@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
-  "author": "",
+  "author": "Pedro Lucas Porcellis <porcellis@eletrotupi.com>",
   "type": "module",
   "main": "src/index.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
+    "start": "node src/app.js",
     "test": "npx ava"
   },
   "dependencies": {
