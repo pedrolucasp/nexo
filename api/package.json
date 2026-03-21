@@ -20,7 +20,10 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.5.0",
     "ava": "^6.4.1",
+    "prisma": "^7.5.0",
     "supertest": "^7.1.4"
   }
 }
