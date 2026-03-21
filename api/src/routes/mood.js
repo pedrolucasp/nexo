@@ -1,10 +1,12 @@
 import express from "express";
+
 import {
   validateMoodComponents,
   isValidLevel,
   isValidRating,
   calculateEmotionStats
 } from "../utils/emotions.js";
+
 import {
   validateRequiredFields,
   isValidDate,
@@ -15,6 +17,10 @@ import {
 } from "../utils/validators.js";
 
 const router = express.Router();
+
+router.get('/', (req, res) => {
+  
+});
 
 // Create new mood entry with components
 router.post("/", (req, res) => {
