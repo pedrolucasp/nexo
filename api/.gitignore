@@ -1,4 +1,4 @@
 node_modules
 .env
-src/generated_prisma
+src/generated/prisma
 orbit.db
