@@ -29,7 +29,7 @@ export const UsersController = {
         email, firstName, lastName, password
       );
 
-      const jwtToken = generateToken(user.id);
+      const jwtToken = generateToken(user.id, user.email);
 
       res.status(201).json({ token: jwtToken });
     } catch (err) {
