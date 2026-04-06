@@ -1,0 +1,14 @@
+root = true
+
+# General settings
+charset = utf-8
+trim_trailing_whitespace = true
+
+# Unix-style newlines with a newline ending every file
+end_of_line = lf
+insert_final_newline = true
+
+# By default all files are indented by two spaces
+[*]
+indent_style = space
+indent_size = 2
