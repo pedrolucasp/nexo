@@ -1,6 +1,0 @@
-const PrimaryButton = () => (
-)
-
-export {
-  PrimaryButton
-}
