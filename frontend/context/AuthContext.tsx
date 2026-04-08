@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { apiClient, User } from '@/lib/api';
 
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
@@ -24,14 +28,11 @@ export function useAuth() {
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+
   return context;
 }
 
-interface AuthProviderProps {
-  children: React.ReactNode;
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -70,6 +71,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
+
     try {
       const response = await apiClient.login(email, password);
       setUser(response.user);
