@@ -11,7 +11,11 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "test": "npx ava",
+    "test": "npm run test:setup && NODE_ENV=test npx ava tests/database.test.ts",
+    "test:setup": "npm run test:setup:generate && npm run test:setup:migrate",
+    "test:setup:generate": "DATABASE_URL='postgres://user:password@orbit_db:5432/orbit_test' npx prisma generate",
+    "test:setup:migrate": "DATABASE_URL='postgres://user:password@orbit_db:5432/orbit_test' npx prisma migrate deploy",
+    "test:watch": "npm run test:setup && NODE_ENV=test npx ava --watch",
     "dev": "prisma generate && prisma migrate deploy && npm run start"
   },
   "dependencies": {
@@ -30,6 +34,7 @@
     "pg": "^8.20.0"
   },
   "devDependencies": {
+    "@ava/typescript": "^6.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
@@ -40,6 +45,7 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2"
   }
 }
