@@ -1,0 +1,36 @@
+services:
+  orbit_db:
+    image: postgres:17-alpine
+    shm_size: 1g
+    user: postgres
+    restart: always
+    healthcheck:
+      test: "pg_isready -U user --dbname=postgres"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5430:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: orbit_dev
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  orbit_api:
+    build: ./api
+    volumes:
+      - ./api:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    env_file:
+      - api/.env
+    depends_on:
+      orbit_db:
+        condition: service_healthy
+    restart: always
+
+volumes:
+  db_data:
