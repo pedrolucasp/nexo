@@ -11,10 +11,12 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "test": "npx ava"
+    "test": "npx ava",
+    "dev": "prisma generate && prisma migrate deploy && npm run start"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.5.0",
+    "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.5.0",
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
@@ -24,18 +26,20 @@
     "date-fns": "^4.1.0",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "ava": "^6.4.1",
     "prisma": "^7.5.0",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^6.0.2"
   }
 }
