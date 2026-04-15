@@ -26,7 +26,7 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - api/.env
+      - api/.env.development
     depends_on:
       orbit_db:
         condition: service_healthy

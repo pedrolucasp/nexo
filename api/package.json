@@ -11,10 +11,10 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "test": "npm run test:setup && NODE_ENV=test npx ava",
+    "test": "npm run test:setup && dotenv -e .env.test -o -- npx ava",
     "test:setup": "npm run test:setup:generate && npm run test:setup:migrate",
-    "test:setup:generate": "dotenv -e .env.test npx prisma generate",
-    "test:setup:migrate": "dotenv -e .env.test npx prisma db push",
+    "test:setup:generate": "dotenv -e .env.test -o -- npx prisma generate",
+    "test:setup:migrate": "dotenv -e .env.test -o -- npx prisma db push",
     "test:watch": "npm run test:setup && NODE_ENV=test npx ava --watch",
     "dev": "prisma generate && prisma migrate deploy && npm run start"
   },

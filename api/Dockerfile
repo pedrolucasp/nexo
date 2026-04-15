@@ -13,6 +13,10 @@ COPY --chown="${UID}:${GID}" package*.json .
 
 RUN npm i --frozen-lockfile
 
+COPY --chown="${UID}:${GID}" prisma ./prisma/
+
+RUN npx prisma generate
+
 COPY --chown="${UID}:${GID}" . .
 
 EXPOSE 3000
