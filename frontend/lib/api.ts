@@ -1,7 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 
-const API_BASE_URL = 'http://192.168.3.76:3000';
-const TOKEN_KEY = 'sky-is-crying'; // Gary B.B Coleman fucking slaps
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY; // Gary B.B Coleman fucking slaps
 
 export interface User {
   id: number;

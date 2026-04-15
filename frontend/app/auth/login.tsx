@@ -48,7 +48,7 @@ export default function LoginScreen() {
       await login(email, password);
       router.replace('/(tabs)');
     } catch (error: any) {
-	  Alert.alert('Erro: ', error.message || 'Falha ao fazer login');
+	  Alert.alert('Erro: ', 'Falha ao fazer login');
     }
   };
 
