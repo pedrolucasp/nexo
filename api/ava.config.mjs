@@ -1,25 +1,17 @@
 export default {
-  "typescript": {
-    "extensions": [
-      "ts",
-      "tsx"
-    ],
-    "rewritePaths": {
-      "src/": "dist/"
-    },
-    compile: false
+  extensions: {
+    ts: 'commonjs'
   },
- // extensions: {
- //   ts: 'module'
- // },
- // nodeArguments: [
- //   '--import=tsx'
- // ],
+  nodeArguments: [
+    '--require=tsx/cjs',
+    '--require=tsconfig-paths/register'
+  ],
   files: [
     'tests/**/*.test.ts'
   ],
   environmentVariables: {
-    NODE_ENV: 'test'
+    NODE_ENV: 'test',
+    TS_NODE_PROJECT: './tsconfig.json'
   },
   timeout: '30s',
   concurrency: 1, // Run tests serially to avoid database conflicts

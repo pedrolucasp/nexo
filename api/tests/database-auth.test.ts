@@ -24,6 +24,12 @@ test.beforeEach(async () => {
 });
 
 test.after.always(async () => {
+  const deleteUsers = prisma.user.deleteMany();
+
+  await prisma.$transaction([
+    deleteUsers
+  ])
+
   await prisma?.$disconnect();
 });
 
