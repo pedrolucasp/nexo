@@ -16,6 +16,12 @@ import {
 
 import { InvalidEmailError, ShortPasswordError } from '@app/lib/errors/UserErrors'
 
+type UserOptions = {
+  email: string;
+  firstName: string;
+  lastName: string;
+};
+
 const createUser = async (email: string, firstName: string, lastName: string, password: string) => {
   // Validate email format
   if (!isValidEmail(email)) {
@@ -26,7 +32,7 @@ const createUser = async (email: string, firstName: string, lastName: string, pa
   if (!isValidPassword(password)) {
     throw new ShortPasswordError()
   }
-  
+
   const encryptedPassword = bcrypt.hashSync(password, 10);
 
   try {
@@ -41,14 +47,19 @@ const createUser = async (email: string, firstName: string, lastName: string, pa
 
     return user;
   } catch (err: any) {
-    console.log(err)
-    throw new Error("Something was off when creating user")
+    throw err;
   }
 }
 
 const generateToken = (userId: number, email: string) => {
   return createJWT(userId, email);
 }
+
+const findUserById = async (id: number) => {
+  return await prisma.user.findUnique({
+    where: { id }
+  });
+};
 
 const findUserByEmail = async (email: string) => {
   return await prisma.user.findUnique({
@@ -134,11 +145,20 @@ const resetPassword = async (token: string, newPassword: string) => {
   return { success: true };
 };
 
+const updateUser = async (user: any, data: UserOptions) => {
+  return await prisma.user.update({
+    where: { id: user.id },
+    data
+  });
+}
+
 export {
   createUser,
+  findUserById,
   generateToken,
   findUserByEmail,
   authenticateUser,
   initiatePasswordReset,
-  resetPassword
+  resetPassword,
+  updateUser
 }

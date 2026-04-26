@@ -8,8 +8,10 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  // TODO: Rig some improved, centralized error logging here
-  console.error(`[ErrorHandler]: ${err}`);
+  if (process.env.NODE_ENV === "development") {
+    // TODO: Rig some improved, centralized error logging here
+    console.error(`[ErrorHandler]: ${err}`);
+  }
 
   if (isDomainError(err)) {
     return res.status(err.status)
