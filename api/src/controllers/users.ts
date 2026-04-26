@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import {
   createUser,
+  findUserById,
+  findUserByEmail,
+  updateUser,
   generateToken
 } from '@app/models/user';
 
@@ -11,11 +14,11 @@ import {
 export const UsersController = {
   create: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password, first_name: firstName, last_name: lastName } = req.body;
+      const { email, password, firstName, lastName } = req.body;
 
       // Validate required fields
       const requiredValidation = validateRequiredFields(req.body, [
-        'email', 'password', 'first_name'
+        'email', 'password', 'firstName'
       ]);
 
       if (!requiredValidation.valid) {
@@ -32,6 +35,36 @@ export const UsersController = {
       const jwtToken = generateToken(user.id, user.email);
 
       res.status(201).json({ token: jwtToken });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  update: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params
+      const { email, password, firstName, lastName } = req.body;
+
+      const user = await findUserById(Number(id));
+
+      if (!user) {
+        return res.status(404).json({
+          error: "Usuário não encontrado"
+        })
+      }
+
+      if (email || password || firstName || lastName) {
+        const response = await updateUser(user, {
+          email, firstName, lastName
+        })
+      }
+
+      const updated = await findUserById(Number(id))
+
+      // TODO: Drop encrypted password & token here
+      return res.status(200).json({
+        user: updated
+      })
     } catch (err) {
       next(err);
     }

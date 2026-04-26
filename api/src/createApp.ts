@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import userRouter from '@app/routes/users';
 import authRouter from '@app/routes/auth';
@@ -16,6 +17,7 @@ export function createApp(prismaClient?: PrismaClient) {
   }));
 
   app.use(express.json());
+  app.use(bodyParser.json());
 
   // Only use morgan in non-test environments
   if (process.env.NODE_ENV !== 'test') {
