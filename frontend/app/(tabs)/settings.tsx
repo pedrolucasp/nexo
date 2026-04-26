@@ -1,19 +1,37 @@
-import { StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, FlatList, View } from 'react-native';
+import { useState } from 'react';
 import ParallaxScrollView from '@/components/misc/parallax-scroll-view';
+import { Link } from 'expo-router'
 
 import { ThemedText } from '@/components/misc/themed-text';
 import { ThemedView } from '@/components/misc/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function Settings() {
+  const [options] = useState([
+    { id: 'profile', name: 'Perfil', path: '/profile'}
+  ])
+
+  const textColor = useThemeColor({}, 'text');
+  const tintColor = useThemeColor({}, 'tint');
+
+  const renderItem = ({item}) => (
+    <Link key={item.id} href={item.path} asChild style={[styles.item, { color: tintColor }]}>
+      <ThemedText>
+        {item.name}
+      </ThemedText>
+    </Link>
+  )
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
         <IconSymbol
           size={310}
-          color="#808080"
+          color="pink"
           name="chevron.left.forwardslash.chevron.right"
           style={styles.headerImage}
         />
@@ -24,12 +42,13 @@ export default function Settings() {
           style={{
             fontFamily: Fonts.rounded,
           }}>
-          Explore
+          Configurações
         </ThemedText>
       </ThemedView>
-      <ThemedText>
-        This app includes example code to help you get started.
-      </ThemedText>
+
+      {(options.map((opt) => (
+        renderItem({ item: opt })
+      )))}
     </ParallaxScrollView>
   )
 }
@@ -41,6 +60,18 @@ const styles = StyleSheet.create({
     bottom: -90,
     left: -35,
     position: 'absolute',
+  },
+  item: {
+    paddingTop: 16,
+    paddingBottom: 16,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ccc'
   },
   titleContainer: {
     flexDirection: 'row',
