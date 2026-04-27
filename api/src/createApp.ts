@@ -7,7 +7,7 @@ import authRouter from '@app/routes/auth';
 import { errorHandler } from '@app/middleware/errorHandler';
 import { PrismaClient } from '@prisma/client';
 
-export function createApp(prismaClient?: PrismaClient) {
+export function createApp() {
   const app = express();
 
   // Configure CORS
@@ -16,17 +16,11 @@ export function createApp(prismaClient?: PrismaClient) {
     credentials: true
   }));
 
-  app.use(express.json());
   app.use(bodyParser.json());
 
   // Only use morgan in non-test environments
   if (process.env.NODE_ENV !== 'test') {
     app.use(morgan('combined'));
-  }
-
-  // Make prisma client available to routes if provided (for testing)
-  if (prismaClient) {
-    app.locals.prisma = prismaClient;
   }
 
   app.use("/users", userRouter);
