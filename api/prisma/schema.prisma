@@ -19,6 +19,7 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   moods Mood[]
+  interventions Intervention[]
 
   @@map("users")
 }
@@ -49,8 +50,30 @@ model MoodComponent {
   @@map("mood_components")
 }
 
+model Intervention {
+  id Int @id @default(autoincrement())
+	comment String?
+	interventionType InterventionType @map("intervention_type")
+	eficacy Int
+  startAt DateTime @map("start_at")
+  endAt DateTime @map("end_at")
+
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("interventions")
+}
+
 enum IntensityLevel {
   LIGHT
   MODERATE
   HIGH
+}
+
+enum InterventionType {
+  MEDICATION
+  THERAPY
+  MEDITATION
+  EXERCISE
+  CONVERSATION
 }
