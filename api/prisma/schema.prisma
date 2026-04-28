@@ -20,6 +20,7 @@ model User {
 
   moods Mood[]
   interventions Intervention[]
+  triggers Trigger[]
 
   @@map("users")
 }
@@ -64,6 +65,17 @@ model Intervention {
   @@map("interventions")
 }
 
+model Trigger {
+  id Int @id @default(autoincrement())
+	comment String? @db.Text
+	category TriggerType
+
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("triggers")
+}
+
 enum IntensityLevel {
   LIGHT
   MODERATE
@@ -76,4 +88,12 @@ enum InterventionType {
   MEDITATION
   EXERCISE
   CONVERSATION
+}
+
+enum TriggerType {
+  SOCIAL
+  ENVIRONMENTAL
+  EMOTIONAL
+  PHYSICAL
+  OTHER
 }
