@@ -22,6 +22,7 @@ model User {
   interventions Intervention[]
   triggers Trigger[]
   reminders Reminder[]
+  sleepRecords SleepRecord[]
 
   @@map("users")
 }
@@ -88,6 +89,18 @@ model Reminder {
   user User @relation(fields: [userId], references: [id])
 
   @@map("reminders")
+}
+
+model SleepRecord {
+  id Int @id @default(autoincrement())
+  average Float
+  date DateTime @db.Date
+  annotations String? @db.Text
+
+  userId Int @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("sleep_records")
 }
 
 enum IntensityLevel {
