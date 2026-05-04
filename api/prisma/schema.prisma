@@ -76,6 +76,16 @@ model Trigger {
   @@map("triggers")
 }
 
+model Reminder {
+  id Int @id @default(autoincrement())
+  hour Int
+  minute Int
+  description String?
+  active Boolean @default(false)
+
+  @@map("reminders")
+}
+
 enum IntensityLevel {
   LIGHT
   MODERATE
