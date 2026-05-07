@@ -8,11 +8,16 @@ export interface User {
   email: string;
   firstName: string;
   lastName?: string;
+  updatedAt: Date;
 }
 
 export interface AuthResponse {
   token: string;
   user: User;
+}
+
+export interface UserUpdateResponse {
+  user: User
 }
 
 class ApiClient {
@@ -60,7 +65,11 @@ class ApiClient {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'Network error' }));
+      const error = await response.json()
+        .catch(() => ({ error: 'Network error' }));
+
+      console.error("[API]: ", error, response.status)
+
       throw new Error(error.error || `HTTP ${response.status}`);
     }
 
