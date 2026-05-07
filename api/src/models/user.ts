@@ -20,6 +20,8 @@ type UserOptions = {
   email: string;
   firstName: string;
   lastName: string;
+  password?: string;
+  encryptedPassword?: string;
 };
 
 const createUser = async (email: string, firstName: string, lastName: string, password: string) => {
@@ -146,6 +148,15 @@ const resetPassword = async (token: string, newPassword: string) => {
 };
 
 const updateUser = async (user: any, data: UserOptions) => {
+  const { password } = data;
+
+  if (password) {
+    const encryptedPassword = bcrypt.hashSync(password, 10);
+
+    delete data.password;
+    data = { ...data, encryptedPassword }
+  }
+
   return await prisma.user.update({
     where: { id: user.id },
     data

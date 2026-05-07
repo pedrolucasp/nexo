@@ -43,28 +43,36 @@ export const UsersController = {
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params
-      const { email, password, firstName, lastName } = req.body;
+      const { user: userParams } = req.body;
 
-      const user = await findUserById(Number(id));
+      if (userParams) {
+        const { email, password, firstName, lastName } = userParams;
 
-      if (!user) {
-        return res.status(404).json({
-          error: "Usuário não encontrado"
-        })
+        const user = await findUserById(Number(id));
+
+        if (!user) {
+          return res.status(404).json({
+            error: "Usuário não encontrado"
+          })
+        }
+
+        if (email || password || firstName || lastName) {
+          const response = await updateUser(user, {
+            email, firstName, lastName, password
+          })
+
+          const updated = await findUserById(Number(id))
+
+          // TODO: Drop encrypted password & token here
+          return res.status(200).json({
+            user: updated
+          })
+        } else {
+          return res.status(200).json({
+            user
+          })
+        }
       }
-
-      if (email || password || firstName || lastName) {
-        const response = await updateUser(user, {
-          email, firstName, lastName
-        })
-      }
-
-      const updated = await findUserById(Number(id))
-
-      // TODO: Drop encrypted password & token here
-      return res.status(200).json({
-        user: updated
-      })
     } catch (err) {
       next(err);
     }
