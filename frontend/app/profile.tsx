@@ -17,9 +17,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
+import { apiClient } from '@/lib/api'
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, updateAuthUser } = useAuth();
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
   const [email, setEmail] = useState(user.email);
@@ -36,8 +37,6 @@ export default function Profile() {
     setFirstName(user.firstName)
     setLastName(user.lastName)
     setEmail(user.email)
-
-    console.log(user);
   }, [user])
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -55,11 +54,13 @@ export default function Profile() {
       if (!confirmPassword) {
         newErrors.confirmPassword = 'Precisa confirmar a senha';
       } else {
-        if (password == confirmPassword) {
+        if (password !== confirmPassword) {
           newErrors.confirmPassword = "Senhas não conferem";
         }
       }
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = 'Por favor, use um email válido';
     }
 
@@ -75,8 +76,7 @@ export default function Profile() {
   const handleUpdate = async () => {
     if (!validateForm()) return;
 
-    const data = {
-    };
+    const data = {};
 
     data.firstName = firstName
     data.lastName = lastName
@@ -86,13 +86,23 @@ export default function Profile() {
       data.password = password
     }
 
-    console.log("sending the update")
-
     try {
-      await updateUser({ firstName, lastName, email, password });
+      const id = user.id;
+
+      const response = await apiClient.updateUser({
+        id,
+        firstName,
+        lastName,
+        email,
+        password
+      });
+
+      updateAuthUser(response.user);
+
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Erro: ', 'Falha ao fazer login');
+      console.error("[PROFILE]", error)
+      Alert.alert('Erro: ', 'Falha ao tentar atualizar o usuário');
     }
   }
 
@@ -163,7 +173,7 @@ export default function Profile() {
             />
 
             <Button
-              title="Trocar senha"
+              title="Atualizar perfil"
               onPress={handleUpdate}
               loading={loading}
               style={styles.resetButton}
