@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  ThemedView
-} from '@/components/ui/themed-view'
-
-import {
-  ThemedText
-} from '@/components/ui/themed-text'
-
-import {
   View,
   Text,
   StyleSheet,
@@ -16,30 +8,97 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+
+import { ThemedView } from '@/components/ui/themed-view'
+import { ThemedText } from '@/components/ui/themed-text'
 import { Link, useLocalSearchParams, router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Profile() {
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
+  const { user } = useAuth();
+  const [firstName, setFirstName] = useState(user.firstName);
+  const [lastName, setLastName] = useState(user.lastName);
+  const [email, setEmail] = useState(user.email);
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
-  const [email, setEmail] = useState();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
+    firstName?: string;
     password?: string;
     confirmPassword?: string;
   }>({});
 
+  useEffect(() => {
+    setFirstName(user.firstName)
+    setLastName(user.lastName)
+    setEmail(user.email)
+
+    console.log(user);
+  }, [user])
+
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
 
-  const handleUpdate = () => {}
+  const validateForm = () => {
+    const newErrors: {
+      firstName?: string;
+      email?: string;
+      password?: string;
+      confirmPassword?: string
+    } = {};
+
+    if (password) {
+      if (!confirmPassword) {
+        newErrors.confirmPassword = 'Precisa confirmar a senha';
+      } else {
+        if (password == confirmPassword) {
+          newErrors.confirmPassword = "Senhas não conferem";
+        }
+      }
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Por favor, use um email válido';
+    }
+
+    if (!firstName) {
+      newErrors.firstName = 'É necessário ter um nome';
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  }
+
+  const handleUpdate = async () => {
+    if (!validateForm()) return;
+
+    const data = {
+    };
+
+    data.firstName = firstName
+    data.lastName = lastName
+    data.email = email
+
+    if (password) {
+      data.password = password
+    }
+
+    console.log("sending the update")
+
+    try {
+      await updateUser({ firstName, lastName, email, password });
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      Alert.alert('Erro: ', 'Falha ao fazer login');
+    }
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
+      <StatusBar style={'dark'} />
       <KeyboardAvoidingView
         behavior='height'
         style={styles.keyboardView}
@@ -72,6 +131,15 @@ export default function Profile() {
               onChangeText={setLastName}
               placeholder="Qual seu sobrenome?"
               error={errors.lastName}
+            />
+
+            <Input
+              label="Email"
+              type="text"
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Qual seu email?"
+              error={errors.email}
             />
 
             <Input

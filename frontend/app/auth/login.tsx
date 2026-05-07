@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
+import { apiClient, User } from '@/lib/api';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');

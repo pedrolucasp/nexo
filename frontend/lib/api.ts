@@ -124,6 +124,13 @@ class ApiClient {
     const token = await this.getStoredToken();
     return { token };
   }
+
+  async updateUser(user): Promise<void> {
+    return await this.request(`/users/${user.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ user })
+    })
+  }
 }
 
 export const apiClient = new ApiClient();
