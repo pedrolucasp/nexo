@@ -66,8 +66,8 @@ export default function SignupScreen() {
 
     try {
       await signup({
-        first_name: firstName,
-        last_name: lastName || undefined,
+        firstName,
+        lastName,
         email,
         password,
       });

@@ -11,8 +11,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: {
-    first_name: string;
-    last_name?: string;
+    firstName: string;
+    lastName?: string;
     email: string;
     password: string;
   }) => Promise<void>;
@@ -81,8 +81,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signup = async (userData: {
-    first_name: string;
-    last_name?: string;
+    firstName: string;
+    lastName?: string;
     email: string;
     password: string;
   }) => {
