@@ -9,6 +9,12 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  updateAuthUser: (user: {
+    firstName: string;
+    lastName?: string;
+    email: string;
+    updatedAt: date;
+  }) => void;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: {
     firstName: string;
@@ -113,6 +119,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await apiClient.resetPassword(token, password);
   };
 
+  const updateAuthUser = (user) => {
+    setUser(user);
+  }
+
   const value: AuthContextType = {
     user,
     isLoading,
@@ -122,6 +132,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     forgotPassword,
     resetPassword,
+    updateAuthUser
   };
 
   return (
