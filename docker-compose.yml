@@ -1,5 +1,5 @@
 services:
-  orbit_db:
+  db:
     image: postgres:17-alpine
     shm_size: 1g
     user: postgres
@@ -18,7 +18,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
-  orbit_api:
+  api:
     build: ./api
     volumes:
       - ./api:/app
@@ -28,7 +28,7 @@ services:
     env_file:
       - api/.env.development
     depends_on:
-      orbit_db:
+      db:
         condition: service_healthy
     restart: always
 
