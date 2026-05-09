@@ -12,12 +12,19 @@ type IconSymbolName = keyof typeof MAPPING;
  * Add your SF Symbols to Material Icons mappings here.
  * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
  * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
+ *
+ * TODO: We might get rid of this completely and just wrap a <MeterialIcons>
+ * since we won't have iOS stuff
  */
 const MAPPING = {
   'house.fill': 'home',
+  'add-circle': 'add-circle',
+  'history': 'history',
+  'lightbulb-outline': 'lightbulb-outline',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'bolt': 'bolt',
   'settings.fill': 'settings'
 } as IconMapping;
 
