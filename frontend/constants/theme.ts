@@ -11,12 +11,14 @@ const black = '#121712';
 
 export const Colors = {
   light: {
-    text: '#121712',
+    text: black,
     background: '#fff',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: tintColorSecondary,
     tabIconSelected: black,
+    inputBackgroundColor: '#F0F5F2',
+    inputBorderColor: '#F0F5F2'
   },
 };
 
