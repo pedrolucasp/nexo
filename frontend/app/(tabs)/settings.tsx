@@ -1,14 +1,16 @@
-import { TouchableOpacity, StyleSheet, Text, SectionList, View, StatusBar, Pressable } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, SectionList, View, Alert } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import ParallaxScrollView from '@/components/misc/parallax-scroll-view';
 import { Link } from 'expo-router'
+import { StatusBar } from 'expo-status-bar';
 
 import { ThemedText } from '@/components/misc/themed-text';
 import { ThemedView } from '@/components/misc/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useAuth } from '@/context/AuthContext';
 
 const SECTIONS = [
   {
@@ -39,6 +41,7 @@ const SECTIONS = [
 ]
 
 export default function Settings() {
+  const { user, logout } = useAuth();
   const [options] = useState([
     { id: 'profile', name: 'Perfil', path: '/profile'}
   ])
@@ -46,7 +49,20 @@ export default function Settings() {
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
 
-  console.log(tintColor, textColor)
+  const handleLogout = async () => {
+    Alert.alert(
+      'Sair',
+      'Tem certeza que quer sair?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sair',
+          style: 'destructive',
+          onPress: logout
+        },
+      ]
+    );
+  };
 
   const renderItem = ({item}) => {
     const itemStyle = [
@@ -55,14 +71,24 @@ export default function Settings() {
 
     const itemColor = { color: item.logout ? '#FF2C2C' : textColor }
 
+    if (item.logout) {
+      return (
+        <TouchableOpacity onPress={handleLogout} style={itemStyle}>
+          <Text style={itemColor}>
+            Sair
+          </Text>
+        </TouchableOpacity>
+      )
+    }
+
     return (
       <View>
         <Link key={item.id} href={item.path} asChild style={itemStyle}>
-          <Pressable>
+          <TouchableOpacity>
             <Text style={itemColor}>
               {item.title}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </Link>
       </View>
     )
@@ -71,7 +97,7 @@ export default function Settings() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar style='dark' />
+        <StatusBar style="dark" />
         <SectionList
           sections={SECTIONS}
           keyExtractor={(item, index) => item.title + index}
@@ -87,8 +113,8 @@ export default function Settings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
-    marginHorizontal: 16
+    marginHorizontal: 16,
+    paddingTop: 10
   },
   item: {
     paddingTop: 20,
