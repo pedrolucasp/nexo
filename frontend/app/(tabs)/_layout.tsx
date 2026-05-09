@@ -40,25 +40,41 @@ export default function TabLayout() {
       }}>
 
       <Tabs.Screen
-        name="index"
+        name="history/index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Histórico',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="history" color={color} />,
         }}
       />
 
       <Tabs.Screen
-        name="explore"
+        name="insights/index"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Insights',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb-outline" color={color} />,
         }}
       />
 
       <Tabs.Screen
-        name="settings"
+        name="new/index"
         options={{
-          title: 'Configurações',
+          title: 'Novo',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="add-circle" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="actions/index"
+        options={{
+          title: 'Ações',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bolt" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="settings/index"
+        options={{
+          title: 'Ajustes',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="settings.fill" color={color} />,
         }}
       />
