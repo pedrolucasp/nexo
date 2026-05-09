@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TextInput,
   TextInputProps,
@@ -26,12 +26,12 @@ export const Input: React.FC<InputProps> = ({
   style,
   ...props
 }) => {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'inputBackgroundColor');
   const borderColor = useThemeColor({}, 'inputBorderColor');
   const errorColor = '#ef4444';
-  const placeholderColor = useThemeColor({ light: '#9ca3af', dark: '#6b7280' }, 'placeholder');
+  const placeholderColor = useThemeColor({}, 'inputPlaceholderColor');
 
   const keyboardType = type === 'email' ? 'email-address' : 'default';
   const secureTextEntry = type === 'password' && !showPassword;

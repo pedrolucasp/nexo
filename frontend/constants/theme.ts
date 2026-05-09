@@ -16,9 +16,11 @@ const SURFACE_LIGHT = '#ffffff';
 // Text Colors
 const TEXT_PRIMARY = '#0f172a';
 const TEXT_SECONDARY = '#64748b';
+const TEXT_PLACEHOLDER = '#94A3B8';
 
 // Borders & Accents
 const BORDER_SUBTLE = '#f1f5f9';
+const BORDER_SUBTLE_GRAY = '#E5E7EB';
 const STATUS_ACTIVE_BG = 'rgba(19, 236, 91, 0.1)';
 
 // Semantic Color Pills and stuff
@@ -48,8 +50,9 @@ export const Colors = {
 
     // Form Inputs
     inputBackgroundColor: SURFACE_LIGHT,
-    inputBorderColor: BORDER_SUBTLE,
+    inputBorderColor: BORDER_SUBTLE_GRAY,
     inputFocusBorderColor: NEON_GREEN,
+    inputPlaceholderColor: TEXT_PLACEHOLDER,
 
     // Cards & Containers
     cardBackground: SURFACE_LIGHT,
