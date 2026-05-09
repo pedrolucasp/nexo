@@ -52,10 +52,9 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextColor = () => {
-    if (disabled) return useThemeColor({ light: '#9ca3af', dark: '#6b7280' }, 'text');
+    if (disabled) return useThemeColor({}, 'text');
     switch (variant) {
       case 'primary':
-        return '#fff';
       case 'secondary':
       case 'outline':
       case 'ghost':

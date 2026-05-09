@@ -28,8 +28,8 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({ light: '#f5f5f5', dark: '#2a2a2a' }, 'background');
-  const borderColor = useThemeColor({ light: '#e0e0e0', dark: '#404040' }, 'border');
+  const backgroundColor = useThemeColor({}, 'inputBackgroundColor');
+  const borderColor = useThemeColor({}, 'inputBorderColor');
   const errorColor = '#ef4444';
   const placeholderColor = useThemeColor({ light: '#9ca3af', dark: '#6b7280' }, 'placeholder');
 
@@ -98,11 +98,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     fontSize: 16,
-    ...Platform.select({
-      web: {
-        outlineStyle: 'none',
-      },
-    }),
   },
   passwordToggle: {
     position: 'absolute',
