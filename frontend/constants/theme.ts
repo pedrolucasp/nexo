@@ -71,11 +71,66 @@ export const Colors = {
   },
 };
 
+export const Typography = {
+  // Headlines
+  headlineLg: {
+    fontFamily: Platform.select({
+      android: 'Inter_900Black',
+      default: 'Inter',
+    }),
+    fontSize: 20,
+    fontWeight: '900' as const,
+    lineHeight: 28,
+    letterSpacing: -0.02,
+  },
+  headlineMd: {
+    fontFamily: Platform.select({
+      android: 'Inter',
+      default: 'Inter',
+    }),
+    fontSize: 18,
+    fontWeight: '700' as const,
+    lineHeight: 24,
+  },
+
+  // Body
+  bodyLg: {
+    fontFamily: Platform.select({
+      android: 'Inter',
+      default: 'Inter',
+    }),
+    fontSize: 16,
+    fontWeight: '700' as const,
+    lineHeight: 20,
+  },
+  bodyMd: {
+    fontFamily: Platform.select({
+      android: 'Inter',
+      default: 'Inter',
+    }),
+    fontSize: 14,
+    fontWeight: '500' as const,
+    lineHeight: 20,
+  },
+  
+  // Labels
+  labelSm: {
+    fontFamily: Platform.select({
+      android: 'Inter',
+      default: 'Inter',
+    }),
+    fontSize: 12,
+    fontWeight: '600' as const,
+    lineHeight: 16,
+    letterSpacing: 0.05,
+  },
+};
+
 export const Fonts = Platform.select({
   default: {
-    sans: 'normal',
+    sans: 'Inter',
     serif: 'serif',
-    rounded: 'normal',
+    rounded: 'Inter',
     mono: 'monospace',
   },
 });
