@@ -31,10 +31,10 @@ export const Button: React.FC<ButtonProps> = ({
   onPress,
   ...props
 }) => {
-  const primaryColor = useThemeColor({ light: '#0a7ea4', dark: '#4fb3d1' }, 'tint');
+  const primaryColor = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
-  const borderColor = useThemeColor({ light: '#e0e0e0', dark: '#404040' }, 'border');
+  const borderColor = useThemeColor({}, 'border');
 
   const getBackgroundColor = () => {
     if (disabled) return useThemeColor({ light: '#e5e5e5', dark: '#404040' }, 'background');
