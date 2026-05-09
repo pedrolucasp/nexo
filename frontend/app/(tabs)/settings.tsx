@@ -1,4 +1,5 @@
-import { TouchableOpacity, StyleSheet, FlatList, View } from 'react-native';
+import { TouchableOpacity, StyleSheet, Text, SectionList, View, StatusBar, Pressable } from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import ParallaxScrollView from '@/components/misc/parallax-scroll-view';
 import { Link } from 'expo-router'
@@ -9,6 +10,34 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+const SECTIONS = [
+  {
+    title: 'Geral',
+    data: [{
+      title: 'Perfil & Senha',
+      path: '/profile'
+    }]
+  },
+  {
+    title: 'Sobre',
+    data: [
+      {
+        title: 'Sobre o aplicativo',
+        path: '/about'
+      },
+      {
+        title: 'O que acontece com seus dados?',
+        path: '/data'
+      },
+      {
+        title: 'Sair',
+        path: '/logout',
+        logout: true
+      }
+    ]
+  }
+]
+
 export default function Settings() {
   const [options] = useState([
     { id: 'profile', name: 'Perfil', path: '/profile'}
@@ -17,64 +46,59 @@ export default function Settings() {
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
 
-  const renderItem = ({item}) => (
-    <Link key={item.id} href={item.path} asChild style={[styles.item, { color: tintColor }]}>
-      <ThemedText>
-        {item.name}
-      </ThemedText>
-    </Link>
-  )
+  console.log(tintColor, textColor)
+
+  const renderItem = ({item}) => {
+    const itemStyle = [
+      styles.item,
+    ]
+
+    const itemColor = { color: item.logout ? '#FF2C2C' : textColor }
+
+    return (
+      <View>
+        <Link key={item.id} href={item.path} asChild style={itemStyle}>
+          <Pressable>
+            <Text style={itemColor}>
+              {item.title}
+            </Text>
+          </Pressable>
+        </Link>
+      </View>
+    )
+  }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="pink"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Configurações
-        </ThemedText>
-      </ThemedView>
-
-      {(options.map((opt) => (
-        renderItem({ item: opt })
-      )))}
-    </ParallaxScrollView>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <StatusBar style='dark' />
+        <SectionList
+          sections={SECTIONS}
+          keyExtractor={(item, index) => item.title + index}
+          renderItem={renderItem}
+          renderSectionHeader={({section: {title}}) => (
+            <ThemedText style={styles.header}>{title}</ThemedText>
+          )} />
+      </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 
-
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+    marginHorizontal: 16
   },
   item: {
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
   },
-  itemName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold'
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#ccc'
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+  logout: {
+    textColor: '#FF2C2C'
+  }
 });
