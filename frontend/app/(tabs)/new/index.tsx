@@ -72,6 +72,17 @@ export default function New() {
             </Col>
           </Card>
         </Section>
+
+        {/* TODO: Check whether we gonna have to generate these on demand */}
+        <Section>
+          <Grid gap={4}>
+            <Card style={{minHeight: 150, backgroundColor: 'powderblue'}}>
+            </Card>
+
+            <Card style={{minHeight: 150, backgroundColor: 'tomato'}}>
+            </Card>
+          </Grid>
+        </Section>
       </ThemedView>
     </ScreenLayout>
   )
