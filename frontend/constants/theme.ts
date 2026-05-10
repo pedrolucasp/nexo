@@ -76,6 +76,15 @@ export const Colors = {
 
 export const Typography = {
   // Headlines
+  headlineXg: {
+    fontFamily: Platform.select({
+      android: 'Inter_900Black',
+      default: 'Inter',
+    }),
+    fontSize: 36,
+    fontWeight: '900' as const,
+    lineHeight: 40,
+  },
   headlineLg: {
     fontFamily: Platform.select({
       android: 'Inter_900Black',
