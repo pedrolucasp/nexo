@@ -18,7 +18,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Grid, Col, Row, Between, Center } from '@/components/ui/LayoutHelpers';
 import { Card } from '@/components/ui/Cards';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Input, TextArea } from '@/components/ui/Input';
 import { Section, SectionHeader } from '@/components/ui/Sections';
 import { Spacing, Typography, Colors } from '@/constants/theme';
 
@@ -46,10 +46,13 @@ export default function NewMoodEntry() {
           </Card>
 
           <Card style={styles.annotationsCard}>
-            <Input
+            <TextArea
               label="Notas sobre o dia"
               type="text"
+              variant="darkGhost"
               onChangeText={(val) => console.log(val)}
+              minRows={4}
+              maxRows={6}
               placeholder="Escreva uma nota rápida sobre o seu dia..."
             />
           </Card>
