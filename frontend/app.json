@@ -16,7 +16,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.eletrotupi.orbit"
     },
     "plugins": [
       "expo-router",
@@ -69,10 +70,19 @@
           ]
         }
       ],
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9e045ebc-b4b3-4fc9-959f-d6db2f12259c"
+      }
+    },
+    "owner": "eletrotupi"
   }
 }
