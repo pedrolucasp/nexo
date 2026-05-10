@@ -6,6 +6,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/misc/themed-text'
+import { Row, Between } from '@/components/ui/LayoutHelpers';
 
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -26,6 +27,7 @@ export const Section: React.FC<SectionProps> = ({ children, style }) => {
 
 interface SectionHeaderProps {
   title: string;
+  subtitle?: string;
   actionLabel?: string;
   onActionPress?: () => void;
   style?: ViewStyle;
@@ -35,6 +37,7 @@ interface SectionHeaderProps {
 // or it should be a link
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
+  subtitle,
   info,
   actionLabel,
   onActionPress,
@@ -42,18 +45,22 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => {
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary')
 
   const styles = StyleSheet.create({
     headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
       marginBottom: (Spacing.cardGap * 2),
     },
     title: {
       fontSize: Typography.headlineMd.fontSize,
       fontWeight: Typography.headlineMd.fontWeight,
       color: textColor,
+    },
+    subtitle: {
+      fontSize: 14,
+      color: textSecondaryColor,
+      lineHeight: 20,
+      marginTop: 4
     },
     actionButton: {
       padding: 4,
@@ -68,26 +75,36 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   // TODO: Rework these when we finally have chips/badges
   return (
     <View style={[styles.headerContainer, style]}>
-      <ThemedText style={styles.title}>
-        {title}
-      </ThemedText>
-
-      {info && !actionLabel && (
-        <ThemedText>
-          {info}
+      <Between>
+        <ThemedText style={styles.title}>
+          {title}
         </ThemedText>
-      )}
 
-      {actionLabel && !info && onActionPress && (
-        <Pressable
-          style={styles.actionButton}
-          onPress={onActionPress}
-          hitSlop={8}
-        >
-          <ThemedText style={styles.actionText}>
-            {actionLabel}
+        {info && !actionLabel && (
+          <ThemedText>
+            {info}
           </ThemedText>
-        </Pressable>
+        )}
+
+        {actionLabel && !info && onActionPress && (
+          <Pressable
+            style={styles.actionButton}
+            onPress={onActionPress}
+            hitSlop={8}
+          >
+            <ThemedText style={styles.actionText}>
+              {actionLabel}
+            </ThemedText>
+          </Pressable>
+        )}
+      </Between>
+
+      {subtitle && (
+        <Row>
+          <ThemedText style={styles.subtitle}>
+            {subtitle}
+          </ThemedText>
+        </Row>
       )}
     </View>
   );
