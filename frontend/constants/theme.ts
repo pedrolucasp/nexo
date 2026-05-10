@@ -65,12 +65,12 @@ export const Colors = {
 
     // Semantic Accents (for categorization)
     accentBlue: PILL_BLUE,
-  accentIndigo: PILL_INDIGO,
-  accentPurple: PILL_PURPLE,
+    accentIndigo: PILL_INDIGO,
+    accentPurple: PILL_PURPLE,
 
-  // Disabled / Secondary
-  disabled: '#cbd5e1',
-  divider: BORDER_SUBTLE,
+    // Disabled / Secondary
+    disabled: '#cbd5e1',
+    divider: BORDER_SUBTLE,
   },
 };
 
@@ -127,6 +127,21 @@ export const Typography = {
     lineHeight: 16,
     letterSpacing: 0.05,
   },
+};
+
+export const Spacing = {
+  containerPadding: 16, // 1rem
+  sectionGap: 32, // 2rem
+  inlineGapSm: 8, // 0.5rem
+};
+
+export const BorderRadius = {
+  sm: 4, // 0.25rem
+  default: 8, // 0.5rem
+  md: 12, // 0.75rem
+  lg: 16, // 1rem
+  xl: 24, // 1.5rem
+  full: 9999, // pill-shaped
 };
 
 export const Fonts = Platform.select({
