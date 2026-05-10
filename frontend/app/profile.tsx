@@ -99,7 +99,7 @@ export default function Profile() {
 
       updateAuthUser(response.user);
 
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/insights');
     } catch (error: any) {
       console.error("[PROFILE]", error)
       Alert.alert('Erro: ', 'Falha ao tentar atualizar o usuário');

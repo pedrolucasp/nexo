@@ -1,12 +1,20 @@
 import { ThemedText } from '@/components/misc/themed-text';
 import { ThemedView } from '@/components/misc/themed-view';
+import { ScreenLayout } from '@/components/ui/ScreenLayout';
+import { useAuth } from '@/context/AuthContext';
 
 export default function New() {
+  const { user } = useAuth();
+
   return (
-    <ThemedView>
-      <ThemedText>
-        New
-      </ThemedText>
-    </ThemedView>
+    <ScreenLayout userName={user.firstName}
+      onNotificationPress={() => console.log('Notifications')}
+      showNotificationBadge={true}>
+      <ThemedView>
+        <ThemedText>
+          Novo
+        </ThemedText>
+      </ThemedView>
+    </ScreenLayout>
   )
 }
