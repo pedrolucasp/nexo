@@ -12,6 +12,7 @@ const PRIMARY_DARK = '#0f172a';
 // Surface & Background
 const BACKGROUND_LIGHT = '#f6f8f6';
 const SURFACE_LIGHT = '#ffffff';
+const BACKGROUND_DARK_GHOST = '#F8FAFC';
 
 // Text Colors
 const TEXT_PRIMARY = '#0f172a';
@@ -42,6 +43,7 @@ export const Colors = {
     background: BACKGROUND_LIGHT,
     surface: SURFACE_LIGHT,
     tint: NEON_GREEN,
+    backgroundDarkGhost: BACKGROUND_DARK_GHOST,
 
     // Interactive States
     icon: TEXT_SECONDARY,
@@ -50,6 +52,7 @@ export const Colors = {
 
     // Form Inputs
     inputBackgroundColor: SURFACE_LIGHT,
+    inputBackgroundDarkGhostColor: BACKGROUND_DARK_GHOST,
     inputBorderColor: BORDER_SUBTLE_GRAY,
     inputFocusBorderColor: NEON_GREEN,
     inputPlaceholderColor: TEXT_PLACEHOLDER,
