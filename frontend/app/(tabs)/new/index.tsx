@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { 
+import {
   StyleSheet
 } from 'react-native';
 
@@ -14,12 +14,14 @@ import { Section, SectionHeader } from '@/components/ui/Sections';
 import { MoodSelector } from '@/components/ui/EmojiSelectors';
 import { Typography, Spacing, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { router } from 'expo-router';
 
 export default function New() {
   const { user } = useAuth();
   const [mood, setMood] = useState<string>('bem');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // TODO: Move these elsewhere
   const moodOptions = [
     { id: 'sad', icon: '😢', label: 'Triste' },
     { id: 'neutral', icon: '😐', label: 'Neutro' },
@@ -30,6 +32,9 @@ export default function New() {
 
   const initQuickRegister = () => {
     console.log("Register: ", mood);
+
+    // TODO: Set down on camelCase vs kebab case
+    router.navigate(`/new/entry?initialMood=${mood}`)
   };
 
   return (

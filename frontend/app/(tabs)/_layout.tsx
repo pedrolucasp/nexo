@@ -56,7 +56,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="new/index"
+        name="new"
         options={{
           title: 'Novo',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="add-circle" color={color} />,
