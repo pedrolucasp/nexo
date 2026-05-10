@@ -133,6 +133,7 @@ export const Spacing = {
   containerPadding: 16, // 1rem
   sectionGap: 32, // 2rem
   inlineGapSm: 8, // 0.5rem
+  cardGap: 12 // 0.75rem
 };
 
 export const BorderRadius = {
@@ -142,6 +143,30 @@ export const BorderRadius = {
   lg: 16, // 1rem
   xl: 24, // 1.5rem
   full: 9999, // pill-shaped
+};
+
+export const Shadows = {
+  sm: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: NEON_GREEN,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+  },
 };
 
 export const Fonts = Platform.select({
