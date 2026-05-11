@@ -42,7 +42,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log("user & auth", isAuthenticated, user)
   const isAuthenticated = !!user;
+  console.log("after user & auth", isAuthenticated, user)
 
   // Check for existing authentication on app start
   useEffect(() => {
@@ -52,17 +54,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkAuthState = async () => {
     try {
       const { token } = await apiClient.getStoredAuthData();
+      console.log("We have a token?", token);
 
       if (token) {
         const verifyResponse = await apiClient.verifyToken();
+        console.log("Checking response: ", verifyResponse)
         if (verifyResponse.valid && verifyResponse.userId && verifyResponse.email) {
           // TODO: Fetch the full user profile
           // For now, we'll create a basic user object
           setUser({
             id: verifyResponse.userId,
             email: verifyResponse.email,
-            firstName: '',
-            lastName: undefined,
+            firstName: verifyResponse.user.firstName,
+            lastName: verifyResponse.user.lastName,
           });
         }
       }
