@@ -5,7 +5,7 @@ import { useColorScheme } from 'react-native'
 import { AuthProvider } from '@/context/AuthContext';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: '(tabs)/new',
 };
 
 export default function RootLayout() {

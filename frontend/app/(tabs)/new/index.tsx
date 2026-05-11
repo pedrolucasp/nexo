@@ -18,7 +18,7 @@ import { router } from 'expo-router';
 
 export default function New() {
   const { user } = useAuth();
-  const [mood, setMood] = useState<string>('bem');
+  const [mood, setMood] = useState<string>('good');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // TODO: Move these elsewhere
