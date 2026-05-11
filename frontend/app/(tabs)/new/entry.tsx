@@ -21,11 +21,19 @@ import { Button } from '@/components/ui/Button';
 import { Input, TextArea } from '@/components/ui/Input';
 import { Section, SectionHeader } from '@/components/ui/Sections';
 import { Spacing, Typography, Colors } from '@/constants/theme';
+import { ScaleSlider } from '@/components/ui/ScaleSlider';
+import { Ionicons } from '@expo/vector-icons';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function NewMoodEntry() {
   const { user } = useAuth();
+  const tintColor = useThemeColor({}, 'tint');
+
   // TODO: transform this into a specific mood component
   const { initialMood } = useLocalSearchParams();
+  const [stress, setStress] = useState(0);
+  const [anxiety, setAnxiety] = useState(0);
+  const [energy, setEnergy] = useState(0);
 
   const editComponents = () => {
     console.log("Wants to open the components");
@@ -47,6 +55,37 @@ export default function NewMoodEntry() {
           </Center>
 
           <Card style={styles.resumeCard}>
+            <Col gap={24}>
+              <ScaleSlider
+                variant="rich"
+                label="Energia"
+                value={energy}
+                onValueChange={setEnergy}
+                icon={<Ionicons name="flower-outline" size={20} color={tintColor} />}
+                minLabel="Baixa"
+                maxLabel="Alta"
+              />
+
+              <ScaleSlider
+                variant="rich"
+                label="Ansiedade"
+                value={anxiety}
+                onValueChange={setAnxiety}
+                icon={<Ionicons name="sad-outline" size={20} color="#FB923C" />}
+                minLabel="Calmo"
+                maxLabel="Ansioso"
+              />
+
+              <ScaleSlider
+                variant="rich"
+                label="Estresse"
+                value={stress}
+                onValueChange={setStress}
+                icon={<Ionicons name="flame" size={20} color="#f87171" />}
+                minLabel="Relaxado"
+                maxLabel="Estressado"
+              />
+            </Col>
           </Card>
 
           <Card style={styles.annotationsCard}>
@@ -96,6 +135,6 @@ const styles = StyleSheet.create({
     padding: Spacing.cardGap
   },
   resumeCard: {
-    height: 361
+    padding: Spacing.cardGap,
   }
 });
