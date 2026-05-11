@@ -76,6 +76,8 @@ export const Colors = {
     // Disabled / Secondary
     disabled: '#cbd5e1',
     divider: BORDER_SUBTLE,
+    sliderTracking: '#E2E8F0',
+    sliderLabels: '#94a3b8'
   },
 };
 
@@ -129,7 +131,7 @@ export const Typography = {
     fontWeight: '500' as const,
     lineHeight: 20,
   },
-  
+
   // Labels
   labelSm: {
     fontFamily: Platform.select({
@@ -141,6 +143,17 @@ export const Typography = {
     lineHeight: 16,
     letterSpacing: 0.05,
   },
+
+  // Used for the Slider labels
+  labelXs: {
+    fontFamily: Platform.select({
+      android: 'Inter',
+      default: 'Inter',
+    }),
+    fontSize: 10,
+    lineHeight: 15,
+    letterSpacing: 0.25
+  }
 };
 
 export const Spacing = {
@@ -191,3 +204,11 @@ export const Fonts = Platform.select({
     mono: 'monospace',
   },
 });
+
+export const Theme = {
+  colors: Colors,
+  typography: Typography,
+  spacing: Spacing,
+  shadows: Shadows,
+  borderRadius: BorderRadius
+};
