@@ -40,7 +40,7 @@ export default function TabLayout() {
       }}>
 
       <Tabs.Screen
-        name="history/index"
+        name="history"
         options={{
           title: 'Histórico',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="history" color={color} />,
@@ -48,7 +48,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="insights/index"
+        name="insights"
         options={{
           title: 'Insights',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb-outline" color={color} />,
@@ -64,7 +64,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="actions/index"
+        name="actions"
         options={{
           title: 'Ações',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="bolt" color={color} />,
@@ -72,7 +72,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="settings/index"
+        name="settings"
         options={{
           title: 'Ajustes',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="settings.fill" color={color} />,
