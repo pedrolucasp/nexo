@@ -3,7 +3,8 @@ import {
   authenticateUser,
   generateToken,
   initiatePasswordReset,
-  resetPassword
+  resetPassword,
+  findUserByEmail
 } from '@app/models/user';
 import {
   validateRequiredFields
@@ -108,11 +109,18 @@ export const AuthController = {
 
       const token = authHeader.substring(7);
       const payload = verifyToken(token);
+      const user = await findUserByEmail(payload.email);
 
       res.json({
         valid: true,
         userId: payload.userId,
-        email: payload.email
+        email: payload.email,
+        user: {
+          firstName: user?.firstName,
+          email: user?.email,
+          lastName: user?.lastName,
+          updatedAt: user?.updatedAt
+        }
       });
     } catch (err: any) {
       if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
