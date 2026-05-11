@@ -12,7 +12,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'dashed';
   size?: 'small' | 'medium' | 'large';
   loading?: boolean;
   disabled?: boolean;
@@ -33,8 +33,10 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const primaryColor = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textSecondary');
   const backgroundColor = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
+  const borderDashedColor = useThemeColor({}, 'borderDashed');
 
   const getBackgroundColor = () => {
     if (disabled) return useThemeColor({ light: '#e5e5e5', dark: '#404040' }, 'background');
@@ -45,6 +47,7 @@ export const Button: React.FC<ButtonProps> = ({
         return useThemeColor({ light: '#f3f4f6', dark: '#374151' }, 'background');
       case 'outline':
       case 'ghost':
+      case 'dashed':
         return 'transparent';
       default:
         return primaryColor;
@@ -53,27 +56,45 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getTextColor = () => {
     if (disabled) return useThemeColor({}, 'text');
+
     switch (variant) {
       case 'primary':
       case 'secondary':
       case 'outline':
       case 'ghost':
         return textColor;
+      case 'dashed':
+        return textSecondaryColor;
       default:
         return '#fff';
     }
   };
 
   const getBorderWidth = () => {
-    return variant === 'outline' ? 1 : 0;
+    if (variant === 'outline' || variant === 'dashed') {
+      return 1;
+    } else {
+      return 0;
+    }
   };
 
   const getBorderColor = () => {
-    if (variant === 'outline') {
-      return disabled ? borderColor : primaryColor;
+    if (variant === 'outline' || variant === 'dashed') {
+      if (disabled) {
+        return borderColor;
+      } else if (variant === 'dashed') {
+        return borderDashedColor;
+      } else {
+        return primaryColor;
+      }
     }
+
     return 'transparent';
   };
+
+  const getBorderStyle = () => {
+    return variant === 'dashed' ? 'dashed' : 'solid';
+  }
 
   const getHeight = () => {
     switch (size) {
@@ -109,6 +130,7 @@ export const Button: React.FC<ButtonProps> = ({
           backgroundColor: getBackgroundColor(),
           borderWidth: getBorderWidth(),
           borderColor: getBorderColor(),
+          borderStyle: getBorderStyle(),
           height: getHeight(),
           opacity: disabled || loading ? 0.6 : 1,
         },

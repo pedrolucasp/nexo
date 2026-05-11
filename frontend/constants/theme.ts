@@ -22,6 +22,7 @@ const TEXT_PLACEHOLDER = '#94A3B8';
 // Borders & Accents
 const BORDER_SUBTLE = '#f1f5f9';
 const BORDER_SUBTLE_GRAY = '#E5E7EB';
+const BORDER_SUBTLE_LIGHT_GRAY = '#CBD5E1';
 const STATUS_ACTIVE_BG = 'rgba(19, 236, 91, 0.1)';
 
 // Semantic Color Pills and stuff
@@ -44,6 +45,7 @@ export const Colors = {
     surface: SURFACE_LIGHT,
     tint: NEON_GREEN,
     backgroundDarkGhost: BACKGROUND_DARK_GHOST,
+    borderDashed: BORDER_SUBTLE_LIGHT_GRAY,
 
     // Interactive States
     icon: TEXT_SECONDARY,

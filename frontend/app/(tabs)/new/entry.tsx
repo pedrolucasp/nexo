@@ -27,6 +27,10 @@ export default function NewMoodEntry() {
   // TODO: transform this into a specific mood component
   const { initialMood } = useLocalSearchParams();
 
+  const editComponents = () => {
+    console.log("Wants to open the components");
+  }
+
   return (
     <View>
       <ScrollView
@@ -53,7 +57,7 @@ export default function NewMoodEntry() {
               onChangeText={(val) => console.log(val)}
               minRows={4}
               maxRows={6}
-              placeholder="Escreva uma nota rápida sobre o seu dia..."
+              placeholder="Escreva uma nota rápida sobre o seu dia até o momento..."
             />
           </Card>
 
@@ -63,6 +67,12 @@ export default function NewMoodEntry() {
               <Card style={{height: 38}} />
               <Card style={{height: 38}} />
             </Grid>
+
+            <Button title="Adicionar Componentes"
+                    onPress={editComponents}
+                    textStyle={{ fontWeight: 500 }}
+                    variant="dashed"
+                    />
           </Section>
         </View>
       </ScrollView>
