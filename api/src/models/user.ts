@@ -109,7 +109,8 @@ const initiatePasswordReset = async (email: string) => {
   return {
     success: true,
     token: resetToken,
-    email: user.email
+    email: user.email,
+    id: user.id
   };
 };
 

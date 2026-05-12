@@ -6,7 +6,8 @@ import {
 } from '@app/lib/queue/types';
 
 import {
-  sendWelcomeEmail
+  sendWelcomeEmail,
+  sendResetPasswordEmail
 } from '@app/services/mail'
 
 export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void> {
@@ -14,8 +15,6 @@ export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void
   switch (job.name as MailJobName) {
     case MailJobName.WelcomeEmail: {
       const data = job.data as WelcomeEmailPayload;
-      // await sendWelcomeEmail(data.userId);
-
       console.log("Dispatching an welcome email", data);
 
       sendWelcomeEmail(Number(data.userId));
@@ -25,7 +24,10 @@ export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void
 
     case MailJobName.PasswordReset: {
       const data = job.data as PasswordResetPayload;
-      // await sendPasswordResetEmail(data.userId, data.token);
+      console.log("Dispatching an welcome email", data);
+
+      await sendResetPasswordEmail(data.userId, data.token);
+
       break;
     }
 

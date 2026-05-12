@@ -6,10 +6,13 @@ import {
   resetPassword,
   findUserByEmail
 } from '@app/models/user';
+
 import {
   validateRequiredFields
 } from '@app/utils/validators';
+
 import { verifyToken } from '@app/lib/jwt';
+import { getQueue, MailJobName } from '@app/lib/queue';
 
 export const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
@@ -61,6 +64,11 @@ export const AuthController = {
       }
 
       const result = await initiatePasswordReset(email);
+      const mailQueue = getQueue('mail');
+      const job = await mailQueue.add(MailJobName.PasswordReset, {
+        userId: result.id,
+        token: result.token
+      });
 
       // In production, don't send token in response
       // Instead, send email with reset link
