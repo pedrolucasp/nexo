@@ -11,6 +11,8 @@ import {
   validateRequiredFields
 } from '@app/utils/validators'
 
+import { getQueue, MailJobName } from '@app/lib/queue';
+
 export const UsersController = {
   create: async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -33,6 +35,9 @@ export const UsersController = {
       );
 
       const jwtToken = generateToken(user.id, user.email);
+
+      const mailQueue = getQueue('mail');
+      const job = await mailQueue.add(MailJobName.WelcomeEmail, { userId: user.id });
 
       res.status(201).json({ token: jwtToken });
     } catch (err) {
