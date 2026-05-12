@@ -1,6 +1,6 @@
 FROM node:24-alpine3.23
 
-RUN apk add -U bash postgresql17-client build-base yaml-dev
+RUN apk add -U bash postgresql17-client build-base yaml-dev valkey-cli
 
 ARG UID=1000
 ARG GID=1000

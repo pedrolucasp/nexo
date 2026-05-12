@@ -18,6 +18,17 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  valkey:
+    image: valkey/valkey:9.0-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - valkey_data:/data
+      - ./etc/valkey.conf:/etc/valkey/valkey.conf
+    command: valkey-server /etc/valkey/valkey.conf
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
   api:
     build: ./api
     volumes:
@@ -28,9 +39,12 @@ services:
     env_file:
       - api/.env.development
     depends_on:
+      valkey:
+        condition: service_started
       db:
         condition: service_healthy
     restart: always
 
 volumes:
   db_data:
+  valkey_data:
