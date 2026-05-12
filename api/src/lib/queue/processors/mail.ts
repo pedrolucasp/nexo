@@ -5,6 +5,10 @@ import {
   PasswordResetPayload,
 } from '@app/lib/queue/types';
 
+import {
+  sendWelcomeEmail
+} from '@app/services/mail'
+
 export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void> {
   // job.name is the discriminant
   switch (job.name as MailJobName) {
@@ -13,6 +17,9 @@ export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void
       // await sendWelcomeEmail(data.userId);
 
       console.log("Dispatching an welcome email", data);
+
+      sendWelcomeEmail(Number(data.userId));
+
       break;
     }
 
