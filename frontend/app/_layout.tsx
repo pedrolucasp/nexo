@@ -24,6 +24,17 @@ export default function RootLayout() {
               presentation: 'modal'
             }}
           />
+
+          <Stack.Screen
+            name="entry/mood-components"
+            options={{
+              presentation: 'formSheet',
+              title: 'Editar Componentes',
+              sheetAllowedDetents: [0.25, 0.5, 1],
+              sheetInitialDetentIndex: 1
+            }}
+          />
+
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
       </AuthProvider>
