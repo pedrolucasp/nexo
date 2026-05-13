@@ -140,6 +140,13 @@ class ApiClient {
       body: JSON.stringify({ user })
     })
   }
+
+  async createMoodEntry(moodEntry): Promise<void> {
+    return await this.request(`/moods`, {
+      method: 'POST',
+      body: JSON.stringify({ mood: moodEntry })
+    })
+  }
 }
 
 export const apiClient = new ApiClient();
