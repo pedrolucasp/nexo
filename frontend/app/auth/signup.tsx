@@ -71,7 +71,7 @@ export default function SignupScreen() {
         email,
         password,
       });
-      router.replace('/(tabs)');
+      router.replace('/');
     } catch (error: any) {
 	  Alert.alert('Erro:', error.message || 'Falha no cadastro. Tente novamente.');
     }
