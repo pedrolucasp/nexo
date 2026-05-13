@@ -22,6 +22,7 @@ import { Input, TextArea } from '@/components/ui/Input';
 import { Section, SectionHeader } from '@/components/ui/Sections';
 import { Spacing, Typography, Colors } from '@/constants/theme';
 import { ScaleSlider } from '@/components/ui/ScaleSlider';
+import { MoodComponentCard } from '@/components/ui/MoodComponentCard';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import {
@@ -46,15 +47,18 @@ export default function NewMoodEntry() {
     selectedMood,
     setSelectedMood,
     components,
+    reset
   } = useMoodEntryStore();
 
   useEffect(() => {
     setSelectedMood(getMood(initialMood));
   }, [initialMood]);
 
-  const editComponents = () => {
-    console.log("Wants to open the components");
+  useEffect(() => {
+    return () => reset();
+  }, []);
 
+  const editComponents = () => {
     router.push("/entry/mood-components")
   }
 
@@ -69,7 +73,7 @@ export default function NewMoodEntry() {
             </ThemedText>
 
             <ThemedText style={styles.statusText}>
-              {selectedMood.label || "Neutro"}
+              {selectedMood?.label || "Neutro"}
             </ThemedText>
           </Center>
 
@@ -121,16 +125,23 @@ export default function NewMoodEntry() {
 
           <Section>
             <SectionHeader title="Componentes do Humor" info="Editar" />
-            <Grid gap={4}>
-              <Card style={{height: 38}} />
-              <Card style={{height: 38}} />
-            </Grid>
+            {components.length > 0 ? (
+              <Grid gap={2} style={{ marginTop: 8 }}>
+                {components.map((comp) => (
+                  <MoodComponentCard
+                    key={comp.id}
+                    id={comp.id}
+                    intensity={comp.intensity}
+                  />
+                ))}
+              </Grid>
+            ) : null}
 
             <Button title="Adicionar Componentes"
-                    onPress={editComponents}
-                    textStyle={{ fontWeight: 500 }}
-                    variant="dashed"
-                    />
+              onPress={editComponents}
+              textStyle={{ fontWeight: 500 }}
+              variant="dashed"
+            />
           </Section>
         </View>
       </ScrollView>

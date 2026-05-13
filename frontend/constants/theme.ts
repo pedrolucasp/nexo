@@ -68,6 +68,7 @@ export const Colors = {
     // Active / Inactive States
     activeBackground: STATUS_ACTIVE_BG,
     inactiveOpacity: 0.7,
+    moodIntensityLabel: '#94a3b8',
 
     // Semantic Accents (for categorization)
     accentBlue: PILL_BLUE,
