@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 export interface ActiveMoodComponent {
-  i: string;         // matches MoodComponentDefinition.id
-  intensity: number; // 1–10
+  id: string;         // matches MoodComponentDefinition.id
+  intensity: number; // 1–3
 }
 
 interface MoodEntryState {
