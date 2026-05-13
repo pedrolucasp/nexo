@@ -25,3 +25,9 @@ export const intensityLabel = (value: number): string => {
   if (value <= 2) return 'Moderada';
   if (value <= 3) return 'Intensa';
 };
+
+export const intensityToValue = (value: number): string => {
+  if (value == 1) return 'LIGHT';
+  if (value <= 2) return 'MODERATE';
+  if (value <= 3) return 'HIGH';
+}
