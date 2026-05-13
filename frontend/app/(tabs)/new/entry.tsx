@@ -24,19 +24,38 @@ import { Spacing, Typography, Colors } from '@/constants/theme';
 import { ScaleSlider } from '@/components/ui/ScaleSlider';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import {
+  useMoodEntryStore,
+} from '@/stores/moodEntry';
+
+import {
+  MOODS,
+  getMood
+} from '@/constants/moods';
 
 export default function NewMoodEntry() {
   const { user } = useAuth();
   const tintColor = useThemeColor({}, 'tint');
 
-  // TODO: transform this into a specific mood component
   const { initialMood } = useLocalSearchParams();
   const [stress, setStress] = useState(0);
   const [anxiety, setAnxiety] = useState(0);
   const [energy, setEnergy] = useState(0);
 
+  const {
+    selectedMood,
+    setSelectedMood,
+    components,
+  } = useMoodEntryStore();
+
+  useEffect(() => {
+    setSelectedMood(getMood(initialMood));
+  }, [initialMood]);
+
   const editComponents = () => {
     console.log("Wants to open the components");
+
+    router.push("/entry/mood-components")
   }
 
   return (
@@ -50,7 +69,7 @@ export default function NewMoodEntry() {
             </ThemedText>
 
             <ThemedText style={styles.statusText}>
-              Muito Bem
+              {selectedMood.label || "Neutro"}
             </ThemedText>
           </Center>
 

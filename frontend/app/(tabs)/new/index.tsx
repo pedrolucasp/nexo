@@ -31,8 +31,6 @@ export default function New() {
   ];
 
   const initQuickRegister = () => {
-    console.log("Register: ", mood);
-
     // TODO: Set down on camelCase vs kebab case
     router.navigate(`/new/entry?initialMood=${mood}`)
   };
