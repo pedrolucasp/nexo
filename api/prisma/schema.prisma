@@ -29,8 +29,9 @@ model User {
 
 model Mood {
   id Int @id @default(autoincrement())
-  description String? @db.Text
+  annotation String? @db.Text
   moment DateTime @default(now())
+  selectedMood BaseMoodOption @default(GOOD) @map("selected_mood")
   anxietyLevel Int @map("anxiety_level")
   stressLevel Int @map("stress_level")
   energyLevel Int @map("energy_level")
@@ -44,7 +45,7 @@ model Mood {
 
 model MoodComponent {
   id Int @id @default(autoincrement())
-  comment String?
+  component MoodComponentOption
   intensity IntensityLevel @default(LIGHT)
 
   moodId Int @map("mood_id")
@@ -123,4 +124,24 @@ enum TriggerType {
   EMOTIONAL
   PHYSICAL
   OTHER
+}
+
+// XXX: Keep it in sync with constants/moods.ts
+enum BaseMoodOption {
+  SAD
+  NEUTRAL
+  GOOD
+  GREAT
+  ANGRY
+}
+
+enum MoodComponentOption {
+  JOY
+  NEUTRAL
+  ANGER
+  SADNESS
+  ANXIETY
+  GRATITUDE
+  FOCUS
+  TIREDNESS
 }
