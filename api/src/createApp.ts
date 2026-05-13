@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import mainRouter from '@app/routes/main';
 import userRouter from '@app/routes/users';
 import authRouter from '@app/routes/auth';
+import moodRouter from '@app/routes/moods';
 import { errorHandler } from '@app/middleware/errorHandler';
 import { PrismaClient } from '@prisma/client';
 import { bootWorkers, closeAllWorkers, closeAllQueues } from '@app/lib/queue';
@@ -29,6 +30,7 @@ export function createApp() {
   app.get('/', mainRouter);
   app.use("/users", userRouter);
   app.use("/auth", authRouter);
+  app.use("/moods", moodRouter);
 
   app.use(errorHandler); // always last
 
