@@ -112,10 +112,6 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
   );
 };
 
-// ============================================================================
-// STYLES
-// ============================================================================
-
 const styles = StyleSheet.create({
   container: {
     width: '100%',
@@ -154,7 +150,7 @@ const styles = StyleSheet.create({
   valueCompact: {
     fontSize: Theme.typography.bodyMd.fontSize,
     fontWeight: Theme.typography.bodyMd.fontWeight,
-    color: secondaryColor,
+    color: Theme.colors.light.textSecondary,
   },
 
   slider: {
