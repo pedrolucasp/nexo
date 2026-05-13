@@ -46,6 +46,7 @@ export const Colors = {
     tint: NEON_GREEN,
     backgroundDarkGhost: BACKGROUND_DARK_GHOST,
     borderDashed: BORDER_SUBTLE_LIGHT_GRAY,
+    smallAddButtonIcon: BORDER_SUBTLE_LIGHT_GRAY,
 
     // Interactive States
     icon: TEXT_SECONDARY,
