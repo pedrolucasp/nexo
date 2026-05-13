@@ -34,11 +34,20 @@ import {
   getMood
 } from '@/constants/moods';
 
+import {
+  intensityToValue
+} from '@/constants/mood-components';
+
+import {
+  apiClient
+} from '@/lib/api';
+
 export default function NewMoodEntry() {
   const { user } = useAuth();
   const tintColor = useThemeColor({}, 'tint');
 
   const { initialMood } = useLocalSearchParams();
+  const [annotation, setAnnotation] = useState();
   const [stress, setStress] = useState(0);
   const [anxiety, setAnxiety] = useState(0);
   const [energy, setEnergy] = useState(0);
@@ -57,6 +66,25 @@ export default function NewMoodEntry() {
   useEffect(() => {
     return () => reset();
   }, []);
+
+  const saveMoodEntry = async () => {
+    const data = {
+      selectedMood: selectedMood?.id.toUpperCase(),
+      stressLevel: stress,
+      energyLevel: energy,
+      anxietyLevel: anxiety,
+      moment: new Date(),
+      annotation: annotation,
+      moodComponents: components.map((c) => ({
+        component: c.id.toUpperCase(),
+        intensity: intensityToValue(c.intensity)
+      }))
+    }
+
+    const result = await apiClient.createMoodEntry(data)
+
+    router.push("/")
+  }
 
   const editComponents = () => {
     router.push("/entry/mood-components")
@@ -116,7 +144,8 @@ export default function NewMoodEntry() {
               label="Notas sobre o dia"
               type="text"
               variant="darkGhost"
-              onChangeText={(val) => console.log(val)}
+              onChangeText={(val) => setAnnotation(val)}
+              value={annotation}
               minRows={4}
               maxRows={6}
               placeholder="Escreva uma nota rápida sobre o seu dia até o momento..."
@@ -143,6 +172,10 @@ export default function NewMoodEntry() {
               variant="dashed"
             />
           </Section>
+
+          <Button title="Salvar Registro"
+            onPress={saveMoodEntry}
+          />
         </View>
       </ScrollView>
     </View>
