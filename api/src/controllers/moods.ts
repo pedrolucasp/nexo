@@ -28,7 +28,7 @@ export const MoodsController = {
     }
   },
 
-  index: async (req: Request, res: Response, next: NextFunction) => {
+  index: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const moods = await getMoodsByUserId(Number(req.params.id));
 
