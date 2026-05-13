@@ -56,7 +56,7 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
     <View style={[styles.container, style]}>
 
       {/* Header row */}
-      <View style={styles.header}>
+      <View style={[styles.header, isRich ? styles.headerRich : styles.headerCompact ]}>
         <View style={styles.labelRow}>
           {isRich && icon && (
             <View style={styles.iconWrapper}>{icon}</View>
@@ -77,8 +77,9 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
         </Text>
       </View>
 
-      <View style={{ marginRight: -10, marginLeft: -10 }}>
-        {/* Slider */}
+      {/* XXX: Rich variant needs some extra margin to account for icons */}
+      <View style={{ marginRight: isRich ? -10 : -15, marginLeft: isRich ? -10 : -15 }}>
+        {/* Slider has a glitch with the full padding of it */}
         <Slider
           style={styles.slider}
           minimumValue={min}
@@ -120,8 +121,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+
+  // Rich has bigger margin than compact
+  headerRich: {
     marginBottom: 4,
   },
+
+  headerCompact: {
+    marginBottom: 1
+  },
+
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -145,11 +155,14 @@ const styles = StyleSheet.create({
 
   // Compact variant
   labelCompact: {
-    fontSize: Theme.typography.bodyLg.fontSize,
+    fontSize: 12,
+    fontWeight: 600,
+    lineHeight: 16
   },
   valueCompact: {
-    fontSize: Theme.typography.bodyMd.fontSize,
-    fontWeight: Theme.typography.bodyMd.fontWeight,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: 600,
     color: Theme.colors.light.textSecondary,
   },
 
