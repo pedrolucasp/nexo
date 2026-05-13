@@ -33,7 +33,7 @@ export const useMoodEntryStore = create<MoodEntryState>((set) => ({
   addComponent: (id) =>
     set((state) => {
       if (state.components.find((c) => c.id === id)) return state;
-      return { components: [...state.components, { id, intensity: 5 }] };
+      return { components: [...state.components, { id, intensity: 1 }] };
     }),
 
   removeComponent: (id) =>

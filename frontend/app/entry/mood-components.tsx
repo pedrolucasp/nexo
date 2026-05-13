@@ -104,7 +104,7 @@ export default function MoodComponentsScreen() {
                     value={comp.intensity}
                     onValueChange={(v) => setComponentIntensity(comp.id, v)}
                     min={1}
-                    max={10}
+                    max={3}
                     step={1}
                     minLabel="Suave"
                     maxLabel="Intensa"

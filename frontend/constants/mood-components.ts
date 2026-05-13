@@ -21,9 +21,7 @@ export const getMoodComponent = (id: string) =>
 
 // Intensity label buckets
 export const intensityLabel = (value: number): string => {
-  if (value <= 2) return 'Muito Baixa';
-  if (value <= 4) return 'Baixa';
-  if (value <= 6) return 'Moderada';
-  if (value <= 8) return 'Alta';
-  return 'Muito Alta';
+  if (value == 1) return 'Suave';
+  if (value <= 2) return 'Moderada';
+  if (value <= 3) return 'Intensa';
 };
