@@ -24,35 +24,6 @@ type UserOptions = {
   encryptedPassword?: string;
 };
 
-const createUser = async (email: string, firstName: string, lastName: string, password: string) => {
-  // Validate email format
-  if (!isValidEmail(email)) {
-    throw new InvalidEmailError()
-  }
-
-  // Validate password strength
-  if (!isValidPassword(password)) {
-    throw new ShortPasswordError()
-  }
-
-  const encryptedPassword = bcrypt.hashSync(password, 10);
-
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        encryptedPassword
-      }
-    });
-
-    return user;
-  } catch (err: any) {
-    throw err;
-  }
-}
-
 const generateToken = (userId: number, email: string) => {
   return createJWT(userId, email);
 }
@@ -165,7 +136,6 @@ const updateUser = async (user: any, data: UserOptions) => {
 }
 
 export {
-  createUser,
   findUserById,
   generateToken,
   findUserByEmail,

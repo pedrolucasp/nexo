@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import {
-  createUser,
   findUserById,
   findUserByEmail,
   updateUser,
@@ -12,34 +11,34 @@ import {
 } from '@app/utils/validators'
 
 import { getQueue, MailJobName } from '@app/lib/queue';
+import {
+  CreateUserSchema
+} from '@app/schemas';
+
+import {
+  createUser
+} from '@app/services/user.service';
 
 export const UsersController = {
   create: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password, firstName, lastName } = req.body;
+      const parsed = CreateUserSchema.safeParse(req.body.user);
 
-      // Validate required fields
-      const requiredValidation = validateRequiredFields(req.body, [
-        'email', 'password', 'firstName'
-      ]);
-
-      if (!requiredValidation.valid) {
-        return res.status(400).json({
-          error: "Campos faltantes",
-          missing: requiredValidation.missing
-        });
+      if (!parsed.success) {
+        return res.status(422).json({
+          errors: parsed.error!.issues
+        })
       }
 
-      const user = await createUser(
-        email, firstName, lastName, password
-      );
-
+      const user = await createUser(parsed.data);
       const jwtToken = generateToken(user.id, user.email);
 
       const mailQueue = getQueue('mail');
       const job = await mailQueue.add(MailJobName.WelcomeEmail, { userId: user.id });
 
-      res.status(201).json({ token: jwtToken });
+      res.status(201).json({
+        token: jwtToken
+      });
     } catch (err) {
       next(err);
     }
