@@ -20,7 +20,9 @@ export const verifyToken = (token: string): TokenPayload => {
 };
 
 export const generatePasswordResetToken = (): string => {
-  return crypto.randomBytes(32).toString('hex');
+  return [...Array(6)]
+    .map(() => crypto.randomInt(100))
+    .join(" ");
 };
 
 export const getPasswordResetExpiration = (): Date => {
