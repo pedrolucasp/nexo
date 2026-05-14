@@ -66,10 +66,12 @@ export default function SignupScreen() {
 
     try {
       await signup({
-        firstName,
-        lastName,
-        email,
-        password,
+        user: {
+          firstName,
+          lastName,
+          email,
+          password
+        }
       });
       router.replace('/');
     } catch (error: any) {
