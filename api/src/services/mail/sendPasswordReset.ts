@@ -1,4 +1,4 @@
-import { findUserById } from '@app/models/user';
+import { findUserById } from '@app/services/user.service';
 import { sendEmail }  from '@app/lib/mail';
 
 const email = (firstName: string, token: string) => {
