@@ -1,46 +1,41 @@
 import { Request, Response, NextFunction } from 'express';
 import {
-  authenticateUser,
+  login,
   generateToken,
-  initiatePasswordReset,
+  requestPasswordReset,
   resetPassword,
-  findUserByEmail
-} from '@app/models/user';
+} from '@app/services/auth.service';
 
 import {
-  validateRequiredFields
-} from '@app/utils/validators';
+  verifyToken
+} from '@app/lib/jwt';
 
-import { verifyToken } from '@app/lib/jwt';
-import { getQueue, MailJobName } from '@app/lib/queue';
+import {
+  findUserByEmail
+} from '@app/services/user.service'
+
+import {
+  LoginSchema,
+  PasswordResetSchema,
+  PasswordResetRequestSchema
+} from '@app/schemas';
 
 export const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = req.body;
+      const parsed = LoginSchema.safeParse(req.body);
 
-      const requiredValidation = validateRequiredFields(req.body, [
-        'email', 'password'
-      ]);
-
-      if (!requiredValidation.valid) {
+      if (!parsed.success) {
         return res.status(400).json({
-          error: 'Missing required fields',
-          missing: requiredValidation.missing
+          errors: parsed.error!.issues
         });
       }
 
-      const user = await authenticateUser(email, password);
-      const jwtToken = generateToken(user.id, user.email);
+      const { user, token } = await login(parsed.data);
 
-      res.json({
-        token: jwtToken,
-        user: {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName
-        }
+      return res.json({
+        token,
+        user
       });
     } catch (err: any) {
       if (err.message === 'Invalid credentials') {
@@ -52,30 +47,17 @@ export const AuthController = {
 
   forgotPassword: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.body;
 
-      const requiredValidation = validateRequiredFields(req.body, ['email']);
+      const parsed = PasswordResetRequestSchema.safeParse(req.body);
 
-      if (!requiredValidation.valid) {
+      if (!parsed.success) {
         return res.status(400).json({
-          error: 'Email is required',
-          missing: requiredValidation.missing
+          errors: parsed.error!.issues
         });
       }
 
-      const result = await initiatePasswordReset(email);
-      const mailQueue = getQueue('mail');
-      const job = await mailQueue.add(MailJobName.PasswordReset, {
-        userId: result.id,
-        token: result.token
-      });
-
-      // In production, don't send token in response
-      // Instead, send email with reset link
-      res.json({
-        message: 'Password reset instructions sent to your email',
-        ...(!process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? { token: result.token } : {})
-      });
+      const result = await requestPasswordReset(parsed.data);
+      return res.status(200).json(result)
     } catch (err) {
       next(err);
     }
@@ -83,22 +65,16 @@ export const AuthController = {
 
   resetPassword: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { token, password } = req.body;
+      const parsed = PasswordResetSchema.safeParse(req.body);
 
-      const requiredValidation = validateRequiredFields(req.body, [
-        'token', 'password'
-      ]);
-
-      if (!requiredValidation.valid) {
+      if (!parsed.success) {
         return res.status(400).json({
-          error: 'Missing required fields',
-          missing: requiredValidation.missing
+          errors: parsed.error!.issues
         });
       }
 
-      await resetPassword(token, password);
-
-      res.json({ message: 'Password successfully reset' });
+      const result = await resetPassword(parsed.data);
+      return res.status(200).json(result);
     } catch (err: any) {
       if (err.message.includes('token')) {
         return res.status(400).json({ error: err.message });

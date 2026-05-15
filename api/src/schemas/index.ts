@@ -8,9 +8,17 @@ export type {
 } from '@app/schemas/mood.schema';
 
 export {
-  CreateUserSchema
+  CreateUserSchema,
+  UpdateUserSchema,
+  type CreateUserInput,
+  type UpdateUserInput,
 } from '@app/schemas/user.schema';
 
-export type {
-  CreateUserInput
-} from '@app/schemas/user.schema';
+export {
+  LoginSchema,
+  PasswordResetRequestSchema,
+  PasswordResetSchema,
+  type LoginInput,
+  type PasswordResetRequestInput,
+  type PasswordResetInput
+} from '@app/schemas/auth.schema';
