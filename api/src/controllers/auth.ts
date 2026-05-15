@@ -95,15 +95,24 @@ export const AuthController = {
       const payload = verifyToken(token);
       const user = await findUserByEmail(payload.email);
 
+      if (!user) {
+        // XXX: Investigate which actual cases this would happen
+        // But the possible reason is that a token is living inside
+        // the user's phone, but somehow he was banned/deleted
+        return res.status(404).json({
+          errors: "User does not exist anymore"
+        });
+      }
+
       res.json({
         valid: true,
         userId: payload.userId,
         email: payload.email,
         user: {
-          firstName: user?.firstName,
-          email: user?.email,
-          lastName: user?.lastName,
-          updatedAt: user?.updatedAt
+          firstName: user.firstName,
+          email: user.email,
+          lastName: user.lastName,
+          updatedAt: user.updatedAt
         }
       });
     } catch (err: any) {
