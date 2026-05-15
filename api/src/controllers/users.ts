@@ -1,22 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import {
-  findUserById,
-  findUserByEmail,
-  updateUser,
   generateToken
-} from '@app/models/user';
-
-import {
-  validateRequiredFields
-} from '@app/utils/validators'
+} from '@app/services/auth.service';
 
 import { getQueue, MailJobName } from '@app/lib/queue';
 import {
-  CreateUserSchema
+  CreateUserSchema,
+  UpdateUserSchema
 } from '@app/schemas';
 
 import {
-  createUser
+  createUser,
+  findUserById,
+  findUserByEmail,
+  updateUser
 } from '@app/services/user.service';
 
 export const UsersController = {
@@ -46,37 +43,29 @@ export const UsersController = {
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params
-      const { user: userParams } = req.body;
+      const { id } = req.params;
 
-      if (userParams) {
-        const { email, password, firstName, lastName } = userParams;
-
-        const user = await findUserById(Number(id));
-
-        if (!user) {
-          return res.status(404).json({
-            error: "Usuário não encontrado"
-          })
-        }
-
-        if (email || password || firstName || lastName) {
-          const response = await updateUser(user, {
-            email, firstName, lastName, password
-          })
-
-          const updated = await findUserById(Number(id))
-
-          // TODO: Drop encrypted password & token here
-          return res.status(200).json({
-            user: updated
-          })
-        } else {
-          return res.status(200).json({
-            user
-          })
-        }
+      const parsed = UpdateUserSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({
+          errors: parsed.error!.issues
+        });
       }
+
+      const user = await findUserById(Number(id));
+
+      if (!user) {
+        return res.status(404).json({
+          error: "Usuário não encontrado"
+        });
+      }
+
+      const updated = await updateUser(parsed.data);
+
+      // TODO: Drop encrypted password & token here
+      return res.status(200).json({
+        user: updated
+      });
     } catch (err) {
       next(err);
     }

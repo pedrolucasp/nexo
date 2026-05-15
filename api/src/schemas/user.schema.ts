@@ -7,13 +7,11 @@ export const CreateUserSchema = z.object({
   password: z.string().min(6)
 });
 
+export const UpdateUserSchema = CreateUserSchema
+  .partial()
+  .extend({
+    id: z.number()
+  });
+
 export type CreateUserInput = z.infer<typeof CreateUserSchema>;
-
-export const UpdateUserSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string().optional(),
-  email: z.string().email(),
-  password: z.string().min(6)
-});
-
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
