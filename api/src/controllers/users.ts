@@ -16,6 +16,11 @@ import {
   updateUser
 } from '@app/services/user.service';
 
+// XXX: I've regreted already
+interface SingleFileRequest extends Request {
+  file?: any;
+}
+
 export const UsersController = {
   create: async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -45,7 +50,7 @@ export const UsersController = {
     try {
       const { id } = req.params;
 
-      const parsed = UpdateUserSchema.safeParse(req.body);
+      const parsed = UpdateUserSchema.safeParse(req.body.user);
       if (!parsed.success) {
         return res.status(400).json({
           errors: parsed.error!.issues
@@ -69,5 +74,22 @@ export const UsersController = {
     } catch (err) {
       next(err);
     }
+  },
+
+  updateAvatar: async (req: SingleFileRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      res.json({
+        message: 'File uploaded successfully',
+        fileLocation: req.file.location,
+        filename: req.file.originalname,
+        size: req.file.size
+      });
+    } catch (err) {
+      next(err);
+    }
   }
-};
+}
