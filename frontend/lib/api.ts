@@ -54,12 +54,13 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const token = await this.getStoredToken();
+    const isFormData = options.body instanceof FormData;
 
     const config: RequestInit = {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
         ...(token && { Authorization: `Bearer ${token}` }),
+        ...(!isFormData && { 'Content-Type': 'application/json' }),
         ...options.headers,
       },
     };
