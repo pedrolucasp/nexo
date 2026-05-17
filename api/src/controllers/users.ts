@@ -16,8 +16,12 @@ import {
   updateUser
 } from '@app/services/user.service';
 
+import {
+  AuthenticatedRequest
+} from '@app/middleware/auth';
+
 // XXX: I've regreted already
-interface SingleFileRequest extends Request {
+interface SingleFileRequest extends AuthenticatedRequest {
   file?: any;
 }
 
@@ -85,6 +89,7 @@ export const UsersController = {
       res.json({
         message: 'File uploaded successfully',
         fileLocation: req.file.location,
+        key: req.file.key,
         filename: req.file.originalname,
         size: req.file.size
       });
