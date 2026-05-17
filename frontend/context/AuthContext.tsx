@@ -14,6 +14,8 @@ interface AuthContextType {
     lastName?: string;
     email: string;
     updatedAt: date;
+    avatarURL?: string;
+    avatarKey?: string;
   }) => void;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: {
@@ -25,6 +27,19 @@ interface AuthContextType {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<{ message: string; token?: string }>;
   resetPassword: (token: string, password: string) => Promise<void>;
+}
+
+
+export function sanitizeUser(data: any): User {
+  return {
+    id: data.id,
+    email: data.email,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    updatedAt: data.updatedAt,
+    avatarKey: data.avatarKey,
+    avatarURL: data.avatarURL,
+  };
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,10 +56,7 @@ export function useAuth() {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  console.log("user & auth", isAuthenticated, user)
   const isAuthenticated = !!user;
-  console.log("after user & auth", isAuthenticated, user)
 
   // Check for existing authentication on app start
   useEffect(() => {
@@ -54,11 +66,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkAuthState = async () => {
     try {
       const { token } = await apiClient.getStoredAuthData();
-      console.log("We have a token?", token);
 
       if (token) {
         const verifyResponse = await apiClient.verifyToken();
-        console.log("Checking response: ", verifyResponse)
         if (verifyResponse.valid && verifyResponse.userId && verifyResponse.email) {
           // TODO: Fetch the full user profile
           // For now, we'll create a basic user object
@@ -67,6 +77,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             email: verifyResponse.email,
             firstName: verifyResponse.user.firstName,
             lastName: verifyResponse.user.lastName,
+            avatarURL: verifyResponse.user.avatarURL,
+            avatarKey: verifyResponse.user.avatarKey
           });
         }
       }
@@ -124,7 +136,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const updateAuthUser = (user) => {
-    setUser(user);
+    setUser(sanitizeUser(user));
   }
 
   const value: AuthContextType = {
