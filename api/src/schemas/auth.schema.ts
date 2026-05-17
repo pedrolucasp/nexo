@@ -11,7 +11,7 @@ export const PasswordResetRequestSchema = z.object({
 
 export const PasswordResetSchema = z.object({
   token: z.string(),
-  newPassword: z.string().min(8)
+  newPassword: z.string().min(6)
 })
 
 export type LoginInput = z.infer<typeof LoginSchema>;
