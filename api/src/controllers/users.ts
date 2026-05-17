@@ -20,6 +20,10 @@ import {
   AuthenticatedRequest
 } from '@app/middleware/auth';
 
+import { prisma } from '@app/lib/prisma';
+import s3 from '@app/lib/s3';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+
 // XXX: I've regreted already
 interface SingleFileRequest extends AuthenticatedRequest {
   file?: any;
@@ -86,15 +90,61 @@ export const UsersController = {
         return res.status(400).json({ error: 'No file uploaded' });
       }
 
+      const currentUser = await findUserById(Number(req.userId));
+      if (currentUser?.avatarKey) {
+        await s3.send(
+          new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET!, Key: currentUser?.avatarKey!
+          })
+        );
+      }
+
+      const user = await prisma.user.update({
+        where: {
+          id: currentUser?.id
+        }, data: {
+          avatarURL: req.file.location,
+          avatarKey: req.file.key
+        }
+      });
+
       res.json({
         message: 'File uploaded successfully',
         fileLocation: req.file.location,
         key: req.file.key,
         filename: req.file.originalname,
-        size: req.file.size
+        size: req.file.size,
+        user: user
       });
     } catch (err) {
       next(err);
     }
+  },
+
+  removeAvatar: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const currentUser = await findUserById(Number(req.userId));
+
+    if (currentUser && currentUser?.avatarKey == null) {
+      return res.json({ user: currentUser })
+    }
+
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.S3_BUCKET!, Key: currentUser?.avatarKey!
+      })
+    );
+
+    const user = await prisma.user.update({
+      where: {
+        id: req.userId
+      }, data: {
+        avatarURL: null,
+        avatarKey: null
+      }
+    });
+
+    return res.json({
+      user
+    })
   }
 }

@@ -7,6 +7,7 @@ const router = Router();
 
 router.post('/', UsersController.create);
 router.put('/:id', UsersController.update);
-router.post('/:id/avatar', requireAuth, multer.single('avatar'), UsersController.updateAvatar);
+router.post('/me/avatar', requireAuth, multer.single('avatar'), UsersController.updateAvatar);
+router.delete('/me/avatar', requireAuth, UsersController.removeAvatar);
 
 export default router;
