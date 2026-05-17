@@ -52,7 +52,6 @@ export interface MoodComponentPayload {
   intensity: string;
 };
 
-
 export interface MoodEntryPayload {
   annotation: string;
   moment: Date;
@@ -63,6 +62,22 @@ export interface MoodEntryPayload {
   moodComponents: MoodComponentPayload[]
 };
 
+export interface MoodComponentResponse {
+  id: number;
+  component: string;
+  intensity: string;
+}
+
+export interface MoodEntryResponse {
+  id: number;
+  annotation: string;
+  moment: Date;
+  selectedMood: string;
+  anxietyLevel: number;
+  energyLevel: number;
+  stressLevel: number;
+  moodComponents: MoodComponentResponse[];
+}
 
 // Generic stuff
 export interface PaginatedResponse<T> {

@@ -89,10 +89,10 @@ class ApiClient {
     return response;
   }
 
-  async signup(data: SignUpPayload): Promise<AuthResponse> {
+  async signup(user: SignUpPayload): Promise<AuthResponse> {
     const response = await this.request<AuthResponse>('/users', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ user }),
     });
 
     await this.storeToken(response.token);
@@ -135,7 +135,7 @@ class ApiClient {
     })
   }
 
-  async avatar(formData: FormData): Promise<void> {
+  async avatar(formData: FormData): Promise<User> {
     return await this.request(`/users/me/avatar`, {
       method: 'POST',
       body: formData,
@@ -152,7 +152,7 @@ class ApiClient {
   }
 
   // Mood-related
-  async createMoodEntry(moodEntry): Promise<void> {
+  async createMoodEntry(mood: MoodEntryPayload): Promise<MoodEntryResponse> {
     return await this.request(`/moods`, {
       method: 'POST',
       body: JSON.stringify({ mood: moodEntry })
