@@ -18,6 +18,9 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
 import { apiClient } from '@/lib/api'
+import { Card } from '@/components/ui/Cards';
+import AvatarUpload  from '@/components/ui/AvatarUpload';
+import { Typography, Spacing, Colors } from '@/constants/theme';
 
 export default function Profile() {
   const { user, updateAuthUser } = useAuth();
@@ -37,6 +40,8 @@ export default function Profile() {
     setFirstName(user.firstName)
     setLastName(user.lastName)
     setEmail(user.email)
+
+    console.log("User@profile", user);
   }, [user])
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -106,6 +111,19 @@ export default function Profile() {
     }
   }
 
+  const onChangeAvatar = (userData) => {
+    const { id, avatarKey, avatarURL, firstName, lastName, email } = userData;
+
+    updateAuthUser({
+      id,
+      avatarKey,
+      avatarURL,
+      firstName,
+      lastName,
+      email
+    });
+  }
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <StatusBar style={'dark'} />
@@ -117,60 +135,73 @@ export default function Profile() {
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: textColor }]}>Edite o seu perfil</Text>
-            <Text style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
-              Altere suas configurações
-            </Text>
-          </View>
+          <AvatarUpload
+            currentAvatar={user.avatarURL}
+            onUploadSuccess={onChangeAvatar}
+            onRemoveSuccess={onChangeAvatar} />
 
           <View style={styles.form}>
-            <Input
-              label="Primeiro Nome"
-              type="text"
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="Qual seu nome?"
-              error={errors.firstName}
-            />
+            <Card style={styles.cardBlock}>
+              <Input
+                label="Primeiro Nome"
+                type="text"
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholder="Qual seu nome?"
+                variant="darkGhost"
+                error={errors.firstName}
+              />
 
-            <Input
-              label="Sobrenome"
-              type="text"
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Qual seu sobrenome?"
-              error={errors.lastName}
-            />
+              <Input
+                label="Sobrenome"
+                type="text"
+                value={lastName}
+                variant="darkGhost"
+                onChangeText={setLastName}
+                placeholder="Qual seu sobrenome?"
+                error={errors.lastName}
+              />
+            </Card>
 
-            <Input
-              label="Email"
-              type="text"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Qual seu email?"
-              error={errors.email}
-            />
+            <Card style={styles.cardBlock}>
+              <Input
+                label="Email"
+                type="text"
+                value={email}
+                variant="darkGhost"
+                onChangeText={setEmail}
+                placeholder="Qual seu email?"
+                error={errors.email}
+              />
+            </Card>
 
-            <Input
-              label="Nova senha"
-              type="password"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Digite uma nova senha"
-              error={errors.password}
-              showPasswordToggle
-            />
+            <Card style={styles.cardBlock}>
+              <Input
+                label="Nova senha"
+                type="password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Digite uma nova senha"
+                error={errors.password}
+                variant="darkGhost"
+                showPasswordToggle
+              />
 
-            <Input
-              label="Confirmar nova senha"
-              type="password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="Confirme a nova senha"
-              error={errors.confirmPassword}
-              showPasswordToggle
-            />
+              <Input
+                label="Confirmar nova senha"
+                type="password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Confirme a nova senha"
+                error={errors.confirmPassword}
+                variant="darkGhost"
+                showPasswordToggle
+              />
+
+              <Text style={styles.cardBlockHint}>
+                Preencha apenas se quiser mudar a sua senha
+              </Text>
+            </Card>
 
             <Button
               title="Atualizar perfil"
@@ -233,4 +264,11 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
   },
+  cardBlock: {
+    padding: Spacing.cardGap
+  },
+  cardBlockHint: {
+    ...Typography.cardHint,
+    color: Colors.light.textSecondary
+  }
 });
