@@ -7,7 +7,7 @@ export default function History() {
   const { user } = useAuth();
 
   return (
-    <ScreenLayout userName={user.firstName}
+    <ScreenLayout userName={user.firstName} userAvatar={user.avatarURL}
       onNotificationPress={() => console.log('Notifications')}
       showNotificationBadge={true}>
       <ThemedView>
