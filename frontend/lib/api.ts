@@ -9,6 +9,8 @@ export interface User {
   firstName: string;
   lastName?: string;
   updatedAt: Date;
+  avatarKey?: string;
+  avatarURL?: string;
 }
 
 export interface AuthResponse {
@@ -74,6 +76,22 @@ class ApiClient {
     }
 
     return response.json();
+  }
+
+  async avatar(formData: FormData): Promise<void> {
+    return await this.request(`/users/me/avatar`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      } as any,
+    })
+  }
+
+  async removeAvatar(): Promise<void> {
+    return await this.request(`/users/me/avatar`, {
+      method: 'DELETE'
+    });
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {
