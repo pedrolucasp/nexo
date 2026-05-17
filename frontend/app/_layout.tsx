@@ -26,6 +26,13 @@ export default function RootLayout() {
           />
 
           <Stack.Screen
+            name="profile"
+            options={{
+              title: 'Editar perfil',
+            }}
+          />
+
+          <Stack.Screen
             name="entry/mood-components"
             options={{
               presentation: 'formSheet',
