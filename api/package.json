@@ -40,7 +40,8 @@
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
     "resend": "^6.12.3",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "zod-validation-error": "^5.0.0"
   },
   "devDependencies": {
     "@ava/typescript": "^6.0.0",
