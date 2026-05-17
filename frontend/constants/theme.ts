@@ -79,7 +79,8 @@ export const Colors = {
     disabled: '#cbd5e1',
     divider: BORDER_SUBTLE,
     sliderTracking: '#E2E8F0',
-    sliderLabels: '#94a3b8'
+    sliderLabels: '#94a3b8',
+    danger: '#EF4444'
   },
 };
 
@@ -155,6 +156,16 @@ export const Typography = {
     fontSize: 10,
     lineHeight: 15,
     letterSpacing: 0.25
+  },
+
+  cardHint: {
+    fontFamily: Platform.select({
+      android: 'Inter',
+      default: 'Inter',
+    }),
+    fontSize: 11,
+    lineHeight: 13.8,
+    fontStyle: "italic"
   }
 };
 
