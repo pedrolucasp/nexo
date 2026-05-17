@@ -14,7 +14,7 @@ import {
 } from '@/lib/api/types';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
-const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY; // Gary B.B Coleman fucking slaps
+const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY;
 
 class ApiClient {
   private async getStoredToken(): Promise<string | null> {
