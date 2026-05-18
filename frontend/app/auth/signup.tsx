@@ -66,16 +66,15 @@ export default function SignupScreen() {
 
     try {
       await signup({
-        user: {
-          firstName,
-          lastName,
-          email,
-          password
-        }
+        firstName,
+        lastName,
+        email,
+        password
       });
+
       router.replace('/');
     } catch (error: any) {
-	  Alert.alert('Erro:', error.message || 'Falha no cadastro. Tente novamente.');
+      Alert.alert('Erro:', error.message || 'Falha no cadastro. Tente novamente.');
     }
   };
 
