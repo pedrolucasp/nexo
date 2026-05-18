@@ -70,3 +70,12 @@ export const getMoodById = async (id: number): Promise<Mood | null> => {
     include: { moodComponents: true }
   });
 }
+
+export const destroyMoodById = async (userId: number, id: number): Promise<Mood> => {
+  return await prisma.mood.delete({
+    where: {
+      id,
+      userId
+    }
+  })
+}

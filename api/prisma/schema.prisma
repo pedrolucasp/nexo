@@ -51,7 +51,7 @@ model MoodComponent {
   intensity IntensityLevel @default(LIGHT)
 
   moodId Int @map("mood_id")
-  mood Mood @relation(fields: [moodId], references: [id])
+  mood Mood @relation(fields: [moodId], references: [id], onDelete: Cascade)
 
   @@map("mood_components")
 }
