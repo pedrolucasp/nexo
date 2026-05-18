@@ -178,6 +178,10 @@ class ApiClient {
   async getMoodEntry(id: string): Promise<MoodEntry> {
     return this.request(`/moods/${id}`);
   }
+
+  async deleteMoodEntry(id: string): Promise<void> {
+    return this.request(`/moods/${id}`, { method: 'DELETE' });
+  }
 }
 
 export const apiClient = new ApiClient();
