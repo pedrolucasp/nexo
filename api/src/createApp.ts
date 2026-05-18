@@ -9,6 +9,8 @@ import moodRouter from '@app/routes/moods';
 import { errorHandler } from '@app/middleware/errorHandler';
 import { PrismaClient } from '@prisma/client';
 import { bootWorkers, closeAllWorkers, closeAllQueues } from '@app/lib/queue';
+import pino from 'pino';
+import pinoHttp from 'pino-http';
 
 export function createApp() {
   const app = express();
@@ -22,10 +24,21 @@ export function createApp() {
 
   app.use(bodyParser.json());
 
-  // Only use morgan in non-test environments
-  if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('combined'));
-  }
+  // Create Pino logger
+  const logger = pino({
+    level: process.env.LOG_LEVEL || 'info',
+    transport: {
+      target: 'pino-pretty', // Human-readable in development
+      options: {
+        colorize: true,
+        singleLine: false,
+        messageFormat: '{if levelLabel}{levelLabel} - {end}{msg}',
+      },
+    },
+  });
+
+  // Use pino-http for HTTP logging (better than Morgan for structured logs)
+  app.use(pinoHttp({ logger }));
 
   app.get('/', mainRouter);
   app.use("/users", userRouter);
