@@ -158,6 +158,26 @@ class ApiClient {
       body: JSON.stringify({ mood })
     })
   }
+
+  async getMoodEntries(params?: {
+    from?: string;
+    to?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResponse<MoodEntry>> {
+    const query = new URLSearchParams();
+    if (params?.from)  query.set('from', params.from);
+    if (params?.to)    query.set('to', params.to);
+    if (params?.page)  query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+
+    const qs = query.toString();
+    return this.request(`/moods${qs ? `?${qs}` : ''}`);
+  }
+
+  async getMoodEntry(id: string): Promise<MoodEntry> {
+    return this.request(`/moods/${id}`);
+  }
 }
 
 export const apiClient = new ApiClient();

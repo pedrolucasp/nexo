@@ -24,10 +24,10 @@ import { Spacing, Typography, Colors } from '@/constants/theme';
 import { ScaleSlider } from '@/components/ui/ScaleSlider';
 import { MoodComponentCard } from '@/components/ui/MoodComponentCard';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { useThemeColor, useCreateMoodEntry } from '@/hooks';
 import {
   useMoodEntryStore,
-} from '@/stores/moodEntry';
+} from '@/stores';
 
 import {
   MOODS,
@@ -59,6 +59,8 @@ export default function NewMoodEntry() {
     reset
   } = useMoodEntryStore();
 
+  const createMoodEntry = useCreateMoodEntry();
+
   useEffect(() => {
     setSelectedMood(getMood(initialMood));
   }, [initialMood]);
@@ -79,11 +81,12 @@ export default function NewMoodEntry() {
         component: c.id.toUpperCase(),
         intensity: intensityToValue(c.intensity)
       }))
-    }
+    };
 
-    const result = await apiClient.createMoodEntry(data)
+    await createMoodEntry.mutateAsync(data)
 
-    router.push("/")
+    reset();
+    router.replace("/")
   }
 
   const editComponents = () => {
