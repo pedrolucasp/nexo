@@ -152,10 +152,10 @@ class ApiClient {
   }
 
   // Mood-related
-  async createMoodEntry(mood: MoodEntryPayload): Promise<MoodEntryResponse> {
+  async createMoodEntry(mood: CreateMoodEntryPayload): Promise<MoodEntryResponse> {
     return await this.request(`/moods`, {
       method: 'POST',
-      body: JSON.stringify({ mood: moodEntry })
+      body: JSON.stringify({ mood })
     })
   }
 }

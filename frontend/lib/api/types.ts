@@ -52,7 +52,7 @@ export interface MoodComponentPayload {
   intensity: string;
 };
 
-export interface MoodEntryPayload {
+export interface CreateMoodEntryPayload {
   annotation: string;
   moment: Date;
   selectedMood: string;
@@ -62,13 +62,15 @@ export interface MoodEntryPayload {
   moodComponents: MoodComponentPayload[]
 };
 
-export interface MoodComponentResponse {
+export interface MoodComponent {
   id: number;
   component: string;
   intensity: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface MoodEntryResponse {
+export interface MoodEntry {
   id: number;
   annotation: string;
   moment: Date;
@@ -76,7 +78,9 @@ export interface MoodEntryResponse {
   anxietyLevel: number;
   energyLevel: number;
   stressLevel: number;
-  moodComponents: MoodComponentResponse[];
+  moodComponents: MoodComponent[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Generic stuff
