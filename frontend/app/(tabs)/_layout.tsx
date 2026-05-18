@@ -50,8 +50,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="insights"
         options={{
-          title: 'Insights',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb-outline" color={color} />,
+          title: 'Jornada',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="book" color={color} />,
         }}
       />
 
