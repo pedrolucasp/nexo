@@ -4,11 +4,12 @@ import { ThemedView } from '@/components/misc/themed-view';
 import { ScreenLayout } from '@/components/ui/ScreenLayout';
 import { useAuth } from '@/context/AuthContext';
 import { Section, SectionHeader } from '@/components/ui/Sections';
-import { Card } from '@/components/ui/Cards';
+import { Card, SubtleInfoCard } from '@/components/ui/Cards';
 import { Grid, Col, Row, Between } from '@/components/ui/LayoutHelpers';
 import { Button } from '@/components/ui/Button'
 import { Shadows, Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, Octicons } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 
 export default function Actions() {
   const { user } = useAuth();
@@ -72,6 +73,27 @@ export default function Actions() {
           </Text>
         </Card>
       </Grid>
+
+      <Card style={styles.disclaimerCard}>
+        <View style={styles.disclaimerTitleContainer}>
+          <Ionicons name="information-circle-outline" size={20} color={Colors.light.tint} />
+          <Text style={styles.disclaimerTitleText}>Nota de Apoio</Text>
+        </View>
+
+        <Text style={styles.disclaimerText}>
+          Este aplicativo é um assistente digital para
+          auxiliar no seu monitoramento diário. Em caso
+          de emergência ou sintomas graves, entre em
+          contato imediatamente com seu médico ou
+          serviços de saúde locais.
+        </Text>
+
+        <View style={styles.disclaimerHelp}>
+          <Link href="https://expo.dev" style={styles.disclaimerHelpText}>
+            Ver canais de ajuda <Octicons name="link-external" size={12} color="black" />
+          </Link>
+        </View>
+      </Card>
     </ScreenLayout>
   )
 }
@@ -102,5 +124,37 @@ const styles = StyleSheet.create({
     ...Typography.labelSm,
     color: Colors.light.textSecondary,
     marginTop: 4
+  },
+  disclaimerCard: {
+    padding: Spacing.cardGap,
+  },
+  disclaimerTitleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 5,
+    marginBottom: 10
+  },
+  disclaimerTitleText: {
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: 20,
+  },
+  disclaimerText: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: Colors.light.textSecondary,
+  },
+  disclaimerHelp: {
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: Colors.light.divider,
+    paddingTop: 5,
+  },
+  disclaimerHelpText: {
+    color: "#0f172a",
+    fontWeight: 500,
+    fontSize: 12,
+    lineHeight: 16,
+    alignItems: 'center'
   }
 })
