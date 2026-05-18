@@ -4,11 +4,13 @@ import {
   StyleSheet,
   Pressable,
   ViewStyle,
+  Text
 } from 'react-native';
 
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/misc/themed-text'
+import { Ionicons } from '@expo/vector-icons';
 
 interface CardProps {
   children: React.ReactNode;
@@ -61,3 +63,43 @@ export const Card: React.FC<CardProps> = ({
     </Pressable>
   );
 };
+
+interface SubtleInfoCardProps {
+  text: string;
+  style?: ViewStyle;
+};
+
+export const SubtleInfoCard: React.FC<SubtleInfoCardProps> = ({
+  text,
+  style
+}) => {
+  const accentBlueColor = useThemeColor({}, 'accentBlue');
+
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: accentBlueColor,
+      borderRadius: BorderRadius.lg,
+      padding: Spacing.cardGap,
+      marginBottom: Spacing.cardGap,
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'top'
+    },
+    text: {
+      fontSize: 12,
+      lineHeight: 18,
+      color: Colors.light.textSecondary,
+      marginLeft: 10
+    },
+  });
+
+  return (
+    <View style={[styles.card, style]}>
+      <Ionicons name="information-circle-outline" size={20} color="gray" />
+
+      <Text style={styles.text}>
+        {text.replace(/\s+/g, ' ').trim()}
+      </Text>
+    </View>
+  )
+}
