@@ -31,6 +31,7 @@ interface SectionHeaderProps {
   actionLabel?: string;
   onActionPress?: () => void;
   style?: ViewStyle;
+  variant?: 'default' | 'subtle';
 }
 
 // XXX: A Section must either have a label as a pill/informative thing
@@ -41,20 +42,47 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   info,
   actionLabel,
   onActionPress,
+  variant,
   style,
 }) => {
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
   const textSecondaryColor = useThemeColor({}, 'textSecondary')
 
+  const getTextColor = () => {
+    switch (variant) {
+      case 'subtle':
+        return textSecondaryColor;
+      default:
+        return textColor;
+    }
+  };
+
+  const getFont = () => {
+    switch (variant) {
+      case 'subtle':
+        return {
+          fontSize: 11,
+          fontWeight: '600',
+          letterSpacing: 0.8,
+          color: Colors.light.textSecondary,
+          textTransform: 'uppercase',
+        };
+      default:
+        return {
+          fontSize: Typography.headlineMd.fontSize,
+          fontWeight: Typography.headlineMd.fontWeight,
+        };
+    }
+  }
+
   const styles = StyleSheet.create({
     headerContainer: {
-      marginBottom: (Spacing.cardGap * 2),
+      marginBottom: variant == 'subtle' ? 10 : (Spacing.cardGap * 2),
     },
     title: {
-      fontSize: Typography.headlineMd.fontSize,
-      fontWeight: Typography.headlineMd.fontWeight,
-      color: textColor,
+      color: getTextColor(),
+      ...getFont(),
     },
     subtitle: {
       fontSize: 14,
