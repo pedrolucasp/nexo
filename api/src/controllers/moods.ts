@@ -30,11 +30,16 @@ export const MoodsController = {
 
   index: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const moods = await getMoodsByUserId(Number(req.params.id));
+      const result = await getMoodsByUserId(Number(req.userId), {
+        limit: req.query.limit ? Number(req.query.limit) : undefined,
+        page:  req.query.page  ? Number(req.query.page)  : undefined,
+        from:  req.query.from  as string | undefined,
+        to:    req.query.to    as string | undefined,
+      });
 
-      return res.status(200).json({
-        moods
-      })
+      return res.status(200).json(
+        result
+      )
     } catch (err) {
       next(err);
     }
