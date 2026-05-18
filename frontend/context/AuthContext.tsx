@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { apiClient, User } from '@/lib/api';
+import { queryClient, storage } from '@/lib/queryClient';
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -121,7 +122,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(true);
     try {
       await apiClient.logout();
+
       setUser(null);
+      // Clear both the in-memory cache and the persisted MMKV cache
+      queryClient.clear();
+      storage.clearAll();
     } finally {
       setIsLoading(false);
     }
