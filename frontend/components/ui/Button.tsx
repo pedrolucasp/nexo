@@ -12,7 +12,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'dashed';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'dashed' | 'danger';
   size?: 'small' | 'medium' | 'large';
   loading?: boolean;
   disabled?: boolean;
@@ -45,6 +45,8 @@ export const Button: React.FC<ButtonProps> = ({
         return primaryColor;
       case 'secondary':
         return useThemeColor({ light: '#f3f4f6', dark: '#374151' }, 'background');
+      case 'danger':
+        return useThemeColor({}, 'danger');
       case 'outline':
       case 'ghost':
       case 'dashed':
