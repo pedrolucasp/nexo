@@ -61,3 +61,12 @@ export const getMoodsByUserId = async (
     nextPage: page < totalPages ? page + 1 : null,
   };
 };
+
+export const getMoodById = async (id: number): Promise<Mood | null> => {
+  return await prisma.mood.findUnique({
+    where: {
+      id
+    },
+    include: { moodComponents: true }
+  });
+}

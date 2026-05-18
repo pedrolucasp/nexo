@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@app/middleware/auth';
 import {
   createMood,
-  getMoodsByUserId
+  getMoodsByUserId,
+  getMoodById
 } from '@app/services/mood.service';
 
 import {
@@ -44,4 +45,20 @@ export const MoodsController = {
       next(err);
     }
   },
+
+  show: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const mood = await getMoodById(Number(req.params.id))
+
+      if (!mood) {
+        return res.status(404).json({ errors: "not found" })
+      }
+
+      return res.status(200).json(
+        mood
+      )
+    } catch (err) {
+      next(err);
+    }
+  }
 };
