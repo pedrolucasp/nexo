@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
-  StyleSheet
+  StyleSheet,
+  View,
+  Text
 } from 'react-native';
 
 import { ThemedText } from '@/components/misc/themed-text';
@@ -9,26 +11,80 @@ import { ScreenLayout } from '@/components/ui/ScreenLayout';
 import { useAuth } from '@/context/AuthContext';
 import { Grid, Col, Row, Between } from '@/components/ui/LayoutHelpers';
 import { Card } from '@/components/ui/Cards';
+import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Section, SectionHeader } from '@/components/ui/Sections';
 import { MoodSelector } from '@/components/ui/EmojiSelectors';
-import { Typography, Spacing, Shadows } from '@/constants/theme';
+import { Typography, Spacing, Shadows, Colors } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { router } from 'expo-router';
+import {
+  MoodDefinition, MOODS
+} from '@/constants/moods'
+
+const MoodEntryLog = ({ mood: MoodDefinition, moment: Date }) => {
+  const styles = StyleSheet.create({
+    card: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+      overflow: "hidden",
+      padding: Spacing.cardGap
+    },
+    moodIcon: {
+      width: 48,
+      height: 48,
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+    },
+    moodIconEmoji: {
+      fontSize: 26,
+    },
+    // Text
+    moodBlock: {
+      flex: 1,
+      minWidth: 0,
+    },
+    title: {
+      fontSize: 15,
+      fontWeight: "700",
+      color: Colors.light.text,
+      letterSpacing: -0.2,
+      marginBottom: 3,
+    },
+    subtitle: {
+      fontSize: 12.5,
+      fontWeight: "500",
+      color: Colors.light.textSecondary,
+      letterSpacing: 0.1,
+    },
+  });
+
+  return (
+    <Card style={styles.card}>
+      <View style={styles.moodIcon}>
+        <Text style={styles.moodIconEmoji}>😀</Text>
+      </View>
+
+      <View style={styles.moodBlock}>
+        <Text style={styles.title} numberOfLines={1}>
+          Neutro
+        </Text>
+        <ThemedText style={styles.subtitle} numberOfLines={1}>
+          Ontem às 10h
+        </ThemedText>
+      </View>
+
+      <Badge label="Manhã" />
+    </Card>
+  );
+}
 
 export default function New() {
   const { user } = useAuth();
   const [mood, setMood] = useState<string>('good');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // TODO: Move these elsewhere
-  const moodOptions = [
-    { id: 'sad', icon: '😢', label: 'Triste' },
-    { id: 'neutral', icon: '😐', label: 'Neutro' },
-    { id: 'good', icon: '😊', label: 'Bem' },
-    { id: 'great', icon: '🤩', label: 'Ótimo' },
-    { id: 'angry', icon: '😠', label: 'Irritado' },
-  ];
 
   const initQuickRegister = () => {
     // TODO: Set down on camelCase vs kebab case
@@ -39,7 +95,6 @@ export default function New() {
     <ScreenLayout userName={user.firstName} userAvatar={user.avatarURL}
       onNotificationPress={() => console.log('Notifications')}
       showNotificationBadge={true}>
-      <ThemedView>
         <Section>
           <SectionHeader
             title="Como você está hoje?"
@@ -61,7 +116,7 @@ export default function New() {
 
               <MoodSelector
                 style={{paddingLeft: 8, paddingRight: 8, paddingTop: 16 }}
-                items={moodOptions}
+                items={MOODS}
                 value={mood}
                 onSelect={setMood}
               />
@@ -86,7 +141,20 @@ export default function New() {
             </Card>
           </Grid>
         </Section>
-      </ThemedView>
+
+        <Section>
+          <SectionHeader title="Registros recentes" />
+
+          <MoodEntryLog
+            mood="sad"
+            moment={new Date()}
+          />
+
+          <MoodEntryLog
+            mood="good"
+            moment={new Date()}
+          />
+        </Section>
     </ScreenLayout>
   )
 }
