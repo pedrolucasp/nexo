@@ -21,6 +21,7 @@
     "@tanstack/query-sync-storage-persister": "^5.100.10",
     "@tanstack/react-query": "^5.100.10",
     "@tanstack/react-query-persist-client": "^5.100.10",
+    "date-fns": "^4.1.0",
     "expo": "~54.0.34",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.21",
