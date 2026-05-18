@@ -23,6 +23,27 @@ export default function MoodDetailScreen() {
   const [minutesLeft, setMinutesLeft] = useState(0);
   const [canDelete, setCanDelete] = useState(false);
 
+  useEffect(() => {
+    const updateTimer = () => {
+      const moment = new Date(entry?.moment);
+      const createdAt = new Date(entry?.moment);
+      const msSinceCreation = Date.now() - createdAt.getTime();
+      const deletionWindowMs = 5 * 60 * 1000;
+
+      const newCanDelete = msSinceCreation < deletionWindowMs;
+      const newMinutesLeft = Math.max(0, Math.ceil((deletionWindowMs - msSinceCreation) / 60000));
+
+      setCanDelete(newCanDelete);
+      setMinutesLeft(newMinutesLeft);
+    };
+
+    updateTimer(); // Set initial values
+
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, [entry?.moment]);
+
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -45,28 +66,6 @@ export default function MoodDetailScreen() {
   const moment = new Date(entry.moment);
   const moodDef = getMood(entry.selectedMood.toLowerCase());
   const badge = getTimeBadge(moment);
-
-  useEffect(() => {
-    const updateTimer = () => {
-      const moment = new Date(entry.moment);
-      const createdAt = new Date(entry.moment);
-      const msSinceCreation = Date.now() - createdAt.getTime();
-      const deletionWindowMs = 5 * 60 * 1000;
-
-      const newCanDelete = msSinceCreation < deletionWindowMs;
-      const newMinutesLeft = Math.max(0, Math.ceil((deletionWindowMs - msSinceCreation) / 60000));
-
-      setCanDelete(newCanDelete);
-      setMinutesLeft(newMinutesLeft);
-    };
-
-    updateTimer(); // Set initial values
-
-    const interval = setInterval(updateTimer, 1000);
-
-    return () => clearInterval(interval);
-  }, [entry.moment]);
-
 
   const handleDelete = async () => {
     await deleteMoodEntry.mutateAsync(String(entry.id));
@@ -113,11 +112,11 @@ export default function MoodDetailScreen() {
         <Section>
           <SectionHeader title="Níveis" variant="subtle" />
             {[
-              { label: 'Energia',  value: entry.energyLevel  },
-              { label: 'Estresse', value: entry.stressLevel  },
-              { label: 'Ansiedade', value: entry.anxietyLevel },
+              { id: 'energy', label: 'Energia',  value: entry.energyLevel  },
+              { id: 'stress', label: 'Estresse', value: entry.stressLevel  },
+              { id: 'anxiety', label: 'Ansiedade', value: entry.anxietyLevel },
             ].map((item, index, arr) => (
-              <Card style={{ padding: Spacing.cardGap }}>
+              <Card key={item.id} style={{ padding: Spacing.cardGap }}>
                 <View key={item.label}>
                   <View style={styles.componentRow}>
                     <Text style={styles.componentLabel}>{item.label}</Text>
