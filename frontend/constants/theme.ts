@@ -80,7 +80,8 @@ export const Colors = {
     divider: BORDER_SUBTLE,
     sliderTracking: '#E2E8F0',
     sliderLabels: '#94a3b8',
-    danger: '#EF4444'
+    danger: '#EF4444',
+    textBlack: PRIMARY_DARK
   },
 };
 
