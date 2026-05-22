@@ -20,10 +20,10 @@
 \title{orbit - Um aplicativo para rastrear flutuações de humor para pessoas com TAB}
 
 % Autor do trabalho. Primeiro argumento: Último sobrenome; Segundo argumento: Restante do nome
-\author{Porcellis}{Pedro Lucas Porcellis}
+\author{Porcellis}{Pedro Lucas}
 
 % Orientador do trabalho. Primeiro argumento (opcional): titulação do orientador. Segundo argumento (obrigatório): Último sobrenome; Terceiro argumento (obrigatório): Restante do nome
-\advisor[Prof.~Me.]{Torres}{Giovane de Oliveira}
+\advisor[Prof.~Me.]{Nunes}{Flávio}
 
 % Instituição do orientador do trabalho.
 \instituicaoadvisor{IFSul}
@@ -50,9 +50,9 @@
 \instituicaomembroiii{UFCR}
 
 % Palavras-chave do trabalho desenvolvido.
-\keyword{Reuso de traços}
-\keyword{Arquiteturas ARM}
-\keyword{Desempenho}
+\keyword{Desenvolvimento de Aplicativo}
+\keyword{Transtorno Afetivo Bipolar}
+\keyword{React Native}
 
 \begin{document}
 
@@ -88,14 +88,33 @@
 \end{epigrafe}
 
 % Resumo em língua vernácula (a que você está escrevendo o documento)
+% TODO: Rework this a bit more
 \begin{abstract}
-	Texto do resumo. Deve conter de 150 a 500 palavras.
+  Esse projeto aborda o desenvolvimento de um aplicativo de auxílio e controle
+  para pessoas com transtorno de afetivo bipolar (TAB). A proposta é uma
+  aplicação cujo usuário pode utilizar para monitorar o registro diário tanto
+  de mudanças no humor quanto também no controle e registro de intervenções,
+  qualidade de sono e gatilhos, com o objetivo de facilitar a identificação da
+  fase cíclica da TAB. O trabalho abrange desde a construção da pesquisa
+  inicial, o desenvolvimento da aplicação e testes. O sistema é praticamente
+  inteiramente desenvolvido na linguagem de programação JavaScript, tanto com o
+  backend/API e a aplicação, desenvolvida em React Native.
 \end{abstract}
 
 % Resumo em língua estrangeira
 \begin{englishabstract}%
- 	{Palavras-chave em inglês}
- 	Texto do resumo, em inglês.
+ 	{Mobile application, Bipolar Affective Disorder, Mood Tracker}
+
+  This work addresses the development of a mood tracking mobile application
+  aimed at people with Bipolar Affective Disorder (BAP). The proposal is a
+  daily mood tracker, which also has modules for tracking sleep quality, which
+  can aid in identifying hypomanic or manic cycles. It’ll also design a
+  tracking of other elements such as interventions, sleep patterns, triggers,
+  and reminders, which engages in a more faithful detection of cycles and
+  patterns. The work itself goes all the way from the initial research up to
+  the development of the app, layout, and tests. The system itself is mostly
+  written in JavaScript.
+
 \end{englishabstract}
 
 %Lista de Figuras
@@ -105,18 +124,18 @@
 \listoftables
 
 %lista de abreviaturas e siglas
-\begin{listofabbrv}{SN1} % <- Insira aqui a maior sigla da sua lista de siglas.
+\begin{listofabbrv}{TAB} % <- Insira aqui a maior sigla da sua lista de siglas.
 	% O conteúdo dentro dos colchetes é a sigla, e o texto ao lado é o seu significado
-	\item[SN1] Sigla Número 1
+	\item[TAB] Transtorno Afetivo Bipolar
+  \item[BAP] Bipolar Affective Disorder
 \end{listofabbrv}
 
 %Sumario
 \tableofcontents
 
 % Chapter é a seção primária do documento. Toda vez que é chamado este comando, uma quebra de página é adicionada;
-\chapter{Seção Primária (\textit{chapter})}
-
-\lipsum[1]
+\input{chapters/introduction}
+\input{chapters/contextualization}
 
 % Section é a seção secundária do documento. O restante é auto explicativo..
 \section{Seção Secundária (\textit{section})}
@@ -141,7 +160,7 @@ Isso pode ser visto na Figura~\ref{fig:xitsu}.
 \centering
 \caption{Xitsu}
 \label{fig:xitsu}
-\includegraphics[scale=2]{xitsu.png} 
+\includegraphics[scale=1]{xitsu.png} 
 \source{Xitsu}
 \end{figure}
 
