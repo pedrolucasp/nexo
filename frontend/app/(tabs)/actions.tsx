@@ -9,10 +9,14 @@ import { Grid, Col, Row, Between } from '@/components/ui/LayoutHelpers';
 import { Button } from '@/components/ui/Button'
 import { Shadows, Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { Ionicons, Octicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 export default function Actions() {
   const { user } = useAuth();
+
+  const onPressSleep = () => {
+    router.push('/sleep/new')
+  }
 
   return (
     <ScreenLayout userName={user.firstName} userAvatar={user.avatarURL}
@@ -45,7 +49,7 @@ export default function Actions() {
       </Card>
 
       <Grid gap={4}>
-        <Card style={{ padding: Spacing.cardGap }}>
+        <Card onPress={onPressSleep} style={{ padding: Spacing.cardGap }}>
           <View style={[styles.cardIcon, { backgroundColor: '#EFF6FF' }]}>
             <Ionicons name="moon-outline" size={20} color="#2563EB" />
           </View>
@@ -127,6 +131,7 @@ const styles = StyleSheet.create({
   },
   disclaimerCard: {
     padding: Spacing.cardGap,
+    marginTop: 20
   },
   disclaimerTitleContainer: {
     flex: 1,
