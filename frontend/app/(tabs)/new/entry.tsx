@@ -178,6 +178,7 @@ export default function NewMoodEntry() {
 
           <Button title="Salvar Registro"
             onPress={saveMoodEntry}
+            disabled={!components.length}
           />
         </View>
       </ScrollView>
