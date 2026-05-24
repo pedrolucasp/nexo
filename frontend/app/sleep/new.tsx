@@ -15,9 +15,9 @@ import DatePickerField from '@/components/ui/DatePickerField';
 import { ScaleSlider } from '@/components/ui/ScaleSlider';
 
 export default function NewSleepRecord() {
-  const [day, setDay] = useState(new Date())
-  const [annotation, setAnnotation] = useState();
-  const [duration, setDuration] = useState(7.5);
+  const [date, setDate] = useState(new Date())
+  const [annotations, setAnnotations] = useState();
+  const [average, setAverage] = useState(7.5);
 
   const formatValue = (value: number): string => {
     return String(value).replaceAll('.', ',');
@@ -25,9 +25,9 @@ export default function NewSleepRecord() {
 
   const save = async () => {
     const data = {
-      day,
-      annotation,
-      duration
+      date,
+      annotations,
+      average
     };
 
     console.log("Sleep record:", data)
@@ -60,16 +60,16 @@ export default function NewSleepRecord() {
           <Card style={styles.mainCard}>
             <DatePickerField
               label="Data do Registro"
-              initialDate={day}
+              initialDate={date}
               maximumDate={new Date()}
-              onChange={setDay}
+              onChange={setDate}
             />
 
             <View style={{ marginVertical: 15 }}>
               <ScaleSlider
                 label="Duração"
-                value={duration}
-                onValueChange={setDuration}
+                value={average}
+                onValueChange={setAverage}
                 onValueFormat={formatValue}
                 step={0.5}
                 min={0.0}
@@ -82,8 +82,8 @@ export default function NewSleepRecord() {
               label="Notas sobre a qualidade"
               type="text"
               variant="darkGhost"
-              onChangeText={(val) => setAnnotation(val)}
-              value={annotation}
+              onChangeText={(val) => setAnnotations(val)}
+              value={annotations}
               minRows={5}
               maxRows={10}
               placeholder="Como você se sentiu ao acordar? Teve sonhos marcantes?"
