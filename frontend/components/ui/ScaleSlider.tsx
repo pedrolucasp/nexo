@@ -15,6 +15,7 @@ interface ScaleSliderProps {
   label: string;
   value: number;
   onValueChange: (value: number) => void;
+  onValueFormat?: (value: number) => string;
   min?: number;
   max?: number;
   step?: number;
@@ -30,6 +31,7 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
   label,
   value,
   onValueChange,
+  onValueFormat,
   min = 0,
   max = 10,
   step = 1,
@@ -73,7 +75,7 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
           isRich ? styles.valueRich : styles.valueCompact,
           { color: textColor },
         ]}>
-          {valueDisplay}
+          {(onValueFormat ? onValueFormat(valueDisplay) : valueDisplay)}
         </Text>
       </View>
 
