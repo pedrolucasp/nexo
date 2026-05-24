@@ -45,6 +45,13 @@ export default function RootLayout() {
               }}
             />
 
+            <Stack.Screen
+              name="sleep/new"
+              options={{
+                title: "Registrar Sono"
+              }}
+            />
+
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
         </AuthProvider>
