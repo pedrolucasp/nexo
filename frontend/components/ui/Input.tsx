@@ -65,7 +65,12 @@ export const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const { textColor, placeholderColor, errorColor, inputStyle } = useInputStyles(variant, error);
+  const {
+    textColor,
+    placeholderColor,
+    errorColor,
+    inputStyle
+  } = useInputStyles(variant, error);
 
   const keyboardType = type === 'email' ? 'email-address' : 'default';
   const secureTextEntry = type === 'password' && !showPassword;
@@ -73,7 +78,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <View style={styles.container}>
       {label && (
-        <Text style={[styles.label, { color: textColor }]}>{label}</Text>
+        <Label text={label} />
       )}
       <View style={styles.inputContainer}>
         <TextInput
@@ -121,7 +126,12 @@ export const TextArea: React.FC<TextAreaProps> = ({
   style,
   ...props
 }) => {
-  const { textColor, placeholderColor, errorColor, inputStyle } = useInputStyles(variant, error);
+  const {
+    textColor,
+    placeholderColor,
+    errorColor,
+    inputStyle
+  } = useInputStyles(variant, error);
 
   const minHeight = minRows * 24;
   const maxHeight = maxRows ? maxRows * 24 : undefined;
@@ -129,7 +139,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   return (
     <View style={styles.container}>
       {label && (
-        <Text style={[styles.label, { color: textColor }]}>{label}</Text>
+        <Label text={label} />
       )}
       <TextInput
         style={[
@@ -148,6 +158,24 @@ export const TextArea: React.FC<TextAreaProps> = ({
         <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
       )}
     </View>
+  );
+};
+
+interface LabelProps extends React.ComponentProps<typeof Text> {
+  text: string;
+}
+
+export const Label: React.FC<LabelProps> = ({
+  text,
+  style,
+  ...props
+}) => {
+  const textColor = useThemeColor({}, 'text');
+
+  return (
+    <Text style={[styles.label, { color: textColor }, style]} {...props}>
+      {text}
+    </Text>
   );
 };
 
