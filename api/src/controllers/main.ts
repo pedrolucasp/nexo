@@ -5,7 +5,7 @@ export const MainController = {
   index: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { message } = req.params;
-      res.json({ status: 'alive' });
+      res.send('../static/index.html');
     } catch (err) {
       next(err);
     }

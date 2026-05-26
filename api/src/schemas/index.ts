@@ -22,3 +22,8 @@ export {
   type PasswordResetRequestInput,
   type PasswordResetInput
 } from '@app/schemas/auth.schema';
+
+export {
+  type CreateSleepRecordInput,
+  CreateSleepRecordSchema
+} from '@app/schemas/sleepRecord.schema';

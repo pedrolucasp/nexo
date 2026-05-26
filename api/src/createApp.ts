@@ -6,11 +6,13 @@ import mainRouter from '@app/routes/main';
 import userRouter from '@app/routes/users';
 import authRouter from '@app/routes/auth';
 import moodRouter from '@app/routes/moods';
+import sleepRecordRouter from '@app/routes/sleepRecords';
 import { errorHandler } from '@app/middleware/errorHandler';
 import { PrismaClient } from '@prisma/client';
 import { bootWorkers, closeAllWorkers, closeAllQueues } from '@app/lib/queue';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
+import path from 'path';
 
 export function createApp() {
   const app = express();
@@ -40,12 +42,17 @@ export function createApp() {
   // Use pino-http for HTTP logging (better than Morgan for structured logs)
   app.use(pinoHttp({ logger }));
 
-  app.get('/', mainRouter);
   app.use("/users", userRouter);
   app.use("/auth", authRouter);
   app.use("/moods", moodRouter);
+  app.use("/sleep_records", sleepRecordRouter);
 
   app.use(errorHandler); // always last
+
+  // TODO: flesh the actual page here
+  app.use(express.static(path.join(__dirname, './static')));
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, './static/index.html')); });
 
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
