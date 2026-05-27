@@ -16,3 +16,8 @@ export {
   useCreateMoodEntry,
   useDeleteMoodEntry
 } from '@/hooks/useMoodEntries.queries';
+
+export {
+  useSleepRecords,
+  useCreateSleepRecord
+} from '@/hooks/useSleepRecord.queries';
