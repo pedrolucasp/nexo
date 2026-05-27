@@ -2,9 +2,11 @@ import {
   View,
   Text,
   StyleSheet,
+  KeyboardAvoidingView,
   ScrollView
 } from 'react-native';
 import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
 
 import { Card } from '@/components/ui/Cards';
 import { Input, TextArea } from '@/components/ui/Input';
@@ -13,11 +15,13 @@ import { Spacing, Typography, Colors, BorderRadius } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import DatePickerField from '@/components/ui/DatePickerField';
 import { ScaleSlider } from '@/components/ui/ScaleSlider';
+import { useCreateSleepRecord } from '@/hooks';
 
 export default function NewSleepRecord() {
   const [date, setDate] = useState(new Date())
   const [annotations, setAnnotations] = useState();
   const [average, setAverage] = useState(7.5);
+  const createSleepRecord = useCreateSleepRecord();
 
   const formatValue = (value: number): string => {
     return String(value).replaceAll('.', ',');
@@ -31,12 +35,14 @@ export default function NewSleepRecord() {
     };
 
     console.log("Sleep record:", data)
-    //await createSleepRecord.mutateAsync(data)
-    //router.replace("/")
+    await createSleepRecord.mutateAsync(data)
+    router.replace("/")
   };
 
   return (
-    <View>
+    <KeyboardAvoidingView
+      behavior='height'
+      style={styles.keyboardView}>
       <ScrollView scrollEventThrottle={16}>
         <View style={styles.container}>
           <View style={styles.header}>
@@ -94,7 +100,7 @@ export default function NewSleepRecord() {
           <Button title="Salvar Registro" onPress={save} />
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -135,5 +141,8 @@ const styles = StyleSheet.create({
     ...Typography.bodyMd,
     color: Colors.light.textSecondary,
     marginTop: 20
-  }
+  },
+  keyboardView: {
+    flex: 1,
+  },
 })
