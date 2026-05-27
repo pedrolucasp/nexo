@@ -10,6 +10,7 @@ import {
   UserUpdateResponse,
   MoodComponentPayload,
   MoodEntryPayload,
+  SleepRecordPayload,
   PaginatedResponse
 } from '@/lib/api/types';
 
@@ -181,6 +182,30 @@ class ApiClient {
 
   async deleteMoodEntry(id: string): Promise<void> {
     return this.request(`/moods/${id}`, { method: 'DELETE' });
+  }
+
+  // Sleep Record
+  async createSleepRecord(sleepRecord: CreateSleepRecordPayload): Promise<SleepRecordResponse> {
+    return await this.request(`/sleep_records`, {
+      method: 'POST',
+      body: JSON.stringify({ sleepRecord })
+    })
+  }
+
+  async getSleepRecords(params?: {
+    from?: string;
+    to?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResponse<SleepRecord>> {
+    const query = new URLSearchParams();
+    if (params?.from)  query.set('from', params.from);
+    if (params?.to)    query.set('to', params.to);
+    if (params?.page)  query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+
+    const qs = query.toString();
+    return this.request(`/sleep_records${qs ? `?${qs}` : ''}`);
   }
 }
 

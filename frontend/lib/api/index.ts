@@ -5,8 +5,9 @@ export {
 export type {
   User,
   AuthResponse,
-  MoodEntryPayload,
+  CreateMoodEntryPayload,
   MoodComponentPayload,
   PaginatedResponse,
-  UserUpdateResponse
+  UserUpdateResponse,
+  SleepRecordPayload,
 } from '@/lib/api/types';

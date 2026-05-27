@@ -83,6 +83,23 @@ export interface MoodEntry {
   updatedAt: Date;
 }
 
+// Sleep Records
+
+export interface SleepRecordPayload {
+  average: number;
+  annotations: string;
+  date: Date;
+};
+
+export interface SleepRecord {
+  id: number;
+  annotations: string;
+  date: Date;
+  average: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Generic stuff
 export interface PaginatedResponse<T> {
   entries: T[];
