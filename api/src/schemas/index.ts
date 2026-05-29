@@ -18,9 +18,11 @@ export {
   LoginSchema,
   PasswordResetRequestSchema,
   PasswordResetSchema,
+  ActivateUserSchema,
   type LoginInput,
   type PasswordResetRequestInput,
-  type PasswordResetInput
+  type PasswordResetInput,
+  type ActivateUserInput
 } from '@app/schemas/auth.schema';
 
 export {

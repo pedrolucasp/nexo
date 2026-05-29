@@ -4,7 +4,7 @@ export enum MailJobName {
   PasswordReset   = 'mail:password-reset',
 }
 
-export type WelcomeEmailPayload    = { userId: number };
+export type WelcomeEmailPayload    = { userId: number; code: string };
 export type PasswordResetPayload   = { userId: number; token: string };
 
 export type MailJobData =

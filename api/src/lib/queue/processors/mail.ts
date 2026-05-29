@@ -17,7 +17,7 @@ export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void
       const data = job.data as WelcomeEmailPayload;
       console.log("Dispatching an welcome email", data);
 
-      sendWelcomeEmail(Number(data.userId));
+      sendWelcomeEmail(Number(data.userId), data.code);
 
       break;
     }

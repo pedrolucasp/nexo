@@ -4,6 +4,7 @@ import {
 } from '@app/services/auth.service';
 
 import { getQueue, MailJobName } from '@app/lib/queue';
+
 import {
   CreateUserSchema,
   UpdateUserSchema
@@ -17,12 +18,18 @@ import {
 } from '@app/services/user.service';
 
 import {
+  storeActivationCode
+} from '@app/services/auth.service';
+
+import {
   AuthenticatedRequest
 } from '@app/middleware/auth';
 
 import { prisma } from '@app/lib/prisma';
 import s3 from '@app/lib/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+import crypto from 'crypto';
+import { addMinutes } from 'date-fns';
 
 // XXX: I've regreted already
 interface SingleFileRequest extends AuthenticatedRequest {
@@ -43,8 +50,17 @@ export const UsersController = {
       const user = await createUser(parsed.data);
       const jwtToken = generateToken(user.id, user.email);
 
+      const code = [...Array(6)].map(() => crypto.randomInt(100))
+        .join(" ");
+
+      const expiresAt = addMinutes(new Date(), 5);
+      await storeActivationCode(user.id, code, expiresAt);
+
       const mailQueue = getQueue('mail');
-      const job = await mailQueue.add(MailJobName.WelcomeEmail, { userId: user.id });
+      const job = await mailQueue.add(MailJobName.WelcomeEmail, {
+        userId: user.id,
+        code: code
+      });
 
       res.status(201).json({
         token: jwtToken

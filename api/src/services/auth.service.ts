@@ -1,4 +1,5 @@
 import { prisma } from '@app/lib/prisma';
+import { User } from '@prisma/client';
 import bcrypt from "bcryptjs";
 
 import {
@@ -15,7 +16,8 @@ import {
 import {
   LoginInput,
   PasswordResetRequestInput,
-  PasswordResetInput
+  PasswordResetInput,
+  ActivateUserInput
 } from '@app/schemas'
 
 import { getQueue, MailJobName } from '@app/lib/queue';
@@ -101,3 +103,28 @@ export const resetPassword = async ({ token, newPassword }: PasswordResetInput) 
 export const generateToken = (userId: number, email: string) => {
   return createJWT(userId, email);
 };
+
+export const activateUser = async(user: User, input: ActivateUserInput): Promise<User> => {
+  return await prisma.user.update({
+    where: {
+      id: user.id
+    },
+    data: {
+      isActive: true,
+      activationCode: null,
+      activationCodeExpiresAt: null
+    }
+  });
+}
+
+export const storeActivationCode = async(userId: number, code: string, expiresAt: Date): Promise<User> => {
+  return await prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      activationCode: code,
+      activationCodeExpiresAt: expiresAt
+    }
+  })
+}

@@ -4,6 +4,7 @@ import {
   generateToken,
   requestPasswordReset,
   resetPassword,
+  activateUser
 } from '@app/services/auth.service';
 
 import {
@@ -11,13 +12,15 @@ import {
 } from '@app/lib/jwt';
 
 import {
-  findUserByEmail
+  findUserByEmail,
+  findUserById,
 } from '@app/services/user.service'
 
 import {
   LoginSchema,
   PasswordResetSchema,
-  PasswordResetRequestSchema
+  PasswordResetRequestSchema,
+  ActivateUserSchema
 } from '@app/schemas';
 
 export const AuthController = {
@@ -119,6 +122,29 @@ export const AuthController = {
       if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
         return res.status(401).json({ error: 'Invalid or expired token' });
       }
+      next(err);
+    }
+  },
+
+  activate: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const parsed = ActivateUserSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        return res.status(400).json({
+          errors: parsed.error!.issues
+        });
+      }
+
+      const user = await findUserById(parsed.data.userId);
+
+      if (!user) {
+        return res.status(403).json({ error: "Usuario não encontrado" })
+      }
+
+      const result = await activateUser(user, parsed.data);
+      return res.status(200).json(result);
+    } catch (err: any) {
       next(err);
     }
   }

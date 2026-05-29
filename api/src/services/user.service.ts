@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 import {
   CreateUserInput,
-  UpdateUserInput,
+  UpdateUserInput
 } from "@app/schemas";
 
 export const createUser = async(input: CreateUserInput): Promise<User> => {
