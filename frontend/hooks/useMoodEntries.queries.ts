@@ -31,7 +31,7 @@ export const useMoodEntries = (filters?: MoodEntryFilters) => {
   });
 }
 
-// Infinite scroll version for the history tab
+// Infinite scroll version
 export const useMoodEntriesInfinite = (limit = 20) => {
   return useInfiniteQuery({
     queryKey: [...moodKeys.lists(), 'infinite'],
