@@ -18,7 +18,7 @@ export const badgeVariants = {
 
 // TODO: Add a subtle variant and allow to drop the dot as well
 // TODO: Experiment with a less round-ish version?
-export const Badge = ({ label, variant = "green" }) => {
+export const Badge = ({ label, variant = "green", style }) => {
   const palette = badgeVariants[variant] ?? badgeVariants.green;
 
   const styles = StyleSheet.create({
@@ -44,7 +44,7 @@ export const Badge = ({ label, variant = "green" }) => {
   });
 
   return (
-    <View style={[styles.badge, { backgroundColor: palette.bg }]}>
+    <View style={[styles.badge, { backgroundColor: palette.bg }, style]}>
       <View style={[styles.badgeDot, { backgroundColor: palette.dot }]} />
       <Text style={[styles.badgeText, { color: palette.text }]}>{label}</Text>
     </View>
