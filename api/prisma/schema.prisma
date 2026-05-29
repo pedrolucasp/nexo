@@ -20,6 +20,10 @@ model User {
   avatarKey String? @map("avatar_key")
   avatarURL String? @map("avatar_url")
 
+  activationCode String? @map("activation_code")
+  activationCodeExpiresAt DateTime? @map("activation_code_expires_at")
+  active Boolean @default(false) @map("active")
+
   moods Mood[]
   interventions Intervention[]
   triggers Trigger[]
