@@ -28,6 +28,12 @@ services:
     command: valkey-server /etc/valkey/valkey.conf
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   api:
     build: ./api
@@ -40,7 +46,7 @@ services:
       - api/.env.development
     depends_on:
       valkey:
-        condition: service_started
+        condition: service_healthy
       db:
         condition: service_healthy
     restart: always
