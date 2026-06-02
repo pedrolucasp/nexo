@@ -182,6 +182,8 @@ Versão: \currversion^^J
 
 % Definição do espaçamento de texto
 \setlength{\baselineskip}{1.5cm}
+% TODO: seems incorrect without it
+\setlength{\parskip}{0.2 cm}
 
 %==============================================================================
 % Numeração das páginas
