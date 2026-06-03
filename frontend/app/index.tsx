@@ -3,7 +3,8 @@ import { useAuth } from '@/context/AuthContext';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function Index() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  let url = "/auth/login";
 
   if (isLoading) {
     return (
@@ -13,5 +14,13 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={isAuthenticated ? '/(tabs)/new' : '/auth/login'} />;
+  if (isAuthenticated) {
+    if (user.active) {
+      url = "/(tabs)/new"
+    } else {
+      url = "/auth/activate"
+    }
+  }
+
+  return <Redirect href={url} />;
 }

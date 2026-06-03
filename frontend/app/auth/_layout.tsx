@@ -10,6 +10,12 @@ export default function AuthLayout() {
         }}
       />
       <Stack.Screen
+        name="activate"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="signup"
         options={{
           headerShown: false,

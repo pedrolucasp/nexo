@@ -122,11 +122,11 @@ export default function SignupScreen() {
             />
 
             <Input
-              label="Password"
+              label="Senha"
               type="password"
               value={password}
               onChangeText={setPassword}
-              placeholder="Escolha uma senha (min. 6 caracteres)"
+              placeholder="Deve ter no min. 6 caracteres"
               error={errors.password}
               showPasswordToggle
             />

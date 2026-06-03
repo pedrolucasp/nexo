@@ -6,6 +6,7 @@ export interface User {
   updatedAt: Date;
   avatarKey?: string;
   avatarURL?: string;
+  active: boolean;
 };
 
 // Auth
@@ -36,6 +37,10 @@ export interface ResetPasswordRequestResponse {
 export interface ResetPasswordResponse {
   message: string;
 };
+
+export interface ActivateResponse {
+  activated: boolean;
+}
 
 // User
 export interface UserUpdatePayload extends Partial<User> {

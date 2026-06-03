@@ -17,6 +17,7 @@ interface AuthContextType {
     updatedAt: date;
     avatarURL?: string;
     avatarKey?: string;
+    active: boolean;
   }) => void;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: {
@@ -28,8 +29,8 @@ interface AuthContextType {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<{ message: string; token?: string }>;
   resetPassword: (token: string, password: string) => Promise<void>;
+  activate: (code: string) => Promise<void>;
 }
-
 
 export function sanitizeUser(data: any): User {
   return {
@@ -40,6 +41,7 @@ export function sanitizeUser(data: any): User {
     updatedAt: data.updatedAt,
     avatarKey: data.avatarKey,
     avatarURL: data.avatarURL,
+    active: data.active
   };
 }
 
@@ -79,7 +81,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             firstName: verifyResponse.user.firstName,
             lastName: verifyResponse.user.lastName,
             avatarURL: verifyResponse.user.avatarURL,
-            avatarKey: verifyResponse.user.avatarKey
+            avatarKey: verifyResponse.user.avatarKey,
+            active: verifyResponse.user.active
           });
         }
       }
@@ -140,6 +143,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await apiClient.resetPassword(token, password);
   };
 
+  const activate = async (code: number) => {
+    const response = await apiClient.activate(code);
+
+    if (response.user) {
+      updateAuthUser(response.user)
+    }
+
+    return response
+  }
+
   const updateAuthUser = (user) => {
     setUser(sanitizeUser(user));
   }
@@ -153,7 +166,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     forgotPassword,
     resetPassword,
-    updateAuthUser
+    updateAuthUser,
+    activate
   };
 
   return (

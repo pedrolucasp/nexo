@@ -80,14 +80,24 @@ class ApiClient {
   }
 
   // Auth
-  async login(email: string, password: string): Promise<AuthResponse> {
+  async login(email: string, password: string): Promise<AuthResponse | { isActive: boolean }> {
     const response = await this.request<AuthResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
 
-    await this.storeToken(response.token);
+    if (response.token) {
+      await this.storeToken(response.token);
+    }
+
     return response;
+  }
+
+  async activate(code: number): Promise<ActivateResponse> {
+    return this.request('/auth/activate', {
+      method: 'POST',
+      body: JSON.stringify({ code }),
+    });
   }
 
   async signup(user: SignUpPayload): Promise<AuthResponse> {

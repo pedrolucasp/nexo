@@ -47,9 +47,10 @@ export default function LoginScreen() {
 
     try {
       await login(email, password);
-      router.replace('/(tabs)/new');
+      router.replace('/');
     } catch (error: any) {
-	  Alert.alert('Erro: ', 'Falha ao fazer login');
+      console.log("LOGIN error: ", error)
+      Alert.alert('Erro: ', 'Falha ao fazer login');
     }
   };
 
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 'auto',
-    paddingBottom: 20,
+    paddingBottom: 40,
   },
   footerText: {
     fontSize: 14,
