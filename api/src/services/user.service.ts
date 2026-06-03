@@ -34,6 +34,14 @@ export const findUserByEmail = async(email: string): Promise<User | null> => {
   });
 };
 
+export const findUserByActivationCode = async(code: string): Promise<User | null> => {
+  return await prisma.user.findFirst({
+    where: {
+      activationCode: code
+    }
+  });
+}
+
 export const updateUser = async (input: UpdateUserInput): Promise<User> => {
   const { password, ...data } = input;
 

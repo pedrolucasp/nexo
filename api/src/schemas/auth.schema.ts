@@ -15,8 +15,7 @@ export const PasswordResetSchema = z.object({
 });
 
 export const ActivateUserSchema = z.object({
-  userId: z.number(),
-  code: z.number().max(6)
+  code: z.number()
 });
 
 export type LoginInput = z.infer<typeof LoginSchema>;

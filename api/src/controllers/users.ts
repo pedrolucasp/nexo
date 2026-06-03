@@ -50,8 +50,8 @@ export const UsersController = {
       const user = await createUser(parsed.data);
       const jwtToken = generateToken(user.id, user.email);
 
-      const code = [...Array(6)].map(() => crypto.randomInt(100))
-        .join(" ");
+      const code = [...Array(6)].map(() => crypto.randomInt(9))
+        .join("");
 
       const expiresAt = addMinutes(new Date(), 5);
       await storeActivationCode(user.id, code, expiresAt);

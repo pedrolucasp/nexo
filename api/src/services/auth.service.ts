@@ -31,7 +31,7 @@ class InvalidOrExpiredTokenError extends Error {
 }
 
 export const login = async({ email, password }: LoginInput) => {
-  const user = await findUserByEmail(email);
+  const user = await findUserByEmail(email)!;
 
   if (!user || !bcrypt.compareSync(password, user.encryptedPassword)) {
     throw new InvalidCredentialsError();
@@ -104,13 +104,13 @@ export const generateToken = (userId: number, email: string) => {
   return createJWT(userId, email);
 };
 
-export const activateUser = async(user: User, input: ActivateUserInput): Promise<User> => {
+export const activateUser = async(user: User): Promise<User> => {
   return await prisma.user.update({
     where: {
       id: user.id
     },
     data: {
-      isActive: true,
+      active: true,
       activationCode: null,
       activationCodeExpiresAt: null
     }

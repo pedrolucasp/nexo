@@ -14,6 +14,7 @@ import {
 import {
   findUserByEmail,
   findUserById,
+  findUserByActivationCode
 } from '@app/services/user.service'
 
 import {
@@ -35,6 +36,11 @@ export const AuthController = {
       }
 
       const { user, token } = await login(parsed.data);
+
+      if (!user.active) {
+        // TODO: generate a new activation code and send an email
+        // if the code has expired
+      }
 
       return res.json({
         token,
@@ -136,14 +142,17 @@ export const AuthController = {
         });
       }
 
-      const user = await findUserById(parsed.data.userId);
+      const user = await findUserByActivationCode(String(parsed.data.code));
 
       if (!user) {
         return res.status(403).json({ error: "Usuario não encontrado" })
       }
 
-      const result = await activateUser(user, parsed.data);
-      return res.status(200).json(result);
+      const result = await activateUser(user);
+
+      return res.status(200).json({
+        user: result
+      });
     } catch (err: any) {
       next(err);
     }
