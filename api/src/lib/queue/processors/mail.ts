@@ -3,11 +3,13 @@ import {
   MailJobName, MailJobData,
   WelcomeEmailPayload,
   PasswordResetPayload,
+  ActivateAccountEmailPayload
 } from '@app/lib/queue/types';
 
 import {
   sendWelcomeEmail,
-  sendResetPasswordEmail
+  sendResetPasswordEmail,
+  sendActivateAccountEmail
 } from '@app/services/mail'
 
 export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void> {
@@ -18,6 +20,15 @@ export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void
       console.log("Dispatching an welcome email", data);
 
       sendWelcomeEmail(Number(data.userId), data.code);
+
+      break;
+    }
+
+    case MailJobName.ActivateAccountEmail: {
+      const data = job.data as ActivateAccountEmailPayload;
+      console.log("Dispatching an activate account email", data);
+
+      sendActivateAccountEmail(Number(data.userId), data.code);
 
       break;
     }

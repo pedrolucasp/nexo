@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '@app/middleware/auth';
+
 import {
   login,
   generateToken,
   requestPasswordReset,
   resetPassword,
-  activateUser
+  activateUser,
+  storeActivationCode
 } from '@app/services/auth.service';
 
 import {
@@ -14,7 +17,7 @@ import {
 import {
   findUserByEmail,
   findUserById,
-  findUserByActivationCode
+  findUserByActivationCode,
 } from '@app/services/user.service'
 
 import {
@@ -23,6 +26,10 @@ import {
   PasswordResetRequestSchema,
   ActivateUserSchema
 } from '@app/schemas';
+
+import { addMinutes } from 'date-fns';
+import { getQueue, MailJobName } from '@app/lib/queue';
+import crypto from 'crypto';
 
 export const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
@@ -37,9 +44,18 @@ export const AuthController = {
 
       const { user, token } = await login(parsed.data);
 
-      if (!user.active) {
-        // TODO: generate a new activation code and send an email
-        // if the code has expired
+      if (!user.active && (new Date() > new Date(user.activationCodeExpiresAt!))) {
+        const code = [...Array(6)].map(() => crypto.randomInt(9))
+        .join("");
+
+        const expiresAt = addMinutes(new Date(), 5);
+        await storeActivationCode(user.id, code, expiresAt);
+
+        const mailQueue = getQueue('mail');
+        const job = await mailQueue.add(MailJobName.ActivateAccountEmail, {
+          userId: user.id,
+          code: code
+        });
       }
 
       return res.json({
@@ -145,7 +161,9 @@ export const AuthController = {
       const user = await findUserByActivationCode(String(parsed.data.code));
 
       if (!user) {
-        return res.status(403).json({ error: "Usuario não encontrado" })
+        return res.status(422).json({
+          error: "Código incorreto. Verifique o código e tente novamente"
+        })
       }
 
       const result = await activateUser(user);
@@ -153,6 +171,36 @@ export const AuthController = {
       return res.status(200).json({
         user: result
       });
+    } catch (err: any) {
+      next(err);
+    }
+  },
+
+  resendActivationCode: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const user = await findUserById(req.userId!);
+
+      if (!user) {
+        return res.status(400).json({
+          errors: "Usuário não encontrado"
+        })
+      }
+
+      const code = [...Array(6)].map(() => crypto.randomInt(9))
+      .join("");
+
+      const expiresAt = addMinutes(new Date(), 5);
+      await storeActivationCode(user.id, code, expiresAt);
+
+      //const mailQueue = getQueue('mail');
+      //const job = await mailQueue.add(MailJobName.ActivateAccountEmail, {
+      //  userId: user.id,
+      //  code: code
+      //});
+
+      res.json({
+        user
+      })
     } catch (err: any) {
       next(err);
     }
