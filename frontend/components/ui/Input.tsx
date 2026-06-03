@@ -19,7 +19,7 @@ interface BaseInputProps {
   variant?: InputVariant;
 }
 
-function useInputStyles(variant: InputVariant, error?: string) {
+function useInputStyles(variant: InputVariant, error?: string, hasPasswordToggle?: boolean) {
   let backgroundColor = null;
 
   const textColor = useThemeColor({}, 'text');
@@ -45,6 +45,7 @@ function useInputStyles(variant: InputVariant, error?: string) {
     backgroundColor: backgroundColor,
     borderColor: error ? errorColor : borderColor,
     borderWidth: isGhost || isDarkGhost ? 0 : 1,
+    paddingRight: hasPasswordToggle ? 44 : 0
   };
 
   return { textColor, placeholderColor, errorColor, inputStyle };
@@ -70,7 +71,7 @@ export const Input: React.FC<InputProps> = ({
     placeholderColor,
     errorColor,
     inputStyle
-  } = useInputStyles(variant, error);
+  } = useInputStyles(variant, error, showPasswordToggle);
 
   const keyboardType = type === 'email' ? 'email-address' : 'default';
   const secureTextEntry = type === 'password' && !showPassword;
@@ -194,7 +195,6 @@ const styles = StyleSheet.create({
   input: {
     height: 48,
     paddingHorizontal: 12,
-    paddingRight: 44,
     borderWidth: 1,
     borderRadius: 8,
     fontSize: 16,
