@@ -52,12 +52,7 @@ export function MoodHistoryCard({ card }: Props) {
               {card.raw.annotation?.trim()}
             </Text>
           ) : null}
-          {badge ? (
-            <Badge label={badge.label}
-                   variant={badge.variant}
-                   style={styles.badge}
-            /> : null
-          )}
+          {(badge ? (<Badge label={badge.label} variant={badge.variant} style={styles.badge}/>) : null)}
         </View>
       </View>
     </Card>
