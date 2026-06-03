@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-BR">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Nexo - Monitore suas emoções</title>
+    <!-- Tailwind & Plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.core.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/atropos/atropos.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="/styles/main.css" rel="stylesheet" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "background-light": "#f6f8f6",
+              "border-subtle": "#f1f5f9",
+              "surface-light": "#ffffff",
+              "pill-indigo": "#e0e7ff",
+              "pill-purple": "#f3e8ff",
+              "text-primary": "#0f172a",
+              "status-active-bg": "rgba(19, 236, 91, 0.1)",
+              "text-secondary": "#64748b",
+              "pill-blue": "#dbeafe",
+              "brand-green": "#13ec5b"
+            },
+            "borderRadius": {
+              "DEFAULT": "0.25rem",
+              "lg": "0.5rem",
+              "xl": "0.75rem",
+              "full": "9999px"
+            },
+            "spacing": {
+              "container-padding": "1rem",
+              "section-gap": "2rem",
+              "card-gap": "0.75rem",
+              "internal-padding": "1rem",
+              "inline-gap-sm": "0.5rem"
+            },
+            "fontFamily": {
+              "label-sm": ["Inter"],
+              "body-md": ["Inter"],
+              "body-lg": ["Inter"],
+              "headline-md": ["Inter"],
+              "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+              "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+              "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+              "body-lg": ["16px", { "lineHeight": "20px", "fontWeight": "700" }],
+              "headline-md": ["18px", { "lineHeight": "24px", "fontWeight": "700" }],
+              "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+            }
+          },
+        },
+      }
+    </script>
+  </head>
+
+  <body class="text-text-primary">
+    <header class="docked full-width top-0 sticky z-50 bg-surface-light/95 backdrop-blur-md border-b border-border-subtle shadow-sm">
+      <nav class="flex justify-between items-center w-full px-container-padding max-w-7xl mx-auto h-16">
+        <div class="text-headline-lg font-headline-lg text-text-primary">nexo</div>
+        <div class="hidden md:flex gap-8">
+          <a class="text-text-primary font-bold border-b-2 border-status-active-bg transition-colors duration-200" href="#">
+            Funcionalidades
+          </a>
+
+          <a class="text-text-secondary font-body-md hover:text-text-primary transition-colors duration-200" href="#">
+            Monografia
+          </a>
+
+          <a class="text-text-secondary font-body-md hover:text-text-primary transition-colors duration-200" href="#">
+            Sobre o projeto
+          </a>
+        </div>
+
+        <button class="bg-text-primary text-white px-6 py-2 rounded-lg font-body-lg btn-hover-effect">
+          Começe já!
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="max-w-7xl mx-auto px-container-padding py-20 flex flex-col md:flex-row items-center gap-12">
+        <div class="flex-1 space-y-8">
+          <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight animate__animated animate__zoomIn">
+            Equilíbrio em cada <span class="text-brand-green">registro</span>
+          </h1>
+          <p class="text-text-secondary text-lg md:text-xl max-w-lg">
+            Monitore sua saúde mental e física com precisão clínica e interface intuitiva.
+            Organize sua rotina de bem-estar em um só lugar.
+          </p>
+
+          <div class="flex gap-4">
+            <button class="bg-brand-green text-text-primary px-8 py-4 rounded-xl font-body-lg shadow-lg shadow-brand-green/20 btn-hover-effect flex items-center gap-2">
+              <span class="material-symbols-outlined">download</span>
+              Baixar Agora
+            </button>
+
+            <button class="border border-border-subtle bg-surface-light px-8 py-4 rounded-xl font-body-lg btn-hover-effect">
+              Saiba mais
+            </button>
+          </div>
+        </div>
+
+        <div class="flex-1 relative">
+          <div class="absolute -top-12 -left-12 w-64 h-64 bg-brand-green/10 rounded-full blur-3xl animate-pulse"></div>
+          <div class="relative z-10 p-4 bg-white/50 backdrop-blur-xl rounded-[2.5rem] border border-white shadow-2xl">
+            <img alt="nexo App" class="rounded-[2rem] shadow-sm w-full h-auto object-cover"
+                 src="/images/app.png" />
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-surface-light py-20 border-y border-border-subtle">
+        <div class="max-w-7xl mx-auto px-container-padding">
+          <div class="mb-12 flex justify-between items-end">
+            <div>
+              <h2 class="text-headline-lg font-headline-lg text-3xl mb-2">Funcionalidades</h2>
+              <p class="text-text-secondary">Explore as ferramentas desenhadas para sua evolução.</p>
+            </div>
+          </div>
+          <div class="glide">
+            <div class="glide__track" data-glide-el="track">
+              <ul class="glide__slides">
+                <li class="glide__slide">
+                  <div class="bg-background-light p-8 rounded-xl border border-border-subtle h-full group hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-pill-indigo rounded-lg flex items-center justify-center mb-6">
+                      <span class="material-symbols-outlined text-indigo-600">mood</span>
+                    </div>
+                    <h3 class="font-headline-md text-xl mb-3">Monitoramento de Humor</h3>
+                    <p class="text-text-secondary font-body-md mb-6">
+                      Identifique padrões emocionais e gatilhos diários com nosso
+                      sistema de tagging inteligente e análise de sentimentos.
+                    </p>
+
+                    <img alt="Mood tracking"
+                         class="w-full h-48 object-cover rounded-lg"
+                         src="/images/mood.jpg"/>
+                  </div>
+                </li>
+
+                <li class="glide__slide">
+                  <div class="bg-background-light p-8 rounded-xl border border-border-subtle h-full group hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-pill-purple rounded-lg flex items-center justify-center mb-6">
+                      <span class="material-symbols-outlined text-purple-600">medical_services</span>
+                    </div>
+                    <h3 class="font-headline-md text-xl mb-3">Gestão de Saúde</h3>
+                    <p class="text-text-secondary font-body-md mb-6">
+                      Controle medicação, consultas e exames em um cronograma
+                      unificado com alertas inteligentes e lembretes
+                      personalizáveis.
+                    </p>
+                    <img alt="Health management" class="w-full h-48 object-cover rounded-lg" data-alt="Close up of a modern medical laboratory or clinic setting with clean white surfaces and high-tech equipment. Soft natural light flows through a window, highlighting the precision and cleanliness of the health environment. Professional and trustworthy atmosphere." src="/images/pills.jpg"/>
+                  </div>
+                </li>
+
+                <!-- TODO: Check how to make this work with some morphing icons -->
+                <li class="glide__slide">
+                  <div class="bg-background-light p-8 rounded-xl border border-border-subtle h-full group hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-pill-blue rounded-lg flex items-center justify-center mb-6">
+                      <span class="material-symbols-outlined text-blue-600">sleep</span>
+                    </div>
+
+                    <h3 class="font-headline-md text-xl mb-3">Monitore seu sono</h3>
+                    <p class="text-text-secondary font-body-md mb-6">
+                      Controle também o seu sono, para conseguir antecipar flutuações no humor
+                      e identificar padrões com mais qualidade
+                    </p>
+                    <img alt="Exercise routines"
+                         class="w-full h-48 object-cover rounded-lg"
+                         src="/images/sleep.jpg"/>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="glide__bullets mt-8 flex justify-center gap-2" data-glide-el="controls[nav]">
+              <button type="button"
+                      class="glide__bullet w-3 h-3 rounded-full bg-border-subtle"
+                      data-glide-dir="=0">
+              </button>
+
+              <button type="button"
+                      class="glide__bullet w-3 h-3 rounded-full bg-border-subtle"
+                      data-glide-dir="=1">
+              </button>
+
+              <button type="button"
+                      class="glide__bullet w-3 h-3 rounded-full bg-border-subtle"
+                      data-glide-dir="=2">
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-24 max-w-7xl mx-auto px-container-padding text-center">
+        <h2 class="text-headline-lg font-headline-lg text-4xl mb-16">Visualize padrões</h2>
+        <div class="flex justify-center">
+          <div class="atropos my-atropos w-full max-w-2xl">
+            <div class="atropos-scale">
+              <div class="atropos-rotate">
+                <div class="atropos-inner rounded-[2rem] bg-surface-light border border-border-subtle shadow-2xl p-10 text-left overflow-hidden">
+                  <div class="flex justify-between items-start mb-8">
+                    <div data-atropos-offset="5">
+                      <span class="text-label-sm font-label-sm uppercase tracking-widest text-text-secondary">Energia</span>
+                      <h3 class="text-5xl font-extrabold mt-2 text-brand-green">84%</h3>
+                    </div>
+
+                    <div class="bg-status-active-bg p-3 rounded-xl" data-atropos-offset="10">
+                      <span class="material-symbols-outlined text-brand-green text-3xl">trending_up</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-end gap-3 h-48 mb-8" data-atropos-offset="3">
+                    <div class="flex-1 bg-border-subtle rounded-t-lg h-[60%] hover:bg-brand-green/20 transition-colors"></div>
+                    <div class="flex-1 bg-border-subtle rounded-t-lg h-[45%] hover:bg-brand-green/20 transition-colors"></div>
+                    <div class="flex-1 bg-brand-green rounded-t-lg h-[84%] relative">
+                      <div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-text-primary text-white text-[10px] px-2 py-1 rounded">
+                        Hoje
+                      </div>
+                    </div>
+                    <div class="flex-1 bg-border-subtle rounded-t-lg h-[55%] transition-colors"></div>
+                    <div class="flex-1 bg-border-subtle rounded-t-lg h-[70%] transition-colors"></div>
+                    <div class="flex-1 bg-border-subtle rounded-t-lg h-[40%] transition-colors"></div>
+                    <div class="flex-1 bg-border-subtle rounded-t-lg h-[65%] transition-colors"></div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4" data-atropos-offset="8">
+                    <div class="p-4 bg-background-light rounded-xl">
+                      <span class="text-xs text-text-secondary block">Humor</span>
+                      <span class="font-bold">+12% mais ansioso nos últimos três dias</span>
+                    </div>
+                    <div class="p-4 bg-background-light rounded-xl">
+                      <span class="text-xs text-text-secondary block">Sono</span>
+                      <span class="font-bold">Você tem dormido melhor na última semana</span>
+                    </div>
+                  </div>
+
+                  <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-brand-green/5 rounded-full blur-3xl"
+                       data-atropos-offset="-5"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-background-light py-24">
+        <div class="max-w-7xl mx-auto px-container-padding">
+          <div class="text-center mb-16">
+            <h2 class="text-headline-lg font-headline-lg text-4xl mb-4">Por que o nexo?</h2>
+            <p class="text-text-secondary max-w-2xl mx-auto">
+              Tecnologia avançada focada no que realmente importa: seu bem-estar
+              diário e a segurança dos seus dados.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-surface-light p-10 rounded-2xl border border-border-subtle transition-all hover:-translate-y-2">
+              <div class="w-14 h-14 bg-status-active-bg rounded-2xl flex items-center justify-center mb-8">
+                <span class="material-symbols-outlined text-brand-green text-3xl">lock</span>
+              </div>
+              <h3 class="text-headline-md font-headline-md text-xl mb-4">Privacidade</h3>
+              <p class="text-text-secondary font-body-md leading-relaxed">
+                Seus dados de saúde são criptografados de ponta a ponta. Você tem
+                controle total sobre o que compartilha e com quem.
+              </p>
+            </div>
+
+            <div class="bg-surface-light p-10 rounded-2xl border border-border-subtle transition-all hover:-translate-y-2">
+              <div class="w-14 h-14 bg-pill-blue rounded-2xl flex items-center justify-center mb-8">
+                <span class="material-symbols-outlined text-blue-600 text-3xl">sync</span>
+              </div>
+              <h3 class="text-headline-md font-headline-md text-xl mb-4">Sincronização</h3>
+              <p class="text-text-secondary font-body-md leading-relaxed">
+                Acesse seu histórico de qualquer dispositivo. Utilize offline e o
+                app sincronizará.
+              </p>
+            </div>
+
+            <div class="bg-surface-light p-10 rounded-2xl border border-border-subtle transition-all hover:-translate-y-2">
+              <div class="w-14 h-14 bg-pill-purple rounded-2xl flex items-center justify-center mb-8">
+                <span class="material-symbols-outlined text-purple-600 text-3xl">analytics</span>
+              </div>
+              <h3 class="text-headline-md font-headline-md text-xl mb-4">Relatórios</h3>
+              <p class="text-text-secondary font-body-md leading-relaxed">
+                Gere PDFs detalhados para levar ao seu médico ou terapeuta,
+                facilitando o diagnóstico e acompanhamento clínico.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="max-w-7xl mx-auto px-container-padding py-12">
+        <div class="bg-text-primary rounded-[2.5rem] p-12 md:p-20 text-center relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-96 h-96 bg-brand-green/10 rounded-full blur-[100px]"></div>
+          <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-500/10 rounded-full blur-[80px]"></div>
+          <div class="relative z-10 space-y-8">
+            <h2 class="text-white text-4xl md:text-6xl font-extrabold tracking-tight animated-text">
+              Pronto para começar sua jornada?
+            </h2>
+            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto">
+              Explore o código-fonte, e baixe o aplicativo na Google Play. Exporte seus dados quando quiser
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+              <button class="bg-brand-green text-text-primary px-10 py-5 rounded-xl font-bold text-lg shadow-xl shadow-brand-green/20 btn-hover-effect">
+                Começar Grátis agora
+              </button>
+              <a href="https://pira.dev/eletrotupi/tcc"
+                class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-xl font-bold text-lg btn-hover-effect">
+                Visualizar código-fonte
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-background-light border-t border-border-subtle mt-20">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-section-gap px-container-padding py-16 max-w-7xl mx-auto">
+        <div class="col-span-2 md:col-span-1">
+          <div class="text-headline-md font-headline-md text-text-primary mb-6">nexo</div>
+          <p class="text-text-secondary font-body-md mb-6 max-w-xs">
+            Elevando o padrão de cuidado mental convergindo o que é necessário pra você.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-text-primary mb-6">O app</h4>
+          <ul class="space-y-4">
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Funcionalidades</a></li>
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Monografia</a></li>
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Ajuda</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-text-primary mb-6">Sobre</h4>
+          <ul class="space-y-4">
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Fale conosco</a></li>
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Política de Privacidade</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h4 class="font-bold text-text-primary mb-6">Legal</h4>
+          <ul class="space-y-4">
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Termos de uso</a></li>
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Política de Cookies</a></li>
+            <li><a class="text-text-secondary hover:text-text-primary transition-all" href="#">Segurança</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-border-subtle py-8 text-center text-label-sm font-label-sm text-text-secondary">
+        © 2025 <a href="https://cabotia.dev">cabotia</a>.
+        Todos os direitos reservados. Código-fonte e texto sob os termos das
+        respectivas licenças.
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/glide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/atropos/atropos.min.js"></script>
+    <script src="/js/app.js">
+    </script>
+  </body>
+</html>
