@@ -52,6 +52,13 @@ export default function RootLayout() {
               }}
             />
 
+            <Stack.Screen
+              name="triggers/new"
+              options={{
+                title: "Registrar Gatilho"
+              }}
+            />
+
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
         </AuthProvider>

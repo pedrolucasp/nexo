@@ -18,6 +18,10 @@ export default function Actions() {
     router.push('/sleep/new')
   }
 
+  const onPressTrigger = () => {
+    router.push('/triggers/new')
+  }
+
   return (
     <ScreenLayout userName={user.firstName} userAvatar={user.avatarURL}
       onNotificationPress={() => console.log('Notifications')}
@@ -63,7 +67,7 @@ export default function Actions() {
           </Text>
         </Card>
 
-        <Card style={{ padding: Spacing.cardGap }}>
+        <Card style={{ padding: Spacing.cardGap }} onPress={onPressTrigger}>
           <View style={[styles.cardIcon, { backgroundColor: '#FFF7ED' }]}>
             <Ionicons name="flash-outline" size={20} color="#EA580C" />
           </View>
