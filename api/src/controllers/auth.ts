@@ -137,7 +137,10 @@ export const AuthController = {
           firstName: user.firstName,
           email: user.email,
           lastName: user.lastName,
-          updatedAt: user.updatedAt
+          updatedAt: user.updatedAt,
+          active: user.active,
+          avatarKey: user.avatarKey,
+          avatarURL: user.avatarURL
         }
       });
     } catch (err: any) {
@@ -192,11 +195,11 @@ export const AuthController = {
       const expiresAt = addMinutes(new Date(), 5);
       await storeActivationCode(user.id, code, expiresAt);
 
-      //const mailQueue = getQueue('mail');
-      //const job = await mailQueue.add(MailJobName.ActivateAccountEmail, {
-      //  userId: user.id,
-      //  code: code
-      //});
+      const mailQueue = getQueue('mail');
+      const job = await mailQueue.add(MailJobName.ActivateAccountEmail, {
+        userId: user.id,
+        code: code
+      });
 
       res.json({
         user
