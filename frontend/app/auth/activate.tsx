@@ -22,7 +22,7 @@ export default function ActivateScreen() {
     code?: string;
   }>({});
 
-  const { activate } = useAuth();
+  const { activate, requestActivateCode } = useAuth();
   const [loading, setLoading] = useState(false);
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
@@ -63,6 +63,12 @@ export default function ActivateScreen() {
   };
 
   const resendCode = async () => {
+    await requestActivateCode()
+
+    Alert.alert(
+      "Novo código",
+      "Enviado novo código, verifique sua caixa de entrada"
+    );
   }
 
   return (
@@ -106,7 +112,7 @@ export default function ActivateScreen() {
               Não recebeu?{' '}
             </Text>
 
-            <Button variant="outline" title="Reenviar um novo código" onPressed={resendCode} />
+            <Button variant="outline" title="Reenviar um novo código" onPress={resendCode} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

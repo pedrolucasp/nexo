@@ -100,6 +100,12 @@ class ApiClient {
     });
   }
 
+  async requestActivateCode(): Promise<void> {
+    return this.request('/auth/resend_code', {
+      method: 'POST'
+    })
+  }
+
   async signup(user: SignUpPayload): Promise<AuthResponse> {
     const response = await this.request<AuthResponse>('/users', {
       method: 'POST',

@@ -10,15 +10,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  updateAuthUser: (user: {
-    firstName: string;
-    lastName?: string;
-    email: string;
-    updatedAt: date;
-    avatarURL?: string;
-    avatarKey?: string;
-    active: boolean;
-  }) => void;
+  updateAuthUser: (user: User) => void;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: {
     firstName: string;
@@ -30,6 +22,7 @@ interface AuthContextType {
   forgotPassword: (email: string) => Promise<{ message: string; token?: string }>;
   resetPassword: (token: string, password: string) => Promise<void>;
   activate: (code: string) => Promise<void>;
+  requestActivateCode: () => Promise<void>;
 }
 
 export function sanitizeUser(data: any): User {
@@ -78,11 +71,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setUser({
             id: verifyResponse.userId,
             email: verifyResponse.email,
-            firstName: verifyResponse.user.firstName,
-            lastName: verifyResponse.user.lastName,
-            avatarURL: verifyResponse.user.avatarURL,
-            avatarKey: verifyResponse.user.avatarKey,
-            active: verifyResponse.user.active
+            ...verifyResponse.user
           });
         }
       }
@@ -147,14 +136,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const response = await apiClient.activate(code);
 
     if (response.user) {
-      updateAuthUser(response.user)
+      setUser(response.user)
     }
 
     return response
   }
 
+  const requestActivateCode = async() => {
+    await apiClient.requestActivateCode();
+  }
+
   const updateAuthUser = (user) => {
-    setUser(sanitizeUser(user));
+    setUser(user);
   }
 
   const value: AuthContextType = {
@@ -167,7 +160,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     forgotPassword,
     resetPassword,
     updateAuthUser,
-    activate
+    activate,
+    requestActivateCode
   };
 
   return (

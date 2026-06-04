@@ -40,8 +40,6 @@ export default function Profile() {
     setFirstName(user.firstName)
     setLastName(user.lastName)
     setEmail(user.email)
-
-    console.log("User@profile", user);
   }, [user])
 
   const backgroundColor = useThemeColor({}, 'background');
