@@ -3,38 +3,38 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
 // Primary Colors
-const NEON_GREEN = '#13ec5b';
-const PRIMARY_DARK = '#0f172a';
+const NEON_GREEN = "#13ec5b";
+const PRIMARY_DARK = "#0f172a";
 
 // Surface & Background
-const BACKGROUND_LIGHT = '#f6f8f6';
-const SURFACE_LIGHT = '#ffffff';
-const BACKGROUND_DARK_GHOST = '#F8FAFC';
+const BACKGROUND_LIGHT = "#f6f8f6";
+const SURFACE_LIGHT = "#ffffff";
+const BACKGROUND_DARK_GHOST = "#F8FAFC";
 
 // Text Colors
-const TEXT_PRIMARY = '#0f172a';
-const TEXT_SECONDARY = '#64748b';
-const TEXT_PLACEHOLDER = '#94A3B8';
+const TEXT_PRIMARY = "#0f172a";
+const TEXT_SECONDARY = "#64748b";
+const TEXT_PLACEHOLDER = "#94A3B8";
 
 // Borders & Accents
-const BORDER_SUBTLE = '#f1f5f9';
-const BORDER_SUBTLE_GRAY = '#E5E7EB';
-const BORDER_SUBTLE_LIGHT_GRAY = '#CBD5E1';
-const STATUS_ACTIVE_BG = 'rgba(19, 236, 91, 0.1)';
+const BORDER_SUBTLE = "#f1f5f9";
+const BORDER_SUBTLE_GRAY = "#E5E7EB";
+const BORDER_SUBTLE_LIGHT_GRAY = "#CBD5E1";
+const STATUS_ACTIVE_BG = "rgba(19, 236, 91, 0.1)";
 
 // Semantic Color Pills and stuff
-const PILL_BLUE = '#dbeafe';
-const PILL_INDIGO = '#e0e7ff';
-const PILL_PURPLE = '#f3e8ff';
+const PILL_BLUE = "#dbeafe";
+const PILL_INDIGO = "#e0e7ff";
+const PILL_PURPLE = "#f3e8ff";
 
-const tintColorLight = '#12ED5C';
-const tintColorSecondary = '#618A70';
-const black = '#0F172A';
-const gray = '#475569';
-const lightGray = '#64748B'
+const tintColorLight = "#12ED5C";
+const tintColorSecondary = "#618A70";
+const black = "#0F172A";
+const gray = "#475569";
+const lightGray = "#64748B";
 
 export const Colors = {
   light: {
@@ -63,12 +63,12 @@ export const Colors = {
     // Cards & Containers
     cardBackground: SURFACE_LIGHT,
     cardBorder: BORDER_SUBTLE,
-    cardShadow: 'rgba(0, 0, 0, 0.05)',
+    cardShadow: "rgba(0, 0, 0, 0.05)",
 
     // Active / Inactive States
     activeBackground: STATUS_ACTIVE_BG,
     inactiveOpacity: 0.7,
-    moodIntensityLabel: '#94a3b8',
+    moodIntensityLabel: "#94a3b8",
 
     // Semantic Accents (for categorization)
     accentBlue: PILL_BLUE,
@@ -76,12 +76,12 @@ export const Colors = {
     accentPurple: PILL_PURPLE,
 
     // Disabled / Secondary
-    disabled: '#cbd5e1',
+    disabled: "#cbd5e1",
     divider: BORDER_SUBTLE,
-    sliderTracking: '#E2E8F0',
-    sliderLabels: '#94a3b8',
-    danger: '#EF4444',
-    textBlack: PRIMARY_DARK
+    sliderTracking: "#E2E8F0",
+    sliderLabels: "#94a3b8",
+    danger: "#EF4444",
+    textBlack: PRIMARY_DARK,
   },
 };
 
@@ -89,61 +89,61 @@ export const Typography = {
   // Headlines
   headlineXg: {
     fontFamily: Platform.select({
-      android: 'Inter_900Black',
-      default: 'Inter',
+      android: "Inter_900Black",
+      default: "Inter",
     }),
     fontSize: 36,
-    fontWeight: '900' as const,
+    fontWeight: "900" as const,
     lineHeight: 40,
   },
   headlineLg: {
     fontFamily: Platform.select({
-      android: 'Inter_900Black',
-      default: 'Inter',
+      android: "Inter_900Black",
+      default: "Inter",
     }),
     fontSize: 20,
-    fontWeight: '900' as const,
+    fontWeight: "900" as const,
     lineHeight: 28,
     letterSpacing: -0.02,
   },
   headlineMd: {
     fontFamily: Platform.select({
-      android: 'Inter',
-      default: 'Inter',
+      android: "Inter",
+      default: "Inter",
     }),
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: "700" as const,
     lineHeight: 24,
   },
 
   // Body
   bodyLg: {
     fontFamily: Platform.select({
-      android: 'Inter',
-      default: 'Inter',
+      android: "Inter",
+      default: "Inter",
     }),
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: "700" as const,
     lineHeight: 20,
   },
   bodyMd: {
     fontFamily: Platform.select({
-      android: 'Inter',
-      default: 'Inter',
+      android: "Inter",
+      default: "Inter",
     }),
     fontSize: 14,
-    fontWeight: '500' as const,
+    fontWeight: "500" as const,
     lineHeight: 20,
   },
 
   // Labels
   labelSm: {
     fontFamily: Platform.select({
-      android: 'Inter',
-      default: 'Inter',
+      android: "Inter",
+      default: "Inter",
     }),
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: "600" as const,
     lineHeight: 16,
     letterSpacing: 0.05,
   },
@@ -151,30 +151,30 @@ export const Typography = {
   // Used for the Slider labels
   labelXs: {
     fontFamily: Platform.select({
-      android: 'Inter',
-      default: 'Inter',
+      android: "Inter",
+      default: "Inter",
     }),
     fontSize: 10,
     lineHeight: 15,
-    letterSpacing: 0.25
+    letterSpacing: 0.25,
   },
 
   cardHint: {
     fontFamily: Platform.select({
-      android: 'Inter',
-      default: 'Inter',
+      android: "Inter",
+      default: "Inter",
     }),
     fontSize: 11,
     lineHeight: 13.8,
-    fontStyle: "italic"
-  }
+    fontStyle: "italic",
+  },
 };
 
 export const Spacing = {
   containerPadding: 16, // 1rem
   sectionGap: 32, // 2rem
   inlineGapSm: 8, // 0.5rem
-  cardGap: 12 // 0.75rem
+  cardGap: 12, // 0.75rem
 };
 
 export const BorderRadius = {
@@ -188,14 +188,14 @@ export const BorderRadius = {
 
 export const Shadows = {
   sm: {
-    shadowColor: '#000000',
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
     elevation: 2,
   },
   md: {
-    shadowColor: '#000000',
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -212,10 +212,10 @@ export const Shadows = {
 
 export const Fonts = Platform.select({
   default: {
-    sans: 'Inter',
-    serif: 'serif',
-    rounded: 'Inter',
-    mono: 'monospace',
+    sans: "Inter",
+    serif: "serif",
+    rounded: "Inter",
+    mono: "monospace",
   },
 });
 
@@ -224,5 +224,5 @@ export const Theme = {
   typography: Typography,
   spacing: Spacing,
   shadows: Shadows,
-  borderRadius: BorderRadius
+  borderRadius: BorderRadius,
 };
