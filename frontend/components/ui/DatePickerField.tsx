@@ -1,18 +1,28 @@
 import { useState, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, Platform } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Colors } from '@/constants/theme';
-import { Label } from '@/components/ui/Input';
+import { MaterialIcons } from "@expo/vector-icons";
+import { Colors } from "@/constants/theme";
+import { Label } from "@/components/ui/Input";
 
-export default function DatePickerField({
+interface DatePickerProps {
+  label: string;
+  initialDate?: Date;
+  onChange: (date: Date) => void;
+  minimumDate?: Date;
+  maximumDate?: Date;
+}
+
+export const DatePickerField: React.FC<DatePickerProps> = ({
   label,
   initialDate = new Date(),
   onChange,
   minimumDate,
   maximumDate,
-}) {
+}) => {
   const [date, setDate] = useState(initialDate);
   const [show, setShow] = useState(false);
 
@@ -22,7 +32,7 @@ export default function DatePickerField({
 
   const openPicker = () => setShow(true);
 
-  const handleChange = (event, selectedDate) => {
+  const handleChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShow(false);
 
     if (selectedDate) {
@@ -37,10 +47,12 @@ export default function DatePickerField({
     <View>
       <Label text={label} />
 
-      <Pressable onPress={openPicker}
-                 style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+      <Pressable
+        onPress={openPicker}
+        style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      >
         <Text style={styles.dateText}>{formatted}</Text>
-        <MaterialCommunityIcons name="calendar-outline" size={22} color="#6B7280" />
+        <MaterialIcons name="calendar-month" size={22} color="#6B7280" />
       </Pressable>
 
       {show && (
@@ -55,16 +67,16 @@ export default function DatePickerField({
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   label: {
-    fontWeight: '500',
+    fontWeight: "500",
     color: Colors.light.textSecondary,
     fontSize: 12,
     marginBottom: 8,
     letterSpacing: 0.5,
-    textTransform: 'uppercase'
+    textTransform: "uppercase",
   },
   container: {
     flexDirection: "row",
@@ -87,4 +99,3 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-

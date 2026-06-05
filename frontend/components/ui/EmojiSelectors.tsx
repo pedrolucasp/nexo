@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Pressable,
@@ -7,15 +7,15 @@ import {
   Text,
   ImageSourcePropType,
   ViewStyle,
-} from 'react-native';
-import { Spacing, Typography, BorderRadius } from '@/constants/theme';
-import { useThemeColor } from '@/hooks/use-theme-color';
+} from "react-native";
+import { Spacing, Typography, BorderRadius } from "@/constants/theme";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 type IconSource = string | ImageSourcePropType; // either string or a svg
 
 // Specialized variant with labels below
 interface MoodSelectorProps {
-  items: Array<{
+  items: T<{
     id: string;
     icon: IconSource;
     label: string;
@@ -33,39 +33,39 @@ export const MoodSelector: React.FC<MoodSelectorProps> = ({
   disabled = false,
   style,
 }) => {
-  const accentBlueColor = useThemeColor({}, 'accentBlue');
-  const tintColor = useThemeColor({}, 'tint');
-  const surfaceColor = useThemeColor({}, 'surface');
-  const dividerColor = useThemeColor({}, 'divider');
-  const textSecondaryColor = useThemeColor({}, 'textSecondary');
+  const accentBlueColor = useThemeColor({}, "accentBlue");
+  const tintColor = useThemeColor({}, "tint");
+  const surfaceColor = useThemeColor({}, "surface");
+  const dividerColor = useThemeColor({}, "divider");
+  const textSecondaryColor = useThemeColor({}, "textSecondary");
 
   const styles = StyleSheet.create({
     container: {
-      flexDirection: 'row',
+      flexDirection: "row",
       gap: Spacing.inlineGapSm,
-      justifyContent: 'space-around',
-      alignItems: 'flex-start',
-      flexWrap: 'wrap',
+      justifyContent: "space-around",
+      alignItems: "flex-start",
+      flexWrap: "wrap",
     },
     itemWrapper: {
-      alignItems: 'center',
+      alignItems: "center",
       gap: 8,
       flex: 1,
-      minWidth: '8%',
+      minWidth: "8%",
     },
     itemButton: {
       width: 50,
       height: 50,
       borderRadius: BorderRadius.lg,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       backgroundColor: surfaceColor,
       borderWidth: 1,
       borderColor: dividerColor,
     },
     itemButtonActive: {
       backgroundColor: accentBlueColor,
-      borderColor: 'transparent',
+      borderColor: "transparent",
     },
     icon: {
       fontSize: 48,
@@ -77,13 +77,14 @@ export const MoodSelector: React.FC<MoodSelectorProps> = ({
     },
     label: {
       fontSize: Typography.labelSm.fontSize,
-      fontWeight: '500',
+      fontWeight: "500",
       color: textSecondaryColor,
-      textAlign: 'center',
+      textAlign: "center",
     },
   });
 
-  const isEmoji = (icon: IconSource): icon is string => typeof icon === 'string';
+  const isEmoji = (icon: IconSource): icon is string =>
+    typeof icon === "string";
 
   return (
     <View style={[styles.container, style]}>
