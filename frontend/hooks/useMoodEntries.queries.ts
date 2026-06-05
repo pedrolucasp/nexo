@@ -3,20 +3,20 @@ import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
-import { apiClient, MoodEntry, CreateMoodEntryPayload } from '@/lib/api';
+import { apiClient, MoodEntry, CreateMoodEntryPayload } from "@/lib/api";
 
 export const moodKeys = {
-  all:    () => ['mood-entries'] as const,
-  lists:  () => [...moodKeys.all(), 'list'] as const,
-  list:   (filters?: MoodEntryFilters) => [...moodKeys.lists(), filters] as const,
-  detail: (id: string) => [...moodKeys.all(), 'detail', id] as const,
+  all: () => ["mood-entries"] as const,
+  lists: () => [...moodKeys.all(), "list"] as const,
+  list: (filters?: MoodEntryFilters) => [...moodKeys.lists(), filters] as const,
+  detail: (id: string) => [...moodKeys.all(), "detail", id] as const,
 };
 
 interface MoodEntryFilters {
-  from?: string;   // ISO date
-  to?: string;     // ISO date
+  from?: string; // ISO date
+  to?: string; // ISO date
   limit?: number;
 }
 
@@ -29,18 +29,18 @@ export const useMoodEntries = (filters?: MoodEntryFilters) => {
     queryKey: moodKeys.list(filters),
     queryFn: () => apiClient.getMoodEntries(filters),
   });
-}
+};
 
 // Infinite scroll version
 export const useMoodEntriesInfinite = (limit = 20) => {
   return useInfiniteQuery({
-    queryKey: [...moodKeys.lists(), 'infinite'],
+    queryKey: [...moodKeys.lists(), "infinite"],
     queryFn: ({ pageParam = 1 }) =>
       apiClient.getMoodEntries({ page: pageParam, limit }),
     getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
     initialPageParam: 1,
   });
-}
+};
 
 // Single entry detail
 export const useMoodEntry = (id: string) => {
@@ -49,7 +49,7 @@ export const useMoodEntry = (id: string) => {
     queryFn: () => apiClient.getMoodEntry(id),
     enabled: !!id,
   });
-}
+};
 
 // MUTATIONS
 
@@ -97,7 +97,7 @@ export const useCreateMoodEntry = () => {
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
     },
   });
-}
+};
 
 // Delete a mood entry with optimistic removal
 export const useDeleteMoodEntry = () => {
@@ -111,7 +111,7 @@ export const useDeleteMoodEntry = () => {
       const previous = queryClient.getQueryData(moodKeys.list());
 
       queryClient.setQueryData(moodKeys.list(), (old: MoodEntry[] = []) =>
-        old.filter((e) => e.id !== id)
+        old.filter((e) => e.id !== Number(id)),
       );
 
       return { previous };
@@ -127,4 +127,4 @@ export const useDeleteMoodEntry = () => {
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
     },
   });
-}
+};

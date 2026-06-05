@@ -1,13 +1,19 @@
-export {
-  apiClient
-} from '@/lib/api/client';
+export { apiClient } from "@/lib/api/client";
 
 export type {
   User,
   AuthResponse,
+  PaginatedResponse,
+  // Mood
+  MoodEntry,
   CreateMoodEntryPayload,
   MoodComponentPayload,
-  PaginatedResponse,
+  // User
   UserUpdateResponse,
+  // Sleep
   SleepRecordPayload,
-} from '@/lib/api/types';
+  SleepRecord,
+  // Trigger
+  Trigger,
+  CreateTriggerPayload,
+} from "@/lib/api/types";

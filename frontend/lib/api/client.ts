@@ -7,11 +7,16 @@ import {
   ResetPasswordRequestResponse,
   ResetPasswordResponse,
   UserUpdatePayload,
-  UserUpdateResponse,
-  MoodComponentPayload,
-  MoodEntryPayload,
+  CreateMoodEntryPayload,
   SleepRecordPayload,
+  MoodEntry,
+  SleepRecord,
+  SleepRecordResponse,
+  MoodEntryResponse,
+  Trigger,
+  TriggerResponse,
   CreateTriggerPayload,
+  ActivateResponse,
   PaginatedResponse,
 } from "@/lib/api/types";
 
@@ -21,7 +26,7 @@ const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY;
 class ApiClient {
   private async getStoredToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(TOKEN_KEY);
+      return await SecureStore.getItemAsync(TOKEN_KEY!);
     } catch (error) {
       console.error("Failed to get stored token:", error);
       return null;
@@ -30,7 +35,7 @@ class ApiClient {
 
   private async storeToken(token: string): Promise<void> {
     try {
-      await SecureStore.setItemAsync(TOKEN_KEY, token);
+      await SecureStore.setItemAsync(TOKEN_KEY!, token);
     } catch (error) {
       console.error("Failed to store token:", error);
       throw error;
@@ -39,7 +44,7 @@ class ApiClient {
 
   private async removeToken(): Promise<void> {
     try {
-      await SecureStore.deleteItemAsync(TOKEN_KEY);
+      await SecureStore.deleteItemAsync(TOKEN_KEY!);
     } catch (error) {
       console.error("Failed to remove token:", error);
     }
@@ -212,7 +217,7 @@ class ApiClient {
 
   // Sleep Record
   async createSleepRecord(
-    sleepRecord: CreateSleepRecordPayload,
+    sleepRecord: SleepRecordPayload,
   ): Promise<SleepRecordResponse> {
     return await this.request(`/sleep_records`, {
       method: "POST",

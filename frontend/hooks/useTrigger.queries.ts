@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient, Trigger, CreateTriggerPayload } from "@/lib/api";
 
@@ -101,7 +96,7 @@ export const useDeleteTrigger = () => {
       const previous = queryClient.getQueryData(triggerKeys.list());
 
       queryClient.setQueryData(triggerKeys.list(), (old: Trigger[] = []) =>
-        old.filter((e) => e.id !== id),
+        old.filter((e) => e.id !== Number(id)),
       );
 
       return { previous };

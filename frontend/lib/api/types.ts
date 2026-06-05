@@ -129,3 +129,15 @@ export interface PaginatedResponse<T> {
   page: number;
   nextPage: number | null;
 }
+
+export interface MoodEntryResponse {
+  moodEntry: MoodEntry;
+}
+
+export interface SleepRecordResponse {
+  sleepRecord: SleepRecord;
+}
+
+export interface TriggerResponse {
+  trigger: Trigger;
+}

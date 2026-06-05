@@ -1,21 +1,18 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { apiClient, SleepRecord, SleepRecordPayload } from '@/lib/api';
+import { apiClient, SleepRecord, SleepRecordPayload } from "@/lib/api";
 
 export const sleepRecordKeys = {
-  all:    () => ['sleep-records'] as const,
-  lists:  () => [...sleepRecordKeys.all(), 'list'] as const,
-  list:   (filters?: SleepRecordFilters) => [...sleepRecordKeys.lists(), filters] as const,
-  detail: (id: string) => [...sleepRecordKeys.all(), 'detail', id] as const,
+  all: () => ["sleep-records"] as const,
+  lists: () => [...sleepRecordKeys.all(), "list"] as const,
+  list: (filters?: SleepRecordFilters) =>
+    [...sleepRecordKeys.lists(), filters] as const,
+  detail: (id: string) => [...sleepRecordKeys.all(), "detail", id] as const,
 };
 
 interface SleepRecordFilters {
-  from?: string;   // ISO date
-  to?: string;     // ISO date
+  from?: string; // ISO date
+  to?: string; // ISO date
   limit?: number;
 }
 
@@ -39,15 +36,18 @@ export const useCreateSleepRecord = () => {
       const previous = queryClient.getQueryData(sleepRecordKeys.list());
 
       // TODO: might as well create a shared attrs that we're keeping it
-      queryClient.setQueryData(sleepRecordKeys, (old: SleepRecord[] = []) => [
-        {
-          ...payload,
-          id: `temp-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          _optimistic: true,
-        },
-        ...old,
-      ]);
+      queryClient.setQueryData(
+        sleepRecordKeys.list(),
+        (old: SleepRecord[] = []) => [
+          {
+            ...payload,
+            id: `temp-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            _optimistic: true,
+          },
+          ...old,
+        ],
+      );
 
       return { previous };
     },
@@ -62,4 +62,4 @@ export const useCreateSleepRecord = () => {
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
     },
   });
-}
+};
