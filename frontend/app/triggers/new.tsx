@@ -5,19 +5,21 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { router } from "expo-router";
 
 import { Card } from "@/components/ui/Cards";
-import { Input, TextArea } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useCreateTrigger } from "@/hooks";
+import { useCreateTrigger, useMoodEntries } from "@/hooks";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
 import { TimePicker } from "@/components/ui/TimePicker";
+import { getMood } from "@/constants/moods";
+import { LinkRow } from "@/components/ui/LinkRow";
 
 const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] = [
   {
@@ -52,6 +54,15 @@ export default function NewTrigger() {
   const [comment, setComment] = useState("");
   const [category, setCategory] = useState("WORK");
   const createTrigger = useCreateTrigger();
+  const [linkMood, setLinkMood] = useState(false);
+  const { data: moodEntries, isLoading: isLoadingMood } = useMoodEntries({
+    limit: 1,
+  });
+
+  const latestMood = moodEntries?.entries[0] ?? null;
+  const moodDef = latestMood
+    ? getMood(latestMood.selectedMood.toLowerCase())
+    : null;
 
   const save = async () => {
     const data = {
@@ -118,6 +129,46 @@ export default function NewTrigger() {
             </Card>
           </Section>
 
+          <Section>
+            <SectionHeader title="Vincular registro" />
+
+            <LinkRow
+              icon={
+                <View
+                  style={[styles.iconWrap, { backgroundColor: "transparent" }]}
+                >
+                  <Text style={styles.moodIconEmoji}>
+                    {moodDef?.icon ?? "😐"}
+                  </Text>
+                </View>
+              }
+              label="Humor atual"
+              sublabel={
+                isLoadingMood ? "..." : (moodDef?.label ?? "Nenhum registrado")
+              }
+              disabled={!latestMood}
+              value={linkMood && !!latestMood}
+              onToggle={setLinkMood}
+            />
+
+            <LinkRow
+              icon={
+                <MaterialIcons
+                  name="psychology"
+                  size={40}
+                  color={Colors.light.disabled}
+                />
+              }
+              label="Atividade"
+              sublabel={"Nenhuma registrada"}
+              disabled={true}
+              value={false}
+              onToggle={() => {
+                console.log("When we get that");
+              }}
+            />
+          </Section>
+
           <Button title="Salvar Registro" onPress={save} />
         </View>
       </ScrollView>
@@ -165,5 +216,16 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
+  },
+  moodIconEmoji: {
+    fontSize: 26,
+  },
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 1,
   },
 });
