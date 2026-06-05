@@ -17,6 +17,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useCreateTrigger } from "@/hooks";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
+import { TimePicker } from "@/components/ui/TimePicker";
 
 const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] = [
   {
@@ -86,6 +87,11 @@ export default function NewTrigger() {
               emocionais
             </Text>
           </View>
+
+          <Section>
+            <SectionHeader title="Horário do Evento" />
+            <TimePicker value={moment} onChange={setMoment} />
+          </Section>
 
           <Section>
             <SectionHeader title="Selecionar uma categoria" />
