@@ -1,4 +1,4 @@
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 import {
   User,
   AuthResponse,
@@ -11,8 +11,9 @@ import {
   MoodComponentPayload,
   MoodEntryPayload,
   SleepRecordPayload,
-  PaginatedResponse
-} from '@/lib/api/types';
+  CreateTriggerPayload,
+  PaginatedResponse,
+} from "@/lib/api/types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY;
@@ -22,7 +23,7 @@ class ApiClient {
     try {
       return await SecureStore.getItemAsync(TOKEN_KEY);
     } catch (error) {
-      console.error('Failed to get stored token:', error);
+      console.error("Failed to get stored token:", error);
       return null;
     }
   }
@@ -31,7 +32,7 @@ class ApiClient {
     try {
       await SecureStore.setItemAsync(TOKEN_KEY, token);
     } catch (error) {
-      console.error('Failed to store token:', error);
+      console.error("Failed to store token:", error);
       throw error;
     }
   }
@@ -40,7 +41,7 @@ class ApiClient {
     try {
       await SecureStore.deleteItemAsync(TOKEN_KEY);
     } catch (error) {
-      console.error('Failed to remove token:', error);
+      console.error("Failed to remove token:", error);
     }
   }
 
@@ -51,7 +52,7 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> {
     const token = await this.getStoredToken();
     const isFormData = options.body instanceof FormData;
@@ -60,7 +61,7 @@ class ApiClient {
       ...options,
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),
-        ...(!isFormData && { 'Content-Type': 'application/json' }),
+        ...(!isFormData && { "Content-Type": "application/json" }),
         ...options.headers,
       },
     };
@@ -68,10 +69,11 @@ class ApiClient {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
     if (!response.ok) {
-      const error = await response.json()
-        .catch(() => ({ error: 'Network error' }));
+      const error = await response
+        .json()
+        .catch(() => ({ error: "Network error" }));
 
-      console.error("[API]: ", error, response.status)
+      console.error("[API]: ", error, response.status);
 
       throw new Error(error.error || `HTTP ${response.status}`);
     }
@@ -80,9 +82,12 @@ class ApiClient {
   }
 
   // Auth
-  async login(email: string, password: string): Promise<AuthResponse | { isActive: boolean }> {
-    const response = await this.request<AuthResponse>('/auth/login', {
-      method: 'POST',
+  async login(
+    email: string,
+    password: string,
+  ): Promise<AuthResponse | { isActive: boolean }> {
+    const response = await this.request<AuthResponse>("/auth/login", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
     });
 
@@ -94,21 +99,21 @@ class ApiClient {
   }
 
   async activate(code: number): Promise<ActivateResponse> {
-    return this.request('/auth/activate', {
-      method: 'POST',
+    return this.request("/auth/activate", {
+      method: "POST",
       body: JSON.stringify({ code }),
     });
   }
 
   async requestActivateCode(): Promise<void> {
-    return this.request('/auth/resend_code', {
-      method: 'POST'
-    })
+    return this.request("/auth/resend_code", {
+      method: "POST",
+    });
   }
 
   async signup(user: SignUpPayload): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>('/users', {
-      method: 'POST',
+    const response = await this.request<AuthResponse>("/users", {
+      method: "POST",
       body: JSON.stringify({ user }),
     });
 
@@ -117,22 +122,25 @@ class ApiClient {
   }
 
   async forgotPassword(email: string): Promise<ResetPasswordRequestResponse> {
-    return this.request('/auth/forgot-password', {
-      method: 'POST',
+    return this.request("/auth/forgot-password", {
+      method: "POST",
       body: JSON.stringify({ email }),
     });
   }
 
-  async resetPassword(token: string, password: string): Promise<ResetPasswordResponse> {
-    return this.request('/auth/reset-password', {
-      method: 'POST',
+  async resetPassword(
+    token: string,
+    password: string,
+  ): Promise<ResetPasswordResponse> {
+    return this.request("/auth/reset-password", {
+      method: "POST",
       body: JSON.stringify({ token, newPassword: password }),
     });
   }
 
   async verifyToken(): Promise<VerifyTokenResponse> {
     try {
-      return await this.request('/auth/verify');
+      return await this.request("/auth/verify");
     } catch (error) {
       // Token is invalid or expired
       await this.removeToken();
@@ -147,33 +155,35 @@ class ApiClient {
   // User-related
   async updateUser(user: UserUpdatePayload): Promise<User> {
     return await this.request(`/users/${user.id}`, {
-      method: 'PUT',
-      body: JSON.stringify({ user })
-    })
+      method: "PUT",
+      body: JSON.stringify({ user }),
+    });
   }
 
   async avatar(formData: FormData): Promise<User> {
     return await this.request(`/users/me/avatar`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       } as any,
-    })
+    });
   }
 
   async removeAvatar(): Promise<void> {
     return await this.request(`/users/me/avatar`, {
-      method: 'DELETE'
+      method: "DELETE",
     });
   }
 
   // Mood-related
-  async createMoodEntry(mood: CreateMoodEntryPayload): Promise<MoodEntryResponse> {
+  async createMoodEntry(
+    mood: CreateMoodEntryPayload,
+  ): Promise<MoodEntryResponse> {
     return await this.request(`/moods`, {
-      method: 'POST',
-      body: JSON.stringify({ mood })
-    })
+      method: "POST",
+      body: JSON.stringify({ mood }),
+    });
   }
 
   async getMoodEntries(params?: {
@@ -183,13 +193,13 @@ class ApiClient {
     limit?: number;
   }): Promise<PaginatedResponse<MoodEntry>> {
     const query = new URLSearchParams();
-    if (params?.from)  query.set('from', params.from);
-    if (params?.to)    query.set('to', params.to);
-    if (params?.page)  query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.from) query.set("from", params.from);
+    if (params?.to) query.set("to", params.to);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
 
     const qs = query.toString();
-    return this.request(`/moods${qs ? `?${qs}` : ''}`);
+    return this.request(`/moods${qs ? `?${qs}` : ""}`);
   }
 
   async getMoodEntry(id: string): Promise<MoodEntry> {
@@ -197,15 +207,17 @@ class ApiClient {
   }
 
   async deleteMoodEntry(id: string): Promise<void> {
-    return this.request(`/moods/${id}`, { method: 'DELETE' });
+    return this.request(`/moods/${id}`, { method: "DELETE" });
   }
 
   // Sleep Record
-  async createSleepRecord(sleepRecord: CreateSleepRecordPayload): Promise<SleepRecordResponse> {
+  async createSleepRecord(
+    sleepRecord: CreateSleepRecordPayload,
+  ): Promise<SleepRecordResponse> {
     return await this.request(`/sleep_records`, {
-      method: 'POST',
-      body: JSON.stringify({ sleepRecord })
-    })
+      method: "POST",
+      body: JSON.stringify({ sleepRecord }),
+    });
   }
 
   async getSleepRecords(params?: {
@@ -215,13 +227,45 @@ class ApiClient {
     limit?: number;
   }): Promise<PaginatedResponse<SleepRecord>> {
     const query = new URLSearchParams();
-    if (params?.from)  query.set('from', params.from);
-    if (params?.to)    query.set('to', params.to);
-    if (params?.page)  query.set('page', String(params.page));
-    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.from) query.set("from", params.from);
+    if (params?.to) query.set("to", params.to);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
 
     const qs = query.toString();
-    return this.request(`/sleep_records${qs ? `?${qs}` : ''}`);
+    return this.request(`/sleep_records${qs ? `?${qs}` : ""}`);
+  }
+
+  // Trigger
+  async createTrigger(trigger: CreateTriggerPayload): Promise<TriggerResponse> {
+    return await this.request(`/triggers`, {
+      method: "POST",
+      body: JSON.stringify({ trigger }),
+    });
+  }
+
+  async getTriggers(params?: {
+    from?: string;
+    to?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResponse<Trigger>> {
+    const query = new URLSearchParams();
+    if (params?.from) query.set("from", params.from);
+    if (params?.to) query.set("to", params.to);
+    if (params?.page) query.set("page", String(params.page));
+    if (params?.limit) query.set("limit", String(params.limit));
+
+    const qs = query.toString();
+    return this.request(`/triggers${qs ? `?${qs}` : ""}`);
+  }
+
+  async getTrigger(id: string): Promise<Trigger> {
+    return this.request(`/triggers/${id}`);
+  }
+
+  async deleteTrigger(id: string): Promise<void> {
+    return this.request(`/triggers/${id}`, { method: "DELETE" });
   }
 }
 

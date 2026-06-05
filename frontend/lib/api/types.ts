@@ -7,36 +7,36 @@ export interface User {
   avatarKey?: string;
   avatarURL?: string;
   active: boolean;
-};
+}
 
 // Auth
 export interface AuthResponse {
   token: string;
   user: User;
-};
+}
 
 export interface VerifyTokenResponse {
   valid: boolean;
   userId?: number;
   email?: string;
-  user: Pick<User, 'firstName' | 'lastName'>;
-};
+  user: Pick<User, "firstName" | "lastName">;
+}
 
 export interface SignUpPayload {
   firstName: string;
   lastName?: string;
   email: string;
   password: string;
-};
+}
 
 export interface ResetPasswordRequestResponse {
   message: string;
   token?: string;
-};
+}
 
 export interface ResetPasswordResponse {
   message: string;
-};
+}
 
 export interface ActivateResponse {
   activated: boolean;
@@ -48,14 +48,14 @@ export interface UserUpdatePayload extends Partial<User> {
 }
 
 export interface UserUpdateResponse {
-  user: User
-};
+  user: User;
+}
 
 // Mood entries
 export interface MoodComponentPayload {
   component: string;
   intensity: string;
-};
+}
 
 export interface CreateMoodEntryPayload {
   annotation: string;
@@ -64,8 +64,8 @@ export interface CreateMoodEntryPayload {
   anxietyLevel: number;
   energyLevel: number;
   stressLevel: number;
-  moodComponents: MoodComponentPayload[]
-};
+  moodComponents: MoodComponentPayload[];
+}
 
 export interface MoodComponent {
   id: number;
@@ -94,7 +94,7 @@ export interface SleepRecordPayload {
   average: number;
   annotations: string;
   date: Date;
-};
+}
 
 export interface SleepRecord {
   id: number;
@@ -105,10 +105,27 @@ export interface SleepRecord {
   updatedAt: Date;
 }
 
+// Trigger
+
+export interface Trigger {
+  id: number;
+  comment: string;
+  category: string;
+  moment: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateTriggerPayload {
+  comment: string;
+  category: string;
+  moment: Date;
+}
+
 // Generic stuff
 export interface PaginatedResponse<T> {
   entries: T[];
   total: number;
   page: number;
   nextPage: number | null;
-};
+}

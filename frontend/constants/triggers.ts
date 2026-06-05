@@ -1,1 +1,7 @@
-export type TriggerCategory = 'work' | 'social' | 'health' | 'family' | 'other';
+export type TriggerCategory =
+  | "WORK"
+  | "SOCIAL"
+  | "HEALTH"
+  | "PHYSICAL"
+  | "FAMILY"
+  | "OTHER";

@@ -1,11 +1,7 @@
 // Legacy shit from react native
-export {
-  useThemeColor
-} from '@/hooks/use-theme-color';
+export { useThemeColor } from "@/hooks/use-theme-color";
 
-export {
-  useColorScheme
-} from '@/hooks/use-color-scheme';
+export { useColorScheme } from "@/hooks/use-color-scheme";
 
 // Custom stuff
 export {
@@ -14,10 +10,12 @@ export {
   useMoodEntriesInfinite,
   useMoodEntry,
   useCreateMoodEntry,
-  useDeleteMoodEntry
-} from '@/hooks/useMoodEntries.queries';
+  useDeleteMoodEntry,
+} from "@/hooks/useMoodEntries.queries";
 
 export {
   useSleepRecords,
-  useCreateSleepRecord
-} from '@/hooks/useSleepRecord.queries';
+  useCreateSleepRecord,
+} from "@/hooks/useSleepRecord.queries";
+
+export { useTriggers, useCreateTrigger } from "@/hooks/useTrigger.queries";
