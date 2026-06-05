@@ -23,7 +23,7 @@ const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] = [
   {
     label: "Trabalho",
     value: "WORK",
-    icon: <Ionicons size={16} color="#60A5FA" name="briefcase" />,
+    icon: <MaterialIcons size={16} color="#60A5FA" name="work" />,
   },
   {
     label: "Social",

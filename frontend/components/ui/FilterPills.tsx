@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 import {
   ScrollView,
   TouchableOpacity,
@@ -6,25 +6,26 @@ import {
   View,
   StyleSheet,
   Platform,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import type { HistoryCategory } from '@/lib/history/types';
-import { Colors } from '@/constants/theme';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import type { HistoryCategory } from "@/lib/history/types";
+import { Colors } from "@/constants/theme";
 
 export type FilterOption = {
-  label: string
-  value: HistoryCategory | 'all'
+  label: string;
+  value: HistoryCategory | "all";
 };
 
 export const HISTORY_FILTERS: FilterOption[] = [
-  { label: 'Tudo',         value: 'all'          },
-  { label: 'Humor',        value: 'mood'         },
-  { label: 'Sono',         value: 'sleep'        }
+  { label: "Tudo", value: "all" },
+  { label: "Humor", value: "mood" },
+  { label: "Sono", value: "sleep" },
+  { label: "Gatilho", value: "trigger" },
 ];
 
 type Props = {
-  active: HistoryCategory | 'all'
-  onChange: (value: HistoryCategory | 'all') => void
+  active: HistoryCategory | "all";
+  onChange: (value: HistoryCategory | "all") => void;
 };
 
 export function FilterPills({ active, onChange }: Props) {
@@ -39,7 +40,7 @@ export function FilterPills({ active, onChange }: Props) {
         contentContainerStyle={styles.scrollContent}
       >
         {HISTORY_FILTERS.map((filter) => {
-          const isActive = filter.value === active
+          const isActive = filter.value === active;
           return (
             <TouchableOpacity
               key={filter.value}
@@ -51,7 +52,7 @@ export function FilterPills({ active, onChange }: Props) {
                 {filter.label}
               </Text>
             </TouchableOpacity>
-          )
+          );
         })}
       </ScrollView>
 
@@ -66,27 +67,27 @@ export function FilterPills({ active, onChange }: Props) {
         />
       */}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: 'relative',
+    position: "relative",
   },
   scrollContent: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 8,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   pill: {
     paddingHorizontal: 16,
     paddingVertical: 7,
     borderRadius: 999,
-    backgroundColor: '#F2F2F7',
+    backgroundColor: "#F2F2F7",
     borderWidth: 1,
-    borderColor: 'transparent',
-    elevation: 1
+    borderColor: "transparent",
+    elevation: 1,
   },
   pillActive: {
     backgroundColor: Colors.light.tint,
@@ -94,15 +95,15 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#3C3C43',
+    fontWeight: "500",
+    color: "#3C3C43",
     letterSpacing: -0.1,
   },
   labelActive: {
-    color: Colors.light.text
+    color: Colors.light.text,
   },
   fadeRight: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     top: 0,
     bottom: 0,
