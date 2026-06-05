@@ -29,3 +29,8 @@ export {
   type CreateSleepRecordInput,
   CreateSleepRecordSchema
 } from '@app/schemas/sleepRecord.schema';
+
+export {
+  type CreateTriggerInput,
+  CreateTriggerSchema
+} from '@app/schemas/trigger.schema';

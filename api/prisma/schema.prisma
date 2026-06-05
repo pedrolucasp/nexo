@@ -127,9 +127,10 @@ enum InterventionType {
 
 enum TriggerType {
   SOCIAL
-  ENVIRONMENTAL
-  EMOTIONAL
+  WORK
+  HEALTH
   PHYSICAL
+  FAMILY
   OTHER
 }
 

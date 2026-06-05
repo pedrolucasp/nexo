@@ -6,6 +6,7 @@ import mainRouter from '@app/routes/main';
 import userRouter from '@app/routes/users';
 import authRouter from '@app/routes/auth';
 import moodRouter from '@app/routes/moods';
+import triggerRouter from '@app/routes/triggers';
 import sleepRecordRouter from '@app/routes/sleepRecords';
 import { errorHandler } from '@app/middleware/errorHandler';
 import { PrismaClient } from '@prisma/client';
@@ -46,6 +47,7 @@ export function createApp() {
   app.use("/auth", authRouter);
   app.use("/moods", moodRouter);
   app.use("/sleep_records", sleepRecordRouter);
+  app.use("/triggers", triggerRouter);
 
   app.use(errorHandler); // always last
 
