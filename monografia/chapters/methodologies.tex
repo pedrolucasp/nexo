@@ -80,7 +80,7 @@ entregas mais rápidas, flexibilidade durante o desenvolvimento do
 reduzisse rigidez. Os principais destaques da abordagem ágil é a proposta de
 que a mesma não é escrita em pedra, ou seja, permite flexibilidade no como
 aplicá-la. Nesse cenário, existem algumas abordagens sobre ela, como o
-\texit{Kanban} e o \textit{Scrum}, que dão um pouco mais de forma a ideia
+\textit{Kanban} e o \textit{Scrum}, que dão um pouco mais de forma a ideia
 apresentada com o desenvolvimento ágil o que casa relativamente bem com o
 modelo de desenvolvimento incremental.
 
@@ -132,7 +132,57 @@ produto final visa resolver uma demanda concreta do público-alvo.
 
 \subsection{Instrumento de coleta de dados}
 
-\lipsum[1]
+Como instrumento de coleta de dados, optou-se pela aplicação de um questionário
+estruturado, elaborado com o intuito de compreender hábitos, preferências e
+resistências de usuários em relação ao uso de aplicativos voltados para o
+acompanhamento emocional e práticas de autorreflexão.
+
+A escolha do questionário se justifica pela sua abrangência, agilidade na
+coleta de dados e facilidade de análise quantitativa e qualitativa. Além disso,
+como a amostra é composta por usuários potenciais, a aplicação do questionário
+de forma digital (via um formulário online) permite alcançar um público mais
+amplo com baixo custo e maior comodidade, como também reforça Jung (2009).
+
+O questionário foi bem recebido, e obteve por volta de 52 respostas válidas.
+Como a divulgação foi de forma aberta, existia uma pergunta inicial com uma
+função chaveadora, a fim de verificar se os respondentes se encaixavam no
+perfil de potenciais usuários. Isso se justifica pela natureza sensível do
+tema, que envolve saúde mental e experiências subjetivas.
+
+Na pergunta "Você já teve algum interesse ou experiência com o monitoramento do
+seu humor ou estado emocional?", apenas 8\% afirmaram que não tem e não teriam
+interesse em realizar esse tipo de acompanhamento. Esse dado corrobora outro
+resultado relevante: 53\% dos participantes afirmaram já ter, em algum momento
+da vida, realizado algum tipo de monitoramento de humor.
+
+Em outros horizontes, mais da metade dos participantes expressou interesse em
+acompanhar como o humor varia ao longo do tempo, muitas vezes com sugestões
+explícitas como: “Seria legal ver um gráfico semanal ou mensal do meu humor”.
+Tal observação reforça a receptividade dos participantes em relação à ideia de
+detecção de padrões emocionais, sugerindo que esse tipo de funcionalidade
+representa um diferencial positivo frente aos aplicativos existentes.
+
+É notável que os participantes demonstram uma preocupação recorrente com a
+privacidade dos dados coletados. Aproximadamente 67\% dos participantes
+indicaram desconforto com a exposição de suas informações em plataformas que
+não explicam de forma clara como os dados são usados ou armazenados. Essa
+percepção está alinhada com a literatura sobre saúde digital. Por exemplo,
+\cite{Iwaya:22}, argumentam que a ausência de mecanismos transparentes de
+consentimento, controle e anonimização pode minar a confiança dos usuários em
+aplicativos de bem-estar e monitoramento contínuo de saúde, especialmente em
+contextos sensíveis como saúde mental.
+
+Outro ponto importante revelado pelo levantamento é o desejo por um tom mais
+humano, subjetivo e acolhedor. Cerca de 52\% dos participantes relataram
+incômodo com ferramentas que adotam uma linguagem genérica, motivacional ou
+automatizada demais. Isso reforça a necessidade de uma interface mais empática,
+que valorize tanto a escrita livre quanto a análise assistida. Também foram
+mencionadas sugestões de funcionalidades consideradas excepcionais, como
+inferência automática de ciclos de humor (66\% demonstraram interesse),
+personalização da forma de visualização das informações (como gráficos ou
+comparativos), e integração com dados contextuais ou ambientais, reforçando a
+ideia de um sistema que vá além do simples diário, oferecendo inteligência
+emocional útil, mas sem perder a sensibilidade que o tema exige.
 
 \subsection{Análise de Similares}
 
@@ -152,6 +202,37 @@ pode ser um aplicativo em português ou inglês; (2) o aplicativo tem que
 apresentar algum tipo de gráfico das entradas feitas (3) tem que possuir
 entrada textual.
 
+% TODO: Quadro 1
+
+Com esses dados em mente, podemos compreender alguns elementos fundamentais:
+poucos sistemas analisados são open-source, o que indica que, em sua grande
+maioria, são sistemas comerciais. A maior parte dos sistemas também oferecem
+algum aspecto de pagamento, bloqueando funcionalidades importantes atrás de
+algum tipo de modelo de subscrição. Existe também o fato de personalização e de
+exportação de dados, que poucos ou nenhum sistema oferece, o que faz com que o
+sistema não tenha portabilidade dos dados inseridos, criando assim, um walled
+garden, ou um jardim fechado – uma técnica de fazer com que o usuário não
+consiga migrar entre sistemas, prendendo-o a usar aquela aplicação já que seus
+dados estão lá.
+
 \subsection{Relação entre os dados coletados e o desenvolvimento}
 
-\lipsum[1]
+A análise dos sistemas similares, quando considerada em conjunto com os dados
+coletados por meio do questionário, revela lacunas e oportunidades relevantes
+para o desenvolvimento de uma nova solução. Observa-se, por exemplo, que a
+maior parte das ferramentas disponíveis no mercado segue modelos comerciais,
+frequentemente com funcionalidades essenciais bloqueadas por sistemas de
+pagamento ou assinaturas. Além disso, é comum que tais sistemas sejam fechados,
+sem disponibilização de código-fonte ou possibilidade de exportação dos dados
+inseridos, o que configura uma prática de \textit{walled garden}, dificultando
+a migração entre plataformas e restringindo a autonomia dos usuários sobre suas
+próprias informações.
+
+Esses aspectos, quando contrastados com o interesse expressivo dos respondentes
+por visualizar padrões emocionais ao longo do tempo e por maior personalização,
+sugerem direções claras para o desenvolvimento de um sistema que não apenas
+atenda a essas demandas, mas também adote princípios de transparência, abertura
+e controle por parte do usuário. A seguir, serão discutidas as decisões de
+projeto que nortearam a construção da ferramenta proposta, baseadas tanto nas
+limitações identificadas nos sistemas existentes quanto nas necessidades e
+expectativas manifestadas pelo público-alvo da pesquisa.
