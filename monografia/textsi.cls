@@ -182,8 +182,15 @@ Versão: \currversion^^J
 
 % Definição do espaçamento de texto
 \setlength{\baselineskip}{1.5cm}
-% TODO: seems incorrect without it
-\setlength{\parskip}{0.2 cm}
+
+%----------------------------------------
+% PARÁGRAFOS
+%----------------------------------------
+% Tamanho da endentação do parágrafo
+\setlength{\parindent}{1.3cm}
+% Espaçamento entre um parágrafo e outro
+\setlength{\parskip}{1.5pt}
+
 
 %==============================================================================
 % Numeração das páginas
