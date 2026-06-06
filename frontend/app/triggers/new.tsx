@@ -69,6 +69,7 @@ export default function NewTrigger() {
       moment,
       comment,
       category,
+      ...(linkMood && latestMood ? { moodId: latestMood.id } : null),
     };
 
     await createTrigger.mutateAsync(data);
@@ -159,7 +160,7 @@ export default function NewTrigger() {
                   color={Colors.light.disabled}
                 />
               }
-              label="Atividade"
+              label="Prática"
               sublabel={"Nenhuma registrada"}
               disabled={true}
               value={false}
