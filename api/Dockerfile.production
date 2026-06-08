@@ -1,4 +1,5 @@
-FROM node:24-alpine3.23 AS deps
+# Build stage
+FROM node:24-alpine3.23 AS builder
 
 RUN apk add --no-cache build-base yaml-dev
 
@@ -8,16 +9,22 @@ ARG GID=1000
 USER ${UID}:${GID}
 WORKDIR /app
 
+# Install all deps (including dev, which is needed for tsc, tsc-alias, prisma)
 COPY --chown=${UID}:${GID} package*.json ./
-RUN npm ci --frozen-lockfile --omit=dev
+RUN npm ci --frozen-lockfile
 
 COPY --chown=${UID}:${GID} prisma ./prisma/
 RUN npx prisma generate
 
-# For runtime then:
+COPY --chown=${UID}:${GID} . .
+
+# Compile TS and spit on dist/
+RUN npm run build
+
+# Runtime stage
 FROM node:24-alpine3.23
 
-RUN apk add --no-cache bash postgresql17-client valkey-cli
+RUN apk add --no-cache bash postgresql17-client valkey-cli yaml-dev
 
 ARG UID=1000
 ARG GID=1000
@@ -25,12 +32,18 @@ ARG GID=1000
 USER ${UID}:${GID}
 WORKDIR /app
 
-COPY --from=deps --chown=${UID}:${GID} /app/node_modules ./node_modules
-COPY --from=deps --chown=${UID}:${GID} /app/node_modules/.prisma ./node_modules/.prisma
+# Only prod deps
+COPY --chown=${UID}:${GID} package*.json ./
+RUN npm ci --frozen-lockfile --omit=dev
 
-COPY --chown=${UID}:${GID} . .
+# Prisma client generated in builder
+COPY --from=builder --chown=${UID}:${GID} /app/node_modules/.prisma ./node_modules/.prisma
+
+# Compiled output and prisma schema (needed for migrate deploy)
+COPY --from=builder --chown=${UID}:${GID} /app/dist ./dist
+COPY --chown=${UID}:${GID} prisma ./prisma/
 
 EXPOSE 3000
 
-# migrate then start — migrations are idempotent
+# migrate then start
 CMD ["sh", "-c", "npx prisma migrate deploy && npm run prod"]
