@@ -43,6 +43,7 @@ COPY --from=builder --chown=${UID}:${GID} /app/node_modules/.prisma ./node_modul
 # Compiled output and prisma schema (needed for migrate deploy)
 COPY --from=builder --chown=${UID}:${GID} /app/dist ./dist
 COPY --chown=${UID}:${GID} prisma ./prisma/
+COPY --chown=${UID}:${GID} prisma.config.ts ./
 
 EXPOSE 3000
 
