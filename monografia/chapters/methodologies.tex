@@ -202,18 +202,130 @@ pode ser um aplicativo em português ou inglês; (2) o aplicativo tem que
 apresentar algum tipo de gráfico das entradas feitas (3) tem que possuir
 entrada textual.
 
-% TODO: Quadro 1
+\subsubsection{Baseline}
+
+O Baseline é um aplicativo de código aberto voltado ao acompanhamento do
+bem-estar emocional por meio de uma abordagem minimalista. A ferramenta permite
+o registro diário de humor utilizando entradas textuais ou gravações de áudio,
+além de disponibilizar notificações personalizadas e revisões periódicas dos
+registros realizados.
+
+Entre os aspectos observados, destaca-se a natureza open-source da aplicação,
+característica que favorece a transparência e a possibilidade de adaptação por
+terceiros. Sua interface apresenta baixo nível de complexidade e reduz a
+quantidade de interações necessárias para o registro das informações.
+Entretanto, o sistema não oferece visualizações temporais avançadas nem
+mecanismos de personalização mais aprofundados. Além disso, o acompanhamento
+emocional é realizado principalmente por meio de uma pontuação de humor, sem
+identificar ciclos emocionais ou relacionar registros a gatilhos e intervenções
+específicas.
+
+\subsubsection{Daylio}
+
+O Daylio é um dos aplicativos de monitoramento de humor mais populares
+disponíveis atualmente, possuindo como principal característica a simplicidade
+de uso. O sistema utiliza emojis e categorias de atividades para facilitar o
+registro rápido do estado emocional do usuário.
+
+Entre suas funcionalidades estão o registro de humor, categorização de
+atividades, geração de gráficos históricos e envio de lembretes periódicos. A
+aplicação apresenta boa qualidade visual e fornece recursos adequados para o
+acompanhamento da evolução do humor ao longo do tempo.
+
+Como limitações, observa-se que o software possui código fechado e restringe
+parte de suas funcionalidades mais avançadas à versão paga. Além disso, o foco
+em registros rápidos reduz a flexibilidade para inserção de reflexões textuais
+mais detalhadas.
+
+\subsubsection{Moodnotes}
+
+O Moodnotes é um diário emocional baseado em princípios da Terapia
+Cognitivo-Comportamental (TCC), buscando auxiliar usuários na identificação e
+reformulação de padrões de pensamento considerados disfuncionais.
+
+O aplicativo oferece registros textuais reflexivos, sugestões de reestruturação
+cognitiva, gráficos históricos e geração automática de insights relacionados
+aos padrões emocionais identificados. Sua proposta diferencia-se por incorporar
+conceitos psicológicos de maneira mais explícita ao processo de registro.
+
+Apesar dos recursos disponíveis, trata-se de uma solução proprietária e
+predominantemente paga. Adicionalmente, apresenta limitações relacionadas à
+exportação dos dados registrados e à personalização das informações
+armazenadas.
+
+\subsubsection{Reflectly}
+
+O Reflectly é um aplicativo de diário pessoal que utiliza recursos de
+inteligência artificial para promover práticas de autorreflexão e
+acompanhamento emocional. Sua proposta enfatiza a experiência do usuário e a
+construção de narrativas pessoais a partir dos registros realizados.
+
+Entre suas funcionalidades estão entradas textuais livres, perguntas guiadas
+diárias, análises emocionais automatizadas e personalização visual da
+interface. O sistema apresenta uma experiência moderna e intuitiva,
+incentivando o uso contínuo por meio de elementos de engajamento.
+
+Como pontos observados, destaca-se o fato de ser uma solução proprietária e
+dependente de coleta significativa de dados para alimentar seus mecanismos de
+análise. Além disso, sua abordagem está mais voltada ao diário pessoal do que
+ao acompanhamento sistemático de indicadores de saúde mental.
+
+\subsubsection{T2 Mood Tracker}
+
+O T2 Mood Tracker foi desenvolvido com foco em contextos clínicos e
+acompanhamento estruturado do humor. A ferramenta permite que usuários
+monitorem diferentes aspectos emocionais por meio de escalas configuráveis.
+
+Entre os recursos oferecidos estão escalas deslizantes de avaliação, criação de
+categorias personalizadas e geração de gráficos históricos para análise
+temporal dos registros. Sua proposta é particularmente útil para profissionais
+e pacientes que necessitam acompanhar indicadores específicos ao longo do
+tempo.
+
+Entretanto, a aplicação apresenta limitações relacionadas à experiência do
+usuário, possuindo interface considerada desatualizada quando comparada a
+soluções contemporâneas. Também não oferece suporte para registros textuais
+extensos ou entradas por voz, reduzindo a riqueza contextual das informações
+coletadas.
+
+\subsection{Análise comparativa}
+
+\begin{table}[h]
+    \centering
+    \caption{Comparativo de funcionalidades entre aplicativos analisados}
+    \label{tab:comparativo_apps}
+    \begin{tabular}{lccccc}
+        \hline
+        Funcionalidade &
+        Baseline &
+        Daylio &
+        Moodnotes &
+        Reflectly &
+        T2 \\
+
+        \hline
+        Registro de humor & Sim & Sim & Sim & Sim & Sim \\
+        Registro de sono & Não & Não & Não & Não & Não \\
+        Texto livre & Sim & Parcial & Sim & Sim & Não \\
+        Gráficos & Não & Sim & Sim & Sim & Sim \\
+        Gatilhos/intervenções & Não & Parcial & Não & Não & Parcial \\
+        Exportação de dados & Sim & Parcial & Parcial & Parcial & Sim \\
+        Código aberto & Sim & Não & Não & Não & Não \\
+        \hline
+    \end{tabular}
+    \source{Elaborado pelo autor (2026)}
+\end{table}
 
 Com esses dados em mente, podemos compreender alguns elementos fundamentais:
-poucos sistemas analisados são open-source, o que indica que, em sua grande
-maioria, são sistemas comerciais. A maior parte dos sistemas também oferecem
-algum aspecto de pagamento, bloqueando funcionalidades importantes atrás de
-algum tipo de modelo de subscrição. Existe também o fato de personalização e de
-exportação de dados, que poucos ou nenhum sistema oferece, o que faz com que o
-sistema não tenha portabilidade dos dados inseridos, criando assim, um walled
-garden, ou um jardim fechado – uma técnica de fazer com que o usuário não
-consiga migrar entre sistemas, prendendo-o a usar aquela aplicação já que seus
-dados estão lá.
+poucos sistemas analisados são \textit{open-source}, o que indica que, em sua
+grande maioria, são sistemas comerciais. A maior parte dos sistemas também
+oferecem algum aspecto de pagamento, bloqueando funcionalidades importantes
+atrás de algum tipo de modelo de subscrição. Existe também o fato de
+personalização e de exportação de dados, que poucos ou nenhum sistema oferece,
+o que faz com que o sistema não tenha portabilidade dos dados inseridos,
+criando assim, um \textit{walled garden}, ou um jardim fechado – uma técnica de
+fazer com que o usuário não consiga migrar entre sistemas, prendendo-o a usar
+aquela aplicação já que seus dados estão lá.
 
 \subsection{Relação entre os dados coletados e o desenvolvimento}
 
