@@ -59,7 +59,7 @@ const sanitizeString = (str: string) => {
 // Validate required fields
 
 const validateRequiredFields = (data: Record<string, unknown>, fields: string[]) => {
-  const missing = [];
+  const missing: string[] = [];
 
   for (const field of fields) {
     if (data[field] === undefined || data[field] === null || data[field] === '') {
