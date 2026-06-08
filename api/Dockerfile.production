@@ -33,4 +33,4 @@ COPY --chown=${UID}:${GID} . .
 EXPOSE 3000
 
 # migrate then start — migrations are idempotent
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run prod"]
