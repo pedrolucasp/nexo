@@ -1,0 +1,36 @@
+FROM node:24-alpine3.23 AS deps
+
+RUN apk add --no-cache build-base yaml-dev
+
+ARG UID=1000
+ARG GID=1000
+
+USER ${UID}:${GID}
+WORKDIR /app
+
+COPY --chown=${UID}:${GID} package*.json ./
+RUN npm ci --frozen-lockfile --omit=dev
+
+COPY --chown=${UID}:${GID} prisma ./prisma/
+RUN npx prisma generate
+
+# For runtime then:
+FROM node:24-alpine3.23
+
+RUN apk add --no-cache bash postgresql17-client valkey-cli
+
+ARG UID=1000
+ARG GID=1000
+
+USER ${UID}:${GID}
+WORKDIR /app
+
+COPY --from=deps --chown=${UID}:${GID} /app/node_modules ./node_modules
+COPY --from=deps --chown=${UID}:${GID} /app/node_modules/.prisma ./node_modules/.prisma
+
+COPY --chown=${UID}:${GID} . .
+
+EXPOSE 3000
+
+# migrate then start — migrations are idempotent
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
