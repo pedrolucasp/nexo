@@ -22,6 +22,8 @@ COPY --chown=${UID}:${GID} . .
 # Compile TS and spit on dist/
 RUN npm run build
 
+RUN cp -r src/static dist/static
+
 # Runtime stage
 FROM node:24-alpine3.23
 
