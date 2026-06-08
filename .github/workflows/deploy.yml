@@ -53,3 +53,32 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+
+  deploy-production:
+    name: Deploy to production
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    environment: production
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd /srv/app/production
+
+            docker pull ghcr.io/${{ github.repository }}:latest
+
+            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=latest/" .env
+
+            docker compose up -d --no-deps --force-recreate api
+
+            sleep 3
+            # Dump the logs for a while
+            docker compose logs --tail=50 api
