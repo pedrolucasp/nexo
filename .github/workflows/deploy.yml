@@ -5,6 +5,9 @@ on:
     branches:
       - master # goes for production now, will become staging later on
       - production
+    paths:
+      - 'api/**'
+      - '.github/workflows/deploy.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -79,6 +82,6 @@ jobs:
 
             docker compose up -d --no-deps --force-recreate api
 
-            sleep 3
+            sleep 5
             # Dump the logs for a while
             docker compose logs --tail=50 api
