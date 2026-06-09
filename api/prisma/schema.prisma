@@ -8,41 +8,42 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  firstName String @map("first_name")
-  lastName String? @map("last_name")
-  email String @unique
-  encryptedPassword String @map("encrypted_password")
-  passwordResetToken String? @map("password_reset_token")
+  id                   Int       @id @default(autoincrement())
+  firstName            String    @map("first_name")
+  lastName             String?   @map("last_name")
+  email                String    @unique
+  encryptedPassword    String    @map("encrypted_password")
+  passwordResetToken   String?   @map("password_reset_token")
   passwordResetExpires DateTime? @map("password_reset_expires")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  avatarKey String? @map("avatar_key")
-  avatarURL String? @map("avatar_url")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  avatarKey            String?   @map("avatar_key")
+  avatarURL            String?   @map("avatar_url")
 
-  activationCode String? @map("activation_code")
+  activationCode          String?   @map("activation_code")
   activationCodeExpiresAt DateTime? @map("activation_code_expires_at")
-  active Boolean @default(false) @map("active")
+  active                  Boolean   @default(false) @map("active")
 
-  moods Mood[]
+  moods         Mood[]
   interventions Intervention[]
-  triggers Trigger[]
-  reminders Reminder[]
-  sleepRecords SleepRecord[]
+  triggers      Trigger[]
+  reminders     Reminder[]
+  sleepRecords  SleepRecord[]
+  insights      Insight[]
 
   @@map("users")
 }
 
 model Mood {
-  id Int @id @default(autoincrement())
-  annotation String? @db.Text
-  moment DateTime @default(now())
+  id           Int            @id @default(autoincrement())
+  annotation   String?        @db.Text
+  moment       DateTime       @default(now())
   selectedMood BaseMoodOption @default(GOOD) @map("selected_mood")
-  anxietyLevel Int @map("anxiety_level")
-  stressLevel Int @map("stress_level")
-  energyLevel Int @map("energy_level")
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  anxietyLevel Int            @map("anxiety_level")
+  stressLevel  Int            @map("stress_level")
+  energyLevel  Int            @map("energy_level")
+  userId       Int            @map("user_id")
+  user         User           @relation(fields: [userId], references: [id])
 
   moodComponents MoodComponent[]
 
@@ -50,65 +51,97 @@ model Mood {
 }
 
 model MoodComponent {
-  id Int @id @default(autoincrement())
+  id        Int                 @id @default(autoincrement())
   component MoodComponentOption
-  intensity IntensityLevel @default(LIGHT)
+  intensity IntensityLevel      @default(LIGHT)
 
-  moodId Int @map("mood_id")
-  mood Mood @relation(fields: [moodId], references: [id], onDelete: Cascade)
+  moodId Int  @map("mood_id")
+  mood   Mood @relation(fields: [moodId], references: [id], onDelete: Cascade)
 
   @@map("mood_components")
 }
 
 model Intervention {
-  id Int @id @default(autoincrement())
-	comment String?
-	interventionType InterventionType @map("intervention_type")
-	eficacy Int
-  startAt DateTime @map("start_at")
-  endAt DateTime @map("end_at")
+  id               Int              @id @default(autoincrement())
+  comment          String?
+  interventionType InterventionType @map("intervention_type")
+  eficacy          Int
+  startAt          DateTime         @map("start_at")
+  endAt            DateTime         @map("end_at")
 
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
 
   @@map("interventions")
 }
 
 model Trigger {
-  id Int @id @default(autoincrement())
-	comment String? @db.Text
-	category TriggerType
-  moment DateTime @default(now())
+  id       Int         @id @default(autoincrement())
+  comment  String?     @db.Text
+  category TriggerType
+  moment   DateTime    @default(now())
 
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
 
   @@map("triggers")
 }
 
 model Reminder {
-  id Int @id @default(autoincrement())
-  hour Int
-  minute Int
+  id          Int     @id @default(autoincrement())
+  hour        Int
+  minute      Int
   description String?
-  active Boolean @default(false)
+  active      Boolean @default(false)
 
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
 
   @@map("reminders")
 }
 
 model SleepRecord {
-  id Int @id @default(autoincrement())
-  average Float
-  date DateTime @db.Date
-  annotations String? @db.Text
+  id          Int      @id @default(autoincrement())
+  average     Float
+  date        DateTime @db.Date
+  annotations String?  @db.Text
 
-  userId Int @map("user_id")
-  user User @relation(fields: [userId], references: [id])
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
 
   @@map("sleep_records")
+}
+
+model Insight {
+  id     Int  @id @default(autoincrement())
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id])
+
+  type        InsightType
+  period      InsightPeriod
+  title       String
+  body        String        @db.Text
+  metadata    Json? // flexible payload: correlations, deltas, scores
+  generatedAt DateTime      @default(now()) @map("generated_at")
+  periodStart DateTime      @map("period_start")
+  periodEnd   DateTime      @map("period_end")
+
+  @@unique([userId, type, periodStart])
+  @@map("insights")
+}
+
+enum InsightType {
+  MOOD_TREND
+  ENERGY_SLEEP_CORRELATION
+  TRIGGER_PATTERN
+  WEEKLY_SUMMARY
+  STREAK
+}
+
+enum InsightPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
 }
 
 enum IntensityLevel {
