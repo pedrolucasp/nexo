@@ -210,3 +210,83 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
 \end{longtable}
 \source{Elaborado pelo autor (2026)}
 
+\subsection{Requirementos não funcionais}
+
+De acordo com \cite[p.~89]{sommerville:2010}: "Requisitos não funcionais são
+restrições sobre os serviços ou funções oferecidas pelo sistema". Ou seja,
+definem os critérios de qualidade que o sistema deve seguir, abrangendo
+aspectos como segurança, usabilidade, desempenho e manutenção. Neste projeto,
+destacam-se especialmente a preservação da privacidade do usuário, a
+transparência proporcionada pelo código aberto e a possibilidade de utilização
+offline, o que garante acessibilidade mesmo em contextos de conectividade
+limitada.
+
+\begin{longtable}{| p{.20\textwidth} | p{.30\textwidth} | p{.40\textwidth} |}
+    \caption{Requisitos não funcionais}
+    \label{tab:requisitos_nao_funcionais}
+        \hline
+        N° &
+        Requisito &
+        Descrição \\
+
+        \hline
+
+        [RNF01] &
+        Usabilidade &
+
+        O sistema deve possuir uma interface intuitiva e acessível para
+        usuários leigos em tecnologia, com navegação fluída e confirmações
+        visuais após cada interação importante \\
+
+        \hline
+
+        [RNF02] &
+        Desempenho &
+
+        O tempo de resposta entre a entrada do usuário e a resposta do sistema
+        deve ser inferior a 1 segundo; O carregamento do histórico semanal e
+        visualizações de ciclos anteriores deve ocorrer em no máximo 2
+        segundos. \\
+
+        \hline
+
+        [RNF03] &
+        Segurança &
+
+        Os dados do usuário devem ser armazenados de forma criptografada; O
+        sistema deve exigir autenticação segura para acesso; A exportação de
+        dados deve sempre exigir a confirmação do usuário \\
+        \hline
+
+        [RNF04] &
+        Confiabilidade &
+
+        O sistema deve garantir a persistência dos dados, mesmo em casos de
+        falha de energia ou conexão; Os dados registrados devem ser armazenados
+        automáticamente e sincronizados quando ouvir conexão \\
+
+        \hline
+
+        [RNF05] &
+        Portabilidade &
+
+        Todos os dados do usuário podem ser exportados a qualquer momento, em
+        um formato de texto que permita que ele possa ler e interpretar,
+        mediante compreensão mínima da linguagem/formato utilizado \\
+
+        \hline
+
+        [RNF06] &
+        Privacidade &
+
+        Nenhuma informação sensível do usuário deve ser compartilhada com
+        terceiros e o sistema deve fornecer uma política de privacidade clara e
+        acessível; Quaisquer alterações à mesma demanda que o usuário seja
+        notificado \\
+
+        \hline
+\end{longtable}
+\source{Elaborado pelo autor (2026)}
+
+Com essas definições em mãos, pode-se avançar para a etapa de modelagem do
+sistema, usando os requerimentos apresentados como fundação para o sistema.
