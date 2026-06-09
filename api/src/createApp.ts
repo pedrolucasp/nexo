@@ -1,23 +1,31 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import morgan from 'morgan';
-import mainRouter from '@app/routes/main';
-import userRouter from '@app/routes/users';
-import authRouter from '@app/routes/auth';
-import moodRouter from '@app/routes/moods';
-import triggerRouter from '@app/routes/triggers';
-import sleepRecordRouter from '@app/routes/sleepRecords';
-import { errorHandler } from '@app/middleware/errorHandler';
-import { PrismaClient } from '@prisma/client';
-import { bootWorkers, closeAllWorkers, closeAllQueues } from '@app/lib/queue';
-import pino from 'pino';
-import pinoHttp from 'pino-http';
-import path from 'path';
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import morgan from "morgan";
+import mainRouter from "@app/routes/main";
+import userRouter from "@app/routes/users";
+import authRouter from "@app/routes/auth";
+import moodRouter from "@app/routes/moods";
+import triggerRouter from "@app/routes/triggers";
+import sleepRecordRouter from "@app/routes/sleepRecords";
+import insightRouter from "@app/routes/insights";
+import { errorHandler } from "@app/middleware/errorHandler";
+import { PrismaClient } from "@prisma/client";
+import {
+  bootWorkers,
+  closeAllWorkers,
+  closeAllQueues,
+  scheduleInsights,
+} from "@app/lib/queue";
+
+import pino from "pino";
+import pinoHttp from "pino-http";
+import path from "path";
 
 export function createApp() {
   const app = express();
   bootWorkers();
+  scheduleInsights();
 
   // Configure CORS
   app.use(cors({
