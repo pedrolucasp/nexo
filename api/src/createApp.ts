@@ -28,24 +28,26 @@ export function createApp() {
   scheduleInsights();
 
   // Configure CORS
-  app.use(cors({
-    origin: process.env.FRONTEND_URL || '*',
-    credentials: true
-  }));
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL || "*",
+      credentials: true,
+    }),
+  );
 
   app.use(bodyParser.json());
 
-  const isDev = process.env.NODE_ENV !== 'production';
+  const isDev = process.env.NODE_ENV !== "production";
 
   const logger = pino({
-    level: process.env.LOG_LEVEL || 'info',
+    level: process.env.LOG_LEVEL || "info",
     ...(isDev && {
       transport: {
-        target: 'pino-pretty',
+        target: "pino-pretty",
         options: {
           colorize: true,
           singleLine: false,
-          messageFormat: '{if levelLabel}{levelLabel} - {end}{msg}',
+          messageFormat: "{if levelLabel}{levelLabel} - {end}{msg}",
         },
       },
     }),
@@ -59,16 +61,18 @@ export function createApp() {
   app.use("/moods", moodRouter);
   app.use("/sleep_records", sleepRecordRouter);
   app.use("/triggers", triggerRouter);
+  app.use("/insights", insightRouter);
 
   app.use(errorHandler); // always last
 
   // TODO: flesh the actual page here
-  app.use(express.static(path.join(__dirname, './static')));
+  app.use(express.static(path.join(__dirname, "./static")));
   app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, './static/index.html')); });
+    res.sendFile(path.join(__dirname, "./static/index.html"));
+  });
 
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
 
   return app;
 }
