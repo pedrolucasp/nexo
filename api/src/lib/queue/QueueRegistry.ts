@@ -1,17 +1,17 @@
-import { Queue, QueueOptions } from 'bullmq';
+import { Queue, QueueOptions } from "bullmq";
 
-export type QueueName = 'mail'; // TODO: add image here later on
+export type QueueName = "mail" | "insights";
 
 const queues = new Map<QueueName, Queue>();
 
 const defaultOpts: QueueOptions = {
   connection: {
     host: process.env.VALKEY_HOST,
-    port: Number(process.env.VALKEY_PORT)
+    port: Number(process.env.VALKEY_PORT),
   },
   defaultJobOptions: {
     attempts: 3,
-    backoff: { type: 'exponential', delay: 2000 },
+    backoff: { type: "exponential", delay: 2000 },
     removeOnComplete: { count: 100 },
     removeOnFail: { count: 500 },
   },
@@ -26,5 +26,5 @@ export function getQueue(name: QueueName): Queue {
 }
 
 export async function closeAllQueues(): Promise<void> {
-  await Promise.all([...queues.values()].map(q => q.close()));
+  await Promise.all([...queues.values()].map((q) => q.close()));
 }

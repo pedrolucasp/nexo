@@ -1,18 +1,21 @@
-import { Job } from 'bullmq';
+import { Job } from "bullmq";
 import {
-  MailJobName, MailJobData,
+  MailJobName,
+  MailJobData,
   WelcomeEmailPayload,
   PasswordResetPayload,
-  ActivateAccountEmailPayload
-} from '@app/lib/queue/types';
+  ActivateAccountEmailPayload,
+} from "@app/lib/queue/types";
 
 import {
   sendWelcomeEmail,
   sendResetPasswordEmail,
-  sendActivateAccountEmail
-} from '@app/services/mail'
+  sendActivateAccountEmail,
+} from "@app/services/mail";
 
-export async function mailProcessor(job: Job<MailJobData['data']>): Promise<void> {
+export async function mailProcessor(
+  job: Job<MailJobData["data"]>,
+): Promise<void> {
   // job.name is the discriminant
   switch (job.name as MailJobName) {
     case MailJobName.WelcomeEmail: {
