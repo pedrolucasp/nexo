@@ -16,7 +16,8 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Section, SectionHeader } from '@/components/ui/Sections';
 import { MoodSelector } from '@/components/ui/EmojiSelectors';
-import { Typography, Spacing, Shadows, Colors } from '@/constants/theme';
+import { Typography, Spacing, Shadows, Colors, BorderRadius } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import {
   MoodDefinition, MOODS
@@ -84,10 +85,40 @@ export default function New() {
         {/* TODO: Check whether we gonna have to generate these on demand */}
         <Section>
           <Grid gap={4}>
-            <Card style={{minHeight: 150, backgroundColor: 'powderblue'}}>
+            <Card style={{ padding: Spacing.cardGap }}>
+              <View style={{ flex: 1, flexDirection: 'row', flexGrow: 0, paddingVertical: 10 }}>
+                <Ionicons name="flash" size={20} color="#64748B" />
+
+                <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+                  Energia
+                </Text>
+              </View>
+
+              <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+                Média Alta
+              </Text>
+
+              <View style={styles.lineTrack}>
+                <View style={[styles.lineFill, { width: `35%` }]} />
+              </View>
             </Card>
 
-            <Card style={{minHeight: 150, backgroundColor: 'tomato'}}>
+            <Card style={{ padding: Spacing.cardGap }}>
+              <View style={{ flex: 1, flexDirection: 'row', flexGrow: 0, paddingVertical: 10 }}>
+                <Ionicons name="moon-outline" size={20} color="#64748B" />
+
+                <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+                  Sono
+                </Text>
+              </View>
+
+              <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+                7h 30m
+              </Text>
+
+              <Text style={styles.indicatorGreen}>
+                +45min que ontem
+              </Text>
             </Card>
           </Grid>
         </Section>
@@ -128,5 +159,23 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginBottom: 16,
     ...Shadows.lg
+  },
+  lineTrack: {
+    height: 6,
+    backgroundColor: Colors.light.divider,
+    borderRadius: BorderRadius.full,
+    marginBottom: 4,
+    overflow: 'hidden',
+  },
+  lineFill: {
+    height: '100%',
+    backgroundColor: Colors.light.tint,
+    borderRadius: BorderRadius.full,
+  },
+  indicatorGreen: {
+    color: Colors.light.tint,
+    fontSize: 11,
+    fontWeight: 600,
+    lineHeight: 16.5
   }
 });

@@ -67,7 +67,7 @@ export default function LoginScreen() {
           <View style={styles.header}>
             <Text style={[styles.title, { color: textColor }]}>Bem vindo de volta</Text>
             <Text style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
-              Logue na sua conta
+              Logue na sua conta nexo
             </Text>
           </View>
 
