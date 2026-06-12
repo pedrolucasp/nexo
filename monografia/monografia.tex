@@ -1,6 +1,6 @@
 \documentclass[tcc,capa,table]{textsi}
 
-\usepackage[brazilian]{babel} % Linguagem do documento: Português-brasileiro
+%\usepackage[brazilian]{babel} % Linguagem do documento: Português-brasileiro
 \usepackage[utf8]{inputenc} % Codificação do arquivo .tex. IMPORTANTE: O arquivo deve ser salvo utilizando a codificação UTF-8 para mostrar corretamente os caracteres!
 \usepackage[T1]{fontenc} % Permite que se faça cópia do texto do PDF de maneira correta, usando a codificação de fonte T1
 
@@ -55,6 +55,19 @@
 \keyword{Transtorno Afetivo Bipolar}
 \keyword{React Native}
 
+% XXX: Fix longtables not having a prefix. Fucking POS template; shoulda stick
+% to rawdogging ABNT2 or just use the IFRJ one which is actually complete
+
+\makeatletter
+\def\LT@c@ption#1[#2]#3{%
+  \LT@makecaption#1\fnum@table{#3}%
+  \def\@tempa{#2}%
+  \ifx\@tempa\@empty\else
+    \addcontentsline{lot}{table}%
+      {\protect\numberline{\fnum@table}{\ignorespaces #2}}%
+  \fi}
+\makeatother
+
 \begin{document}
 
 % Descomente se você tem orientadora, e não orientador.
@@ -64,7 +77,7 @@
 %\renewcommand{\coadvisorname}{\coorientadora}	
 
 % Faz com que o título apareça
-\maketitle 
+\maketitle
 
 \sloppy
 
