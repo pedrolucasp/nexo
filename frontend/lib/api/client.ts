@@ -18,6 +18,10 @@ import {
   CreateTriggerPayload,
   ActivateResponse,
   PaginatedResponse,
+  InsightType,
+  InsightPeriod,
+  InsightMetadata,
+  Insight,
 } from "@/lib/api/types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -87,10 +91,7 @@ class ApiClient {
   }
 
   // Auth
-  async login(
-    email: string,
-    password: string,
-  ): Promise<AuthResponse | { isActive: boolean }> {
+  async login(email: string, password: string): Promise<AuthResponse> {
     const response = await this.request<AuthResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
@@ -158,7 +159,7 @@ class ApiClient {
   }
 
   // User-related
-  async updateUser(user: UserUpdatePayload): Promise<User> {
+  async updateUser(user: UserUpdatePayload): Promise<{ user: User }> {
     return await this.request(`/users/${user.id}`, {
       method: "PUT",
       body: JSON.stringify({ user }),
@@ -271,6 +272,21 @@ class ApiClient {
 
   async deleteTrigger(id: string): Promise<void> {
     return this.request(`/triggers/${id}`, { method: "DELETE" });
+  }
+
+  // Insights
+  async getInsights(filters?: {
+    type?: InsightType;
+    period?: InsightPeriod;
+    limit?: number;
+  }): Promise<Insight[]> {
+    const query = new URLSearchParams();
+    if (filters?.type) query.set("type", filters.type);
+    if (filters?.period) query.set("period", filters.period);
+    if (filters?.limit) query.set("limit", String(filters.limit));
+
+    const qs = query.toString();
+    return this.request(`/insights${qs ? `?${qs}` : ""}`);
   }
 }
 

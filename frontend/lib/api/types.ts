@@ -7,6 +7,7 @@ export interface User {
   avatarKey?: string;
   avatarURL?: string;
   active: boolean;
+  pushToken?: string;
 }
 
 // Auth
@@ -121,6 +122,51 @@ export interface CreateTriggerPayload {
   category: string;
   moment: Date;
 }
+
+// Insights
+
+// types/insight.ts
+// Gotta keep those in sync with the Prisma schema
+export type InsightType =
+  | "MOOD_TREND"
+  | "ENERGY_SLEEP_CORRELATION"
+  | "TRIGGER_PATTERN";
+
+export type InsightPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
+
+export type InsightMetadata =
+  | {
+      type: "MOOD_TREND";
+      delta: number;
+      avgFirst: number;
+      avgSecond: number;
+      dominantMood: string;
+      avgEnergy: number;
+    }
+  | {
+      type: "ENERGY_SLEEP_CORRELATION";
+      correlationScore: number;
+      sampleSize: number;
+    }
+  | {
+      type: "TRIGGER_PATTERN";
+      topCategory: string;
+      topCount: number;
+      total: number;
+      distribution: Record<string, number>;
+    };
+
+export type Insight = {
+  id: number;
+  type: InsightType;
+  period: InsightPeriod;
+  title: string;
+  body: string;
+  metadata: InsightMetadata;
+  generatedAt: string;
+  periodStart: string;
+  periodEnd: string;
+};
 
 // Generic stuff
 export interface PaginatedResponse<T> {

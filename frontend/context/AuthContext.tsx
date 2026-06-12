@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { apiClient, User } from '@/lib/api';
-import { queryClient, storage } from '@/lib/queryClient';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { apiClient, User } from "@/lib/api";
+import { queryClient, storage } from "@/lib/queryClient";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   updateAuthUser: (user: User) => void;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ user: User } | null>;
   signup: (userData: {
     firstName: string;
     lastName?: string;
@@ -19,7 +19,9 @@ interface AuthContextType {
     password: string;
   }) => Promise<void>;
   logout: () => Promise<void>;
-  forgotPassword: (email: string) => Promise<{ message: string; token?: string }>;
+  forgotPassword: (
+    email: string,
+  ) => Promise<{ message: string; token?: string }>;
   resetPassword: (token: string, password: string) => Promise<void>;
   activate: (code: string) => Promise<void>;
   requestActivateCode: () => Promise<void>;
@@ -34,7 +36,7 @@ export function sanitizeUser(data: any): User {
     updatedAt: data.updatedAt,
     avatarKey: data.avatarKey,
     avatarURL: data.avatarURL,
-    active: data.active
+    active: data.active,
   };
 }
 
@@ -43,7 +45,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
 
   return context;
@@ -65,18 +67,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (token) {
         const verifyResponse = await apiClient.verifyToken();
-        if (verifyResponse.valid && verifyResponse.userId && verifyResponse.email) {
+        if (
+          verifyResponse.valid &&
+          verifyResponse.userId &&
+          verifyResponse.email
+        ) {
           // TODO: Fetch the full user profile
           // For now, we'll create a basic user object
           setUser({
             id: verifyResponse.userId,
             email: verifyResponse.email,
-            ...verifyResponse.user
+            ...verifyResponse.user,
           });
         }
       }
     } catch (error) {
-      console.error('Auth check failed:', error);
+      console.error("Auth check failed:", error);
       // Token is invalid, wipe out any stored data
       await apiClient.logout();
     } finally {
@@ -84,12 +90,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (
+    email: string,
+    password: string,
+  ): Promise<{ user: User } | null> => {
     setIsLoading(true);
 
     try {
       const response = await apiClient.login(email, password);
-      setUser(response.user);
+
+      if (response.user) {
+        setUser(response.user);
+      }
+
+      return response;
     } finally {
       setIsLoading(false);
     }
@@ -136,19 +150,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const response = await apiClient.activate(code);
 
     if (response.user) {
-      setUser(response.user)
+      setUser(response.user);
     }
 
-    return response
-  }
+    return response;
+  };
 
-  const requestActivateCode = async() => {
+  const requestActivateCode = async () => {
     await apiClient.requestActivateCode();
-  }
+  };
 
   const updateAuthUser = (user) => {
     setUser(user);
-  }
+  };
 
   const value: AuthContextType = {
     user,
@@ -161,12 +175,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     resetPassword,
     updateAuthUser,
     activate,
-    requestActivateCode
+    requestActivateCode,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
