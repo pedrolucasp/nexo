@@ -24,6 +24,8 @@ model User {
   activationCodeExpiresAt DateTime? @map("activation_code_expires_at")
   active                  Boolean   @default(false) @map("active")
 
+  pushToken String? @map("push_token")
+
   moods         Mood[]
   interventions Intervention[]
   triggers      Trigger[]
