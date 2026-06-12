@@ -1,0 +1,36 @@
+---
+# ansible/provision.yml
+# Run once to fully provision the VPS.
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml provision.yml --ask-become-pass
+#
+# What it does (in order):
+#   1. bootstrap  — adds baseline packages
+#   2. docker     — installs Docker Engine + Compose plugin
+#   3. appuser    — creates the deploy user, copies the SSH key
+#   4. directories — creates /srv/app/production
+#   5. TODO: Add nginx + compose here as well
+
+- name: Provision server
+  hosts: vps
+  become: yes
+  become_method: doas
+
+  roles:
+    - bootstrap
+    - docker
+    - appuser
+    - directories
+
+  post_tasks:
+    - name: Confirm deploy user can reach Docker
+      ansible.builtin.command: docker info
+      become_user: "{{ deploy_user }}"
+      changed_when: false
+      register: docker_check
+
+    - name: Show Docker status
+      ansible.builtin.debug:
+        msg: "Docker is reachable by {{ deploy_user }}"
+      when: docker_check.rc == 0

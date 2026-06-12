@@ -1,0 +1,24 @@
+---
+# Creates the deploy user, authorises the deploy key
+
+- name: Create deploy group
+  ansible.builtin.group:
+    name: "{{ deploy_user }}"
+    state: present
+
+- name: Create deploy user
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    groups: docker
+    append: yes
+    password: x # XXX: lazy, dumb password, replace with a encrypted vault
+    shell: /bin/bash
+    create_home: yes
+    state: present
+
+- name: Authorise deploy SSH public key
+  ansible.posix.authorized_key:
+    user: "{{ deploy_user }}"
+    state: present
+    key: "{{ lookup('file', deploy_ssh_pubkey_file) }}"

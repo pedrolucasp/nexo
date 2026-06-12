@@ -1,0 +1,42 @@
+---
+# Creates /srv/app/{production,staging} owned by the deploy user
+
+- name: Ensure /srv/app exists
+  ansible.builtin.file:
+    path: /srv/app
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0750"
+
+- name: Create per-environment directories
+  ansible.builtin.file:
+    path: "/srv/app/{{ item }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0750"
+  loop: "{{ app_environments }}"
+
+- name: Add README so the directories aren't mysterious
+  ansible.builtin.copy:
+    dest: "/srv/app/{{ item }}/README"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0640"
+    content: |
+      {{ item }} environment
+      ----------------------
+      docker-compose.yml  — compose file for this environment
+      .env.{{ item }}     — secrets
+      .env                — required by docker's arg variables
+      valkey.conf         — valkey config
+  loop: "{{ app_environments }}"
+
+- name: Ensure /srv/static exists for thesis
+  ansible.builtin.file:
+    path: /srv/static
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: nginx
+    mode: "0750"

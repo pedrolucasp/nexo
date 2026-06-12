@@ -1,0 +1,10 @@
+# The deploy user to create
+deploy_user: deploy
+
+# The SSH public key that will be authorised for the deploy user
+deploy_ssh_pubkey_file: ~/.ssh/nexo_deploy_key.pub
+
+# App directories to create under /srv/app
+app_environments:
+  - production
+  - staging

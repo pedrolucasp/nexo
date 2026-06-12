@@ -1,0 +1,18 @@
+---
+# roles/bootstrap/tasks/main.yml
+# Minimal server packages for Alpine Linux.
+
+- name: Update apk cache
+  community.general.apk:
+    update_cache: yes
+
+- name: Install baseline packages
+  community.general.apk:
+    name:
+      - htop
+      - vim
+      - git
+      - bash
+      - docker
+      - uacme
+    state: present

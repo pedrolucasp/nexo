@@ -1,0 +1,4 @@
+---
+collections:
+  - name: community.general   # apk module, and others
+  - name: ansible.posix       # authorized_key (and other stuff) modules

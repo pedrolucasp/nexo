@@ -1,0 +1,18 @@
+---
+# Installs Docker Engine + Compose plugin on Alpine Linux.
+- name: Update apk cache
+  community.general.apk:
+    update_cache: yes
+
+- name: Install Docker and Compose plugin
+  community.general.apk:
+    name:
+      - docker
+      - docker-cli-compose
+    state: present
+
+- name: Enable Docker service
+  ansible.builtin.service:
+    name: docker
+    enabled: yes
+    state: started
