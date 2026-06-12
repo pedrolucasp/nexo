@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "128511802945",
+    "project_id": "nexo-e2a32",
+    "storage_bucket": "nexo-e2a32.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128511802945:android:c01f3ab5ff34ad692b10c0",
+        "android_client_info": {
+          "package_name": "com.eletrotupi.orbit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPAyfLr3y_ItcVDpKPIEEYoLkZqaCSjVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

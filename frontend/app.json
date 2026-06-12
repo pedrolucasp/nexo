@@ -17,7 +17,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.eletrotupi.orbit"
+      "package": "com.eletrotupi.orbit",
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-router",
