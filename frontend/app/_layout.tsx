@@ -1,13 +1,22 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
-import { Stack } from 'expo-router';
-import { useColorScheme } from 'react-native';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/queryClient';
-
-import { AuthProvider } from '@/context/AuthContext';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { Stack } from "expo-router";
+import { useColorScheme } from "react-native";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
+import { useNotificationObserver } from "@/hooks/useNotificationObserver";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  initialRouteName: "(tabs)",
+};
+
+const AppBootstrap = () => {
+  useNotificationObserver();
+  return null;
 };
 
 export default function RootLayout() {
@@ -17,6 +26,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={DefaultTheme}>
         <AuthProvider>
+          <AppBootstrap />
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -24,42 +34,53 @@ export default function RootLayout() {
               name="auth"
               options={{
                 headerShown: false,
-                presentation: 'modal'
+                presentation: "modal",
               }}
             />
 
             <Stack.Screen
               name="profile"
               options={{
-                title: 'Editar perfil',
+                title: "Editar perfil",
               }}
             />
 
             <Stack.Screen
               name="entry/mood-components"
               options={{
-                presentation: 'formSheet',
-                title: 'Editar Componentes',
+                presentation: "formSheet",
+                title: "Editar Componentes",
                 sheetAllowedDetents: [0.25, 0.5, 1],
-                sheetInitialDetentIndex: 1
+                sheetInitialDetentIndex: 1,
               }}
             />
 
             <Stack.Screen
               name="sleep/new"
               options={{
-                title: "Registrar Sono"
+                title: "Registrar Sono",
               }}
             />
 
             <Stack.Screen
               name="triggers/new"
               options={{
-                title: "Registrar Gatilho"
+                title: "Registrar Gatilho",
               }}
             />
 
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+            <Stack.Screen
+              name="notifications"
+              options={{
+                presentation: "modal",
+                title: "Notificações",
+              }}
+            />
+
+            <Stack.Screen
+              name="modal"
+              options={{ presentation: "modal", title: "Modal" }}
+            />
           </Stack>
         </AuthProvider>
       </ThemeProvider>

@@ -6,64 +6,62 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
-} from 'react-native';
+} from "react-native";
 
-import {
-  useState, useEffect
-} from 'react';
-import * as Notifications from 'expo-notifications';
+import { useState, useEffect } from "react";
+import * as Notifications from "expo-notifications";
 import { useAuth } from "@/context/AuthContext";
+import { useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { Button } from "@/components/ui/Button";
+import { Colors, Spacing } from "@/constants/theme";
+import { Card } from "@/components/ui/Cards";
+import { Section, SectionHeader } from "@/components/ui/Sections";
 
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { Button } from '@/components/ui/Button';
+type NotificationParams = {
+  title?: string;
+  body?: string;
+  notificationId?: string;
+};
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 export default function NotificationsPage() {
   const { user } = useAuth();
-  const backgroundColor = useThemeColor({}, 'background');
-  const [expoPushToken, setExpoPushToken] = useState(user.pushToken);
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(
-    undefined
-  );
+  const params = useLocalSearchParams<NotificationParams>();
+  const [expoPushToken, setExpoPushToken] = useState(user?.pushToken);
 
   useEffect(() => {
-    const notificationListener = Notifications
-    .addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    const responseListener = Notifications
-    .addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
-    return () => {
-      notificationListener.remove();
-      responseListener.remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    setExpoPushToken(user.pushToken)
+    if (user) {
+      setExpoPushToken(user.pushToken);
+    }
   }, [user]);
 
-  async function sendPushNotification(expoPushToken: string) {
+  async function sendPushNotification() {
     if (expoPushToken) {
       const message = {
         to: expoPushToken,
-        sound: 'default',
-        title: 'Oi meu querido',
-        body: 'Vamo escutar um The Doors',
-        data: { screen: 'notifications' },
+        sound: "default",
+        title: "Oi meu querido",
+        body: "Vamo escutar um The Doors",
+        data: { screen: "notifications" },
       };
 
-      const response = await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
+      await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
         headers: {
-          Accept: 'application/json',
-          'Accept-encoding': 'gzip, deflate',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Accept-encoding": "gzip, deflate",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(message),
       });
@@ -71,35 +69,27 @@ export default function NotificationsPage() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <StatusBar style={'dark'} />
-      <KeyboardAvoidingView
-        behavior='height'
-        style={styles.keyboardView}
-      >
+    <SafeAreaView style={styles.container}>
+      <StatusBar style={"dark"} />
+      <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
-        <View>
-          <Text>
-            Uma notificação!!!
-          </Text>
-        </View>
+          <Section>
+            <SectionHeader title="Recebidas" />
 
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Title: {notification && notification.request.content.title} </Text>
-          <Text>Body: {notification && notification.request.content.body}</Text>
-          <Text>Data: {notification && JSON.stringify(notification.request.content.data)}</Text>
-        </View>
+            <Card style={{ padding: Spacing.cardGap }}>
+              <Text>Title: {params.title}</Text>
+              <Text>Body: {params.body}</Text>
+              <Text>
+                Data:{" "}
+                {params.notificationId && JSON.stringify(params.notificationId)}
+              </Text>
+            </Card>
+          </Section>
 
-        <Button
-          title="Quer ver uma coisa?"
-          onPress={async () => {
-            await sendPushNotification(expoPushToken);
-          }}
-        />
-
+          <Button title="Quer ver uma coisa?" onPress={sendPushNotification} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -109,6 +99,7 @@ export default function NotificationsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.light.background,
   },
   keyboardView: {
     flex: 1,
@@ -116,11 +107,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    justifyContent: 'start',
-    minHeight: '100%',
+    justifyContent: "start",
+    minHeight: "100%",
   },
   header: {
-    alignItems: 'left',
+    alignItems: "left",
     marginBottom: 40,
   },
 });

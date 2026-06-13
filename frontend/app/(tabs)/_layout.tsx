@@ -1,13 +1,12 @@
-import { Tabs, Redirect, router } from 'expo-router';
-import React, { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { Tabs, Redirect, router } from "expo-router";
+import React, { useEffect } from "react";
+import { View, ActivityIndicator } from "react-native";
 
-import { HapticTab } from '@/components/misc/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useAuth } from '@/context/AuthContext';
-import * as Notifications from "expo-notifications";
+import { HapticTab } from "@/components/misc/haptic-tab";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { useAuth } from "@/context/AuthContext";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -15,35 +14,13 @@ export default function TabLayout() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace('/auth/login');
+      router.replace("/auth/login");
     }
   }, [isAuthenticated, isLoading]);
 
-  // TODO: Store the notification in a hook ctx, then capture if was
-  useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const screen = response.notification.request.content.data?.screen;
-
-      if (screen === 'notifications') {
-        router.push('/notifications');
-      }
-    });
-
-    // Handle notification tap when app was already open
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: false,
-        shouldSetBadge: false,
-      }),
-    });
-
-    return () => subscription.remove();
-  }, []);
-
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -56,49 +33,59 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarInactiveTintColor: Colors['light'].tabIconDefault,
-        tabBarActiveTintColor: Colors['light'].tabIconSelected,
+        tabBarInactiveTintColor: Colors["light"].tabIconDefault,
+        tabBarActiveTintColor: Colors["light"].tabIconSelected,
         headerShown: false,
         tabBarButton: HapticTab,
-      }}>
-
+      }}
+    >
       <Tabs.Screen
         name="history"
         options={{
-          title: 'Histórico',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="history" color={color} />,
+          title: "Histórico",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="history" color={color} />
+          ),
         }}
       />
 
       <Tabs.Screen
         name="insights"
         options={{
-          title: 'Jornada',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="book" color={color} />,
+          title: "Jornada",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="book" color={color} />
+          ),
         }}
       />
 
       <Tabs.Screen
         name="new"
         options={{
-          title: 'Novo',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="add-circle" color={color} />,
+          title: "Novo",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="add-circle" color={color} />
+          ),
         }}
       />
 
       <Tabs.Screen
         name="actions"
         options={{
-          title: 'Ações',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bolt" color={color} />,
+          title: "Ações",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="bolt" color={color} />
+          ),
         }}
       />
 
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Ajustes',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="settings.fill" color={color} />,
+          title: "Ajustes",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="settings.fill" color={color} />
+          ),
         }}
       />
     </Tabs>
