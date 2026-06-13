@@ -57,3 +57,13 @@ export const updateUser = async (input: UpdateUserInput): Promise<User> => {
     data: updateData
   })
 }
+
+export const findUsersElligibleForPush = async (): Promise<User[]> => {
+  return await prisma.user.findMany({
+    where: {
+      pushToken: {
+        not: null
+      }
+    }
+  });
+}
