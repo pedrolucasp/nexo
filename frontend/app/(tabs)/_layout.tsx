@@ -7,6 +7,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/context/AuthContext';
+import * as Notifications from "expo-notifications";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -17,6 +18,28 @@ export default function TabLayout() {
       router.replace('/auth/login');
     }
   }, [isAuthenticated, isLoading]);
+
+  // TODO: Store the notification in a hook ctx, then capture if was
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const screen = response.notification.request.content.data?.screen;
+
+      if (screen === 'notifications') {
+        router.push('/notifications');
+      }
+    });
+
+    // Handle notification tap when app was already open
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   if (isLoading) {
     return (

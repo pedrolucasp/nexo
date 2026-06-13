@@ -39,11 +39,15 @@ export default function New() {
     router.navigate(`/new/entry?initialMood=${mood}`);
   };
 
+  const onNotificationPress = () => {
+    router.push('/notifications');
+  }
+
   return (
     <ScreenLayout
       userName={user.firstName}
       userAvatar={user.avatarURL}
-      onNotificationPress={() => console.log("Notifications")}
+      onNotificationPress={onNotificationPress}
       showNotificationBadge={true}
     >
       <Section>
