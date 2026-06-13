@@ -1,174 +1,186 @@
-import { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  ActivityIndicator
-} from 'react-native';
+import { useEffect, useState } from "react";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 
-import { ThemedText } from '@/components/misc/themed-text';
-import { ThemedView } from '@/components/misc/themed-view';
-import { ScreenLayout } from '@/components/ui/ScreenLayout';
-import { useAuth } from '@/context/AuthContext';
-import { Grid, Col, Row, Between } from '@/components/ui/LayoutHelpers';
-import { Card } from '@/components/ui/Cards';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { Section, SectionHeader } from '@/components/ui/Sections';
-import { MoodSelector } from '@/components/ui/EmojiSelectors';
-import { Typography, Spacing, Shadows, Colors, BorderRadius } from '@/constants/theme';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { ThemedText } from "@/components/misc/themed-text";
+import { ThemedView } from "@/components/misc/themed-view";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
+import { useAuth } from "@/context/AuthContext";
+import { Grid, Col, Row, Between } from "@/components/ui/LayoutHelpers";
+import { Card } from "@/components/ui/Cards";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Section, SectionHeader } from "@/components/ui/Sections";
+import { MoodSelector } from "@/components/ui/EmojiSelectors";
 import {
-  MoodDefinition, MOODS
-} from '@/constants/moods'
+  Typography,
+  Spacing,
+  Shadows,
+  Colors,
+  BorderRadius,
+} from "@/constants/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { MoodDefinition, MOODS } from "@/constants/moods";
 
-import {
-  useThemeColor,
-  useMoodEntries
-} from '@/hooks';
+import { useThemeColor, useMoodEntries } from "@/hooks";
 
-import MoodEntryLog from '@/components/ui/MoodEntryLog';
+import MoodEntryLog from "@/components/ui/MoodEntryLog";
 
 export default function New() {
   const { user } = useAuth();
-  const [mood, setMood] = useState<string>('good');
+  const [mood, setMood] = useState<string>("good");
   const { data, isLoading } = useMoodEntries({ limit: 5 });
   const recentEntries = data?.entries ?? [];
 
-  console.log("entries: ", data, recentEntries)
+  console.log("entries: ", data, recentEntries);
 
   const initQuickRegister = () => {
     // TODO: Set down on camelCase vs kebab case
-    router.navigate(`/new/entry?initialMood=${mood}`)
+    router.navigate(`/new/entry?initialMood=${mood}`);
   };
 
+  const onNotificationPress = () => {
+    router.push('/notifications');
+  }
+
   return (
-    <ScreenLayout userName={user.firstName} userAvatar={user.avatarURL}
-      onNotificationPress={() => console.log('Notifications')}
-      showNotificationBadge={true}>
-        <Section>
-          <SectionHeader
-            title="Como você está hoje?"
-            subtitle="Sua jornada começa agora"
+    <ScreenLayout
+      userName={user.firstName}
+      userAvatar={user.avatarURL}
+      onNotificationPress={onNotificationPress}
+      showNotificationBadge={true}
+    >
+      <Section>
+        <SectionHeader
+          title="Como você está hoje?"
+          subtitle="Sua jornada começa agora"
+        ></SectionHeader>
+
+        <Card style={{ minHeight: 200 }}>
+          <Col gap={16}>
+            <Between style={styles.quickRegisterHeader}>
+              <ThemedText style={styles.quickRegisterTitle}>
+                Registro rápido
+              </ThemedText>
+
+              <ThemedText style={styles.quickRegisterBadge}>HOJE</ThemedText>
+            </Between>
+
+            <MoodSelector
+              style={{ paddingLeft: 8, paddingRight: 8, paddingTop: 16 }}
+              items={MOODS}
+              value={mood}
+              onSelect={setMood}
+            />
+
+            <Button
+              title="Salvar Humor"
+              onPress={initQuickRegister}
+              style={styles.quickRegisterButton}
+            />
+          </Col>
+        </Card>
+      </Section>
+
+      {/* TODO: Check whether we gonna have to generate these on demand */}
+      <Section>
+        <Grid gap={4}>
+          <Card style={{ padding: Spacing.cardGap }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                flexGrow: 0,
+                paddingVertical: 10,
+              }}
             >
-          </SectionHeader>
+              <Ionicons name="flash" size={20} color="#64748B" />
 
-          <Card style={{ minHeight: 200 }}>
-            <Col gap={16}>
-              <Between style={styles.quickRegisterHeader}>
-                <ThemedText style={styles.quickRegisterTitle}>
-                  Registro rápido
-                </ThemedText>
+              <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+                Energia
+              </Text>
+            </View>
 
-                <ThemedText style={styles.quickRegisterBadge}>
-                  HOJE
-                </ThemedText>
-              </Between>
+            <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+              Média Alta
+            </Text>
 
-              <MoodSelector
-                style={{paddingLeft: 8, paddingRight: 8, paddingTop: 16 }}
-                items={MOODS}
-                value={mood}
-                onSelect={setMood}
-              />
-
-              <Button
-                title="Salvar Humor"
-                onPress={initQuickRegister}
-                style={styles.quickRegisterButton}
-              />
-            </Col>
+            <View style={styles.lineTrack}>
+              <View style={[styles.lineFill, { width: `35%` }]} />
+            </View>
           </Card>
-        </Section>
 
-        {/* TODO: Check whether we gonna have to generate these on demand */}
-        <Section>
-          <Grid gap={4}>
-            <Card style={{ padding: Spacing.cardGap }}>
-              <View style={{ flex: 1, flexDirection: 'row', flexGrow: 0, paddingVertical: 10 }}>
-                <Ionicons name="flash" size={20} color="#64748B" />
-
-                <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                  Energia
-                </Text>
-              </View>
+          <Card style={{ padding: Spacing.cardGap }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                flexGrow: 0,
+                paddingVertical: 10,
+              }}
+            >
+              <Ionicons name="moon-outline" size={20} color="#64748B" />
 
               <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                Média Alta
+                Sono
               </Text>
+            </View>
 
-              <View style={styles.lineTrack}>
-                <View style={[styles.lineFill, { width: `35%` }]} />
-              </View>
-            </Card>
+            <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+              7h 30m
+            </Text>
 
-            <Card style={{ padding: Spacing.cardGap }}>
-              <View style={{ flex: 1, flexDirection: 'row', flexGrow: 0, paddingVertical: 10 }}>
-                <Ionicons name="moon-outline" size={20} color="#64748B" />
+            <Text style={styles.indicatorGreen}>+45min que ontem</Text>
+          </Card>
+        </Grid>
+      </Section>
 
-                <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                  Sono
-                </Text>
-              </View>
+      <Section>
+        <SectionHeader title="Registros recentes" />
 
-              <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                7h 30m
-              </Text>
-
-              <Text style={styles.indicatorGreen}>
-                +45min que ontem
-              </Text>
-            </Card>
-          </Grid>
-        </Section>
-
-        <Section>
-          <SectionHeader title="Registros recentes" />
-
-          {isLoading ? (
-            <ActivityIndicator />
-          ) : (
-            <Col gap={8}>
-              {recentEntries.map((entry) => (
-                <MoodEntryLog key={entry.id} entry={entry} />
-              ))}
-            </Col>
-          )}
-        </Section>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <Col gap={8}>
+            {recentEntries.map((entry) => (
+              <MoodEntryLog key={entry.id} entry={entry} />
+            ))}
+          </Col>
+        )}
+      </Section>
     </ScreenLayout>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   quickRegisterHeader: {
     marginTop: 16,
     paddingLeft: 16,
-    paddingRight: 16
+    paddingRight: 16,
   },
   quickRegisterTitle: {
-    ...Typography.bodyLg
+    ...Typography.bodyLg,
   },
   // TODO: Replace when we have badges
   quickRegisterBadge: {
     fontSize: 12,
-    lineHeight: 16
+    lineHeight: 16,
   },
   quickRegisterButton: {
     marginLeft: 16,
     marginRight: 16,
     marginBottom: 16,
-    ...Shadows.lg
+    ...Shadows.lg,
   },
   lineTrack: {
     height: 6,
     backgroundColor: Colors.light.divider,
     borderRadius: BorderRadius.full,
     marginBottom: 4,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   lineFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: Colors.light.tint,
     borderRadius: BorderRadius.full,
   },
@@ -176,6 +188,6 @@ const styles = StyleSheet.create({
     color: Colors.light.tint,
     fontSize: 11,
     fontWeight: 600,
-    lineHeight: 16.5
-  }
+    lineHeight: 16.5,
+  },
 });

@@ -16,4 +16,8 @@ export type {
   // Trigger
   Trigger,
   CreateTriggerPayload,
+  // Insights
+  Insight,
+  InsightType,
+  InsightPeriod,
 } from "@/lib/api/types";

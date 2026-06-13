@@ -8,5 +8,6 @@ router.get('/', requireAuth, MoodsController.index);
 router.get('/:id', requireAuth, MoodsController.show);
 router.post('/', requireAuth, MoodsController.create);
 router.delete('/:id', requireAuth, MoodsController.destroy);
+router.post('/notify', MoodsController.sendNotification);
 
 export default router;
