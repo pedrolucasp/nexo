@@ -26,6 +26,7 @@ const INSIGHT_PERIOD: Record<InsightType, InsightPeriod> = {
   MOOD_TREND: "WEEKLY",
   ENERGY_SLEEP_CORRELATION: "WEEKLY",
   TRIGGER_PATTERN: "WEEKLY",
+  DAILY_SLEEP: "DAILY",
 };
 
 export const useInsight = (type: InsightType) => {

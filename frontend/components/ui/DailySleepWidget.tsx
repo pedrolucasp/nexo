@@ -3,11 +3,23 @@ import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { Card } from "./Cards";
 import { Colors, Spacing, Typography } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useInsight } from "@/hooks/useInsights.queries";
 
 export const DailySleepWidget = () => {
-  //const { data: insight, isLoading } = useInsight("DAILY_ENERGY", 0);
-  const isLoading = false;
-  const insight = null;
+  const { data: insight, isLoading } = useInsight("DAILY_SLEEP");
+
+  const metadata = insight?.metadata as
+    | {
+        diffStr: string;
+        diffMinutes: number;
+      }
+    | undefined;
+
+  const diffColor = metadata?.diffMinutes
+    ? metadata.diffMinutes < 0
+      ? Colors.light.danger
+      : Colors.light.tint
+    : Colors.light.tint;
 
   return (
     <Card style={{ padding: Spacing.cardGap }}>
@@ -32,9 +44,11 @@ export const DailySleepWidget = () => {
         ) : insight ? (
           <>
             <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-              7h 30m
+              {insight.body}
             </Text>
-            <Text style={styles.indicatorGreen}>+45min que ontem</Text>
+            <Text style={{ ...styles.indicatorGreen, color: diffColor }}>
+              {metadata?.diffStr}
+            </Text>
           </>
         ) : (
           <>
@@ -54,7 +68,6 @@ const styles = StyleSheet.create({
     padding: Spacing.cardGap,
   },
   indicatorGreen: {
-    color: Colors.light.tint,
     fontSize: 11,
     fontWeight: 600,
     lineHeight: 16.5,

@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Typography, Spacing, Colors, BorderRadius } from "@/constants/theme";
 
 export const DailyEnergyWidget = () => {
-  const { data: insight, isLoading } = useInsight("DAILY_ENERGY", 0);
+  const { data: insight, isLoading } = useInsight("DAILY_ENERGY");
 
   const metadata = insight?.metadata as {
     peak: number;

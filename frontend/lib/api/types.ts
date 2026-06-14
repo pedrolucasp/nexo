@@ -131,7 +131,8 @@ export type InsightType =
   | "MOOD_TREND"
   | "ENERGY_SLEEP_CORRELATION"
   | "TRIGGER_PATTERN"
-  | "DAILY_ENERGY";
+  | "DAILY_ENERGY"
+  | "DAILY_SLEEP";
 
 export type InsightPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
 
@@ -163,6 +164,13 @@ export type InsightMetadata =
       peak: number;
       trough: number;
       entryCount: number;
+    }
+  | {
+      type: "DAILY_SLEEP";
+      totalHours: number;
+      diffMinutes: number;
+      sessionCount: number;
+      hadNaps: boolean;
     };
 
 export type Insight = {
