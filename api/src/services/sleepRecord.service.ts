@@ -5,6 +5,7 @@ import { CreateSleepRecordInput } from '@app/schemas';
 import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
+import { startOfDay } from "date-fns";
 
 export const createSleepRecord = async (
   userId: number, input: CreateSleepRecordInput
@@ -16,7 +17,7 @@ export const createSleepRecord = async (
     }
   });
 
-  void enqueueEnergySleepInsight(userId);
+  void enqueueEnergySleepInsights(userId);
 
   return sleepRecord;
 };
@@ -75,13 +76,31 @@ export const destroySleepRecordById = async (
   })
 }
 
-async function enqueueEnergySleepInsight(userId: number): Promise<void> {
-  await getQueue('insights').add(
-    InsightJobName.EnergySleep,
-    { userId, ...rollingPeriod(7) },
+async function enqueueEnergySleepInsights(userId: number): Promise<void> {
+  const queue = getQueue("insights");
+  const period = rollingPeriod(7);
+  const payload = { userId, ...period };
+
+  await getQueue('insights').addBulk([
     {
-      jobId: `energy-sleep-${userId}-${new Date().toDateString()}`,
-      removeOnComplete: true,
-    }
-  );
+      name: InsightJobName.EnergySleep,
+      data: payload,
+      opts: {
+        jobId: `energy-sleep-${userId}-${new Date().toDateString()}`,
+        removeOnComplete: true,
+      }
+    },
+    {
+      name: InsightJobName.DailySleep,
+      data: {
+        userId,
+        periodStart: startOfDay(new Date()).toISOString(),
+        periodEnd: new Date()
+      },
+      opts: {
+        jobId: `daily-sleep-${userId}-${new Date().toDateString()}`,
+        removeOnComplete: true,
+      },
+    },
+  ]);
 }

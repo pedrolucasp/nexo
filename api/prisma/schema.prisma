@@ -139,6 +139,7 @@ enum InsightType {
   WEEKLY_SUMMARY
   STREAK
   DAILY_ENERGY
+  DAILY_SLEEP
 }
 
 enum InsightPeriod {
