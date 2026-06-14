@@ -279,7 +279,7 @@ class ApiClient {
     type?: InsightType;
     period?: InsightPeriod;
     limit?: number;
-  }): Promise<Insight[]> {
+  }): Promise<{ insights: Insight[] }> {
     const query = new URLSearchParams();
     if (filters?.type) query.set("type", filters.type);
     if (filters?.period) query.set("period", filters.period);

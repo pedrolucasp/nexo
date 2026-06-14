@@ -130,7 +130,8 @@ export interface CreateTriggerPayload {
 export type InsightType =
   | "MOOD_TREND"
   | "ENERGY_SLEEP_CORRELATION"
-  | "TRIGGER_PATTERN";
+  | "TRIGGER_PATTERN"
+  | "DAILY_ENERGY";
 
 export type InsightPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
 
@@ -154,6 +155,14 @@ export type InsightMetadata =
       topCount: number;
       total: number;
       distribution: Record<string, number>;
+    }
+  | {
+      type: "DAILY_ENERGY";
+      avgEnergy: number;
+      dayTrend: number | null;
+      peak: number;
+      trough: number;
+      entryCount: number;
     };
 
 export type Insight = {
