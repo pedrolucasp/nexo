@@ -32,9 +32,9 @@ const PILL_PURPLE = "#f3e8ff";
 
 const tintColorLight = "#12ED5C";
 const tintColorSecondary = "#618A70";
-const black = "#0F172A";
-const gray = "#475569";
-const lightGray = "#64748B";
+const GRAY = "#475569";
+const LIGHT_GRAY = "#64748B";
+const LIGHT_SLATE_GRAY = "#94A3B8";
 
 export const Colors = {
   light: {
@@ -74,12 +74,20 @@ export const Colors = {
     accentBlue: PILL_BLUE,
     accentIndigo: PILL_INDIGO,
     accentPurple: PILL_PURPLE,
+    accentDarkPurple: "#7F77DD",
+
+    // Some grays
+    gray: GRAY,
+    lightGray: LIGHT_GRAY,
+    lightSlateGray: LIGHT_SLATE_GRAY,
+    black: PRIMARY_DARK,
 
     // Disabled / Secondary
     disabled: "#cbd5e1",
     divider: BORDER_SUBTLE,
     sliderTracking: "#E2E8F0",
     sliderLabels: "#94a3b8",
+    warning: "orange",
     success: "#22c55e",
     danger: "#EF4444",
     textBlack: PRIMARY_DARK,
