@@ -78,10 +78,19 @@ export async function processTriggerPattern({
 function buildBody(top: TriggerType, count: number, total: number): string {
   const pct = Math.round((count / total) * 100);
   const label = TRIGGER_LABEL[top];
-  return `
+  let template = "";
+
+  if (top == "OTHER") {
+    template = `
+    Gatilhos do tipo "${label}" foram os mais frequentes,
+    representando ${pct}% dos registros do período.
+  `
+  } else {
+    template = `
     Gatilhos de ${label} foram os mais frequentes,
     representando ${pct}% dos registros do período.
   `
-    .replace(/\s*\n\s*/g, " ")
-    .trim();
+  }
+
+  return template.replace(/\s*\n\s*/g, " ").trim();
 }
