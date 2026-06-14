@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 
 import { apiClient, MoodEntry, CreateMoodEntryPayload } from "@/lib/api";
+import { insightKeys } from "./useInsights.queries";
 
 export const moodKeys = {
   all: () => ["mood-entries"] as const,
@@ -95,6 +96,19 @@ export const useCreateMoodEntry = () => {
     // On success, replace optimistic record with real one from server
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
+
+      // Invalidate insights, so we can force refresh
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("DAILY_ENERGY"),
+        });
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("MOOD_TREND"),
+        });
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION"),
+        });
+      }, 2000);
     },
   });
 };
