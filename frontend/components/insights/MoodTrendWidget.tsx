@@ -38,14 +38,12 @@ export const MoodTrendWidget: React.FC = () => {
     avgEnergy: number;
   };
 
-  const metric = metadata?.delta
-    ? `+${Math.round(metadata.delta * 100)}%`
-    : "N/A";
+  const metric = metadata?.delta ? `${Math.round(metadata.delta)}%` : "N/A";
 
   const accent = metadata?.delta
     ? metadata.delta < 0
-      ? "green"
-      : "purple"
+      ? "purple"
+      : "green"
     : "green";
 
   return (

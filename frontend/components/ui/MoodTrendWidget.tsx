@@ -7,7 +7,7 @@ import { useThemeColor } from "@/hooks/use-theme-color";
 import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 
 export const MoodTrendWidget: React.FC = () => {
-  const { data: insight, isLoading } = useInsight("MOOD_TREND");
+  const { data: insight, isLoading } = useInsight("MOOD_TREND", 0);
 
   const successColor = useThemeColor({}, "success");
   const errorColor = useThemeColor({}, "danger");
