@@ -124,5 +124,13 @@ export const enqueueOnDemandInsights = async (
         removeOnComplete: true,
       },
     },
+    {
+      name: InsightJobName.DailyEnergy,
+      data: payload,
+      opts: {
+        jobId: `daily-energy-${userId}-${new Date().toDateString()}`,
+        removeOnComplete: true,
+      },
+    },
   ]);
 };
