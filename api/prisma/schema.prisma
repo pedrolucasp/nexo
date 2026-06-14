@@ -138,6 +138,7 @@ enum InsightType {
   TRIGGER_PATTERN
   WEEKLY_SUMMARY
   STREAK
+  DAILY_ENERGY
 }
 
 enum InsightPeriod {

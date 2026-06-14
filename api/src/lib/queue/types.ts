@@ -23,6 +23,7 @@ export enum InsightJobName {
   MoodTrend = "insight:mood-trend",
   EnergySleep = "insight:energy-sleep",
   TriggerPattern = "insight:trigger-pattern",
+  DailyEnergy = "insight:daily-energy"
 }
 
 export type InsightPeriodPayload = {
@@ -37,4 +38,5 @@ export type InsightJobData =
   | { name: InsightJobName.FanOut; data: InsightFanOutPayload }
   | { name: InsightJobName.MoodTrend; data: InsightPeriodPayload }
   | { name: InsightJobName.EnergySleep; data: InsightPeriodPayload }
-  | { name: InsightJobName.TriggerPattern; data: InsightPeriodPayload };
+  | { name: InsightJobName.TriggerPattern; data: InsightPeriodPayload }
+  | { name: InsightJobName.DailyEnergy; data: InsightPeriodPayload };

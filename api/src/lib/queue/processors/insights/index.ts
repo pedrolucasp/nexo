@@ -9,6 +9,7 @@ import { prisma } from "@app/lib/prisma";
 import { processMoodTrend } from "@app/lib/queue/processors/insights/moodTrend";
 import { processEnergySleep } from "@app/lib/queue/processors/insights/energySleep";
 import { processTriggerPattern } from "@app/lib/queue/processors/insights/triggerPattern";
+import { processDailyEnergy } from "@app/lib/queue/processors/insights/dailyEnergy";
 
 export async function insightProcessor(
   job: Job<InsightJobData["data"]>,
@@ -27,6 +28,9 @@ export async function insightProcessor(
 
     case InsightJobName.TriggerPattern:
       return processTriggerPattern(job.data as InsightPeriodPayload);
+
+    case InsightJobName.DailyEnergy:
+      return processDailyEnergy(job.data as InsightPeriodPayload);
 
     default:
       throw new Error(`Unknown insight job: ${job.name}`);
