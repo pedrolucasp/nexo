@@ -25,6 +25,7 @@ import { MoodDefinition, MOODS } from "@/constants/moods";
 import { useThemeColor, useMoodEntries } from "@/hooks";
 
 import MoodEntryLog from "@/components/ui/MoodEntryLog";
+import { DailyEnergyWidget } from "@/components/ui/DailyEnergyWidget";
 
 export default function New() {
   const { user } = useAuth();
@@ -40,8 +41,8 @@ export default function New() {
   };
 
   const onNotificationPress = () => {
-    router.push('/notifications');
-  }
+    router.push("/notifications");
+  };
 
   return (
     <ScreenLayout
@@ -84,55 +85,43 @@ export default function New() {
 
       {/* TODO: Check whether we gonna have to generate these on demand */}
       <Section>
-        <Grid gap={4}>
-          <Card style={{ padding: Spacing.cardGap }}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                flexGrow: 0,
-                paddingVertical: 10,
-              }}
-            >
-              <Ionicons name="flash" size={20} color="#64748B" />
+        <View
+          style={[
+            {
+              flexDirection: "row",
+              gap: 16,
+            },
+          ]}
+        >
+          <View style={{ flex: 1 }}>
+            <DailyEnergyWidget />
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <Card style={{ padding: Spacing.cardGap }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  flexGrow: 0,
+                  paddingVertical: 10,
+                }}
+              >
+                <Ionicons name="moon" size={20} color="#64748B" />
+
+                <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
+                  Sono
+                </Text>
+              </View>
 
               <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                Energia
+                7h 30m
               </Text>
-            </View>
 
-            <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-              Média Alta
-            </Text>
-
-            <View style={styles.lineTrack}>
-              <View style={[styles.lineFill, { width: `35%` }]} />
-            </View>
-          </Card>
-
-          <Card style={{ padding: Spacing.cardGap }}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                flexGrow: 0,
-                paddingVertical: 10,
-              }}
-            >
-              <Ionicons name="moon-outline" size={20} color="#64748B" />
-
-              <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                Sono
-              </Text>
-            </View>
-
-            <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-              7h 30m
-            </Text>
-
-            <Text style={styles.indicatorGreen}>+45min que ontem</Text>
-          </Card>
-        </Grid>
+              <Text style={styles.indicatorGreen}>+45min que ontem</Text>
+            </Card>
+          </View>
+        </View>
       </Section>
 
       <Section>
