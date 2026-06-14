@@ -26,6 +26,7 @@ import { useThemeColor, useMoodEntries } from "@/hooks";
 
 import MoodEntryLog from "@/components/ui/MoodEntryLog";
 import { DailyEnergyWidget } from "@/components/ui/DailyEnergyWidget";
+import { DailySleepWidget } from "@/components/ui/DailySleepWidget";
 
 export default function New() {
   const { user } = useAuth();
@@ -98,28 +99,7 @@ export default function New() {
           </View>
 
           <View style={{ flex: 1 }}>
-            <Card style={{ padding: Spacing.cardGap }}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                  flexGrow: 0,
-                  paddingVertical: 10,
-                }}
-              >
-                <Ionicons name="moon" size={20} color="#64748B" />
-
-                <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                  Sono
-                </Text>
-              </View>
-
-              <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-                7h 30m
-              </Text>
-
-              <Text style={styles.indicatorGreen}>+45min que ontem</Text>
-            </Card>
+            <DailySleepWidget />
           </View>
         </View>
       </Section>

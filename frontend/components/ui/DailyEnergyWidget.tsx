@@ -45,7 +45,7 @@ export const DailyEnergyWidget = () => {
       <View style={{ flex: 1 }}>
         {isLoading ? (
           <View style={styles.empty}>
-            <ActivityIndicator size="small" />
+            <ActivityIndicator size="small" style={{ paddingBottom: 50 }} />
           </View>
         ) : insight ? (
           <>
