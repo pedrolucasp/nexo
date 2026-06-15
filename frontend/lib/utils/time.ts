@@ -23,3 +23,14 @@ export const formatMoment = (date: Date): string => {
   if (isYesterday(date)) return `Ontem às ${format(date, "HH'h'mm")}`;
   return format(date, "d 'de' MMM 'às' HH'h'mm", { locale: ptBR });
 }
+
+// When it's a raw date only field, it should output stuff like
+// Hoje, 10/10
+// Ontem, 09/10
+// 09/10/26
+export const formatDate = (date: Date): string => {
+  if (isToday(date))     return `Hoje, ${format(date, "dd/MM")}`;
+  if (isYesterday(date)) return `Ontem, ${format(date, "dd/MM")}`;
+
+  return format(date, "dd/MM/yyyy", { locale: ptBR });
+}
