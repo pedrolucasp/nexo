@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/Cards'
 import { Badge } from '@/components/ui/Badge'
 import type { SleepRecord } from '@/lib/api'
 import { Spacing } from '@/constants/theme';
+import { router } from 'expo-router'
 
 function sleepBadge(hours: number) {
   if (hours >= 7) return { label: 'Excelente', variant: 'green'  } as const
@@ -31,7 +32,7 @@ export function SleepRecordCard({ card }: Props) {
     .toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
   return (
-    <Card style={styles.card}>
+    <Card style={styles.card} onPress={() => router.push(`/sleep/${card.raw.id}`)}>
       <View style={styles.row}>
         <View style={[styles.iconWrap, { backgroundColor: '#ede9fe' }]}>
           <MaterialIcons name="bedtime" size={22} color="#7c3aed" />

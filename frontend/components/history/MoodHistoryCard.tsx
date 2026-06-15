@@ -8,6 +8,7 @@ import type { MoodEntry } from '@/lib/api';
 import { Spacing } from '@/constants/theme';
 import { getMood } from '@/constants/moods';
 import { format } from 'date-fns';
+import { router } from 'expo-router';
 
 function inferBadge(anxiety: number, stress: number, energy: number) {
   if (anxiety >= 7) return { label: 'Ansiedade alta', variant: 'red'    } as const
@@ -35,7 +36,7 @@ export function MoodHistoryCard({ card }: Props) {
   const moodDef = getMood(card.raw.selectedMood.toLowerCase());
 
   return (
-    <Card style={styles.card}>
+    <Card style={styles.card} onPress={() => router.push(`/entry/${card.raw.id}`)}>
       <View style={styles.row}>
         <View style={[styles.iconWrap, { backgroundColor: meta.bg }]}>
           <Text style={styles.moodIconEmoji}>{moodDef?.icon ?? '😐'}</Text>
