@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import {
   StyleSheet,
   Text,
@@ -116,6 +116,7 @@ export default function MoodDetailScreen() {
                 <Text style={styles.moodTime}>{formatMoment(moment)}</Text>
               </Col>
             </Row>
+            {/* If this is the latest mood entry, show the active badge */}
             <Badge
               label="Registro Ativo"
               backgroundColor={Theme.colors.activeBackground}
