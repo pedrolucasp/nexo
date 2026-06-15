@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   View,
@@ -7,13 +7,13 @@ import {
   Image,
   Pressable,
   StatusBar,
-} from 'react-native';
+} from "react-native";
 
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme'
-import { ThemedText } from '@/components/misc/themed-text'
+import { SafeAreaView } from "react-native-safe-area-context";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { Typography, Spacing, BorderRadius } from "@/constants/theme";
+import { ThemedText } from "@/components/misc/themed-text";
 
 interface ScreenLayoutProps {
   children: React.ReactNode;
@@ -26,18 +26,18 @@ interface ScreenLayoutProps {
 
 export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   children,
-  userName = 'Usuário',
+  userName = "Usuário",
   userAvatar,
   onNotificationPress,
   showNotificationBadge = false,
   scrollEnabled = true,
 }) => {
-  const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({}, 'background');
-  const surfaceColor = useThemeColor({}, 'surface');
-  const dividerColor = useThemeColor({}, 'divider');
-  const accentBlue = useThemeColor({}, 'accentBlue');
-  const tintColor = useThemeColor({}, 'tint');
+  const textColor = useThemeColor({}, "text");
+  const backgroundColor = useThemeColor({}, "background");
+  const surfaceColor = useThemeColor({}, "surface");
+  const dividerColor = useThemeColor({}, "divider");
+  const accentBlue = useThemeColor({}, "accentBlue");
+  const tintColor = useThemeColor({}, "tint");
 
   const styles = StyleSheet.create({
     container: {
@@ -54,13 +54,13 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
       backgroundColor: surfaceColor,
       borderBottomWidth: 1,
       borderBottomColor: dividerColor,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
     },
     headerLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
+      flexDirection: "row",
+      alignItems: "center",
       gap: Spacing.inlineGapSm,
     },
     avatar: {
@@ -71,19 +71,19 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
     },
     userName: {
       fontSize: Typography.bodyLg.fontSize,
-      fontWeight: '600',
+      fontWeight: "600",
       color: textColor,
     },
     notificationButton: {
       width: 40,
       height: 40,
       borderRadius: BorderRadius.md,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
       activeOpacity: 0.7,
     },
     notificationBadge: {
-      position: 'absolute',
+      position: "absolute",
       top: 4,
       right: 4,
       width: 8,
@@ -96,28 +96,23 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
       paddingVertical: Spacing.sectionGap,
     },
   });
- 
+
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor={surfaceColor}
-      />
-      <SafeAreaView style={styles.safeAreaView}>
+      <StatusBar barStyle="dark-content" backgroundColor={surfaceColor} />
+      <SafeAreaView
+        style={styles.safeAreaView}
+        edges={["top", "left", "right"]}
+      >
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             {userAvatar ? (
-              <Image
-                source={{ uri: userAvatar }}
-                style={styles.avatar}
-              />
+              <Image source={{ uri: userAvatar }} style={styles.avatar} />
             ) : (
               <View style={styles.avatar} />
             )}
             <View>
-              <ThemedText style={styles.userName}>
-                Olá, {userName}
-              </ThemedText>
+              <ThemedText style={styles.userName}>Olá, {userName}</ThemedText>
             </View>
           </View>
 
@@ -132,11 +127,9 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
                 color: textColor,
               }}
             >
-            <IconSymbol size={24} name="notifications" color={textColor} />
+              <IconSymbol size={24} name="notifications" color={textColor} />
             </View>
-            {showNotificationBadge && (
-              <View style={styles.notificationBadge} />
-            )}
+            {showNotificationBadge && <View style={styles.notificationBadge} />}
           </Pressable>
         </View>
 
@@ -146,9 +139,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
           contentContainerStyle={scrollEnabled ? undefined : { flex: 1 }}
           scrollEventThrottle={16}
         >
-          <View style={styles.scrollContent}>
-            {children}
-          </View>
+          <View style={styles.scrollContent}>{children}</View>
         </ScrollView>
       </SafeAreaView>
     </View>
