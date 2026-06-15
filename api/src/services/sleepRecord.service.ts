@@ -76,6 +76,12 @@ export const destroySleepRecordById = async (
   })
 }
 
+export const getSleepRecordById = async (userId: number, id: number): Promise<SleepRecord | null> => {
+  return await prisma.sleepRecord.findUnique({
+    where: { userId, id }
+  })
+}
+
 async function enqueueEnergySleepInsights(userId: number): Promise<void> {
   const queue = getQueue("insights");
   const period = rollingPeriod(7);

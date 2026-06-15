@@ -3,7 +3,8 @@ import { AuthenticatedRequest } from '@app/middleware/auth';
 import {
   createSleepRecord,
   getSleepRecordsByUserId,
-  destroySleepRecordById
+  destroySleepRecordById,
+  getSleepRecordById
 } from '@app/services/sleepRecord.service';
 
 import {
@@ -41,6 +42,16 @@ export const SleepRecordsController = {
       return res.status(200).json(
         result
       )
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  show: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const sleepRecord = await getSleepRecordById(Number(req.userId!), Number(req.params.id!));
+
+      return res.status(200).json(sleepRecord)
     } catch (err) {
       next(err);
     }
