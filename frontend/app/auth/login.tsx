@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Animated,
+  Easing
 } from "react-native";
 import { Link, router } from "expo-router";
+import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Button, Input } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
@@ -27,6 +31,29 @@ export default function LoginScreen() {
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "background");
   const tintColor = useThemeColor({}, "tint");
+
+  const spinValue = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.timing(spinValue, {
+        toValue: 1,
+        duration: 12000, // 12s per full turn (slow)
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
+  }, [spinValue]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -77,10 +104,21 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
+        <StatusBar style={'dark'} />
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
+          <View style={styles.logoContainer}>
+            <Animated.View style={{ transform: [{ rotate: spin }] }}>
+              <Image
+                source={require("@/assets/images/logo.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </Animated.View>
+          </View>
+
           <View style={styles.header}>
             <Text style={[styles.title, { color: textColor }]}>
               Bem vindo de volta
@@ -162,6 +200,15 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+    marginTop: 10,
+  },
+  logo: {
+    width: 120,
+    height: 120,
   },
   scrollContainer: {
     flexGrow: 1,
