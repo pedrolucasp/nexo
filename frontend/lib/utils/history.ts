@@ -9,11 +9,23 @@ export function mergeAndSort(cards: HistoryCard[][]): HistoryCard[] {
 
 export function groupByDate(cards: HistoryCard[]): Record<string, HistoryCard[]> {
   return cards.reduce<Record<string, HistoryCard[]>>((acc, card) => {
+    // If the key for this card is sleep, we have to set the hours to
+    // mid day since sleep records dont have a specific time
+    if (card.category === 'sleep') {
+      const date = new Date(card.timestamp)
+      date.setHours(12)
+      card.timestamp = date.toISOString()
+    }
+
     const key = new Date(card.timestamp).toLocaleDateString('pt-BR', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
     });
+
+    if (card.category === 'sleep') {
+      console.log("Key for this sleep card", key, card.timestamp)
+    }
 
     // XXX: Hacky as fuck
     (acc[key] ??= []).push(card)

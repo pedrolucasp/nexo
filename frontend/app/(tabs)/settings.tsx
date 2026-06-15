@@ -215,7 +215,7 @@ export default function Settings() {
                   fontWeight: "500" as const,
                 }}
               >
-                Modo Invisível
+                Criptografia (EE2E)
               </Text>
             </View>
 

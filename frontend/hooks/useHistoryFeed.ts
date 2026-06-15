@@ -28,6 +28,10 @@ export function useHistoryFeed(activeFilter: HistoryCategory | "all") {
       sleepRecords.map(mapSleepToHistoryCard),
       triggers.map(mapTriggerToHistoryCard),
     ]);
+
+    console.log("Sleep records", sleepRecords)
+    console.log("Merged data", merged)
+
     const filtered = filterByCategory(merged, activeFilter);
     return groupByDate(filtered);
   }, [moods, sleepRecords, triggers, activeFilter]);

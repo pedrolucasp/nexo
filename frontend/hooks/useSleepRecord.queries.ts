@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient, SleepRecord, SleepRecordPayload } from "@/lib/api";
+import { insightKeys } from "./useInsights.queries";
 
 export const sleepRecordKeys = {
   all: () => ["sleep-records"] as const,
@@ -69,6 +70,19 @@ export const useCreateSleepRecord = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
+
+      // Invalidate insights, so we can force refresh
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("DAILY_ENERGY"),
+        });
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("MOOD_TREND"),
+        });
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION"),
+        });
+      }, 2000);
     },
   });
 };
