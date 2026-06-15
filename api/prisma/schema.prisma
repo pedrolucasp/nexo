@@ -182,11 +182,18 @@ enum BaseMoodOption {
 
 enum MoodComponentOption {
   JOY
-  NEUTRAL
   ANGER
   SADNESS
-  ANXIETY
+  FEAR
+  GUILT
+  FRUSTRATION
+  // States
+  CALM
+  MOTIVATED
+  TIREDNESS
   GRATITUDE
   FOCUS
-  TIREDNESS
+  RESTLESS
+  RELAXED
+  OVERWHELMED
 }
