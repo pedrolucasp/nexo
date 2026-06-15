@@ -242,6 +242,14 @@ class ApiClient {
     return this.request(`/sleep_records${qs ? `?${qs}` : ""}`);
   }
 
+  async getSleepRecord(id: string): Promise<SleepRecord> {
+    return this.request(`/sleep_records/${id}`);
+  }
+
+  async deleteSleepRecord(id: string): Promise<void> {
+    return this.request(`/sleep_records/${id}`, { method: "DELETE" });
+  }
+
   // Trigger
   async createTrigger(trigger: CreateTriggerPayload): Promise<TriggerResponse> {
     return await this.request(`/triggers`, {

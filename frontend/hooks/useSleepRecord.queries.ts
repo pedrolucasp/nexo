@@ -23,6 +23,15 @@ export const useSleepRecords = (filters?: SleepRecordFilters) => {
   });
 };
 
+// Single entry detail
+export const useSleepRecord = (id: string) => {
+  return useQuery({
+    queryKey: sleepRecordKeys.detail(id),
+    queryFn: () => apiClient.getSleepRecord(id),
+    enabled: !!id,
+  });
+};
+
 export const useCreateSleepRecord = () => {
   const queryClient = useQueryClient();
 
@@ -53,6 +62,37 @@ export const useCreateSleepRecord = () => {
     },
 
     onError: (_err, _payload, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(sleepRecordKeys.list(), context.previous);
+      }
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
+    },
+  });
+};
+
+// Delete a sleep record with optimistic removal
+export const useDeleteSleepRecord = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => apiClient.deleteSleepRecord(id),
+
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: sleepRecordKeys.lists() });
+      const previous = queryClient.getQueryData(sleepRecordKeys.list());
+
+      queryClient.setQueryData(
+        sleepRecordKeys.list(),
+        (old: SleepRecord[] = []) => old.filter((e) => e.id !== Number(id)),
+      );
+
+      return { previous };
+    },
+
+    onError: (_err, _id, context) => {
       if (context?.previous) {
         queryClient.setQueryData(sleepRecordKeys.list(), context.previous);
       }
