@@ -86,6 +86,8 @@ export default function New() {
 
       {/* TODO: Check whether we gonna have to generate these on demand */}
       <Section>
+        <SectionHeader title="Entre hoje e ontem" />
+
         <View
           style={[
             {

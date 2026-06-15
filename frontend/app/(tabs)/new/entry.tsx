@@ -1,50 +1,34 @@
-import { useState, useEffect } from 'react';
-import {
-  Link, router, useLocalSearchParams
-} from 'expo-router';
+import { useState, useEffect } from "react";
+import { Link, router, useLocalSearchParams } from "expo-router";
 
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedText } from '@/components/misc/themed-text';
-import { ThemedView } from '@/components/misc/themed-view';
-import { ScreenLayout } from '@/components/ui/ScreenLayout';
-import { useAuth } from '@/context/AuthContext';
-import { Grid, Col, Row, Between, Center } from '@/components/ui/LayoutHelpers';
-import { Card } from '@/components/ui/Cards';
-import { Button } from '@/components/ui/Button';
-import { Input, TextArea } from '@/components/ui/Input';
-import { Section, SectionHeader } from '@/components/ui/Sections';
-import { Spacing, Typography, Colors } from '@/constants/theme';
-import { ScaleSlider } from '@/components/ui/ScaleSlider';
-import { MoodComponentCard } from '@/components/ui/MoodComponentCard';
-import { Ionicons } from '@expo/vector-icons';
-import { useThemeColor, useCreateMoodEntry } from '@/hooks';
-import {
-  useMoodEntryStore,
-} from '@/stores';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedText } from "@/components/misc/themed-text";
+import { ThemedView } from "@/components/misc/themed-view";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
+import { useAuth } from "@/context/AuthContext";
+import { Grid, Col, Row, Between, Center } from "@/components/ui/LayoutHelpers";
+import { Card } from "@/components/ui/Cards";
+import { Button } from "@/components/ui/Button";
+import { Input, TextArea } from "@/components/ui/Input";
+import { Section, SectionHeader } from "@/components/ui/Sections";
+import { Spacing, Typography, Colors } from "@/constants/theme";
+import { ScaleSlider } from "@/components/ui/ScaleSlider";
+import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
+import { Ionicons } from "@expo/vector-icons";
+import { useThemeColor, useCreateMoodEntry } from "@/hooks";
+import { useMoodEntryStore } from "@/stores";
 
-import {
-  MOODS,
-  getMood
-} from '@/constants/moods';
+import { MOODS, getMood } from "@/constants/moods";
 
-import {
-  intensityToValue
-} from '@/constants/mood-components';
+import { intensityToValue } from "@/constants/mood-components";
 
-import {
-  apiClient
-} from '@/lib/api';
+import { apiClient } from "@/lib/api";
 
 export default function NewMoodEntry() {
   const { user } = useAuth();
-  const tintColor = useThemeColor({}, 'tint');
+  const tintColor = useThemeColor({}, "tint");
 
   const { initialMood } = useLocalSearchParams();
   const [annotation, setAnnotation] = useState();
@@ -52,12 +36,8 @@ export default function NewMoodEntry() {
   const [anxiety, setAnxiety] = useState(0);
   const [energy, setEnergy] = useState(0);
 
-  const {
-    selectedMood,
-    setSelectedMood,
-    components,
-    reset
-  } = useMoodEntryStore();
+  const { selectedMood, setSelectedMood, components, reset } =
+    useMoodEntryStore();
 
   const createMoodEntry = useCreateMoodEntry();
 
@@ -79,24 +59,23 @@ export default function NewMoodEntry() {
       annotation: annotation,
       moodComponents: components.map((c) => ({
         component: c.id.toUpperCase(),
-        intensity: intensityToValue(c.intensity)
-      }))
+        intensity: intensityToValue(c.intensity),
+      })),
     };
 
-    await createMoodEntry.mutateAsync(data)
+    await createMoodEntry.mutateAsync(data);
 
     reset();
-    router.replace("/")
-  }
+    router.replace("/");
+  };
 
   const editComponents = () => {
-    router.push("/entry/mood-components")
-  }
+    router.push("/entry/mood-components");
+  };
 
   return (
     <View>
-      <ScrollView
-        scrollEventThrottle={16}>
+      <ScrollView scrollEventThrottle={16}>
         <View style={styles.container}>
           <Center>
             <ThemedText style={styles.statusPrefix}>
@@ -109,13 +88,21 @@ export default function NewMoodEntry() {
           </Center>
 
           <Card style={styles.resumeCard}>
+            <ThemedText style={styles.infoText}>
+              Não existe resposta certa ou errada. Estime, de 0 a 10, como tu
+              percebe tua energia, estresse e ansiedade neste momento. O
+              objetivo é registrar uma impressão geral, não uma medida precisa.
+            </ThemedText>
+
             <Col gap={24}>
               <ScaleSlider
                 variant="rich"
                 label="Energia"
                 value={energy}
                 onValueChange={setEnergy}
-                icon={<Ionicons name="flower-outline" size={20} color={tintColor} />}
+                icon={
+                  <Ionicons name="flower-outline" size={20} color={tintColor} />
+                }
                 minLabel="Baixa"
                 maxLabel="Alta"
               />
@@ -156,7 +143,7 @@ export default function NewMoodEntry() {
           </Card>
 
           <Section>
-            <SectionHeader title="Componentes do Humor" info="Editar" />
+            <SectionHeader title="Também estou..." />
             {components.length > 0 ? (
               <Grid gap={2} style={{ marginTop: 8 }}>
                 {components.map((comp) => (
@@ -169,14 +156,16 @@ export default function NewMoodEntry() {
               </Grid>
             ) : null}
 
-            <Button title="Adicionar Componentes"
+            <Button
+              title="Adicionar estados & emoções"
               onPress={editComponents}
               textStyle={{ fontWeight: 500 }}
               variant="dashed"
             />
           </Section>
 
-          <Button title="Salvar Registro"
+          <Button
+            title="Salvar Registro"
             onPress={saveMoodEntry}
             disabled={!components.length}
           />
@@ -192,16 +181,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
   },
+  infoText: {
+    ...Typography.labelSm,
+    color: Colors.light.textSecondary,
+    marginBottom: 20,
+    fontWeight: "400" as const,
+  },
   statusText: {
     ...Typography.headlineXg,
   },
   statusPrefix: {
-    ...Typography.bodyMd
+    ...Typography.bodyMd,
   },
   annotationsCard: {
-    padding: Spacing.cardGap
+    padding: Spacing.cardGap,
   },
   resumeCard: {
     padding: Spacing.cardGap,
-  }
+  },
 });
