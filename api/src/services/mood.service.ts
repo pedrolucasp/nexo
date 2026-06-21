@@ -114,6 +114,7 @@ export const enqueueOnDemandInsights = async (
       opts: {
         jobId: `mood-trend-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
+        removeOnFail: true,
       },
     },
     {
@@ -122,6 +123,7 @@ export const enqueueOnDemandInsights = async (
       opts: {
         jobId: `energy-sleep-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
+        removeOnFail: true,
       },
     },
     {
@@ -130,6 +132,7 @@ export const enqueueOnDemandInsights = async (
       opts: {
         jobId: `daily-energy-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
+        removeOnFail: true,
       },
     },
   ]);

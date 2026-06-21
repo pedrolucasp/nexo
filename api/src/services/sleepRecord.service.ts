@@ -94,6 +94,7 @@ async function enqueueEnergySleepInsights(userId: number): Promise<void> {
       opts: {
         jobId: `energy-sleep-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
+        removeOnFail: true,
       }
     },
     {
@@ -106,6 +107,7 @@ async function enqueueEnergySleepInsights(userId: number): Promise<void> {
       opts: {
         jobId: `daily-sleep-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
+        removeOnFail: true,
       },
     },
   ]);
