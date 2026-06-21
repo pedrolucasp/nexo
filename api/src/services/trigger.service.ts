@@ -92,6 +92,7 @@ async function enqueueTriggerPatternInsight(userId: number): Promise<void> {
     {
       jobId: `trigger-pattern-${userId}-${new Date().toDateString()}`,
       removeOnComplete: true,
+      removeOnFail: true,
     }
   );
 }
