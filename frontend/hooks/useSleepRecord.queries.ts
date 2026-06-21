@@ -73,15 +73,8 @@ export const useCreateSleepRecord = () => {
 
       // Invalidate insights, so we can force refresh
       setTimeout(() => {
-        queryClient.invalidateQueries({
-          queryKey: insightKeys.byType("DAILY_ENERGY"),
-        });
-        queryClient.invalidateQueries({
-          queryKey: insightKeys.byType("MOOD_TREND"),
-        });
-        queryClient.invalidateQueries({
-          queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION"),
-        });
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("DAILY_SLEEP") });
       }, 2000);
     },
   });
@@ -114,6 +107,10 @@ export const useDeleteSleepRecord = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("DAILY_SLEEP") });
+      }, 2000);
     },
   });
 };

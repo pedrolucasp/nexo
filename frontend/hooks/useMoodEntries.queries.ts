@@ -139,6 +139,11 @@ export const useDeleteMoodEntry = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("MOOD_TREND") });
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("DAILY_ENERGY") });
+      }, 2000);
     },
   });
 };
