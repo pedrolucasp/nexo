@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient, Trigger, CreateTriggerPayload } from "@/lib/api";
+import { insightKeys } from "@/hooks/useInsights.queries";
 
 export const triggerKeys = {
   all: () => ["triggers"] as const,
@@ -80,6 +81,10 @@ export const useCreateTrigger = () => {
     // On success, replace optimistic record with real one from server
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: triggerKeys.lists() });
+      // Delay to allow the async queue job to finish writing the new insight row
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("TRIGGER_PATTERN") });
+      }, 2000);
     },
   });
 };
@@ -110,6 +115,9 @@ export const useDeleteTrigger = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: triggerKeys.lists() });
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("TRIGGER_PATTERN") });
+      }, 2000);
     },
   });
 };

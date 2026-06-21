@@ -11,6 +11,7 @@ import { Spacing, BorderRadius, Colors, Typography } from "@/constants/theme";
 import { WeeklyResume } from "@/components/insights/WeeklyResume";
 import { InsightCard, Highlight } from "@/components/insights/InsightCard";
 import { MoodTrendWidget } from "@/components/insights/MoodTrendWidget";
+import { TriggerPatternWidget } from "@/components/insights/TriggerPatternWidget";
 
 export default function Insights() {
   const { user } = useAuth();
@@ -46,12 +47,7 @@ export default function Insights() {
 
         <MoodTrendWidget />
 
-        <InsightCard
-          category="Gatilhos"
-          body="Trabalho representa 45% dos registros."
-          metric="45%"
-          accent="neutral"
-        />
+        <TriggerPatternWidget />
       </Section>
     </ScreenLayout>
   );
