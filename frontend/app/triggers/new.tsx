@@ -17,37 +17,17 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useCreateTrigger, useMoodEntries } from "@/hooks";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
+import { TRIGGER_CATEGORY_DEFINITIONS } from "@/constants/trigger-categories";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { getMood } from "@/constants/moods";
 import { LinkRow } from "@/components/ui/LinkRow";
 
-const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] = [
-  {
-    label: "Trabalho",
-    value: "WORK",
-    icon: <MaterialIcons size={16} color="#60A5FA" name="work" />,
-  },
-  {
-    label: "Social",
-    value: "SOCIAL",
-    icon: <MaterialIcons size={16} color="#AF52DE" name="diversity-1" />,
-  },
-  {
-    label: "Saúde",
-    value: "HEALTH",
-    icon: <MaterialIcons size={16} color="#34C759" name="healing" />,
-  },
-  {
-    label: "Família",
-    value: "FAMILY",
-    icon: <MaterialIcons size={16} color="#FF9500" name="family-restroom" />,
-  },
-  {
-    label: "Outros",
-    value: "OTHER",
-    icon: <Ionicons size={16} color="#8E8E93" name="ellipsis-horizontal" />,
-  },
-];
+const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
+  TRIGGER_CATEGORY_DEFINITIONS.map((d) => ({
+    label: d.label,
+    value: d.id,
+    icon: <MaterialIcons size={16} color={d.color} name={d.icon} />,
+  }));
 
 export default function NewTrigger() {
   const [moment, setMoment] = useState(new Date());
