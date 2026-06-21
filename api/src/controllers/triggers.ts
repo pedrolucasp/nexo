@@ -3,7 +3,8 @@ import { AuthenticatedRequest } from '@app/middleware/auth';
 import {
   createTrigger,
   getTriggersByUserId,
-  destroyTriggerById
+  destroyTriggerById,
+  getTriggerById
 } from '@app/services/trigger.service';
 
 import {
@@ -51,6 +52,16 @@ export const TriggersController = {
       const result = await destroyTriggerById(req.userId!, Number(req.params.id!));
 
       return res.status(200).json({})
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  show: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const trigger = await getTriggerById(Number(req.userId!), Number(req.params.id!));
+
+      return res.status(200).json(trigger)
     } catch (err) {
       next(err);
     }

@@ -67,11 +67,21 @@ export const getTriggersByUserId = async (
 export const destroyTriggerById = async (
   userId: number, id: number
 ): Promise<Trigger> => {
-  return await prisma.trigger.delete({
+  const trigger = await prisma.trigger.delete({
     where: {
       id,
       userId
     }
+  })
+
+  void enqueueTriggerPatternInsight(userId);
+
+  return trigger
+}
+
+export const getTriggerById = async (userId: number, id: number): Promise<Trigger | null> => {
+  return await prisma.trigger.findUnique({
+    where: { userId, id }
   })
 }
 
