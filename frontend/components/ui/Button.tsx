@@ -44,7 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
       case 'primary':
         return primaryColor;
       case 'secondary':
-        return useThemeColor({ light: '#f3f4f6', dark: '#374151' }, 'background');
+        return useThemeColor({}, 'secondaryBackground');
       case 'danger':
         return useThemeColor({}, 'danger');
       case 'outline':
@@ -61,7 +61,9 @@ export const Button: React.FC<ButtonProps> = ({
 
     switch (variant) {
       case 'primary':
+        return textColor;
       case 'secondary':
+        return useThemeColor({}, 'white');
       case 'outline':
       case 'ghost':
         return textColor;
