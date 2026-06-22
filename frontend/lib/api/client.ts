@@ -9,6 +9,7 @@ import {
   UserUpdatePayload,
   CreateMoodEntryPayload,
   SleepRecordPayload,
+  UpdateSleepRecordPayload,
   MoodEntry,
   SleepRecord,
   SleepRecordResponse,
@@ -16,6 +17,7 @@ import {
   Trigger,
   TriggerResponse,
   CreateTriggerPayload,
+  UpdateTriggerPayload,
   ActivateResponse,
   PaginatedResponse,
   InsightType,
@@ -246,6 +248,16 @@ class ApiClient {
     return this.request(`/sleep_records/${id}`);
   }
 
+  async updateSleepRecord(
+    id: string,
+    sleepRecord: UpdateSleepRecordPayload,
+  ): Promise<SleepRecordResponse> {
+    return await this.request(`/sleep_records/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ sleepRecord }),
+    });
+  }
+
   async deleteSleepRecord(id: string): Promise<void> {
     return this.request(`/sleep_records/${id}`, { method: "DELETE" });
   }
@@ -276,6 +288,16 @@ class ApiClient {
 
   async getTrigger(id: string): Promise<Trigger> {
     return this.request(`/triggers/${id}`);
+  }
+
+  async updateTrigger(
+    id: string,
+    trigger: UpdateTriggerPayload,
+  ): Promise<TriggerResponse> {
+    return await this.request(`/triggers/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ trigger }),
+    });
   }
 
   async deleteTrigger(id: string): Promise<void> {

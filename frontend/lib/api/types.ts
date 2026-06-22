@@ -97,6 +97,8 @@ export interface SleepRecordPayload {
   date: Date;
 }
 
+export interface UpdateSleepRecordPayload extends Partial<SleepRecordPayload> {}
+
 export interface SleepRecord {
   id: number;
   annotations: string;
@@ -122,6 +124,8 @@ export interface CreateTriggerPayload {
   category: string;
   moment: Date;
 }
+
+export interface UpdateTriggerPayload extends Partial<CreateTriggerPayload> {}
 
 // Insights
 
