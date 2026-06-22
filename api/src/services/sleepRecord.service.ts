@@ -1,7 +1,7 @@
 import { prisma } from '@app/lib/prisma';
 import { SleepRecord } from '@prisma/client';
 
-import { CreateSleepRecordInput } from '@app/schemas';
+import { CreateSleepRecordInput, UpdateSleepRecordInput } from '@app/schemas';
 import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
@@ -80,6 +80,22 @@ export const getSleepRecordById = async (userId: number, id: number): Promise<Sl
   return await prisma.sleepRecord.findUnique({
     where: { userId, id }
   })
+}
+
+export const updateSleepRecordById = async (
+  userId: number, id: number, input: UpdateSleepRecordInput
+): Promise<SleepRecord> => {
+  const sleepRecord = await prisma.sleepRecord.update({
+    where: {
+      id,
+      userId
+    },
+    data: input
+  });
+
+  void enqueueEnergySleepInsights(userId);
+
+  return sleepRecord;
 }
 
 async function enqueueEnergySleepInsights(userId: number): Promise<void> {

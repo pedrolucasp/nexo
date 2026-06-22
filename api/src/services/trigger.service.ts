@@ -1,7 +1,7 @@
 import { prisma } from '@app/lib/prisma';
 import { Trigger } from '@prisma/client';
 
-import { CreateTriggerInput } from '@app/schemas';
+import { CreateTriggerInput, UpdateTriggerInput } from '@app/schemas';
 import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
@@ -83,6 +83,22 @@ export const getTriggerById = async (userId: number, id: number): Promise<Trigge
   return await prisma.trigger.findUnique({
     where: { userId, id }
   })
+}
+
+export const updateTriggerById = async (
+  userId: number, id: number, input: UpdateTriggerInput
+): Promise<Trigger> => {
+  const trigger = await prisma.trigger.update({
+    where: {
+      id,
+      userId
+    },
+    data: input
+  });
+
+  void enqueueTriggerPatternInsight(userId);
+
+  return trigger;
 }
 
 async function enqueueTriggerPatternInsight(userId: number): Promise<void> {

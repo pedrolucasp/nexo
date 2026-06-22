@@ -4,11 +4,13 @@ import {
   createTrigger,
   getTriggersByUserId,
   destroyTriggerById,
-  getTriggerById
+  getTriggerById,
+  updateTriggerById
 } from '@app/services/trigger.service';
 
 import {
-  CreateTriggerSchema
+  CreateTriggerSchema,
+  UpdateTriggerSchema
 } from '@app/schemas'
 
 export const TriggersController = {
@@ -62,6 +64,24 @@ export const TriggersController = {
       const trigger = await getTriggerById(Number(req.userId!), Number(req.params.id!));
 
       return res.status(200).json(trigger)
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  update: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const parsed = UpdateTriggerSchema.safeParse(req.body.trigger);
+
+      if (!parsed.success) {
+        return res.status(400).json({
+          errors: parsed.error!.issues
+        });
+      }
+
+      const trigger = await updateTriggerById(req.userId!, Number(req.params.id!), parsed.data);
+
+      return res.status(200).json({ trigger });
     } catch (err) {
       next(err);
     }

@@ -7,6 +7,7 @@ const router = Router();
 router.get('/', requireAuth, SleepRecordsController.index);
 router.post('/', requireAuth, SleepRecordsController.create);
 router.get('/:id', requireAuth, SleepRecordsController.show);
+router.put('/:id', requireAuth, SleepRecordsController.update);
 router.delete('/:id', requireAuth, SleepRecordsController.destroy);
 
 export default router;

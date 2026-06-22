@@ -4,11 +4,13 @@ import {
   createSleepRecord,
   getSleepRecordsByUserId,
   destroySleepRecordById,
-  getSleepRecordById
+  getSleepRecordById,
+  updateSleepRecordById
 } from '@app/services/sleepRecord.service';
 
 import {
-  CreateSleepRecordSchema
+  CreateSleepRecordSchema,
+  UpdateSleepRecordSchema
 } from '@app/schemas'
 
 export const SleepRecordsController = {
@@ -62,6 +64,24 @@ export const SleepRecordsController = {
       const result = await destroySleepRecordById(req.userId!, Number(req.params.id!));
 
       return res.status(200).json({})
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  update: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const parsed = UpdateSleepRecordSchema.safeParse(req.body.sleepRecord);
+
+      if (!parsed.success) {
+        return res.status(400).json({
+          errors: parsed.error!.issues
+        });
+      }
+
+      const sleepRecord = await updateSleepRecordById(req.userId!, Number(req.params.id!), parsed.data);
+
+      return res.status(200).json({ sleepRecord });
     } catch (err) {
       next(err);
     }

@@ -26,11 +26,15 @@ export {
 export {
   type CreateSleepRecordInput,
   CreateSleepRecordSchema,
+  type UpdateSleepRecordInput,
+  UpdateSleepRecordSchema,
 } from "@app/schemas/sleepRecord.schema";
 
 export {
   type CreateTriggerInput,
   CreateTriggerSchema,
+  type UpdateTriggerInput,
+  UpdateTriggerSchema,
 } from "@app/schemas/trigger.schema";
 
 export {

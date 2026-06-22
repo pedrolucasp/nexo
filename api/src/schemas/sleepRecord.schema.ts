@@ -7,3 +7,7 @@ export const CreateSleepRecordSchema = z.object({
 });
 
 export type CreateSleepRecordInput = z.infer<typeof CreateSleepRecordSchema>;
+
+export const UpdateSleepRecordSchema = CreateSleepRecordSchema.partial();
+
+export type UpdateSleepRecordInput = z.infer<typeof UpdateSleepRecordSchema>;
