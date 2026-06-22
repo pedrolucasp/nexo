@@ -12,5 +12,5 @@ ADD COLUMN     "updated_at" TIMESTAMP(3);
 
 UPDATE "triggers" SET created_at = moment, updated_at = moment;
 
-ALTER TABLE "triggers" ALTER COLUMN created_at SET NOT NULL;
-ALTER TABLE "triggers" ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE "triggers" ALTER COLUMN "created_at" SET NOT NULL;
+ALTER TABLE "triggers" ALTER COLUMN "updated_at" SET NOT NULL;
