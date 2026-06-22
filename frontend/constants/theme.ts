@@ -11,7 +11,6 @@ const PRIMARY_DARK = "#0f172a";
 
 // Surface & Background
 const BACKGROUND_LIGHT = "#f6f8f6";
-const SURFACE_LIGHT = "#ffffff";
 const BACKGROUND_DARK_GHOST = "#F8FAFC";
 
 // Text Colors
@@ -35,6 +34,7 @@ const tintColorSecondary = "#618A70";
 const GRAY = "#475569";
 const LIGHT_GRAY = "#64748B";
 const LIGHT_SLATE_GRAY = "#94A3B8";
+const PURE_WHITE = "#FFFFFF";
 
 export const Colors = {
   light: {
@@ -42,11 +42,16 @@ export const Colors = {
     text: TEXT_PRIMARY,
     textSecondary: TEXT_SECONDARY,
     background: BACKGROUND_LIGHT,
-    surface: SURFACE_LIGHT,
+    surface: PURE_WHITE,
     tint: NEON_GREEN,
     backgroundDarkGhost: BACKGROUND_DARK_GHOST,
     borderDashed: BORDER_SUBTLE_LIGHT_GRAY,
     smallAddButtonIcon: BORDER_SUBTLE_LIGHT_GRAY,
+
+    // Secondary
+    neutral: '#6F7A6D',
+    //secondaryBackground: '#E0EBDB',
+    secondaryBackground: '#0EB545',
 
     // Interactive States
     icon: TEXT_SECONDARY,
@@ -54,14 +59,14 @@ export const Colors = {
     tabIconSelected: NEON_GREEN,
 
     // Form Inputs
-    inputBackgroundColor: SURFACE_LIGHT,
+    inputBackgroundColor: PURE_WHITE,
     inputBackgroundDarkGhostColor: BACKGROUND_DARK_GHOST,
     inputBorderColor: BORDER_SUBTLE_GRAY,
     inputFocusBorderColor: NEON_GREEN,
     inputPlaceholderColor: TEXT_PLACEHOLDER,
 
     // Cards & Containers
-    cardBackground: SURFACE_LIGHT,
+    cardBackground: PURE_WHITE,
     cardBorder: BORDER_SUBTLE,
     cardShadow: "rgba(0, 0, 0, 0.05)",
 
@@ -77,6 +82,7 @@ export const Colors = {
     accentDarkPurple: "#7F77DD",
 
     // Some grays
+    white: PURE_WHITE,
     gray: GRAY,
     lightGray: LIGHT_GRAY,
     lightSlateGray: LIGHT_SLATE_GRAY,
