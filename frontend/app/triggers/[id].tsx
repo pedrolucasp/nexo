@@ -59,9 +59,6 @@ export default function TriggerDetailsScreen() {
     return () => clearInterval(interval);
   }, [trigger, isLoading]);
 
-  console.log("trigger", trigger)
-  console.log("isLoading", isLoading)
-
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -139,6 +136,13 @@ export default function TriggerDetailsScreen() {
         {/* Delete */}
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
+          <Button
+            variant="outline"
+            isLoading={false}
+            disabled={!canDelete}
+            onPress={() => router.push(`/triggers/edit/${trigger.id}`)}
+            title="Editar Registro"
+          />
           <Button
             variant="danger"
             isLoading={deleteTrigger.isPending}

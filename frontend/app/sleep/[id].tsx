@@ -22,7 +22,7 @@ import {
   useSleepRecord,
   useDeleteSleepRecord,
 } from "@/hooks/useSleepRecord.queries";
-import { formatDate } from "@/lib/utils/time";
+import { formatDate, parseDateOnly } from "@/lib/utils/time";
 
 export default function SleepDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -36,7 +36,7 @@ export default function SleepDetailScreen() {
       const createdAt = sleepRecord?.createdAt;
       if (!createdAt) return;
 
-      const msSinceCreation = Date.now() - createdAt.getTime();
+      const msSinceCreation = Date.now() - new Date(createdAt).getTime();
       const deletionWindowMs = 5 * 60 * 1000;
 
       const newCanDelete = msSinceCreation < deletionWindowMs;
@@ -57,9 +57,6 @@ export default function SleepDetailScreen() {
 
     return () => clearInterval(interval);
   }, [sleepRecord, isLoading]);
-
-  console.log("sleepRecord", sleepRecord)
-  console.log("isLoading", isLoading)
 
   if (isLoading) {
     return (
@@ -116,7 +113,7 @@ export default function SleepDetailScreen() {
               </Row>
 
               <Text style={styles.dateLabel}>
-                {formatDate(new Date(sleepRecord.date))}
+                {formatDate(parseDateOnly(sleepRecord.date))}
               </Text>
             </Col>
           </Row>
@@ -137,6 +134,14 @@ export default function SleepDetailScreen() {
         {/* Delete */}
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
+          <Button
+            variant="outline"
+            isLoading={false}
+            disabled={!canDelete}
+            onPress={() => router.push(`/sleep/edit/${sleepRecord.id}`)}
+            title="Editar Registro"
+          />
+
           <Button
             variant="danger"
             isLoading={deleteSleepRecord.isPending}
