@@ -34,3 +34,10 @@ export const formatDate = (date: Date): string => {
 
   return format(date, "dd/MM/yyyy", { locale: ptBR });
 }
+
+// Parse a date-only string (YYYY-MM-DD or ISO UTC midnight) as local noon
+// to prevent timezone offsets from shifting the calendar day
+export const parseDateOnly = (dateStr: string | Date): Date => {
+  const iso = typeof dateStr === 'string' ? dateStr : dateStr.toISOString();
+  return new Date(`${iso.slice(0, 10)}T12:00:00`);
+};

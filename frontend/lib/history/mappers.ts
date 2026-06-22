@@ -37,15 +37,13 @@ function sleepQualityBadge(hours: number): HistoryCard["badge"] {
 }
 
 export function mapSleepToHistoryCard(record: SleepRecord): HistoryCard {
+  console.log("mapping...", record)
   const hours = Math.floor(record.average);
   const minutes = Math.round((record.average - hours) * 60);
   const duration = `${hours}h ${minutes.toString().padStart(2, "0")}min`;
-  // Force local noon so timezone shifts can't bleed into the previous day
-  const dateStr = typeof record.date === 'string'
-    ? record.date.slice(0, 10)           // "2026-05-24"
-    : record.date.toISOString().slice(0, 10)
-
-  const timestamp = `${dateStr}T12:00:00`  // local noon, no UTC funny business
+  const timestamp = typeof record.createdAt === 'string'
+    ? record.createdAt
+    : record.createdAt.toISOString();
 
   return {
     id: `sleep-${record.id}`,
