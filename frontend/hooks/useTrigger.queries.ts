@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { apiClient, Trigger, CreateTriggerPayload } from "@/lib/api";
+import { apiClient, Trigger, CreateTriggerPayload, UpdateTriggerPayload } from "@/lib/api";
 import { insightKeys } from "@/hooks/useInsights.queries";
 
 export const triggerKeys = {
@@ -82,6 +82,50 @@ export const useCreateTrigger = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: triggerKeys.lists() });
       // Delay to allow the async queue job to finish writing the new insight row
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("TRIGGER_PATTERN") });
+      }, 2000);
+    },
+  });
+};
+
+// Update a trigger
+export const useUpdateTrigger = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateTriggerPayload }) =>
+      apiClient.updateTrigger(id, payload),
+
+    onMutate: async ({ id, payload }) => {
+      await queryClient.cancelQueries({ queryKey: triggerKeys.detail(id) });
+      await queryClient.cancelQueries({ queryKey: triggerKeys.lists() });
+
+      const previousDetail = queryClient.getQueryData(triggerKeys.detail(id));
+      const previousList = queryClient.getQueryData(triggerKeys.list());
+
+      if (previousDetail) {
+        queryClient.setQueryData(
+          triggerKeys.detail(id),
+          (old: Trigger) => ({ ...old, ...payload }),
+        );
+      }
+
+      return { previousDetail, previousList };
+    },
+
+    onError: (_err, { id }, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(triggerKeys.detail(id), context.previousDetail);
+      }
+      if (context?.previousList) {
+        queryClient.setQueryData(triggerKeys.list(), context.previousList);
+      }
+    },
+
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: triggerKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: triggerKeys.lists() });
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("TRIGGER_PATTERN") });
       }, 2000);

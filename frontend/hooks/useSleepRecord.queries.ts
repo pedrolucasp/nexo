@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { apiClient, SleepRecord, SleepRecordPayload } from "@/lib/api";
+import { apiClient, SleepRecord, SleepRecordPayload, UpdateSleepRecordPayload } from "@/lib/api";
 import { insightKeys } from "./useInsights.queries";
 
 export const sleepRecordKeys = {
@@ -72,6 +72,51 @@ export const useCreateSleepRecord = () => {
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
 
       // Invalidate insights, so we can force refresh
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
+        queryClient.invalidateQueries({ queryKey: insightKeys.byType("DAILY_SLEEP") });
+      }, 2000);
+    },
+  });
+};
+
+// Update a sleep record
+export const useUpdateSleepRecord = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateSleepRecordPayload }) =>
+      apiClient.updateSleepRecord(id, payload),
+
+    onMutate: async ({ id, payload }) => {
+      await queryClient.cancelQueries({ queryKey: sleepRecordKeys.detail(id) });
+      await queryClient.cancelQueries({ queryKey: sleepRecordKeys.lists() });
+
+      const previousDetail = queryClient.getQueryData(sleepRecordKeys.detail(id));
+      const previousList = queryClient.getQueryData(sleepRecordKeys.list());
+
+      if (previousDetail) {
+        queryClient.setQueryData(
+          sleepRecordKeys.detail(id),
+          (old: SleepRecord) => ({ ...old, ...payload }),
+        );
+      }
+
+      return { previousDetail, previousList };
+    },
+
+    onError: (_err, { id }, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(sleepRecordKeys.detail(id), context.previousDetail);
+      }
+      if (context?.previousList) {
+        queryClient.setQueryData(sleepRecordKeys.list(), context.previousList);
+      }
+    },
+
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: sleepRecordKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("DAILY_SLEEP") });

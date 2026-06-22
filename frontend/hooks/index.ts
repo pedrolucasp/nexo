@@ -15,7 +15,16 @@ export {
 
 export {
   useSleepRecords,
+  useSleepRecord,
   useCreateSleepRecord,
+  useUpdateSleepRecord,
+  useDeleteSleepRecord,
 } from "@/hooks/useSleepRecord.queries";
 
-export { useTriggers, useCreateTrigger } from "@/hooks/useTrigger.queries";
+export {
+  useTriggers,
+  useTrigger,
+  useCreateTrigger,
+  useUpdateTrigger,
+  useDeleteTrigger,
+} from "@/hooks/useTrigger.queries";
