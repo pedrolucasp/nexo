@@ -32,7 +32,6 @@ export default function Actions() {
     <ScreenLayout
       userName={user.firstName}
       userAvatar={user.avatarURL}
-      onNotificationPress={() => console.log("Notifications")}
       showNotificationBadge={true}
     >
       <Section>

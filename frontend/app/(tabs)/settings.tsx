@@ -26,8 +26,6 @@ export default function Settings() {
 
   const textColor = useThemeColor({}, "text");
 
-  const onNotificationPress = () => {};
-
   const handleLogout = async () => {
     Alert.alert("Sair", "Tem certeza que quer sair?", [
       { text: "Cancelar", style: "cancel" },
@@ -66,7 +64,6 @@ export default function Settings() {
     <ScreenLayout
       userName={user.firstName}
       userAvatar={user.avatarURL}
-      onNotificationPress={onNotificationPress}
       showNotificationBadge={true}
     >
       <Section>
@@ -215,7 +212,7 @@ export default function Settings() {
                   fontWeight: "500" as const,
                 }}
               >
-                Criptografia (EE2E)
+                Privacidade
               </Text>
             </View>
 

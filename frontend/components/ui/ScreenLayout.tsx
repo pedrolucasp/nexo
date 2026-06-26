@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Typography, Spacing, BorderRadius } from "@/constants/theme";
@@ -32,6 +33,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   showNotificationBadge = false,
   scrollEnabled = true,
 }) => {
+  const router = useRouter();
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "background");
   const surfaceColor = useThemeColor({}, "surface");
@@ -118,7 +120,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
 
           <Pressable
             style={styles.notificationButton}
-            onPress={onNotificationPress}
+            onPress={onNotificationPress ?? (() => router.push("/notifications"))}
             hitSlop={8}
           >
             <View

@@ -26,25 +26,34 @@ type NotificationParams = {
   notificationId?: string;
 };
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+type ReceivedNotification = {
+  title?: string;
+  body?: string;
+};
 
 export default function NotificationsPage() {
   const { user } = useAuth();
   const params = useLocalSearchParams<NotificationParams>();
   const [expoPushToken, setExpoPushToken] = useState(user?.pushToken);
+  const [liveNotification, setLiveNotification] = useState<ReceivedNotification | null>(null);
 
   useEffect(() => {
     if (user) {
       setExpoPushToken(user.pushToken);
     }
   }, [user]);
+
+  useEffect(() => {
+    const sub = Notifications.addNotificationReceivedListener((n) => {
+      setLiveNotification({
+        title: n.request.content.title ?? undefined,
+        body: n.request.content.body ?? undefined,
+      });
+    });
+    return () => sub.remove();
+  }, []);
+
+  const displayed = liveNotification ?? (params.title || params.body ? { title: params.title, body: params.body } : null);
 
   async function sendPushNotification() {
     if (expoPushToken) {
@@ -79,14 +88,16 @@ export default function NotificationsPage() {
           <Section>
             <SectionHeader title="Recebidas" />
 
-            <Card style={{ padding: Spacing.cardGap }}>
-              <Text>Title: {params.title}</Text>
-              <Text>Body: {params.body}</Text>
-              <Text>
-                Data:{" "}
-                {params.notificationId && JSON.stringify(params.notificationId)}
-              </Text>
-            </Card>
+            {displayed ? (
+              <Card style={{ padding: Spacing.cardGap }}>
+                <Text>Title: {displayed.title}</Text>
+                <Text>Body: {displayed.body}</Text>
+              </Card>
+            ) : (
+              <Card style={{ padding: Spacing.cardGap }}>
+                <Text>Nenhuma notificação recebida.</Text>
+              </Card>
+            )}
           </Section>
 
           <Button title="Quer ver uma coisa?" onPress={sendPushNotification} />

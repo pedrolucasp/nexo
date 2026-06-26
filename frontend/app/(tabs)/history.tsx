@@ -39,7 +39,6 @@ export default function History() {
     <ScreenLayout
       userName={user.firstName}
       userAvatar={user.avatarURL}
-      onNotificationPress={() => console.log("Notifications")}
       showNotificationBadge={true}
     >
       <ScrollView>

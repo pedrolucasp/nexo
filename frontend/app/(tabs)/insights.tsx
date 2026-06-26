@@ -20,7 +20,6 @@ export default function Insights() {
     <ScreenLayout
       userName={user.firstName}
       userAvatar={user.avatarURL}
-      onNotificationPress={() => console.log("Notifications")}
       showNotificationBadge={true}
     >
       <WeeklyResume
