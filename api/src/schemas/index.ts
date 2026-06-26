@@ -41,3 +41,20 @@ export {
   InsightsQuerySchema,
   type InsightsQueryInput,
 } from "@app/schemas/insight.schema";
+
+export {
+  LinkMoodSchema,
+  type LinkMoodInput,
+} from "@app/schemas/triggerMoodLink.schema";
+
+export {
+  CreateCareActionSchema,
+  type CreateCareActionInput,
+} from "@app/schemas/careAction.schema";
+
+export {
+  CreateMedicineRegimenSchema,
+  type CreateMedicineRegimenInput,
+  UpdateMedicineRegimenSchema,
+  type UpdateMedicineRegimenInput,
+} from "@app/schemas/medicineRegimen.schema";
