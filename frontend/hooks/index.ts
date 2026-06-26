@@ -27,4 +27,21 @@ export {
   useCreateTrigger,
   useUpdateTrigger,
   useDeleteTrigger,
+  useLinkMoodToTrigger,
 } from "@/hooks/useTrigger.queries";
+
+export {
+  medicineRegimenKeys,
+  useMedicineRegimens,
+  useCreateMedicineRegimen,
+  useUpdateMedicineRegimen,
+  useDeleteMedicineRegimen,
+} from "@/hooks/useMedicineRegimen.queries";
+
+export {
+  careActionKeys,
+  useCareActions,
+  useCareAction,
+  useCreateCareAction,
+  useDeleteCareAction,
+} from "@/hooks/useCareAction.queries";
