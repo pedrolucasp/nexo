@@ -12,18 +12,28 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { Card, SubtleInfoCard } from "@/components/ui/Cards";
+import { NoLinkMessage } from "@/components/misc/NoLinkMessage";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Typography, Colors, Spacing } from "@/constants/theme";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { getTriggerCategory } from "@/constants/trigger-categories";
 import {
   useTrigger,
   useDeleteTrigger,
 } from "@/hooks/useTrigger.queries";
 import { formatMoment } from "@/lib/utils/time";
+import { getMood } from "@/constants/moods";
+
+const impactColor = (n: number) => {
+  if (n <= 1) return '#86efac';
+  if (n <= 2) return '#22c55e';
+  if (n <= 3) return '#f59e0b';
+  if (n <= 4) return '#f97316';
+  return '#ef4444';
+};
 
 export default function TriggerDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -120,6 +130,64 @@ export default function TriggerDetailsScreen() {
             </Col>
           </Row>
         </Card>
+
+        {/* Linked moods */}
+        <Section>
+          <SectionHeader title="Vínculo" variant="subtle" />
+          {trigger.moodLinks && trigger.moodLinks.length > 0 ? (
+            <Col gap={8}>
+              {trigger.moodLinks.map((link) => {
+                const moodDef = getMood(link.mood.selectedMood.toLowerCase());
+                return (
+                  <Pressable
+                    key={link.id}
+                    onPress={() => router.push(`/entry/${link.mood.id}`)}
+                    style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+                  >
+                    <Card style={styles.linkCard}>
+                      <Row style={{ alignItems: "center", gap: 12 }}>
+                        <View style={styles.linkIconCircle}>
+                          <Text style={styles.linkMoodEmoji}>{moodDef?.icon ?? "😐"}</Text>
+                        </View>
+                        <Col gap={3} style={{ flex: 1 }}>
+                          <Row style={{ alignItems: "center", gap: 6 }}>
+                            <Text style={styles.linkLabel}>
+                              {moodDef?.label ?? link.mood.selectedMood}
+                            </Text>
+
+                            <Badge
+                              label="Humor"
+                              variant="yellow"
+                              style={undefined}
+                            />
+                          </Row>
+
+                          <Text style={styles.linkTime}>
+                            {formatMoment(new Date(link.mood.moment))}
+                          </Text>
+                        </Col>
+                        <Ionicons name="chevron-forward" size={16} color={Colors.light.disabled} />
+                      </Row>
+                      <View style={styles.impactBar}>
+                        <View
+                          style={[
+                            styles.impactFill,
+                            {
+                              width: `${(link.perceivedImpact / 5) * 100}%`,
+                              backgroundColor: impactColor(link.perceivedImpact),
+                            },
+                          ]}
+                        />
+                      </View>
+                    </Card>
+                  </Pressable>
+                );
+              })}
+            </Col>
+          ) : (
+            <NoLinkMessage />
+          )}
+        </Section>
 
         {/* Annotation / notes */}
         {trigger.comment && (
@@ -240,5 +308,39 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     fontStyle: "italic",
     padding: 4,
+  },
+  // Linked mood cards
+  linkCard: {
+    padding: Spacing.cardGap,
+    overflow: "hidden",
+    gap: 10,
+  },
+  linkIconCircle: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  linkMoodEmoji: {
+    fontSize: 28,
+  },
+  linkTime: {
+    fontSize: 12,
+    color: Colors.light.textSecondary,
+  },
+  linkLabel: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: Colors.light.text,
+  },
+  impactBar: {
+    height: 3,
+    backgroundColor: Colors.light.divider,
+    borderRadius: 99,
+    overflow: "hidden",
+  },
+  impactFill: {
+    height: "100%",
+    borderRadius: 99,
   },
 });

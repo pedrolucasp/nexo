@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient, Trigger, CreateTriggerPayload, UpdateTriggerPayload } from "@/lib/api";
 import { insightKeys } from "@/hooks/useInsights.queries";
+import { moodKeys } from "@/hooks/useMoodEntries.queries";
 
 export const triggerKeys = {
   all: () => ["triggers"] as const,
@@ -144,8 +145,9 @@ export const useLinkMoodToTrigger = () => {
     }) =>
       apiClient.linkMoodToTrigger(triggerId, { moodId: Number(moodId), perceivedImpact }),
 
-    onSuccess: (_data, { triggerId }) => {
+    onSuccess: (_data, { triggerId, moodId }) => {
       queryClient.invalidateQueries({ queryKey: triggerKeys.detail(triggerId) });
+      queryClient.invalidateQueries({ queryKey: moodKeys.detail(moodId) });
     },
   });
 };

@@ -7,11 +7,12 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, Link } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { Card } from "@/components/ui/Cards";
+import { Section } from '@/components/ui/Sections';
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from "@/constants/theme";
@@ -197,6 +198,13 @@ export default function PostMood() {
           )}
         </Card>
       )}
+
+      <Button
+        title="Pular essa etapa"
+        variant="ghost"
+        onPress={() => router.replace("/(tabs)/new")}
+        style={styles.concludeButton}
+      />
     </ScreenLayout>
   );
 }
@@ -360,5 +368,8 @@ const styles = StyleSheet.create({
   },
   moodList: {
     gap: 8,
+  },
+  concludeButton: {
+    marginTop: 8,
   },
 });

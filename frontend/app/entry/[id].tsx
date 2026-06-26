@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 import { Card, SubtleInfoCard } from "@/components/ui/Cards";
+import { NoLinkMessage } from "@/components/misc/NoLinkMessage";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
@@ -26,6 +27,16 @@ import {
 import { useMoodEntry, useDeleteMoodEntry } from "@/hooks";
 import { getTimeBadge, formatMoment } from "@/lib/utils/time";
 import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { getTriggerCategory } from "@/constants/trigger-categories";
+
+const impactColor = (n: number) => {
+  if (n <= 1) return '#86efac';
+  if (n <= 2) return '#22c55e';
+  if (n <= 3) return '#f59e0b';
+  if (n <= 4) return '#f97316';
+  return '#ef4444';
+};
 
 export default function MoodDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -178,6 +189,56 @@ export default function MoodDetailScreen() {
           </Col>
         </Section>
 
+        {/* Linked triggers */}
+        <Section>
+          <SectionHeader title="Vínculo" variant="subtle" />
+          {entry.triggerLinks && entry.triggerLinks.length > 0 ? (
+            <Col gap={8}>
+              {entry.triggerLinks.map((link) => {
+                const cat = getTriggerCategory(link.trigger.category);
+                return (
+                  <Pressable
+                    key={link.id}
+                    onPress={() => router.push(`/triggers/${link.trigger.id}`)}
+                    style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+                  >
+                    <Card style={styles.linkCard}>
+                      <Row style={{ alignItems: "center", gap: 12 }}>
+                        <View style={[styles.linkIconCircle, { backgroundColor: cat.iconBackground }]}>
+                          <MaterialIcons name={cat.icon} size={22} color={cat.color} />
+                        </View>
+                        <Col gap={3} style={{ flex: 1 }}>
+                          <Row style={{ alignItems: "center", gap: 6 }}>
+                            <Text style={styles.linkLabel}>{cat.label}</Text>
+                            <Badge label="Gatilho" variant="orange" style={undefined} />
+                          </Row>
+                          <Text style={styles.linkTime}>
+                            {formatMoment(new Date(link.trigger.moment))}
+                          </Text>
+                        </Col>
+                        <Ionicons name="chevron-forward" size={16} color={Colors.light.disabled} />
+                      </Row>
+                      <View style={styles.impactBar}>
+                        <View
+                          style={[
+                            styles.impactFill,
+                            {
+                              width: `${(link.perceivedImpact / 5) * 100}%` as any,
+                              backgroundColor: impactColor(link.perceivedImpact),
+                            },
+                          ]}
+                        />
+                      </View>
+                    </Card>
+                  </Pressable>
+                );
+              })}
+            </Col>
+          ) : (
+            <NoLinkMessage />
+          )}
+        </Section>
+
         {/* Annotation / notes */}
         {entry.annotation && (
           <Section>
@@ -315,4 +376,37 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     padding: 4,
   },
+  // Linked trigger cards
+  linkCard: {
+    padding: Spacing.cardGap,
+    overflow: "hidden",
+    gap: 10,
+  },
+  linkIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  linkTime: {
+    fontSize: 12,
+    color: Colors.light.textSecondary,
+  },
+  linkLabel: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: Colors.light.text,
+  },
+  impactBar: {
+    height: 3,
+    backgroundColor: Colors.light.divider,
+    borderRadius: 99,
+    overflow: "hidden",
+  },
+  impactFill: {
+    height: "100%",
+    borderRadius: 99,
+  },
+
 });

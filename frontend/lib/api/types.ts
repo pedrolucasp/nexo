@@ -85,6 +85,7 @@ export interface MoodEntry {
   energyLevel: number;
   stressLevel: number;
   moodComponents: MoodComponent[];
+  triggerLinks?: TriggerMoodLinkWithTrigger[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -117,6 +118,7 @@ export interface Trigger {
   moment: Date;
   createdAt: Date;
   updatedAt: Date;
+  moodLinks?: TriggerMoodLinkWithMood[];
 }
 
 export interface CreateTriggerPayload {
@@ -291,6 +293,14 @@ export interface TriggerMoodLink {
   moodId: number;
   perceivedImpact: number;
   linkedAt: Date;
+}
+
+export interface TriggerMoodLinkWithMood extends TriggerMoodLink {
+  mood: MoodEntry;
+}
+
+export interface TriggerMoodLinkWithTrigger extends TriggerMoodLink {
+  trigger: Trigger;
 }
 
 // Payloads

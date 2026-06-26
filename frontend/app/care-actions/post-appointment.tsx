@@ -78,7 +78,6 @@ export default function PostAppointment() {
           </TouchableOpacity>
         </Card>
 
-        {/* Concluir ghost button */}
         <Button
           title="Concluir"
           variant="ghost"

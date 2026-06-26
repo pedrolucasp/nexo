@@ -33,7 +33,10 @@ export type {
   MedicineRegimenResponse,
   CreateMedicineRegimenPayload,
   UpdateMedicineRegimenPayload,
+  UpdateTriggerPayload,
   // Trigger-Mood linking
   TriggerMoodLink,
+  TriggerMoodLinkWithMood,
+  TriggerMoodLinkWithTrigger,
   LinkMoodPayload,
 } from "@/lib/api/types";
