@@ -16,6 +16,8 @@ export const TRIGGER_CATEGORY_DEFINITIONS: TriggerCategoryDefinition[] = [
   { id: "HEALTH",   label: "Saúde",    icon: "healing",         color: "#34c272", iconBackground: "#d4f5e2", variant: "green" },
   { id: "FAMILY",   label: "Família",  icon: "family-restroom", color: "#f97316", iconBackground: "#ffedd5", variant: "orange" },
   { id: "PHYSICAL", label: "Físico",   icon: "fitness-center",  color: "#f97316", iconBackground: "#ffedd5", variant: "orange" },
+  { id: "THERAPY",  label: "Terapia",  icon: "psychology",       color: "#6366f1", iconBackground: "#e0e7ff", variant: "indigo" },
+  { id: "INTERNAL", label: "Interno",  icon: "self-improvement", color: "#ec4899", iconBackground: "#fce7f3", variant: "pink" },
   { id: "OTHER",    label: "Outro",    icon: "help-outline",    color: "#94a3b8", iconBackground: "#f1f5f9", variant: "gray" },
 ];
 

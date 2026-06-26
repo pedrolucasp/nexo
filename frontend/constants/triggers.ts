@@ -4,4 +4,6 @@ export type TriggerCategory =
   | "HEALTH"
   | "PHYSICAL"
   | "FAMILY"
+  | "THERAPY"
+  | "INTERNAL"
   | "OTHER";
