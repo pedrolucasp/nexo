@@ -6,7 +6,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useState } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 import { Card } from "@/components/ui/Cards";
 import { TextArea } from "@/components/ui/Input";
@@ -32,7 +32,8 @@ const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
 export default function NewTrigger() {
   const [moment, setMoment] = useState(new Date());
   const [comment, setComment] = useState("");
-  const [category, setCategory] = useState("WORK");
+  const { category: initialCategory } = useLocalSearchParams<{ category?: string }>();
+  const [category, setCategory] = useState(initialCategory ?? "WORK");
   const createTrigger = useCreateTrigger();
   const [linkMood, setLinkMood] = useState(false);
   const { data: moodEntries, isLoading: isLoadingMood } = useMoodEntries({

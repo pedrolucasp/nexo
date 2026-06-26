@@ -56,6 +56,11 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="care-actions/post-appointment"
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
               name="sleep/new"
               options={{
                 title: "Registrar Sono",
@@ -67,6 +72,32 @@ export default function RootLayout() {
               options={{
                 title: "Registrar Gatilho",
               }}
+            />
+
+            <Stack.Screen
+              name="care-actions/new"
+              options={{
+                presentation: "formSheet",
+                title: "Registrar Ação de Cuidado",
+                sheetAllowedDetents: [0.25, 0.5, 0.7],
+                sheetInitialDetentIndex: 1,
+              }}
+            />
+            <Stack.Screen
+              name="care-actions/medicine"
+              options={{ title: "Medicamento" }}
+            />
+            <Stack.Screen
+              name="care-actions/medicine-new"
+              options={{ title: "Novo Medicamento" }}
+            />
+            <Stack.Screen
+              name="care-actions/appointment"
+              options={{ title: "Consulta" }}
+            />
+            <Stack.Screen
+              name="care-actions/activity"
+              options={{ title: "Atividade" }}
             />
 
             <Stack.Screen

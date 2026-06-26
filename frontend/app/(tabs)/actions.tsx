@@ -44,13 +44,12 @@ export default function Actions() {
         <Button
           title="Registrar ação de cuidado"
           size="large"
-          style={{
-            ...Shadows.lg,
-          }}
+          onPress={() => router.push('/care-actions/new')}
+          style={{ ...Shadows.lg }}
         />
       </Section>
 
-      <Card style={{ padding: Spacing.cardGap, height: 150 }}>
+      <Card style={{ padding: Spacing.cardGap, height: 150 }} onPress={() => router.push('/medicine-regimens')}>
         <View style={[styles.cardIcon, { backgroundColor: "#E7FDEF" }]}>
           <Ionicons name="bandage-outline" size={20} color="#13EC5B" />
         </View>
