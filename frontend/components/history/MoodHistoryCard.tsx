@@ -14,6 +14,7 @@ function inferBadge(anxiety: number, stress: number, energy: number) {
   if (anxiety >= 7) return { label: 'Ansiedade alta', variant: 'red'    } as const
   if (stress  >= 7) return { label: 'Estresse alto',  variant: 'orange' } as const
   if (energy  <= 3) return { label: 'Energia baixa',  variant: 'yellow' } as const
+  if (energy  >= 7) return { label: 'Energia alta', variant: 'green' } as const
 
   return undefined
 }

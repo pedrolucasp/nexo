@@ -41,19 +41,15 @@ export default function PostMood() {
       moodId,
       perceivedImpact: impact,
     });
+
     setLinked(true);
     setSelectedTrigger(null);
-  };
-
-  const onNotificationPress = () => {
-    router.push("/notifications");
   };
 
   return (
     <ScreenLayout
       userName={user?.firstName}
       userAvatar={user?.avatarURL}
-      onNotificationPress={onNotificationPress}
     >
       {/* Confirmation block */}
       <View style={styles.confirmationBlock}>
@@ -200,7 +196,7 @@ export default function PostMood() {
       )}
 
       <Button
-        title="Pular essa etapa"
+        title={linked ? 'Voltar para a tela inicial' : 'Pular essa etapa'}
         variant="ghost"
         onPress={() => router.replace("/(tabs)/new")}
         style={styles.concludeButton}
@@ -357,6 +353,7 @@ const styles = StyleSheet.create({
   linkedRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 8,
     marginBottom: Spacing.sectionGap,
     paddingHorizontal: 4,
@@ -365,6 +362,7 @@ const styles = StyleSheet.create({
     ...Typography.bodyMd,
     fontWeight: "600",
     color: Colors.light.tint,
+    textAlign: 'center'
   },
   moodList: {
     gap: 8,
