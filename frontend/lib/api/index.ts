@@ -20,4 +20,20 @@ export type {
   Insight,
   InsightType,
   InsightPeriod,
+  // Care Actions
+  CareAction,
+  CareActionType,
+  CareActionResponse,
+  CreateCareActionPayload,
+  CreateCareActionMedicinePayload,
+  CreateCareActionAppointmentPayload,
+  CreateCareActionActivityPayload,
+  // Medicine Regimens
+  MedicineRegimen,
+  MedicineRegimenResponse,
+  CreateMedicineRegimenPayload,
+  UpdateMedicineRegimenPayload,
+  // Trigger-Mood linking
+  TriggerMoodLink,
+  LinkMoodPayload,
 } from "@/lib/api/types";

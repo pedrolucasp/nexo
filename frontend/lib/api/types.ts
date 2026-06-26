@@ -208,3 +208,139 @@ export interface SleepRecordResponse {
 export interface TriggerResponse {
   trigger: Trigger;
 }
+
+// Care Actions
+export type CareActionType = 'MEDICINE' | 'APPOINTMENT' | 'ACTIVITY';
+export type AppointmentType =
+  | 'ANALYST'
+  | 'PSYCHIATRIST'
+  | 'GP'
+  | 'NUTRITIONIST'
+  | 'PHYSIOTHERAPIST'
+  | 'OTHER';
+
+export type ActivityType =
+  | 'WALK'
+  | 'YOGA'
+  | 'GYM'
+  | 'MEDITATION'
+  | 'SOCIAL'
+  | 'CREATIVE'
+  | 'OTHER';
+
+  export type MedicinePeriodicity =
+  | 'ONCE'
+  | 'DAILY'
+  | 'TWICE_DAILY'
+  | 'THREE_TIMES_DAILY'
+  | 'WEEKLY'
+  | 'BIWEEKLY'
+  | 'MONTHLY';
+
+export interface MedicineRegimen {
+  id: number;
+  name: string;
+  dosage: string;
+  periodicity: MedicinePeriodicity;
+  scheduledAt?: string;
+  active: boolean;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface MedicineLog {
+  id: number;
+  regimenId?: number;
+  careActionId: number;
+  takenAt: Date;
+}
+
+export interface AppointmentDetail {
+  id: number;
+  careActionId: number;
+  type: AppointmentType;
+  duration: number;
+  note?: string;
+}
+
+export interface ActivityDetail {
+  id: number;
+  careActionId: number;
+  type: ActivityType;
+  duration?: number;
+}
+
+export interface CareAction {
+  id: number;
+  type: CareActionType;
+  moment: Date;
+  userId: number;
+  triggerId?: number;
+  moodId?: number;
+  medicineLog?: MedicineLog;
+  appointment?: AppointmentDetail;
+  activity?: ActivityDetail;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TriggerMoodLink {
+  id: number;
+  triggerId: number;
+  moodId: number;
+  perceivedImpact: number;
+  linkedAt: Date;
+}
+
+// Payloads
+export interface CreateMedicineRegimenPayload {
+  name: string;
+  dosage: string;
+  periodicity: MedicinePeriodicity;
+  scheduledAt?: string;
+}
+
+export interface UpdateMedicineRegimenPayload extends Partial<CreateMedicineRegimenPayload> {
+  active?: boolean;
+}
+
+export interface CreateCareActionMedicinePayload {
+  type: 'MEDICINE';
+  moment: Date;
+  regimenId?: number;
+  medicine?: {
+    name: string;
+    dosage: string;
+    periodicity: MedicinePeriodicity;
+    scheduledAt?: string
+  };
+  triggerId?: number;
+  moodId?: number;
+}
+
+export interface CreateCareActionAppointmentPayload {
+  type: 'APPOINTMENT';
+  moment: Date;
+  appointment: { type: AppointmentType; duration: number; note?: string };
+  triggerId?: number;
+  moodId?: number;
+}
+
+export interface CreateCareActionActivityPayload {
+  type: 'ACTIVITY';
+  moment: Date;
+  activity: { type: ActivityType; duration?: number };
+  triggerId?: number;
+  moodId?: number;
+}
+
+export type CreateCareActionPayload =
+  | CreateCareActionMedicinePayload
+  | CreateCareActionAppointmentPayload
+  | CreateCareActionActivityPayload;
+
+export interface CareActionResponse { careAction: CareAction; }
+export interface MedicineRegimenResponse { regimen: MedicineRegimen; }
+
+export interface LinkMoodPayload { moodId: number; perceivedImpact: number; }

@@ -24,6 +24,16 @@ import {
   InsightPeriod,
   InsightMetadata,
   Insight,
+  MedicineRegimen,
+  MedicineRegimenResponse,
+  CreateMedicineRegimenPayload,
+  UpdateMedicineRegimenPayload,
+  CareAction,
+  CareActionType,
+  CareActionResponse,
+  CreateCareActionPayload,
+  TriggerMoodLink,
+  LinkMoodPayload,
 } from "@/lib/api/types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -317,6 +327,83 @@ class ApiClient {
 
     const qs = query.toString();
     return this.request(`/insights${qs ? `?${qs}` : ""}`);
+  }
+
+  // Medicine Regimens
+  async getMedicineRegimens(): Promise<{ regimens: MedicineRegimen[] }> {
+    return this.request('/medicine-regimens');
+  }
+
+  async createMedicineRegimen(
+    regimen: CreateMedicineRegimenPayload
+  ): Promise<MedicineRegimenResponse> {
+    return this.request('/medicine-regimens', {
+      method: 'POST',
+      body: JSON.stringify({ regimen })
+    });
+  }
+
+  async updateMedicineRegimen(
+    id: string,
+    regimen: UpdateMedicineRegimenPayload
+  ): Promise<MedicineRegimenResponse> {
+    return this.request(`/medicine-regimens/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ regimen })
+    });
+  }
+
+  async deleteMedicineRegimen(id: string): Promise<void> {
+    return this.request(`/medicine-regimens/${id}`, { method: 'DELETE' });
+  }
+
+  // Care Actions
+  async getCareActions(
+    params?: {
+      type?: CareActionType;
+      from?: string;
+      to?: string;
+      page?: number;
+      limit?: number
+    }): Promise<PaginatedResponse<CareAction>> {
+    const query = new URLSearchParams();
+    if (params?.type) query.set('type', params.type);
+    if (params?.from) query.set('from', params.from);
+    if (params?.to) query.set('to', params.to);
+    if (params?.page) query.set('page', String(params.page));
+    if (params?.limit) query.set('limit', String(params.limit));
+
+    const qs = query.toString();
+
+    return this.request(`/care-actions${qs ? `?${qs}` : ''}`);
+  }
+
+  async getCareAction(id: string): Promise<CareAction> {
+    return this.request(`/care-actions/${id}`);
+  }
+
+  async createCareAction(payload: CreateCareActionPayload): Promise<CareActionResponse> {
+    return this.request('/care-actions', {
+      method: 'POST', body: JSON.stringify({ careAction: payload })
+    });
+  }
+
+  async deleteCareAction(id: string): Promise<void> {
+    return this.request(`/care-actions/${id}`, { method: 'DELETE' });
+  }
+
+  // Trigger to Mood linking
+  async linkMoodToTrigger(
+    triggerId: string, payload: LinkMoodPayload
+  ): Promise<{ link: TriggerMoodLink }> {
+    return this.request(`/triggers/${triggerId}/link-mood`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  }
+
+  async unlinkMoodFromTrigger(triggerId: string, moodId: string): Promise<void> {
+    return this.request(`/triggers/${triggerId}/link-mood/${moodId}`, { method: 'DELETE' });
   }
 }
 
