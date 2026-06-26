@@ -26,12 +26,13 @@ model User {
 
   pushToken String? @map("push_token")
 
-  moods         Mood[]
-  interventions Intervention[]
-  triggers      Trigger[]
-  reminders     Reminder[]
-  sleepRecords  SleepRecord[]
-  insights      Insight[]
+  moods            Mood[]
+  triggers         Trigger[]
+  reminders        Reminder[]
+  sleepRecords     SleepRecord[]
+  insights         Insight[]
+  medicineRegimens MedicineRegimen[]
+  careActions      CareAction[]
 
   @@map("users")
 }
@@ -48,6 +49,8 @@ model Mood {
   user         User           @relation(fields: [userId], references: [id])
 
   moodComponents MoodComponent[]
+  triggerLinks   TriggerMoodLink[]
+  careActions    CareAction[]
 
   @@map("moods")
 }
@@ -63,20 +66,6 @@ model MoodComponent {
   @@map("mood_components")
 }
 
-model Intervention {
-  id               Int              @id @default(autoincrement())
-  comment          String?
-  interventionType InterventionType @map("intervention_type")
-  eficacy          Int
-  startAt          DateTime         @map("start_at")
-  endAt            DateTime         @map("end_at")
-
-  userId Int  @map("user_id")
-  user   User @relation(fields: [userId], references: [id])
-
-  @@map("interventions")
-}
-
 model Trigger {
   id       Int         @id @default(autoincrement())
   comment  String?     @db.Text
@@ -86,10 +75,103 @@ model Trigger {
   userId Int  @map("user_id")
   user   User @relation(fields: [userId], references: [id])
 
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  moodLinks   TriggerMoodLink[]
+  careActions CareAction[]
 
   @@map("triggers")
+}
+
+model TriggerMoodLink {
+  id              Int      @id @default(autoincrement())
+  triggerId       Int      @map("trigger_id")
+  moodId          Int      @map("mood_id")
+  perceivedImpact Int      @map("perceived_impact")
+  linkedAt        DateTime @default(now()) @map("linked_at")
+
+  trigger Trigger @relation(fields: [triggerId], references: [id], onDelete: Cascade)
+  mood    Mood    @relation(fields: [moodId], references: [id], onDelete: Cascade)
+
+  @@unique([triggerId, moodId])
+  @@map("trigger_mood_links")
+}
+
+model MedicineRegimen {
+  id          Int                 @id @default(autoincrement())
+  name        String
+  dosage      String
+  periodicity MedicinePeriodicity
+  scheduledAt String?             @map("scheduled_at")
+  active      Boolean             @default(true)
+  userId      Int                 @map("user_id")
+
+  user         User          @relation(fields: [userId], references: [id])
+  medicineLogs MedicineLog[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("medicine_regimens")
+}
+
+model CareAction {
+  id     Int            @id @default(autoincrement())
+  type   CareActionType
+  moment DateTime       @default(now())
+  userId Int            @map("user_id")
+
+  triggerId Int? @map("trigger_id")
+  moodId    Int? @map("mood_id")
+
+  user    User     @relation(fields: [userId], references: [id])
+  trigger Trigger? @relation(fields: [triggerId], references: [id])
+  mood    Mood?    @relation(fields: [moodId], references: [id])
+
+  medicineLog MedicineLog?
+  appointment Appointment?
+  activity    Activity?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("care_actions")
+}
+
+model MedicineLog {
+  id           Int      @id @default(autoincrement())
+  regimenId    Int?     @map("regimen_id")
+  careActionId Int      @unique @map("care_action_id")
+  takenAt      DateTime @default(now()) @map("taken_at")
+
+  regimen    MedicineRegimen? @relation(fields: [regimenId], references: [id])
+  careAction CareAction       @relation(fields: [careActionId], references: [id], onDelete: Cascade)
+
+  @@map("medicine_logs")
+}
+
+model Appointment {
+  id           Int             @id @default(autoincrement())
+  careActionId Int             @unique @map("care_action_id")
+  type         AppointmentType
+  duration     Int
+  note         String?         @db.Text
+
+  careAction CareAction @relation(fields: [careActionId], references: [id], onDelete: Cascade)
+
+  @@map("appointments")
+}
+
+model Activity {
+  id           Int          @id @default(autoincrement())
+  careActionId Int          @unique @map("care_action_id")
+  type         ActivityType
+  duration     Int?
+
+  careAction CareAction @relation(fields: [careActionId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
 }
 
 model Reminder {
@@ -114,8 +196,8 @@ model SleepRecord {
   userId Int  @map("user_id")
   user   User @relation(fields: [userId], references: [id])
 
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("sleep_records")
 }
@@ -129,7 +211,7 @@ model Insight {
   period      InsightPeriod
   title       String
   body        String        @db.Text
-  metadata    Json? // flexible payload: correlations, deltas, scores
+  metadata    Json?
   generatedAt DateTime      @default(now()) @map("generated_at")
   periodStart DateTime      @map("period_start")
   periodEnd   DateTime      @map("period_end")
@@ -160,20 +242,14 @@ enum IntensityLevel {
   HIGH
 }
 
-enum InterventionType {
-  MEDICATION
-  THERAPY
-  MEDITATION
-  EXERCISE
-  CONVERSATION
-}
-
 enum TriggerType {
   SOCIAL
   WORK
   HEALTH
   PHYSICAL
   FAMILY
+  THERAPY
+  INTERNAL
   OTHER
 }
 
@@ -202,4 +278,39 @@ enum MoodComponentOption {
   RESTLESS
   RELAXED
   OVERWHELMED
+}
+
+enum CareActionType {
+  MEDICINE
+  APPOINTMENT
+  ACTIVITY
+}
+
+enum AppointmentType {
+  ANALYST
+  PSYCHIATRIST
+  GP
+  NUTRITIONIST
+  PHYSIOTHERAPIST
+  OTHER
+}
+
+enum ActivityType {
+  WALK
+  YOGA
+  GYM
+  MEDITATION
+  SOCIAL
+  CREATIVE
+  OTHER
+}
+
+enum MedicinePeriodicity {
+  ONCE
+  DAILY
+  TWICE_DAILY
+  THREE_TIMES_DAILY
+  WEEKLY
+  BIWEEKLY
+  MONTHLY
 }
