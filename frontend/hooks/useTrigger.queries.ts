@@ -133,6 +133,23 @@ export const useUpdateTrigger = () => {
   });
 };
 
+export const useLinkMoodToTrigger = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ triggerId, moodId, perceivedImpact }: {
+      triggerId: string;
+      moodId: string;
+      perceivedImpact: number
+    }) =>
+      apiClient.linkMoodToTrigger(triggerId, { moodId: Number(moodId), perceivedImpact }),
+
+    onSuccess: (_data, { triggerId }) => {
+      queryClient.invalidateQueries({ queryKey: triggerKeys.detail(triggerId) });
+    },
+  });
+};
+
 // Delete a mood entry with optimistic removal
 export const useDeleteTrigger = () => {
   const queryClient = useQueryClient();

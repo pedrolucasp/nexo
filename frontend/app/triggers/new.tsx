@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useCreateTrigger, useMoodEntries } from "@/hooks";
+import { useCreateTrigger, useMoodEntries, useLinkMoodToTrigger } from "@/hooks";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
 import { TRIGGER_CATEGORY_DEFINITIONS } from "@/constants/trigger-categories";
@@ -32,9 +32,10 @@ const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
 export default function NewTrigger() {
   const [moment, setMoment] = useState(new Date());
   const [comment, setComment] = useState("");
-  const { category: initialCategory } = useLocalSearchParams<{ category?: string }>();
+  const { category: initialCategory, moodId: linkedMoodId } = useLocalSearchParams<{ category?: string; moodId?: string }>();
   const [category, setCategory] = useState(initialCategory ?? "WORK");
   const createTrigger = useCreateTrigger();
+  const linkMoodToTrigger = useLinkMoodToTrigger();
   const [linkMood, setLinkMood] = useState(false);
   const { data: moodEntries, isLoading: isLoadingMood } = useMoodEntries({
     limit: 1,
@@ -53,8 +54,18 @@ export default function NewTrigger() {
       ...(linkMood && latestMood ? { moodId: latestMood.id } : null),
     };
 
-    await createTrigger.mutateAsync(data);
-    router.replace("/(tabs)/actions");
+    const result = await createTrigger.mutateAsync(data);
+
+    if (linkedMoodId) {
+      await linkMoodToTrigger.mutateAsync({
+        triggerId: String(result.trigger.id),
+        moodId: linkedMoodId,
+        perceivedImpact: 3,
+      });
+      router.back();
+    } else {
+      router.replace("/(tabs)/actions");
+    }
   };
 
   return (

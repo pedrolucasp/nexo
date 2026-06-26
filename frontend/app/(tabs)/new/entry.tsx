@@ -63,10 +63,12 @@ export default function NewMoodEntry() {
       })),
     };
 
-    await createMoodEntry.mutateAsync(data);
+    const result = await createMoodEntry.mutateAsync(data);
+    const moodId = result.mood.id;
 
     reset();
-    router.replace("/");
+
+    router.replace(`/new/post-mood?moodId=${moodId}`);
   };
 
   const editComponents = () => {

@@ -15,6 +15,7 @@ export default function MoodLayout() {
         headerTitle: "Registrar humor",
         headerShown: true
       }} />
+      <Stack.Screen name="post-mood" options={{ headerShown: false }} />
     </Stack>
   );
 }
