@@ -8,6 +8,8 @@ const TRIGGER_LABEL: Record<TriggerType, string> = {
   HEALTH: "saúde",
   PHYSICAL: "físico",
   FAMILY: "família",
+  THERAPY: "terapia",
+  INTERNAL: "interno",
   OTHER: "outros",
 };
 

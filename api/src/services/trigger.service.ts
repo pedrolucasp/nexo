@@ -79,10 +79,16 @@ export const destroyTriggerById = async (
   return trigger
 }
 
-export const getTriggerById = async (userId: number, id: number): Promise<Trigger | null> => {
+export const getTriggerById = async (userId: number, id: number) => {
   return await prisma.trigger.findUnique({
-    where: { userId, id }
-  })
+    where: { userId, id },
+    include: {
+      moodLinks: {
+        include: { mood: { include: { moodComponents: true } } },
+        orderBy: { linkedAt: 'desc' },
+      },
+    },
+  });
 }
 
 export const updateTriggerById = async (
