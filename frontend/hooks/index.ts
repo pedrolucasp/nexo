@@ -39,6 +39,11 @@ export {
 } from "@/hooks/useMedicineRegimen.queries";
 
 export {
+  medicineTodayKeys,
+  useMedicineToday,
+} from "@/hooks/useMedicineToday.queries";
+
+export {
   careActionKeys,
   useCareActions,
   useCareAction,
