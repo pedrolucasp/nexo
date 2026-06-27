@@ -29,6 +29,7 @@ import { getTimeBadge, formatMoment } from "@/lib/utils/time";
 import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { getTriggerCategory } from "@/constants/trigger-categories";
+import { getCareActionMeta } from "@/constants/care-action-categories";
 
 const impactColor = (n: number) => {
   if (n <= 1) return '#86efac';
@@ -105,6 +106,10 @@ export default function MoodDetailScreen() {
 
     return `${msg} ${suffix}`;
   };
+
+  const hasAnyLinks = (
+    entry.triggerLinks && entry.triggerLinks.length > 0
+  ) || (entry.careActions && entry.careActions.length > 0);
 
   return (
     <>
@@ -192,7 +197,7 @@ export default function MoodDetailScreen() {
         {/* Linked triggers */}
         <Section>
           <SectionHeader title="Vínculo" variant="subtle" />
-          {entry.triggerLinks && entry.triggerLinks.length > 0 ? (
+          {!!hasAnyLinks ? (
             <Col gap={8}>
               {entry.triggerLinks.map((link) => {
                 const cat = getTriggerCategory(link.trigger.category);
@@ -229,6 +234,37 @@ export default function MoodDetailScreen() {
                           ]}
                         />
                       </View>
+                    </Card>
+                  </Pressable>
+                );
+              })}
+
+              {entry.careActions.map((ca) => {
+                const meta = getCareActionMeta(ca);
+
+                return (
+                  <Pressable
+                    key={ca.id}
+                    onPress={() => (router.push as any)(`/care-actions/${ca.id}`)}
+                    style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+                  >
+                    <Card style={styles.linkCard}>
+                      <Row style={{ alignItems: 'center', gap: 12 }}>
+                        <View style={[styles.linkIconCircle, { backgroundColor: meta.iconBackground }]}>
+                          <MaterialIcons name={meta.icon as any} size={22} color={meta.color} />
+                        </View>
+                        <Col gap={3} style={{ flex: 1 }}>
+                          <Row style={{ alignItems: 'center', gap: 6 }}>
+                            <Text style={styles.linkLabel}>{meta.label}</Text>
+                            <Badge label="Consulta" variant="info" style={undefined} />
+                          </Row>
+                          <Text style={styles.linkTime}>
+                            {formatMoment(new Date(ca.moment))}
+                          </Text>
+                        </Col>
+
+                        <Ionicons name="chevron-forward" size={16} color={Colors.light.disabled} />
+                      </Row>
                     </Card>
                   </Pressable>
                 );

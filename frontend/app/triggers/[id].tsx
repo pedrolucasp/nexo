@@ -20,10 +20,13 @@ import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Typography, Colors, Spacing } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { getTriggerCategory } from "@/constants/trigger-categories";
+import { getCareActionMeta } from "@/constants/care-action-categories";
 import {
   useTrigger,
   useDeleteTrigger,
 } from "@/hooks/useTrigger.queries";
+import { usePatchCareAction } from "@/hooks";
+import { useCareActionLinkStore } from "@/stores";
 import { formatMoment } from "@/lib/utils/time";
 import { getMood } from "@/constants/moods";
 
@@ -39,6 +42,9 @@ export default function TriggerDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: trigger, isLoading, isError } = useTrigger(id);
   const deleteTrigger = useDeleteTrigger();
+  const patchCareAction = usePatchCareAction();
+  const { pendingId, triggerLinked } = useCareActionLinkStore();
+  const hasPendingCareAction = !!pendingId && !triggerLinked;
   const [minutesLeft, setMinutesLeft] = useState(0);
   const [canDelete, setCanDelete] = useState(false);
 
@@ -92,8 +98,16 @@ export default function TriggerDetailsScreen() {
 
   const handleDelete = async () => {
     await deleteTrigger.mutateAsync(String(trigger.id));
-
     router.back();
+  };
+
+  const handleLinkCareAction = async () => {
+    const careActionId = useCareActionLinkStore.getState().linkTrigger();
+    if (!careActionId) return;
+    await patchCareAction.mutateAsync({
+      id: String(careActionId),
+      data: { triggerId: trigger.id },
+    });
   };
 
   const deleteButtonMsg = () => {
@@ -103,6 +117,10 @@ export default function TriggerDetailsScreen() {
 
     return `${msg} ${suffix}`;
   };
+
+  const hasAnyLinks = (
+    trigger.careActions && trigger.careActions.length > 0
+  ) || (trigger.moodLinks && trigger.moodLinks.length > 0);
 
   return (
     <>
@@ -131,10 +149,30 @@ export default function TriggerDetailsScreen() {
           </Row>
         </Card>
 
+        {/* Pending care action link banner */}
+        {hasPendingCareAction && (
+          <Pressable
+            onPress={handleLinkCareAction}
+            disabled={patchCareAction.isPending}
+            style={({ pressed }) => [
+              styles.linkBanner,
+              pressed && { opacity: 0.75 },
+            ]}
+          >
+            <View style={styles.linkBannerIcon}>
+              <Ionicons name="link-outline" size={18} color="#1D4ED8" />
+            </View>
+            <Text style={styles.linkBannerText}>
+              Vincular à consulta registrada
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color="#1D4ED8" />
+          </Pressable>
+        )}
+
         {/* Linked moods */}
         <Section>
           <SectionHeader title="Vínculo" variant="subtle" />
-          {trigger.moodLinks && trigger.moodLinks.length > 0 ? (
+          {!!hasAnyLinks ? (
             <Col gap={8}>
               {trigger.moodLinks.map((link) => {
                 const moodDef = getMood(link.mood.selectedMood.toLowerCase());
@@ -179,6 +217,35 @@ export default function TriggerDetailsScreen() {
                           ]}
                         />
                       </View>
+                    </Card>
+                  </Pressable>
+                );
+              })}
+
+              {trigger.careActions.map((ca) => {
+                const meta = getCareActionMeta(ca);
+                return (
+                  <Pressable
+                    key={ca.id}
+                    onPress={() => (router.push as any)(`/care-actions/${ca.id}`)}
+                    style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+                  >
+                    <Card style={styles.linkCard}>
+                      <Row style={{ alignItems: 'center', gap: 12 }}>
+                        <View style={[styles.linkIconCircle, { backgroundColor: meta.iconBackground }]}>
+                          <MaterialIcons name={meta.icon as any} size={22} color={meta.color} />
+                        </View>
+                        <Col gap={3} style={{ flex: 1 }}>
+                          <Row style={{ alignItems: 'center', gap: 6 }}>
+                            <Text style={styles.linkLabel}>{meta.label}</Text>
+                            <Badge label="Consulta" variant="info" style={undefined} />
+                          </Row>
+                          <Text style={styles.linkTime}>
+                            {formatMoment(new Date(ca.moment))}
+                          </Text>
+                        </Col>
+                        <Ionicons name="chevron-forward" size={16} color={Colors.light.disabled} />
+                      </Row>
                     </Card>
                   </Pressable>
                 );
@@ -280,6 +347,30 @@ const styles = StyleSheet.create({
     color: Theme.colors.text,
   },
 
+  // Pending link banner
+  linkBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#DBEAFE',
+    borderRadius: 10,
+    padding: 12,
+  },
+  linkBannerIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#BFDBFE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  linkBannerText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1D4ED8',
+  },
+
   // Header
   headerCard: {
     padding: 16,
@@ -320,6 +411,7 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 20,
   },
   linkMoodEmoji: {
     fontSize: 28,
