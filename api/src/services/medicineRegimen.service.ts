@@ -12,8 +12,8 @@ export const getMedicineRegimensByUserId = async (
   userId: number,
 ): Promise<MedicineRegimen[]> => {
   return prisma.medicineRegimen.findMany({
-    where: { userId, active: true },
-    orderBy: { createdAt: 'desc' },
+    where: { userId },
+    orderBy: [{ active: 'desc' }, { createdAt: 'desc' }],
   });
 };
 
