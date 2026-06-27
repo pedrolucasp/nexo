@@ -1,6 +1,7 @@
 import { prisma } from '@app/lib/prisma';
 import { CareAction, CareActionType } from '@prisma/client';
 import { CreateCareActionInput, PatchCareActionInput } from '@app/schemas';
+import { syncMedicineReminderJobs } from '@app/services/medicineReminder.sync';
 
 const careActionIncludes = {
   medicineLog: { include: { regimen: true } },
@@ -43,6 +44,7 @@ export const getCareActionsByUserId = async (
       take: limit,
       skip,
     }),
+
     prisma.careAction.count({ where }),
   ]);
 
@@ -91,6 +93,7 @@ export const createCareAction = async (
   if (input.type === CareActionType.MEDICINE) {
     if (input.regimenId) {
       const regimenId = input.regimenId;
+
       const [careAction] = await prisma.$transaction([
         prisma.careAction.create({
           data: {
@@ -106,11 +109,13 @@ export const createCareAction = async (
           include: careActionIncludes,
         }),
       ]);
+
       return careAction;
     }
 
     if (input.medicine) {
       const med = input.medicine;
+
       const [careAction] = await prisma.$transaction([
         prisma.careAction.create({
           data: {
@@ -136,6 +141,11 @@ export const createCareAction = async (
           include: careActionIncludes,
         }),
       ]);
+
+      if (careAction.medicineLog?.regimen) {
+        await syncMedicineReminderJobs(careAction.medicineLog.regimen as any);
+      }
+
       return careAction;
     }
 
@@ -152,11 +162,13 @@ export const createCareAction = async (
         include: careActionIncludes,
       }),
     ]);
+
     return careAction;
   }
 
   if (input.type === CareActionType.APPOINTMENT && input.appointment) {
     const appt = input.appointment;
+
     const [careAction] = await prisma.$transaction([
       prisma.careAction.create({
         data: {
@@ -176,11 +188,13 @@ export const createCareAction = async (
         include: careActionIncludes,
       }),
     ]);
+
     return careAction;
   }
 
   if (input.type === CareActionType.ACTIVITY && input.activity) {
     const act = input.activity;
+
     const [careAction] = await prisma.$transaction([
       prisma.careAction.create({
         data: {
@@ -199,6 +213,7 @@ export const createCareAction = async (
         include: careActionIncludes,
       }),
     ]);
+
     return careAction;
   }
 

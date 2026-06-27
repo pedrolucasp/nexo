@@ -19,3 +19,9 @@ export const UpdateMedicineRegimenSchema = z.object({
 });
 
 export type UpdateMedicineRegimenInput = z.infer<typeof UpdateMedicineRegimenSchema>;
+
+export const ToggleMedicineRegimenSchema = z.object({
+  active: z.boolean(),
+});
+
+export type ToggleMedicineRegimenInput = z.infer<typeof ToggleMedicineRegimenSchema>;
