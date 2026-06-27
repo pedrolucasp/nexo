@@ -5,17 +5,13 @@ import { Section, SectionHeader } from "@/components/ui/Sections";
 import { FilterPills } from "@/components/ui/FilterPills";
 import { useAuth } from "@/context/AuthContext";
 import { useHistoryFeed } from "@/hooks/useHistoryFeed";
-import type { HistoryCategory } from "@/lib/history/types";
+import type { HistoryCard, HistoryCategory } from "@/lib/history/types";
 import { MoodHistoryCard } from "@/components/history/MoodHistoryCard";
 import { SleepRecordCard } from "@/components/history/SleepRecordCard";
 import { TriggerHistoryCard } from "@/components/history/TriggerCard";
-
-const FILTERS: { label: string; value: HistoryCategory | "all" }[] = [
-  { label: "Tudo", value: "all" },
-  { label: "Humor", value: "mood" },
-  { label: "Sono", value: "sleep" },
-  { label: "Gatilho", value: "trigger" },
-];
+import { MedicineHistoryCard } from "@/components/history/MedicineHistoryCard";
+import { AppointmentHistoryCard } from "@/components/history/AppointmentHistoryCard";
+import { ActivityHistoryCard } from "@/components/history/ActivityHistoryCard";
 
 function HistoryCardRenderer({ card }: { card: HistoryCard }) {
   switch (card.category) {
@@ -25,6 +21,17 @@ function HistoryCardRenderer({ card }: { card: HistoryCard }) {
       return <SleepRecordCard card={card as any} />;
     case "trigger":
       return <TriggerHistoryCard card={card as any} />;
+    case "care_action":
+      switch (card.subtype) {
+        case "medicine":
+          return <MedicineHistoryCard card={card as any} />;
+        case "appointment":
+          return <AppointmentHistoryCard card={card as any} />;
+        case "activity":
+          return <ActivityHistoryCard card={card as any} />;
+        default:
+          return null;
+      }
   }
 }
 

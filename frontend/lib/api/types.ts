@@ -256,6 +256,7 @@ export interface MedicineLog {
   regimenId?: number;
   careActionId: number;
   takenAt: Date;
+  regimen?: MedicineRegimen;
 }
 
 export interface AppointmentDetail {

@@ -21,6 +21,7 @@ export const HISTORY_FILTERS: FilterOption[] = [
   { label: "Humor", value: "mood" },
   { label: "Sono", value: "sleep" },
   { label: "Gatilho", value: "trigger" },
+  { label: "Cuidado", value: "care_action" },
 ];
 
 type Props = {
