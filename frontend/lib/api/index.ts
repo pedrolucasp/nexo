@@ -23,11 +23,14 @@ export type {
   // Care Actions
   CareAction,
   CareActionType,
+  AppointmentType,
+  ActivityType,
   CareActionResponse,
   CreateCareActionPayload,
   CreateCareActionMedicinePayload,
   CreateCareActionAppointmentPayload,
   CreateCareActionActivityPayload,
+  PatchCareActionPayload,
   // Medicine Regimens
   MedicineRegimen,
   MedicineRegimenResponse,

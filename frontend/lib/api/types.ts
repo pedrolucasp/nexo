@@ -86,6 +86,7 @@ export interface MoodEntry {
   stressLevel: number;
   moodComponents: MoodComponent[];
   triggerLinks?: TriggerMoodLinkWithTrigger[];
+  careActions?: CareAction[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -119,6 +120,7 @@ export interface Trigger {
   createdAt: Date;
   updatedAt: Date;
   moodLinks?: TriggerMoodLinkWithMood[];
+  careActions?: CareAction[];
 }
 
 export interface CreateTriggerPayload {
@@ -352,6 +354,10 @@ export type CreateCareActionPayload =
   | CreateCareActionActivityPayload;
 
 export interface CareActionResponse { careAction: CareAction; }
+export interface PatchCareActionPayload {
+  triggerId?: number;
+  moodId?: number;
+}
 export interface MedicineRegimenResponse { regimen: MedicineRegimen; }
 
 export interface LinkMoodPayload { moodId: number; perceivedImpact: number; }

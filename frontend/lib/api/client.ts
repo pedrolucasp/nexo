@@ -32,6 +32,7 @@ import {
   CareActionType,
   CareActionResponse,
   CreateCareActionPayload,
+  PatchCareActionPayload,
   TriggerMoodLink,
   LinkMoodPayload,
 } from "@/lib/api/types";
@@ -385,6 +386,16 @@ class ApiClient {
   async createCareAction(payload: CreateCareActionPayload): Promise<CareActionResponse> {
     return this.request('/care-actions', {
       method: 'POST', body: JSON.stringify({ careAction: payload })
+    });
+  }
+
+  async patchCareAction(
+    id: string,
+    payload: PatchCareActionPayload,
+  ): Promise<CareAction> {
+    return this.request(`/care-actions/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ careAction: payload }),
     });
   }
 
