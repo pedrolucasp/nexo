@@ -44,6 +44,10 @@ export function bootWorkers(): void {
       console.error(`[${queueName}] job ${job?.id} failed:`, err.message);
     });
 
+    worker.on("error", (err) => {
+      console.error(`[${queueName}] worker error:`, err.message);
+    });
+
     workers.push(worker);
   }
 }
