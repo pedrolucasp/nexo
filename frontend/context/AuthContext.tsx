@@ -37,6 +37,8 @@ export function sanitizeUser(data: any): User {
     avatarKey: data.avatarKey,
     avatarURL: data.avatarURL,
     active: data.active,
+    notificationsEnabled: data.notificationsEnabled,
+    dailyReminderTime: data.dailyReminderTime,
   };
 }
 

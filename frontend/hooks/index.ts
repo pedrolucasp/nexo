@@ -43,6 +43,8 @@ export {
   useMedicineToday,
 } from "@/hooks/useMedicineToday.queries";
 
+export { usePatchUserMe } from "@/hooks/useUserPreferences.queries";
+
 export {
   careActionKeys,
   useCareActions,

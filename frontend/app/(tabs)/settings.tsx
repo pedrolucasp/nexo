@@ -18,11 +18,28 @@ import { useAuth } from "@/context/AuthContext";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Button } from "@/components/ui/Button";
+import { TimePicker } from "@/components/ui/TimePicker";
+import { usePatchUserMe } from "@/hooks/useUserPreferences.queries";
 
 export default function Settings() {
-  const { user, logout } = useAuth();
-  const [allowNotifications, setAllowNotifications] = useState(false);
+  const { user, logout, updateAuthUser } = useAuth();
   const [allowWeeklyInsights, setAllowWeeklyInsights] = useState(false);
+
+  const notificationsEnabled = user?.notificationsEnabled ?? true;
+  const dailyReminderTime = user?.dailyReminderTime ?? "20:00";
+
+  const patchUserMe = usePatchUserMe((updatedUser) => {
+    updateAuthUser(updatedUser);
+  });
+
+  const handleNotificationToggle = (value: boolean) => {
+    patchUserMe.mutate({ notificationsEnabled: value });
+  };
+
+  const handleTimeChange = (date: Date) => {
+    const time = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    patchUserMe.mutate({ dailyReminderTime: time });
+  };
 
   const textColor = useThemeColor({}, "text");
 
@@ -126,20 +143,33 @@ export default function Settings() {
                 flex: 1,
               }}
             >
-              <Text style={styles.cardTitle}>Notificações</Text>
-              <Text>Diário as 20:00</Text>
+              <Text style={styles.cardTitle}>Lembrete diário de humor</Text>
+              <Text>{notificationsEnabled ? `Diário às ${dailyReminderTime}` : "Desativado"}</Text>
             </View>
 
             <Switch
-              onValueChange={setAllowNotifications}
+              onValueChange={handleNotificationToggle}
               thumbColor={Colors.light.tint}
               trackColor={{
                 false: Colors.light.disabled,
                 true: Colors.light.gray,
               }}
-              value={allowNotifications}
+              value={notificationsEnabled}
+              disabled={patchUserMe.isPending}
             />
           </View>
+
+          {notificationsEnabled && (
+            <TimePicker
+              value={(() => {
+                const [h, m] = dailyReminderTime.split(":").map(Number);
+                const d = new Date();
+                d.setHours(h, m, 0, 0);
+                return d;
+              })()}
+              onChange={handleTimeChange}
+            />
+          )}
 
           <View style={styles.divider} />
 
