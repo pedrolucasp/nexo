@@ -5,7 +5,7 @@ export const CreateMedicineRegimenSchema = z.object({
   name: z.string().min(1),
   dosage: z.string().min(1),
   periodicity: z.nativeEnum(MedicinePeriodicity),
-  scheduledAt: z.string().optional(),
+  scheduledAt: z.array(z.string()).optional().default([]),
 });
 
 export type CreateMedicineRegimenInput = z.infer<typeof CreateMedicineRegimenSchema>;
@@ -14,7 +14,7 @@ export const UpdateMedicineRegimenSchema = z.object({
   name: z.string().min(1).optional(),
   dosage: z.string().min(1).optional(),
   periodicity: z.nativeEnum(MedicinePeriodicity).optional(),
-  scheduledAt: z.string().optional(),
+  scheduledAt: z.array(z.string()).optional().default([]),
   active: z.boolean().optional(),
 });
 

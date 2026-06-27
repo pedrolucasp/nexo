@@ -10,7 +10,7 @@ const MedicineInlineSchema = z.object({
   name: z.string().min(1),
   dosage: z.string().min(1),
   periodicity: z.nativeEnum(MedicinePeriodicity),
-  scheduledAt: z.string().optional(),
+  scheduledAt: z.array(z.string()).optional().default([]),
 });
 
 export const CreateCareActionSchema = z.object({
