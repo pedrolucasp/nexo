@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Cards";
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from "@/constants/theme";
+import { useCareActionLinkStore } from "@/stores";
 
 export default function PostAppointment() {
   return (
@@ -81,7 +82,10 @@ export default function PostAppointment() {
         <Button
           title="Concluir"
           variant="ghost"
-          onPress={() => router.replace("/(tabs)/actions")}
+          onPress={() => {
+            useCareActionLinkStore.getState().clear();
+            router.replace("/(tabs)/actions");
+          }}
           style={styles.concludeButton}
         />
       </ScrollView>

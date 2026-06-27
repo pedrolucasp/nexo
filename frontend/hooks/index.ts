@@ -43,5 +43,6 @@ export {
   useCareActions,
   useCareAction,
   useCreateCareAction,
+  usePatchCareAction,
   useDeleteCareAction,
 } from "@/hooks/useCareAction.queries";

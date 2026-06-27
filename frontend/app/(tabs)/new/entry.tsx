@@ -17,8 +17,8 @@ import { Spacing, Typography, Colors } from "@/constants/theme";
 import { ScaleSlider } from "@/components/ui/ScaleSlider";
 import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
 import { Ionicons } from "@expo/vector-icons";
-import { useThemeColor, useCreateMoodEntry } from "@/hooks";
-import { useMoodEntryStore } from "@/stores";
+import { useThemeColor, useCreateMoodEntry, usePatchCareAction } from "@/hooks";
+import { useMoodEntryStore, useCareActionLinkStore } from "@/stores";
 
 import { MOODS, getMood } from "@/constants/moods";
 
@@ -40,6 +40,7 @@ export default function NewMoodEntry() {
     useMoodEntryStore();
 
   const createMoodEntry = useCreateMoodEntry();
+  const patchCareAction = usePatchCareAction();
 
   useEffect(() => {
     setSelectedMood(getMood(initialMood));
@@ -64,7 +65,15 @@ export default function NewMoodEntry() {
     };
 
     const result = await createMoodEntry.mutateAsync(data);
-    const moodId = result.mood.id;
+    const moodId = (result as any).mood?.id ?? (result as any).moodEntry?.id;
+
+    const careActionId = useCareActionLinkStore.getState().linkMood();
+    if (careActionId && moodId) {
+      await patchCareAction.mutateAsync({
+        id: String(careActionId),
+        data: { moodId },
+      });
+    }
 
     reset();
 

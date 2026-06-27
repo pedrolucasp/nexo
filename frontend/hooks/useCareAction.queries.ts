@@ -5,6 +5,7 @@ import {
   CareAction,
   CareActionType,
   CreateCareActionPayload,
+  PatchCareActionPayload,
 } from "@/lib/api";
 
 interface CareActionFilters {
@@ -44,6 +45,20 @@ export const useCreateCareAction = () => {
       apiClient.createCareAction(payload),
 
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
+    },
+  });
+};
+
+export const usePatchCareAction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: PatchCareActionPayload }) =>
+      apiClient.patchCareAction(id, data),
+
+    onSuccess: (_result, { id }) => {
+      queryClient.invalidateQueries({ queryKey: careActionKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
     },
   });

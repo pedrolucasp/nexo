@@ -18,6 +18,7 @@ import { Spacing, Typography, Colors, BorderRadius, Shadows } from "@/constants/
 import { Ionicons } from "@expo/vector-icons";
 import { useCreateCareAction } from "@/hooks";
 import { AppointmentType } from "@/lib/api";
+import { useCareActionLinkStore } from "@/stores";
 
 const APPOINTMENT_TYPES: CategoryOption<AppointmentType>[] = [
   { label: 'Analista', value: 'ANALYST', icon: <Ionicons name="person-outline" size={16} color={Colors.light.tint} /> },
@@ -37,7 +38,7 @@ export default function AppointmentCareAction() {
   const createCareAction = useCreateCareAction();
 
   const handleSave = async () => {
-    await createCareAction.mutateAsync({
+    const result = await createCareAction.mutateAsync({
       type: 'APPOINTMENT',
       moment: new Date(),
       appointment: {
@@ -46,6 +47,7 @@ export default function AppointmentCareAction() {
         note: appointmentNote || undefined,
       },
     });
+    useCareActionLinkStore.getState().setPending(result.careAction.id);
     router.replace('/care-actions/post-appointment');
   };
 

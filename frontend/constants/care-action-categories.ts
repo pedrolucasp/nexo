@@ -1,3 +1,5 @@
+import type { CareAction } from "@/lib/api/types";
+
 export type CareActionMeta = {
   icon: string;
   color: string;
@@ -17,4 +19,36 @@ export const ACTIVITY_CATEGORIES: Record<string, CareActionMeta> = {
 
 export function getActivityCategory(type?: string): CareActionMeta {
   return ACTIVITY_CATEGORIES[type ?? "OTHER"] ?? ACTIVITY_CATEGORIES.OTHER;
+}
+
+const APPOINTMENT_LABELS: Record<string, string> = {
+  ANALYST:       'Analista',
+  PSYCHIATRIST:  'Psiquiatra',
+  GP:            'Clínico',
+  NUTRITIONIST:  'Nutricionista',
+  PHYSIOTHERAPIST: 'Fisioterapeuta',
+  OTHER:         'Consulta',
+};
+
+export function getCareActionMeta(ca: CareAction): CareActionMeta {
+  switch (ca.type) {
+    case 'APPOINTMENT':
+      return {
+        icon: 'psychology',
+        color: '#1D4ED8',
+        iconBackground: '#DBEAFE',
+        label: APPOINTMENT_LABELS[ca.appointment?.type ?? ''] ?? 'Consulta',
+      };
+    case 'MEDICINE':
+      return {
+        icon: 'medication',
+        color: '#7C3AED',
+        iconBackground: '#EDE9FE',
+        label: ca.medicineLog?.regimen?.name ?? 'Medicação',
+      };
+    case 'ACTIVITY':
+      return getActivityCategory(ca.activity?.type);
+    default:
+      return { icon: 'star', color: '#6B7280', iconBackground: '#F3F4F6', label: 'Cuidado' };
+  }
 }

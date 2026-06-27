@@ -14,13 +14,12 @@ import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { useCreateTrigger, useMoodEntries, useLinkMoodToTrigger } from "@/hooks";
+import { useCreateTrigger, useLinkMoodToTrigger, usePatchCareAction } from "@/hooks";
+import { useCareActionLinkStore } from "@/stores";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
 import { TRIGGER_CATEGORY_DEFINITIONS } from "@/constants/trigger-categories";
 import { TimePicker } from "@/components/ui/TimePicker";
-import { getMood } from "@/constants/moods";
-import { LinkRow } from "@/components/ui/LinkRow";
 
 const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
   TRIGGER_CATEGORY_DEFINITIONS.map((d) => ({
@@ -32,29 +31,30 @@ const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
 export default function NewTrigger() {
   const [moment, setMoment] = useState(new Date());
   const [comment, setComment] = useState("");
-  const { category: initialCategory, moodId: linkedMoodId } = useLocalSearchParams<{ category?: string; moodId?: string }>();
+  const { category: initialCategory, moodId: linkedMoodId } = 
+    useLocalSearchParams<{ category?: string; moodId?: string }>();
+
   const [category, setCategory] = useState(initialCategory ?? "WORK");
   const createTrigger = useCreateTrigger();
   const linkMoodToTrigger = useLinkMoodToTrigger();
-  const [linkMood, setLinkMood] = useState(false);
-  const { data: moodEntries, isLoading: isLoadingMood } = useMoodEntries({
-    limit: 1,
-  });
-
-  const latestMood = moodEntries?.entries[0] ?? null;
-  const moodDef = latestMood
-    ? getMood(latestMood.selectedMood.toLowerCase())
-    : null;
+  const patchCareAction = usePatchCareAction();
 
   const save = async () => {
     const data = {
       moment,
       comment,
-      category,
-      ...(linkMood && latestMood ? { moodId: latestMood.id } : null),
+      category
     };
 
     const result = await createTrigger.mutateAsync(data);
+
+    const careActionId = useCareActionLinkStore.getState().linkTrigger();
+    if (careActionId) {
+      await patchCareAction.mutateAsync({
+        id: String(careActionId),
+        data: { triggerId: result.trigger.id },
+      });
+    }
 
     if (linkedMoodId) {
       await linkMoodToTrigger.mutateAsync({
@@ -120,46 +120,6 @@ export default function NewTrigger() {
                 placeholder="Descreva o que gerou esse sentimento"
               />
             </Card>
-          </Section>
-
-          <Section>
-            <SectionHeader title="Vincular registro" />
-
-            <LinkRow
-              icon={
-                <View
-                  style={[styles.iconWrap, { backgroundColor: "transparent" }]}
-                >
-                  <Text style={styles.moodIconEmoji}>
-                    {moodDef?.icon ?? "😐"}
-                  </Text>
-                </View>
-              }
-              label="Humor atual"
-              sublabel={
-                isLoadingMood ? "..." : (moodDef?.label ?? "Nenhum registrado")
-              }
-              disabled={!latestMood}
-              value={linkMood && !!latestMood}
-              onToggle={setLinkMood}
-            />
-
-            <LinkRow
-              icon={
-                <MaterialIcons
-                  name="psychology"
-                  size={40}
-                  color={Colors.light.disabled}
-                />
-              }
-              label="Prática"
-              sublabel={"Nenhuma registrada"}
-              disabled={true}
-              value={false}
-              onToggle={() => {
-                console.log("When we get that");
-              }}
-            />
           </Section>
 
           <Button title="Salvar Registro" onPress={save} />
