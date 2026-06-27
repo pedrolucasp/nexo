@@ -90,6 +90,14 @@ export const getMoodById = async (id: number) => {
         include: { trigger: true },
         orderBy: { linkedAt: 'desc' },
       },
+      careActions: {
+        include: {
+          medicineLog: { include: { regimen: true } },
+          appointment: true,
+          activity: true,
+        },
+        orderBy: { moment: 'desc' },
+      },
     },
   });
 };

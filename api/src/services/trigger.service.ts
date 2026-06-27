@@ -87,6 +87,14 @@ export const getTriggerById = async (userId: number, id: number) => {
         include: { mood: { include: { moodComponents: true } } },
         orderBy: { linkedAt: 'desc' },
       },
+      careActions: {
+        include: {
+          medicineLog: { include: { regimen: true } },
+          appointment: true,
+          activity: true,
+        },
+        orderBy: { moment: 'desc' },
+      },
     },
   });
 }
