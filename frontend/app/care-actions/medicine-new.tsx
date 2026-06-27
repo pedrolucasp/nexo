@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors, BorderRadius, Shadows } from "@/constants/theme";
 import { TimePicker } from "@/components/ui/TimePicker";
-import { useCreateCareAction } from "@/hooks";
+import { useCreateMedicineRegimen } from "@/hooks";
 import { MedicinePeriodicity } from "@/lib/api";
 
 const PERIODICITY_OPTIONS: { label: string; value: MedicinePeriodicity }[] = [
@@ -34,9 +34,7 @@ function getTimePickerCount(p: MedicinePeriodicity): number {
     case 'DAILY': return 1;
     case 'TWICE_DAILY': return 2;
     case 'THREE_TIMES_DAILY': return 3;
-    case 'WEEKLY':
-    case 'BIWEEKLY':
-    case 'MONTHLY': return 1;
+    default: return 1;
   }
 }
 
@@ -46,7 +44,7 @@ export default function MedicineNewCareAction() {
   const [medicinePeriodicity, setMedicinePeriodicity] = useState<MedicinePeriodicity>('ONCE');
   const [scheduledTimes, setScheduledTimes] = useState<Date[]>([]);
 
-  const createCareAction = useCreateCareAction();
+  const createRegimen = useCreateMedicineRegimen();
 
   const handleSave = async () => {
     const count = getTimePickerCount(medicinePeriodicity);
@@ -54,15 +52,11 @@ export default function MedicineNewCareAction() {
       d => `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`
     );
 
-    await createCareAction.mutateAsync({
-      type: 'MEDICINE',
-      moment: new Date(),
-      medicine: {
-        name: medicineName,
-        dosage: medicineDosage,
-        periodicity: medicinePeriodicity,
-        scheduledAt,
-      },
+    await createRegimen.mutateAsync({
+      name: medicineName,
+      dosage: medicineDosage,
+      periodicity: medicinePeriodicity,
+      scheduledAt,
     });
     router.replace('/(tabs)/actions');
   };
@@ -151,7 +145,7 @@ export default function MedicineNewCareAction() {
           <Button
             title="Salvar"
             onPress={handleSave}
-            loading={createCareAction.isPending}
+            loading={createRegimen.isPending}
             disabled={!medicineName || !medicineDosage}
           />
         </View>
