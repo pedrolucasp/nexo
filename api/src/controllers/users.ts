@@ -159,6 +159,33 @@ export const UsersController = {
     }
   },
 
+  me: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: req.userId! },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          updatedAt: true,
+          avatarKey: true,
+          avatarURL: true,
+          active: true,
+          pushToken: true,
+          notificationsEnabled: true,
+          dailyReminderTime: true,
+        },
+      });
+
+      if (!user) return res.status(404).json({ error: "User not found" });
+
+      return res.json({ user });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   removeAvatar: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const currentUser = await findUserById(Number(req.userId));
 
