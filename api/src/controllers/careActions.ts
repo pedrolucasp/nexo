@@ -37,7 +37,7 @@ export const CareActionsController = {
         return res.status(404).json({ errors: 'Care action was not found' });
       }
 
-      return res.status(200).json({ careAction });
+      return res.status(200).json(careAction);
     } catch (err) {
       next(err);
     }
