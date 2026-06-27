@@ -2,6 +2,8 @@ import { Worker, WorkerOptions, Processor } from "bullmq";
 import { getQueue, QueueName } from "@app/lib/queue/QueueRegistry";
 import { mailProcessor } from "@app/lib/queue/processors/mail";
 import { insightProcessor } from "@app/lib/queue/processors/insights";
+import { medicineReminderProcessor } from "@app/lib/queue/processors/medicineReminders";
+import { dailyReminderProcessor } from "@app/lib/queue/processors/dailyReminders";
 import { InsightJobName } from "@app/lib/queue/types";
 
 type ProcessorMap = Record<QueueName, Processor>;
@@ -9,6 +11,8 @@ type ProcessorMap = Record<QueueName, Processor>;
 const processorMap: ProcessorMap = {
   mail: mailProcessor,
   insights: insightProcessor,
+  "medicine-reminders": medicineReminderProcessor,
+  "daily-reminders": dailyReminderProcessor,
 };
 
 // Per-queue concurrency
@@ -16,6 +20,8 @@ const processorMap: ProcessorMap = {
 const concurrencyMap: Record<QueueName, number> = {
   mail: 10,
   insights: 5,
+  "medicine-reminders": 5,
+  "daily-reminders": 5,
 };
 
 const workers: Worker[] = [];

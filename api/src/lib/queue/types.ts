@@ -42,3 +42,25 @@ export type InsightJobData =
   | { name: InsightJobName.TriggerPattern; data: InsightPeriodPayload }
   | { name: InsightJobName.DailyEnergy; data: InsightPeriodPayload }
   | { name: InsightJobName.DailySleep; data: InsightPeriodPayload };
+
+// Medicine reminder queue
+export enum MedicineReminderJobName {
+  Send = "medicine-reminder:send",
+}
+
+export type MedicineReminderPayload = {
+  userId: number;
+  regimenId: number;
+  medicineName: string;
+  dosage: string;
+  scheduledTime: string;
+};
+
+// Daily reminder queue
+export enum DailyReminderJobName {
+  Send = "daily-reminder:send",
+}
+
+export type DailyReminderPayload = {
+  userId: number;
+};
