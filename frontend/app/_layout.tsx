@@ -101,6 +101,11 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="medicine-regimens/index"
+              options={{ title: "Gerenciar Medicamentos" }}
+            />
+
+            <Stack.Screen
               name="notifications"
               options={{
                 presentation: "modal",
