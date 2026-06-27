@@ -28,6 +28,8 @@ import {
   MedicineRegimenResponse,
   CreateMedicineRegimenPayload,
   UpdateMedicineRegimenPayload,
+  TodayMedicineEntry,
+  UserPreferencesPayload,
   CareAction,
   CareActionType,
   CareActionResponse,
@@ -356,6 +358,17 @@ class ApiClient {
 
   async deleteMedicineRegimen(id: string): Promise<void> {
     return this.request(`/medicine-regimens/${id}`, { method: 'DELETE' });
+  }
+
+  async getMedicineRegimensToday(): Promise<{ regimens: TodayMedicineEntry[] }> {
+    return this.request('/medicine-regimens/today');
+  }
+
+  async patchUserMe(payload: UserPreferencesPayload): Promise<{ user: User }> {
+    return this.request('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify({ user: payload }),
+    });
   }
 
   // Care Actions

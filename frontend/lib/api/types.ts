@@ -8,6 +8,8 @@ export interface User {
   avatarURL?: string;
   active: boolean;
   pushToken?: string;
+  notificationsEnabled?: boolean;
+  dailyReminderTime?: string;
 }
 
 // Auth
@@ -50,6 +52,11 @@ export interface UserUpdatePayload extends Partial<User> {
 
 export interface UserUpdateResponse {
   user: User;
+}
+
+export interface UserPreferencesPayload {
+  notificationsEnabled?: boolean;
+  dailyReminderTime?: string | null;
 }
 
 // Mood entries
@@ -246,11 +253,16 @@ export interface MedicineRegimen {
   name: string;
   dosage: string;
   periodicity: MedicinePeriodicity;
-  scheduledAt?: string;
+  scheduledAt: string[];
   active: boolean;
   userId: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface TodayMedicineEntry {
+  regimen: Pick<MedicineRegimen, 'id' | 'name' | 'dosage' | 'scheduledAt'>;
+  logs: { id: number; takenAt: Date }[];
 }
 
 export interface MedicineLog {
@@ -311,7 +323,7 @@ export interface CreateMedicineRegimenPayload {
   name: string;
   dosage: string;
   periodicity: MedicinePeriodicity;
-  scheduledAt?: string;
+  scheduledAt?: string[];
 }
 
 export interface UpdateMedicineRegimenPayload extends Partial<CreateMedicineRegimenPayload> {
@@ -326,7 +338,7 @@ export interface CreateCareActionMedicinePayload {
     name: string;
     dosage: string;
     periodicity: MedicinePeriodicity;
-    scheduledAt?: string
+    scheduledAt?: string[];
   };
   triggerId?: number;
   moodId?: number;

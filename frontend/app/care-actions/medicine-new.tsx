@@ -50,11 +50,9 @@ export default function MedicineNewCareAction() {
 
   const handleSave = async () => {
     const count = getTimePickerCount(medicinePeriodicity);
-    const scheduledAt = count > 0
-      ? scheduledTimes.slice(0, count)
-          .map(d => `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`)
-          .join(',')
-      : undefined;
+    const scheduledAt = scheduledTimes.slice(0, count).map(
+      d => `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`
+    );
 
     await createCareAction.mutateAsync({
       type: 'MEDICINE',
