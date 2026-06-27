@@ -8,8 +8,10 @@ export type { CreateMoodInput } from "@app/schemas/mood.schema";
 export {
   CreateUserSchema,
   UpdateUserSchema,
+  UpdateUserPreferencesSchema,
   type CreateUserInput,
   type UpdateUserInput,
+  type UpdateUserPreferencesInput,
 } from "@app/schemas/user.schema";
 
 export {

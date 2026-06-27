@@ -6,12 +6,23 @@ import {
   createMedicineRegimen,
   updateMedicineRegimen,
   deactivateMedicineRegimen,
+  getTodayMedicineRegimens,
 } from '@app/services/medicineRegimen.service';
 
 export const MedicineRegimensController = {
   index: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
       const regimens = await getMedicineRegimensByUserId(Number(req.userId));
+
+      return res.status(200).json({ regimens });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  today: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const regimens = await getTodayMedicineRegimens(req.userId!);
 
       return res.status(200).json({ regimens });
     } catch (err) {

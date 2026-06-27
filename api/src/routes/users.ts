@@ -6,6 +6,7 @@ import { requireAuth } from '@app/middleware/auth';
 const router = Router();
 
 router.post('/', UsersController.create);
+router.patch('/me', requireAuth, UsersController.updatePreferences);
 router.put('/:id', UsersController.update);
 router.post('/me/avatar', requireAuth, multer.single('avatar'), UsersController.updateAvatar);
 router.delete('/me/avatar', requireAuth, UsersController.removeAvatar);

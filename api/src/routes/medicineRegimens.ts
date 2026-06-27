@@ -5,6 +5,7 @@ import { requireAuth } from '@app/middleware/auth';
 const router = Router();
 
 router.get('/', requireAuth, MedicineRegimensController.index);
+router.get('/today', requireAuth, MedicineRegimensController.today);
 router.post('/', requireAuth, MedicineRegimensController.create);
 router.patch('/:id', requireAuth, MedicineRegimensController.update);
 router.delete('/:id', requireAuth, MedicineRegimensController.destroy);

@@ -7,8 +7,10 @@ import { getQueue, MailJobName } from '@app/lib/queue';
 
 import {
   CreateUserSchema,
-  UpdateUserSchema
+  UpdateUserSchema,
+  UpdateUserPreferencesSchema,
 } from '@app/schemas';
+import { syncDailyReminderJob } from '@app/services/dailyReminder.sync';
 
 import {
   createUser,
@@ -132,6 +134,26 @@ export const UsersController = {
         size: req.file.size,
         user: user
       });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  updatePreferences: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const parsed = UpdateUserPreferencesSchema.safeParse(req.body.user);
+      if (!parsed.success) {
+        return res.status(400).json({ errors: parsed.error!.issues });
+      }
+
+      const user = await prisma.user.update({
+        where: { id: req.userId },
+        data: parsed.data,
+      });
+
+      await syncDailyReminderJob(user);
+
+      return res.status(200).json({ user });
     } catch (err) {
       next(err);
     }
