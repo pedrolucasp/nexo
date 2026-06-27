@@ -6,6 +6,7 @@ import {
   CreateMedicineRegimenPayload,
   UpdateMedicineRegimenPayload,
 } from "@/lib/api";
+import { medicineTodayKeys } from "@/hooks/useMedicineToday.queries";
 
 export const medicineRegimenKeys = {
   all: () => ["medicineRegimens"] as const,
@@ -18,6 +19,14 @@ export const useMedicineRegimens = () => {
   return useQuery({
     queryKey: medicineRegimenKeys.list(),
     queryFn: () => apiClient.getMedicineRegimens(),
+  });
+};
+
+export const useMedicineRegimen = (id: string) => {
+  return useQuery({
+    queryKey: medicineRegimenKeys.detail(id),
+    queryFn: () => apiClient.getMedicineRegimen(id),
+    enabled: !!id,
   });
 };
 
@@ -66,6 +75,21 @@ export const useUpdateMedicineRegimen = () => {
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
+    },
+  });
+};
+
+export const useToggleMedicineRegimen = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+      apiClient.toggleMedicineRegimen(id, active),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
     },
   });
 };

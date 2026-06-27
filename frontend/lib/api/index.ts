@@ -33,6 +33,7 @@ export type {
   PatchCareActionPayload,
   // Medicine Regimens
   MedicineRegimen,
+  MedicinePeriodicity,
   MedicineRegimenResponse,
   CreateMedicineRegimenPayload,
   UpdateMedicineRegimenPayload,

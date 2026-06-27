@@ -8,6 +8,7 @@ import {
   PatchCareActionPayload,
 } from "@/lib/api";
 import { medicineTodayKeys } from "@/hooks/useMedicineToday.queries";
+import { medicineRegimenKeys } from "@/hooks/useMedicineRegimen.queries";
 
 interface CareActionFilters {
   type?: CareActionType;
@@ -48,6 +49,7 @@ export const useCreateCareAction = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
       queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
+      queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.lists() });
     },
   });
 };

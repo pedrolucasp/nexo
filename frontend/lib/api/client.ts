@@ -337,6 +337,10 @@ class ApiClient {
     return this.request('/medicine-regimens');
   }
 
+  async getMedicineRegimen(id: string): Promise<{ regimen: MedicineRegimen }> {
+    return this.request(`/medicine-regimens/${id}`);
+  }
+
   async createMedicineRegimen(
     regimen: CreateMedicineRegimenPayload
   ): Promise<MedicineRegimenResponse> {
@@ -358,6 +362,16 @@ class ApiClient {
 
   async deleteMedicineRegimen(id: string): Promise<void> {
     return this.request(`/medicine-regimens/${id}`, { method: 'DELETE' });
+  }
+
+  async toggleMedicineRegimen(
+    id: string,
+    active: boolean,
+  ): Promise<MedicineRegimenResponse> {
+    return this.request(`/medicine-regimens/${id}/active`, {
+      method: 'PATCH',
+      body: JSON.stringify({ active }),
+    });
   }
 
   async getMedicineRegimensToday(): Promise<{ regimens: TodayMedicineEntry[] }> {

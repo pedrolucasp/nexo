@@ -33,8 +33,10 @@ export {
 export {
   medicineRegimenKeys,
   useMedicineRegimens,
+  useMedicineRegimen,
   useCreateMedicineRegimen,
   useUpdateMedicineRegimen,
+  useToggleMedicineRegimen,
   useDeleteMedicineRegimen,
 } from "@/hooks/useMedicineRegimen.queries";
 
