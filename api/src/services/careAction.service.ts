@@ -1,6 +1,6 @@
 import { prisma } from '@app/lib/prisma';
 import { CareAction, CareActionType } from '@prisma/client';
-import { CreateCareActionInput } from '@app/schemas';
+import { CreateCareActionInput, PatchCareActionInput } from '@app/schemas';
 
 const careActionIncludes = {
   medicineLog: { include: { regimen: true } },
@@ -69,6 +69,18 @@ export const destroyCareActionById = async (
 ): Promise<CareAction> => {
   return prisma.careAction.delete({
     where: { id, userId },
+  });
+};
+
+export const patchCareActionById = async (
+  userId: number,
+  id: number,
+  data: PatchCareActionInput,
+) => {
+  return prisma.careAction.update({
+    where: { id, userId },
+    data,
+    include: careActionIncludes,
   });
 };
 

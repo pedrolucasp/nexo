@@ -42,3 +42,10 @@ export const CreateCareActionSchema = z.object({
 });
 
 export type CreateCareActionInput = z.infer<typeof CreateCareActionSchema>;
+
+export const PatchCareActionSchema = z.object({
+  triggerId: z.number().int().positive().optional(),
+  moodId: z.number().int().positive().optional(),
+}).strict();
+
+export type PatchCareActionInput = z.infer<typeof PatchCareActionSchema>;

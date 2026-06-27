@@ -50,6 +50,8 @@ export {
 export {
   CreateCareActionSchema,
   type CreateCareActionInput,
+  PatchCareActionSchema,
+  type PatchCareActionInput,
 } from "@app/schemas/careAction.schema";
 
 export {

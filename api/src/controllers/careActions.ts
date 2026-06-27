@@ -1,12 +1,13 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@app/middleware/auth';
 import { CareActionType } from '@prisma/client';
-import { CreateCareActionSchema } from '@app/schemas';
+import { CreateCareActionSchema, PatchCareActionSchema } from '@app/schemas';
 import {
   getCareActionsByUserId,
   getCareActionById,
   createCareAction,
   destroyCareActionById,
+  patchCareActionById,
 } from '@app/services/careAction.service';
 
 export const CareActionsController = {
@@ -67,6 +68,30 @@ export const CareActionsController = {
       await destroyCareActionById(req.userId!, Number(req.params.id));
 
       return res.status(200).json({});
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  patch: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const parsed = PatchCareActionSchema.safeParse(req.body.careAction);
+
+      if (!parsed.success) {
+        return res.status(400).json({ errors: parsed.error.issues });
+      }
+
+      const careAction = await patchCareActionById(
+        req.userId!,
+        Number(req.params.id),
+        parsed.data,
+      );
+
+      if (!careAction) {
+        return res.status(404).json({ errors: 'Care action was not found' });
+      }
+
+      return res.status(200).json(careAction);
     } catch (err) {
       next(err);
     }
