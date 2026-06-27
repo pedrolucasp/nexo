@@ -24,11 +24,12 @@ model User {
   activationCodeExpiresAt DateTime? @map("activation_code_expires_at")
   active                  Boolean   @default(false) @map("active")
 
-  pushToken String? @map("push_token")
+  pushToken            String?  @map("push_token")
+  notificationsEnabled Boolean  @default(true) @map("notifications_enabled")
+  dailyReminderTime    String?  @map("daily_reminder_time")
 
   moods            Mood[]
   triggers         Trigger[]
-  reminders        Reminder[]
   sleepRecords     SleepRecord[]
   insights         Insight[]
   medicineRegimens MedicineRegimen[]
@@ -103,7 +104,7 @@ model MedicineRegimen {
   name        String
   dosage      String
   periodicity MedicinePeriodicity
-  scheduledAt String?             @map("scheduled_at")
+  scheduledAt String[]            @default([]) @map("scheduled_at")
   active      Boolean             @default(true)
   userId      Int                 @map("user_id")
 
@@ -174,18 +175,6 @@ model Activity {
   @@map("activities")
 }
 
-model Reminder {
-  id          Int     @id @default(autoincrement())
-  hour        Int
-  minute      Int
-  description String?
-  active      Boolean @default(false)
-
-  userId Int  @map("user_id")
-  user   User @relation(fields: [userId], references: [id])
-
-  @@map("reminders")
-}
 
 model SleepRecord {
   id          Int      @id @default(autoincrement())
