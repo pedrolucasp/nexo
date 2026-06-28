@@ -42,7 +42,7 @@ export interface ResetPasswordResponse {
 }
 
 export interface ActivateResponse {
-  activated: boolean;
+  user: User;
 }
 
 // User

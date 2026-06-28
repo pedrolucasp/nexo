@@ -43,6 +43,12 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY;
 
 class ApiClient {
+  private onUnauthorizedCallback?: () => void;
+
+  registerUnauthorizedHandler(cb: () => void) {
+    this.onUnauthorizedCallback = cb;
+  }
+
   private async getStoredToken(): Promise<string | null> {
     try {
       return await SecureStore.getItemAsync(TOKEN_KEY!);
@@ -93,6 +99,10 @@ class ApiClient {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
     if (!response.ok) {
+      if (response.status === 401) {
+        this.onUnauthorizedCallback?.();
+      }
+
       const error = await response
         .json()
         .catch(() => ({ error: "Network error" }));
@@ -174,6 +184,10 @@ class ApiClient {
   }
 
   // User-related
+  async getMe(): Promise<{ user: User }> {
+    return this.request('/users/me');
+  }
+
   async updateUser(user: UserUpdatePayload): Promise<{ user: User }> {
     return await this.request(`/users/${user.id}`, {
       method: "PUT",

@@ -23,7 +23,7 @@ interface AuthContextType {
     email: string,
   ) => Promise<{ message: string; token?: string }>;
   resetPassword: (token: string, password: string) => Promise<void>;
-  activate: (code: string) => Promise<void>;
+  activate: (code: number) => Promise<void>;
   requestActivateCode: () => Promise<void>;
 }
 
@@ -58,34 +58,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = !!user;
 
-  // Check for existing authentication on app start
   useEffect(() => {
     checkAuthState();
   }, []);
 
-  const checkAuthState = async () => {
-    try {
-      const { token } = await apiClient.getStoredAuthData();
+  useEffect(() => {
+    apiClient.registerUnauthorizedHandler(() => {
+      logout();
+    });
+  }, []);
 
+  const checkAuthState = async () => {
+    const doAuthCheck = async () => {
+      const { token } = await apiClient.getStoredAuthData();
       if (token) {
-        const verifyResponse = await apiClient.verifyToken();
-        if (
-          verifyResponse.valid &&
-          verifyResponse.userId &&
-          verifyResponse.email
-        ) {
-          // TODO: Fetch the full user profile
-          // For now, we'll create a basic user object
-          setUser({
-            id: verifyResponse.userId,
-            email: verifyResponse.email,
-            ...verifyResponse.user,
-          });
-        }
+        await apiClient.verifyToken();
+        const { user } = await apiClient.getMe();
+        setUser(user);
       }
+    };
+
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Auth check timed out")), 10_000),
+    );
+
+    try {
+      await Promise.race([doAuthCheck(), timeout]);
     } catch (error) {
       console.error("Auth check failed:", error);
-      // Token is invalid, wipe out any stored data
       await apiClient.logout();
     } finally {
       setIsLoading(false);
@@ -150,19 +150,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const activate = async (code: number) => {
     const response = await apiClient.activate(code);
-
-    if (response.user) {
-      setUser(response.user);
-    }
-
-    return response;
+    setUser(response.user);
   };
 
   const requestActivateCode = async () => {
     await apiClient.requestActivateCode();
   };
 
-  const updateAuthUser = (user) => {
+  const updateAuthUser = (user: User) => {
     setUser(user);
   };
 
