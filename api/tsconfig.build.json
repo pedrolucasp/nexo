@@ -3,7 +3,8 @@
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
     "noImplicitAny": false,
-    "lib": ["ES2022", "DOM"]
+    "lib": ["ES2022", "DOM"],
+    "rootDir": "src"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
