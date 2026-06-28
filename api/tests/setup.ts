@@ -26,3 +26,8 @@ vi.mock('@app/lib/queue/QueueRegistry', () => ({
   getQueue: vi.fn(() => mockQueue()),
   closeAllQueues: vi.fn(),
 }))
+
+// avatar.ts constructs multer-s3 at import time and requires S3_BUCKET env var
+vi.mock('@app/services/avatar', () => ({
+  default: { single: vi.fn(() => (_req: any, _res: any, next: any) => next()) },
+}))
