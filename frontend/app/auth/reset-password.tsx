@@ -5,14 +5,14 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
 } from 'react-native';
 import { Link, useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { translateError } from '@/lib/errors/translations';
 
 export default function ResetPasswordScreen() {
   const { token } = useLocalSearchParams<{ token: string }>();
@@ -24,6 +24,7 @@ export default function ResetPasswordScreen() {
   }>({});
 
   const { resetPassword } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
@@ -52,21 +53,17 @@ export default function ResetPasswordScreen() {
     if (!validateForm()) return;
 
     if (!token) {
-      Alert.alert('Erro: ', 'Token de reset não encontrado. Por favor, solicite um novo link de recuperação.');
+      showToast('Token não encontrado. Solicite um novo link de recuperação.', 'error');
       return;
     }
 
     setLoading(true);
     try {
       await resetPassword(token, password);
-      Alert.alert('Sucesso!', 'Senha recuperada com sucesso', [
-        {
-          text: 'OK',
-          onPress: () => router.replace('/auth/login'),
-        },
-      ]);
+      showToast('Senha recuperada com sucesso!', 'success');
+      router.replace('/auth/login');
     } catch (error: any) {
-      Alert.alert('Erro: ', error.message || 'Falha em recuperar a conta');
+      showToast(translateError(error.message) || 'Falha em recuperar a conta', 'error');
     } finally {
       setLoading(false);
     }

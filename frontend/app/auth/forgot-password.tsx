@@ -5,14 +5,14 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { translateError } from '@/lib/errors/translations';
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
@@ -21,6 +21,7 @@ export default function ForgotPasswordScreen() {
   const [errors, setErrors] = useState<{ email?: string }>({});
 
   const { forgotPassword } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
@@ -30,9 +31,9 @@ export default function ForgotPasswordScreen() {
     const newErrors: { email?: string } = {};
 
     if (!email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email é obrigatório';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = 'Por favor entre um email válido';
     }
 
     setErrors(newErrors);
@@ -51,7 +52,7 @@ export default function ForgotPasswordScreen() {
         setResetToken(data.token);
       }
     } catch (error: any) {
-      Alert.alert('Erro: ', error.message || 'Falha ao enviar link de recuperação');
+      showToast(translateError(error.message) || 'Falha ao enviar link de recuperação', 'error');
     } finally {
       setLoading(false);
     }

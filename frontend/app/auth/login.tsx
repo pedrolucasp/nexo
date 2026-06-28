@@ -5,8 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
   Animated,
   Easing
 } from "react-native";
@@ -17,7 +15,9 @@ import { StatusBar } from "expo-status-bar";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Button, Input } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { apiClient, User } from "@/lib/api";
+import { apiClient, ApiError } from "@/lib/api";
+import { useToast } from "@/context/ToastContext";
+import { translateError, translateFields } from "@/lib/errors/translations";
 import { registerForPushNotifications } from "@/hooks/useRegisterPushToken";
 
 export default function LoginScreen() {
@@ -26,8 +26,10 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {},
   );
+  const [loading, setLoading] = useState(false);
 
-  const { login, updateAuthUser, isLoading } = useAuth();
+  const { login, updateAuthUser } = useAuth();
+  const { showToast } = useToast();
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "background");
   const tintColor = useThemeColor({}, "tint");
@@ -75,6 +77,7 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     if (!validateForm()) return;
 
+    setLoading(true);
     try {
       const response = await login(email, password);
 
@@ -97,7 +100,13 @@ export default function LoginScreen() {
       router.replace("/");
     } catch (error: any) {
       console.log("LOGIN error: ", error);
-      Alert.alert("Erro: ", "Falha ao fazer login");
+      if (error instanceof ApiError && error.fields) {
+        setErrors(translateFields(error.fields));
+      } else {
+        showToast(translateError(error.message) || 'Falha ao fazer login', 'error');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -152,7 +161,7 @@ export default function LoginScreen() {
             <Button
               title="Entrar"
               onPress={handleLogin}
-              loading={isLoading}
+              loading={loading}
               style={styles.loginButton}
             />
 

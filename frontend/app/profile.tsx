@@ -5,8 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
 } from 'react-native';
 
 import { ThemedView } from '@/components/ui/themed-view'
@@ -17,13 +15,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
-import { apiClient } from '@/lib/api'
+import { apiClient, ApiError } from '@/lib/api'
+import { useToast } from '@/context/ToastContext';
+import { translateError, translateFields } from '@/lib/errors/translations';
 import { Card } from '@/components/ui/Cards';
 import AvatarUpload  from '@/components/ui/AvatarUpload';
 import { Typography, Spacing, Colors } from '@/constants/theme';
 
 export default function Profile() {
   const { user, updateAuthUser } = useAuth();
+  const { showToast } = useToast();
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
   const [email, setEmail] = useState(user.email);
@@ -105,7 +106,11 @@ export default function Profile() {
       router.replace('/(tabs)/insights');
     } catch (error: any) {
       console.error("[PROFILE]", error)
-      Alert.alert('Erro: ', 'Falha ao tentar atualizar o usuário');
+      if (error instanceof ApiError && error.fields) {
+        setErrors(translateFields(error.fields));
+      } else {
+        showToast(translateError(error.message) || 'Falha ao atualizar o perfil', 'error');
+      }
     }
   }
 

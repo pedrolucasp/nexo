@@ -5,14 +5,15 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
 } from 'react-native';
 import { Link, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
+import { ApiError } from '@/lib/api';
+import { useToast } from '@/context/ToastContext';
+import { translateError, translateFields } from '@/lib/errors/translations';
 
 export default function SignupScreen() {
   const [firstName, setFirstName] = useState('');
@@ -27,7 +28,9 @@ export default function SignupScreen() {
     confirmPassword?: string;
   }>({});
 
-  const { signup, isLoading } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { signup } = useAuth();
+  const { showToast } = useToast();
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
   const tintColor = useThemeColor({}, 'tint');
@@ -64,17 +67,18 @@ export default function SignupScreen() {
   const handleSignup = async () => {
     if (!validateForm()) return;
 
+    setLoading(true);
     try {
-      await signup({
-        firstName,
-        lastName,
-        email,
-        password
-      });
-
+      await signup({ firstName, lastName, email, password });
       router.replace('/');
     } catch (error: any) {
-      Alert.alert('Erro:', error.message || 'Falha no cadastro. Tente novamente.');
+      if (error instanceof ApiError && error.fields) {
+        setErrors(translateFields(error.fields));
+      } else {
+        showToast(translateError(error.message) || 'Falha no cadastro. Tente novamente.', 'error');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,7 +148,7 @@ export default function SignupScreen() {
             <Button
               title="Criar conta"
               onPress={handleSignup}
-              loading={isLoading}
+              loading={loading}
               style={styles.signupButton}
             />
           </View>

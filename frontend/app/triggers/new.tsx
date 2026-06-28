@@ -15,6 +15,9 @@ import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useCreateTrigger, useLinkMoodToTrigger, usePatchCareAction } from "@/hooks";
+import { useToast } from "@/context/ToastContext";
+import { ApiError } from "@/lib/api";
+import { translateError } from "@/lib/errors/translations";
 import { useCareActionLinkStore } from "@/stores";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
@@ -38,33 +41,36 @@ export default function NewTrigger() {
   const createTrigger = useCreateTrigger();
   const linkMoodToTrigger = useLinkMoodToTrigger();
   const patchCareAction = usePatchCareAction();
+  const { showToast } = useToast();
 
   const save = async () => {
-    const data = {
-      moment,
-      comment,
-      category
-    };
+    try {
+      const data = { moment, comment, category };
+      const result = await createTrigger.mutateAsync(data);
 
-    const result = await createTrigger.mutateAsync(data);
+      const careActionId = useCareActionLinkStore.getState().linkTrigger();
+      if (careActionId) {
+        await patchCareAction.mutateAsync({
+          id: String(careActionId),
+          data: { triggerId: result.trigger.id },
+        });
+      }
 
-    const careActionId = useCareActionLinkStore.getState().linkTrigger();
-    if (careActionId) {
-      await patchCareAction.mutateAsync({
-        id: String(careActionId),
-        data: { triggerId: result.trigger.id },
-      });
-    }
-
-    if (linkedMoodId) {
-      await linkMoodToTrigger.mutateAsync({
-        triggerId: String(result.trigger.id),
-        moodId: linkedMoodId,
-        perceivedImpact: 3,
-      });
-      router.back();
-    } else {
-      router.replace("/(tabs)/actions");
+      if (linkedMoodId) {
+        await linkMoodToTrigger.mutateAsync({
+          triggerId: String(result.trigger.id),
+          moodId: linkedMoodId,
+          perceivedImpact: 3,
+        });
+        router.back();
+      } else {
+        router.replace("/(tabs)/actions");
+      }
+    } catch (error: any) {
+      showToast(
+        error instanceof ApiError ? translateError(error.message) : 'Falha ao salvar o gatilho',
+        'error',
+      );
     }
   };
 

@@ -5,8 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
 } from 'react-native';
 import { Link, useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +12,8 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { Colors } from '@/constants/theme'
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import { translateError } from '@/lib/errors/translations';
 
 export default function ActivateScreen() {
   const { userId } = useLocalSearchParams();
@@ -23,6 +23,7 @@ export default function ActivateScreen() {
   }>({});
 
   const { activate, requestActivateCode } = useAuth();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
@@ -48,27 +49,22 @@ export default function ActivateScreen() {
     setLoading(true);
     try {
       await activate(Number(code.replaceAll(' ', '')));
-
-      Alert.alert('Sucesso!', 'Conta ativada com sucesso', [
-        {
-          text: 'OK',
-          onPress: () => router.replace('/'),
-        },
-      ]);
+      showToast('Conta ativada com sucesso!', 'success');
+      router.replace('/');
     } catch (error: any) {
-      Alert.alert('Erro: ', error.message || 'Falha em ativar a conta');
+      showToast(translateError(error.message) || 'Falha em ativar a conta', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   const resendCode = async () => {
-    await requestActivateCode()
-
-    Alert.alert(
-      "Novo código",
-      "Enviado novo código, verifique sua caixa de entrada"
-    );
+    try {
+      await requestActivateCode();
+      showToast('Novo código enviado. Verifique sua caixa de entrada.', 'success');
+    } catch {
+      showToast('Falha ao reenviar o código. Tente novamente.', 'error');
+    }
   }
 
   return (

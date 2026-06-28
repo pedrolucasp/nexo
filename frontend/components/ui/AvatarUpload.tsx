@@ -11,7 +11,9 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
-import { apiClient } from '@/lib/api';
+import { apiClient, ApiError } from '@/lib/api';
+import { useToast } from '@/context/ToastContext';
+import { translateError } from '@/lib/errors/translations';
 import { Colors } from '@/constants/theme';
 
 interface AvatarUploadProps {
@@ -26,6 +28,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
   onRemoveSuccess,
 }) => {
   const [preview, setPreview] = useState<string | null>(currentAvatar);
+  const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -50,7 +53,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       }
     } catch (error) {
       console.error('Image picker error:', error);
-      Alert.alert('Error', 'Failed to select image');
+      showToast('Falha ao selecionar imagem', 'error');
     }
   };
 
@@ -70,7 +73,10 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       onUploadSuccess?.(response.user);
     } catch (error) {
       console.error('Upload error:', error);
-      Alert.alert('Error', error instanceof Error ? error.message : 'Upload failed');
+      showToast(
+        error instanceof ApiError ? translateError(error.message) : 'Falha ao enviar foto',
+        'error',
+      );
       setPreview(currentAvatar);
     } finally {
       setIsLoading(false);
@@ -96,7 +102,10 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
             onRemoveSuccess?.(response.user);
           } catch (error) {
             console.error('Remove error:', error);
-            Alert.alert('Error', error instanceof Error ? error.message : 'Failed to remove avatar');
+            showToast(
+              error instanceof ApiError ? translateError(error.message) : 'Falha ao remover foto',
+              'error',
+            );
           } finally {
             setIsLoading(false);
           }

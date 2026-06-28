@@ -16,27 +16,32 @@ import { Ionicons } from "@expo/vector-icons";
 import { DatePickerField } from "@/components/ui/DatePickerField";
 import { ScaleSlider } from "@/components/ui/ScaleSlider";
 import { useCreateSleepRecord } from "@/hooks";
+import { useToast } from "@/context/ToastContext";
+import { ApiError } from "@/lib/api";
+import { translateError } from "@/lib/errors/translations";
 
 export default function NewSleepRecord() {
   const [date, setDate] = useState(new Date());
   const [annotations, setAnnotations] = useState("");
   const [average, setAverage] = useState(7.5);
   const createSleepRecord = useCreateSleepRecord();
+  const { showToast } = useToast();
 
   const formatValue = (value: number): string => {
     return String(value).replaceAll(".", ",");
   };
 
   const save = async () => {
-    const data = {
-      date,
-      annotations,
-      average,
-    };
-
-    console.log("Sleep record:", data);
-    await createSleepRecord.mutateAsync(data);
-    router.replace("/");
+    try {
+      const data = { date, annotations, average };
+      await createSleepRecord.mutateAsync(data);
+      router.replace("/");
+    } catch (error: any) {
+      showToast(
+        error instanceof ApiError ? translateError(error.message) : 'Falha ao salvar o registro de sono',
+        'error',
+      );
+    }
   };
 
   return (
