@@ -9,6 +9,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { useNotificationObserver } from "@/hooks/useNotificationObserver";
 import { AuthProvider } from "@/context/AuthContext";
+import { ToastProvider } from "@/context/ToastContext";
 
 export const unstable_settings = {
   initialRouteName: "(tabs)",
@@ -25,6 +26,7 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={DefaultTheme}>
+        <ToastProvider>
         <AuthProvider>
           <AppBootstrap />
           <Stack>
@@ -119,6 +121,7 @@ export default function RootLayout() {
             />
           </Stack>
         </AuthProvider>
+        </ToastProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

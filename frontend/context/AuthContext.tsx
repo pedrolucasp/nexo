@@ -96,19 +96,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     email: string,
     password: string,
   ): Promise<{ user: User } | null> => {
-    setIsLoading(true);
+    const response = await apiClient.login(email, password);
 
-    try {
-      const response = await apiClient.login(email, password);
-
-      if (response.user) {
-        setUser(response.user);
-      }
-
-      return response;
-    } finally {
-      setIsLoading(false);
+    if (response.user) {
+      setUser(response.user);
     }
+
+    return response;
   };
 
   const signup = async (userData: {
@@ -117,13 +111,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     email: string;
     password: string;
   }) => {
-    setIsLoading(true);
-    try {
-      const response = await apiClient.signup(userData);
-      setUser(response.user);
-    } finally {
-      setIsLoading(false);
-    }
+    const response = await apiClient.signup(userData);
+    setUser(response.user);
   };
 
   const logout = async () => {
