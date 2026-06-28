@@ -12,6 +12,7 @@ import {
   CreateSleepRecordSchema,
   UpdateSleepRecordSchema
 } from '@app/schemas'
+import { formatValidationError } from '@app/lib/errors/validationError'
 
 export const SleepRecordsController = {
   create: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -19,9 +20,7 @@ export const SleepRecordsController = {
       const parsed = CreateSleepRecordSchema.safeParse(req.body.sleepRecord);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const sleepRecord = await createSleepRecord(req.userId!, parsed.data);
@@ -74,9 +73,7 @@ export const SleepRecordsController = {
       const parsed = UpdateSleepRecordSchema.safeParse(req.body.sleepRecord);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const sleepRecord = await updateSleepRecordById(req.userId!, Number(req.params.id!), parsed.data);

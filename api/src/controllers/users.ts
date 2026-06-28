@@ -10,6 +10,7 @@ import {
   UpdateUserSchema,
   UpdateUserPreferencesSchema,
 } from '@app/schemas';
+import { formatValidationError } from '@app/lib/errors/validationError';
 import { syncDailyReminderJob } from '@app/services/dailyReminder.sync';
 
 import {
@@ -44,9 +45,7 @@ export const UsersController = {
       const parsed = CreateUserSchema.safeParse(req.body.user);
 
       if (!parsed.success) {
-        return res.status(422).json({
-          errors: parsed.error!.issues
-        })
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const user = await createUser(parsed.data);
@@ -78,9 +77,7 @@ export const UsersController = {
 
       const parsed = UpdateUserSchema.safeParse(req.body.user);
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const user = await findUserById(Number(id));
@@ -143,7 +140,7 @@ export const UsersController = {
     try {
       const parsed = UpdateUserPreferencesSchema.safeParse(req.body.user);
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const user = await prisma.user.update({

@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@app/middleware/auth';
 import { CreateMedicineRegimenSchema, UpdateMedicineRegimenSchema } from '@app/schemas';
 import { ToggleMedicineRegimenSchema } from '@app/schemas/medicineRegimen.schema';
+import { formatValidationError } from '@app/lib/errors/validationError';
 import {
   getMedicineRegimensByUserId,
   getMedicineRegimenById,
@@ -50,7 +51,7 @@ export const MedicineRegimensController = {
       const parsed = CreateMedicineRegimenSchema.safeParse(req.body.regimen);
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const regimen = await createMedicineRegimen(req.userId!, parsed.data);
@@ -66,7 +67,7 @@ export const MedicineRegimensController = {
       const parsed = UpdateMedicineRegimenSchema.safeParse(req.body.regimen);
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const regimen = await updateMedicineRegimen(
@@ -86,7 +87,7 @@ export const MedicineRegimensController = {
       const parsed = ToggleMedicineRegimenSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const regimen = await toggleMedicineRegimen(

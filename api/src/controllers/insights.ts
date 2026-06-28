@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "@app/middleware/auth";
 import { getInsightsByUserId } from "@app/services/insight.service";
 import { InsightsQuerySchema } from "@app/schemas";
+import { formatValidationError } from "@app/lib/errors/validationError";
 
 export const InsightsController = {
   index: async (
@@ -13,10 +14,7 @@ export const InsightsController = {
       const parsedQuery = InsightsQuerySchema.safeParse(req.query);
 
       if (!parsedQuery.success) {
-        return res.status(400).json({
-          message: "Invalid query parameters",
-          errors: parsedQuery.error.flatten(),
-        });
+        return res.status(400).json(formatValidationError(parsedQuery.error));
       }
 
       const insights = await getInsightsByUserId(req.userId!, {

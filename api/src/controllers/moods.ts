@@ -14,6 +14,7 @@ import { sendPushNotification } from '@app/lib/sendPushNotification';
 import {
   CreateMoodSchema
 } from '@app/schemas'
+import { formatValidationError } from '@app/lib/errors/validationError'
 
 export const MoodsController = {
   create: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -21,9 +22,7 @@ export const MoodsController = {
       const parsed = CreateMoodSchema.safeParse(req.body.mood);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const mood = await createMood(req.userId!, parsed.data);

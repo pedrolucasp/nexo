@@ -47,7 +47,8 @@ describe('POST /moods', () => {
       .send({ mood: { selectedMood: 'GOOD' } })
 
     expect(res.status).toBe(400)
-    expect(res.body.errors).toBeTruthy()
+    expect(res.body.error).toBeTruthy()
+    expect(res.body.fields).toBeTruthy()
   })
 
   it('returns 401 without token', async () => {

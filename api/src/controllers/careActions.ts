@@ -2,6 +2,7 @@ import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@app/middleware/auth';
 import { CareActionType } from '@prisma/client';
 import { CreateCareActionSchema, PatchCareActionSchema } from '@app/schemas';
+import { formatValidationError } from '@app/lib/errors/validationError';
 import {
   getCareActionsByUserId,
   getCareActionById,
@@ -52,7 +53,7 @@ export const CareActionsController = {
       req.log.info("Care action: %s", parsed.error)
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const careAction = await createCareAction(req.userId!, parsed.data);
@@ -78,7 +79,7 @@ export const CareActionsController = {
       const parsed = PatchCareActionSchema.safeParse(req.body.careAction);
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const careAction = await patchCareActionById(

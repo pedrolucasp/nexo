@@ -17,6 +17,7 @@ import {
   UpdateTriggerSchema,
   LinkMoodSchema,
 } from '@app/schemas'
+import { formatValidationError } from '@app/lib/errors/validationError'
 
 export const TriggersController = {
   create: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
@@ -24,9 +25,7 @@ export const TriggersController = {
       const parsed = CreateTriggerSchema.safeParse(req.body.trigger);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const trigger = await createTrigger(req.userId!, parsed.data);
@@ -79,9 +78,7 @@ export const TriggersController = {
       const parsed = UpdateTriggerSchema.safeParse(req.body.trigger);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const trigger = await updateTriggerById(req.userId!, Number(req.params.id!), parsed.data);
@@ -97,7 +94,7 @@ export const TriggersController = {
       const parsed = LinkMoodSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const triggerId = Number(req.params.triggerId);

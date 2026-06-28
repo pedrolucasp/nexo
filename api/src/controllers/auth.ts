@@ -24,6 +24,7 @@ import {
   PasswordResetRequestSchema,
   ActivateUserSchema,
 } from "@app/schemas";
+import { formatValidationError } from "@app/lib/errors/validationError";
 
 import { addMinutes } from "date-fns";
 import { getQueue, MailJobName } from "@app/lib/queue";
@@ -35,9 +36,7 @@ export const AuthController = {
       const parsed = LoginSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues,
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const { user, token } = await login(parsed.data);
@@ -75,9 +74,7 @@ export const AuthController = {
       const parsed = PasswordResetRequestSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues,
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const result = await requestPasswordReset(parsed.data);
@@ -92,9 +89,7 @@ export const AuthController = {
       const parsed = PasswordResetSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues,
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const result = await resetPassword(parsed.data);
@@ -159,9 +154,7 @@ export const AuthController = {
       const parsed = ActivateUserSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({
-          errors: parsed.error!.issues,
-        });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const user = await findUserByActivationCode(String(parsed.data.code));

@@ -35,12 +35,13 @@ describe('POST /users', () => {
     expect(res.status).toBe(409)
   })
 
-  it('returns 422 for missing required fields', async () => {
+  it('returns 400 for missing required fields', async () => {
     const res = await request(app)
       .post('/users')
       .send({ user: { email: 'x@example.com' } })
 
-    expect(res.status).toBe(422)
-    expect(res.body.errors).toBeTruthy()
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBeTruthy()
+    expect(res.body.fields).toBeTruthy()
   })
 })

@@ -1,6 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@app/middleware/auth';
 import { LinkMoodSchema } from '@app/schemas';
+import { formatValidationError } from '@app/lib/errors/validationError';
 import {
   linkTriggerToMood,
   unlinkTriggerFromMood,
@@ -12,7 +13,7 @@ export const TriggerMoodLinksController = {
       const parsed = LinkMoodSchema.safeParse(req.body);
 
       if (!parsed.success) {
-        return res.status(400).json({ errors: parsed.error!.issues });
+        return res.status(400).json(formatValidationError(parsed.error!));
       }
 
       const triggerId = Number(req.params.triggerId);
