@@ -1,53 +1,31 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import 'dotenv/config';
+import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 
-let prismaTestClient: PrismaClient | null = null;
-
-export function getTestPrisma(): PrismaClient {
-  if (!prismaTestClient) {
-    // Use test database URL
-    const connectionString = process.env.DATABASE_URL || 'postgres://user:password@localhost:5430/orbit_test';
-    const adapter = new PrismaPg({ connectionString });
-    prismaTestClient = new PrismaClient({ adapter });
-  }
-  return prismaTestClient;
+export function buildPrisma(): PrismaClient {
+  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+  return new PrismaClient({ adapter })
 }
 
-export async function cleanupTestDb() {
-  const prisma = getTestPrisma();
-
-  // Delete in correct order due to foreign keys
-  // Add more tables as they're added to schema
-  try {
-    // When we add more models, delete them here in reverse order of dependencies
-    await prisma.user.deleteMany({});
-  } catch (err) {
-    console.error('Error cleaning test DB:', err);
-  }
+export async function cleanupTestDb(prisma: PrismaClient) {
+  await prisma.$executeRawUnsafe('TRUNCATE users CASCADE')
 }
 
-export async function disconnectTestDb() {
-  if (prismaTestClient) {
-    await prismaTestClient.$disconnect();
-    prismaTestClient = null;
-  }
+export function generateTestToken(userId: number, email: string): string {
+  return jwt.sign({ userId, email }, process.env.JWT_SECRET!, { expiresIn: '1h' })
 }
 
-// Helper to create test users
-export async function createTestUser(data?: {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  encryptedPassword?: string;
-}) {
-  const prisma = getTestPrisma();
-  return await prisma.user.create({
+export async function createTestUser(
+  prisma: PrismaClient,
+  overrides: { email?: string; firstName?: string; lastName?: string; password?: string } = {}
+) {
+  return prisma.user.create({
     data: {
-      email: data?.email || 'test@example.com',
-      firstName: data?.firstName || 'Test',
-      lastName: data?.lastName || 'User',
-      encryptedPassword: data?.encryptedPassword || '$2a$10$test'
-    }
-  });
+      email: overrides.email ?? 'test@example.com',
+      firstName: overrides.firstName ?? 'Test',
+      lastName: overrides.lastName ?? 'User',
+      encryptedPassword: await bcrypt.hash(overrides.password ?? 'password123', 10),
+    },
+  })
 }

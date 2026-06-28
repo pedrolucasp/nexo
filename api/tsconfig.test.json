@@ -1,16 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "noEmit": true
+    "types": ["vitest/globals"]
   },
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true,
-    "require": ["tsconfig-paths/register"]
-  }
+  "include": ["src/**/*", "tests/**/*"]
 }
