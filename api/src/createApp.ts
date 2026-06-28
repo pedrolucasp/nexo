@@ -11,6 +11,7 @@ import sleepRecordRouter from "@app/routes/sleepRecords";
 import insightRouter from "@app/routes/insights";
 import careActionsRouter from "@app/routes/careActions";
 import medicineRegimensRouter from "@app/routes/medicineRegimens";
+import reportRouter from "@app/reports/report.router";
 import { errorHandler } from "@app/middleware/errorHandler";
 import { PrismaClient } from "@prisma/client";
 import {
@@ -66,6 +67,7 @@ export function createApp() {
   app.use("/insights", insightRouter);
   app.use("/care-actions", careActionsRouter);
   app.use("/medicine-regimens", medicineRegimensRouter);
+  app.use("/reports", reportRouter);
 
   app.use(errorHandler); // always last
 
