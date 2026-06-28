@@ -1,4 +1,16 @@
 import * as SecureStore from "expo-secure-store";
+
+export class ApiError extends Error {
+  status: number;
+  fields?: Record<string, string>;
+
+  constructor(message: string, status: number, fields?: Record<string, string>) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.fields = fields;
+  }
+}
 import {
   User,
   AuthResponse,
@@ -96,20 +108,29 @@ class ApiClient {
       },
     };
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    let response: Response;
+    try {
+      response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    } catch {
+      throw new ApiError("Sem conexão com o servidor", 0);
+    }
 
     if (!response.ok) {
       if (response.status === 401) {
         this.onUnauthorizedCallback?.();
       }
 
-      const error = await response
+      const body = await response
         .json()
         .catch(() => ({ error: "Network error" }));
 
-      console.error("[API]: ", error, response.status);
+      console.error("[API]: ", body, response.status);
 
-      throw new Error(error.error || `HTTP ${response.status}`);
+      throw new ApiError(
+        body.error || `HTTP ${response.status}`,
+        response.status,
+        body.fields,
+      );
     }
 
     return response.json();

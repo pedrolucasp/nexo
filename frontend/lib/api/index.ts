@@ -1,4 +1,4 @@
-export { apiClient } from "@/lib/api/client";
+export { apiClient, ApiError } from "@/lib/api/client";
 
 export type {
   User,
