@@ -18,14 +18,24 @@ export function generateTestToken(userId: number, email: string): string {
 
 export async function createTestUser(
   prisma: PrismaClient,
-  overrides: { email?: string; firstName?: string; lastName?: string; password?: string } = {}
+  overrides: {
+    email?: string
+    firstName?: string
+    lastName?: string
+    password?: string
+    pushToken?: string
+    notificationsEnabled?: boolean
+  } = {}
 ) {
+  const { password, pushToken, notificationsEnabled, ...rest } = overrides
   return prisma.user.create({
     data: {
-      email: overrides.email ?? 'test@example.com',
-      firstName: overrides.firstName ?? 'Test',
-      lastName: overrides.lastName ?? 'User',
-      encryptedPassword: await bcrypt.hash(overrides.password ?? 'password123', 10),
+      email: rest.email ?? 'test@example.com',
+      firstName: rest.firstName ?? 'Test',
+      lastName: rest.lastName ?? 'User',
+      encryptedPassword: await bcrypt.hash(password ?? 'password123', 10),
+      ...(pushToken !== undefined && { pushToken }),
+      ...(notificationsEnabled !== undefined && { notificationsEnabled }),
     },
   })
 }
