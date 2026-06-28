@@ -22,7 +22,7 @@ export async function mailProcessor(
       const data = job.data as WelcomeEmailPayload;
       console.log("Dispatching an welcome email", data);
 
-      sendWelcomeEmail(Number(data.userId), data.code);
+      await sendWelcomeEmail(Number(data.userId), data.code);
 
       break;
     }
@@ -31,7 +31,7 @@ export async function mailProcessor(
       const data = job.data as ActivateAccountEmailPayload;
       console.log("Dispatching an activate account email", data);
 
-      sendActivateAccountEmail(Number(data.userId), data.code);
+      await sendActivateAccountEmail(Number(data.userId), data.code);
 
       break;
     }
