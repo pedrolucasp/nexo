@@ -478,6 +478,37 @@ class ApiClient {
   async unlinkMoodFromTrigger(triggerId: string, moodId: string): Promise<void> {
     return this.request(`/triggers/${triggerId}/link-mood/${moodId}`, { method: 'DELETE' });
   }
+
+  async generateReport(
+    periodStart: string,
+    periodEnd: string,
+  ): Promise<ArrayBuffer> {
+    const token = await this.getStoredToken()
+
+    let response: Response
+    try {
+      response = await fetch(`${API_BASE_URL}/reports`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ periodStart, periodEnd }),
+      })
+    } catch {
+      throw new ApiError('Sem conexão com o servidor', 0)
+    }
+
+    if (!response.ok) {
+      if (response.status === 401) this.onUnauthorizedCallback?.()
+      const body = await response.json().catch(() => ({
+        error: `HTTP ${response.status}`,
+      }))
+      throw new ApiError(body.error ?? `HTTP ${response.status}`, response.status)
+    }
+
+    return response.arrayBuffer()
+  }
 }
 
 export const apiClient = new ApiClient();

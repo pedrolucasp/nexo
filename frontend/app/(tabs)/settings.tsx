@@ -124,7 +124,7 @@ export default function Settings() {
             <View
               style={[
                 styles.cardIcon,
-                { backgroundColor: Colors.light.accentBlue },
+                { backgroundColor: Colors.light.accentBlue, marginBottom: 5 },
               ]}
             >
               <Ionicons
@@ -211,6 +211,34 @@ export default function Settings() {
                 true: Colors.light.gray,
               }}
             />
+          </View>
+        </Card>
+      </Section>
+
+      <Section>
+        <SectionHeader title="Relatório" />
+        <Card
+          style={{ padding: Spacing.cardGap }}
+          onPress={() => router.push("/report")}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <MaterialIcons
+                name="picture-as-pdf"
+                size={24}
+                color={Colors.light.textSecondary}
+              />
+              <Text style={{ marginLeft: 8, ...styles.cardTitle }}>
+                Gerar Relatório
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={textColor} />
           </View>
         </Card>
       </Section>

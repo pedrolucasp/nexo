@@ -9,6 +9,7 @@ const MESSAGE_MAP: Record<string, string> = {
   'Internal server error': 'Erro interno. Tente novamente.',
   'Invalid or expired token': 'Link inválido ou expirado',
   'No token provided': 'Sessão inválida',
+  'periodEnd must be after periodStart and range ≤ 90 days': 'O período deve ter entre 1 e 90 dias',
 };
 
 const PATTERN_MAP: Array<[RegExp, string | ((m: RegExpMatchArray) => string)]> = [
@@ -24,6 +25,8 @@ const PATTERN_MAP: Array<[RegExp, string | ((m: RegExpMatchArray) => string)]> =
 
 export function translateError(message: string): string {
   if (MESSAGE_MAP[message]) return MESSAGE_MAP[message];
+
+  console.log("Erro foi: ", message)
 
   for (const [pattern, replacement] of PATTERN_MAP) {
     const match = message.match(pattern);
