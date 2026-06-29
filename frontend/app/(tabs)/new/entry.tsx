@@ -43,7 +43,7 @@ export default function NewMoodEntry() {
   const patchCareAction = usePatchCareAction();
 
   useEffect(() => {
-    setSelectedMood(getMood(initialMood));
+    if (initialMood) setSelectedMood(getMood(initialMood));
   }, [initialMood]);
 
   useEffect(() => {

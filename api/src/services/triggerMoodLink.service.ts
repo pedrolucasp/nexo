@@ -13,7 +13,7 @@ export const linkTriggerToMood = async (
   });
 
   if (existing) {
-    throw new Error(`Link between trigger ${triggerId} and mood ${moodId} already exists`);
+    return existing;
   }
 
   return prisma.triggerMoodLink.create({

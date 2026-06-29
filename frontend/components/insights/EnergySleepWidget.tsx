@@ -41,6 +41,7 @@ export const EnergySleepWidget: React.FC = () => {
       body={insight.body}
       metric={label}
       accent={accent}
+      footnote="Correlação de Pearson entre horas de sono e energia no dia seguinte."
     />
   );
 };
@@ -49,16 +50,17 @@ function resolveCorrelation(
   score: number,
   sampleSize: number,
 ): { label: string; accent: MetricAccent } {
-  const pct = Math.round(Math.abs(score) * 100);
   const lowData = sampleSize < 5;
+  const suffix = lowData ? "*" : "";
 
   if (score > 0.6)
-    return { label: lowData ? "Alta*" : `+${pct}%`, accent: "green" };
+    return { label: `Forte${suffix}`, accent: "green" };
   if (score > 0.3)
-    return { label: lowData ? "Média*" : `+${pct}%`, accent: "green" };
+    return { label: `Moderada${suffix}`, accent: "green" };
   if (score >= -0.3)
-    return { label: "~0%", accent: "neutral" };
-  return { label: `-${pct}%`, accent: "purple" };
+    return { label: `Nenhuma${suffix}`, accent: "neutral" };
+
+  return { label: `—`, accent: "purple" };
 }
 
 const styles = StyleSheet.create({

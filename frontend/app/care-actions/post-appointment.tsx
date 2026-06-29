@@ -60,7 +60,7 @@ export default function PostAppointment() {
           <TouchableOpacity
             style={styles.optionRow}
             activeOpacity={0.7}
-            onPress={() => router.replace("/new/entry")}
+            onPress={() => router.replace("/new/entry?initialMood=neutral")}
           >
             <View style={[styles.optionIcon, { backgroundColor: "#fef9c3" }]}>
               <Ionicons name="heart-outline" size={22} color="#ca8a04" />

@@ -17,6 +17,7 @@ interface InsightCardProps {
   body: React.ReactNode;
   metric: string;
   accent?: MetricAccent;
+  footnote?: string;
 }
 
 export const InsightCard: React.FC<InsightCardProps> = ({
@@ -24,6 +25,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
   body,
   metric,
   accent = "neutral",
+  footnote,
 }) => (
   <Card style={styles.cardContainer}>
     <View style={styles.inner}>
@@ -39,6 +41,12 @@ export const InsightCard: React.FC<InsightCardProps> = ({
         {metric}
       </Text>
     </View>
+    {footnote && (
+      <>
+        <View style={styles.divider} />
+        <Text style={styles.footnote}>{footnote}</Text>
+      </>
+    )}
   </Card>
 );
 
@@ -80,5 +88,17 @@ const styles = StyleSheet.create({
   metric: {
     ...Typography.headlineLg,
     fontSize: 22,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: Colors.light.divider,
+    marginTop: Spacing.cardGap,
+    marginBottom: 8,
+  },
+  footnote: {
+    fontSize: 11,
+    lineHeight: 15,
+    color: Colors.light.textSecondary,
+    fontStyle: "italic",
   },
 });

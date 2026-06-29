@@ -57,6 +57,7 @@ export const TriggerPatternWidget: React.FC = () => {
       }
       metric={`${pct}%`}
       accent="neutral"
+      footnote="Percentual da categoria de gatilho mais frequente no período."
     />
   );
 };

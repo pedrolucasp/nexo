@@ -52,6 +52,7 @@ export const MoodTrendWidget: React.FC = () => {
       body={insight.body}
       metric={metric}
       accent={accent}
+      footnote="Compara a média de humor da primeira e segunda metade da semana (escala 1–5)."
     />
   );
 };

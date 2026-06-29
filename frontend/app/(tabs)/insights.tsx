@@ -32,7 +32,7 @@ export default function Insights() {
       />
 
       <Section>
-        <SectionHeader title="Indicadores" />
+        <SectionHeader title="Indicadores" subtitle="Baseado nos últimos 7 dias" />
 
         <EnergySleepWidget />
 
