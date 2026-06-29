@@ -18,7 +18,7 @@ import { LOGO_DATA_URI } from './logo'
 const T = {
   title: 'Relatório de Humor e Bem-Estar',
   appName: 'Nexo',
-  tagline: 'Nexo · Rastreador de humor',
+  tagline: 'Nexo · Rastreador de humor — usenexo.xyz',
   confidential: 'Confidencial — uso clínico',
   sections: {
     glance: 'Visão Geral do Período',
@@ -190,6 +190,12 @@ const s = StyleSheet.create({
   },
   tableCell: {
     fontSize: 7,
+  },
+  footnote: {
+    fontSize: 6,
+    color: '#aaaaaa',
+    marginTop: 6,
+    fontFamily: 'Helvetica-Oblique',
   },
 })
 
@@ -471,6 +477,12 @@ export default function ReportDocument({ data }: Props) {
         )}
 
         <SectionHeader label={T.sections.log} />
+
+        <Text style={[s.footnote, { marginBottom: 10 }]}>
+          Ans = Ansiedade · Est = Estresse · Ene = Energia.
+          Níveis percebidos de 0 a 10.
+        </Text>
+
         {data.checkinLog.length > 0 ? (
           <View>
             <TableHeader
@@ -482,7 +494,7 @@ export default function ReportDocument({ data }: Props) {
                 T.tableHeaders.energy,
                 T.tableHeaders.note,
               ]}
-              widths={[48, 62, 28, 28, 28, 150]}
+              widths={[56, 78, 30, 30, 30, 75]}
             />
             {data.checkinLog.map((entry, i) => (
               <TableRow
@@ -494,9 +506,9 @@ export default function ReportDocument({ data }: Props) {
                   String(entry.anxietyLevel),
                   String(entry.stressLevel),
                   String(entry.energyLevel),
-                  truncate(entry.annotation, 28),
+                  truncate(entry.annotation, 14),
                 ]}
-                widths={[48, 62, 28, 28, 28, 150]}
+                widths={[56, 78, 30, 30, 30, 75]}
                 colors={[
                   undefined,
                   MOOD_COLORS[entry.mood],

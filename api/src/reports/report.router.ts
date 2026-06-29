@@ -30,7 +30,7 @@ router.post(
     try {
       const parsed = ReportSchema.safeParse(req.body)
       if (!parsed.success) {
-        return res.status(400).json({ error: parsed.error.message })
+        return res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' })
       }
 
       const { periodStart, periodEnd } = parsed.data
