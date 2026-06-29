@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, View, Text, Switch } from "react-native";
+import { StyleSheet, View, Switch } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Cards";
 import { Typography, Colors, Spacing } from "@/constants/theme";
 

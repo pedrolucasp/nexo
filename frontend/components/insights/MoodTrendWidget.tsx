@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, StyleSheet, ActivityIndicator } from "react-native";
+import { StyleSheet, ActivityIndicator } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Cards";
 import { useInsight } from "@/hooks/useInsights.queries";
 import { Colors, Spacing, Typography } from "@/constants/theme";

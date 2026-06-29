@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   TouchableOpacity,
-  Text,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacityProps,
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -126,6 +126,19 @@ export const Button: React.FC<ButtonProps> = ({
     }
   };
 
+  const getLineHeight = () => {
+    switch (size) {
+      case 'small':
+        return 18;
+      case 'medium':
+        return 20;
+      case 'large':
+        return 22;
+      default:
+        return 20;
+    }
+  };
+
   return (
     <TouchableOpacity
       style={[
@@ -153,6 +166,7 @@ export const Button: React.FC<ButtonProps> = ({
             {
               color: getTextColor(),
               fontSize: getFontSize(),
+              lineHeight: getLineHeight(),
             },
             textStyle,
           ]}

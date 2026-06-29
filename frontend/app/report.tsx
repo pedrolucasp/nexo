@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
 } from 'react-native'
+import { Text } from '@/components/ui/Text';
 import { Stack } from 'expo-router'
 import { format, subDays, startOfDay, endOfDay } from 'date-fns'
 import { Paths, File } from 'expo-file-system'

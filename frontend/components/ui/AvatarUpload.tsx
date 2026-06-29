@@ -3,12 +3,12 @@ import {
   View,
   Image,
   TouchableOpacity,
-  Text,
   Alert,
   ActivityIndicator,
   Animated,
   StyleSheet,
 } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { apiClient, ApiError } from '@/lib/api';

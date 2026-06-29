@@ -1,4 +1,5 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Card } from "@/components/ui/Cards";
 import { Badge } from "@/components/ui/Badge";
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 2,
   },
-  title: { fontSize: 15, fontWeight: "600" },
+  title: { fontSize: 15, fontWeight: "400" },
   time: { fontSize: 13, opacity: 0.45 },
   summary: { fontSize: 13, opacity: 0.6, lineHeight: 18, marginBottom: 6 },
   badge: { alignSelf: "flex-start", marginTop: 4 },

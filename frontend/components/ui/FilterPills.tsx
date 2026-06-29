@@ -2,11 +2,11 @@ import { useRef } from "react";
 import {
   ScrollView,
   TouchableOpacity,
-  Text,
   View,
   StyleSheet,
   Platform,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { LinearGradient } from "expo-linear-gradient";
 import type { HistoryCategory } from "@/lib/history/types";
 import { Colors } from "@/constants/theme";

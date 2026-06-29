@@ -1,12 +1,12 @@
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Alert,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 
 import { useState, useEffect } from "react";
 import * as Notifications from "expo-notifications";

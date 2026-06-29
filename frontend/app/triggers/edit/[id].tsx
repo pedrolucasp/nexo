@@ -1,11 +1,11 @@
 import {
   View,
-  Text,
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { useState, useEffect } from "react";
 import { router, useLocalSearchParams, Stack } from "expo-router";
 

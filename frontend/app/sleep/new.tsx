@@ -1,10 +1,10 @@
 import {
   View,
-  Text,
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { useState } from "react";
 import { router } from "expo-router";
 

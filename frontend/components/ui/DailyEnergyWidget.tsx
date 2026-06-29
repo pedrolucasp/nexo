@@ -1,4 +1,5 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Cards";
 import { useInsight } from "@/hooks/useInsights.queries";
 import { Ionicons } from "@expo/vector-icons";

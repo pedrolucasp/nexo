@@ -1,5 +1,6 @@
 import React from "react";
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Card } from "@/components/ui/Cards";
 import { useInsight } from "@/hooks/useInsights.queries";

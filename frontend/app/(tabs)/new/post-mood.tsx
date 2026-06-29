@@ -1,12 +1,12 @@
 import { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Pressable,
   ActivityIndicator,
 } from "react-native";
+import { Text } from '@/components/ui/Text';
 import { router, useLocalSearchParams, Link } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View } from "react-native";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { FilterPills } from "@/components/ui/FilterPills";

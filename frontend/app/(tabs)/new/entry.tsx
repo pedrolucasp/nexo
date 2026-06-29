@@ -200,6 +200,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     ...Typography.headlineXg,
+    fontWeight: 900
   },
   statusPrefix: {
     ...Typography.bodyMd,

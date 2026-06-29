@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ViewStyle,
 } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import Slider from '@react-native-community/slider';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Theme } from '@/constants/theme';

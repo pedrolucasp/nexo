@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useMedicineToday, useCreateCareAction, medicineTodayKeys } from "@/hooks";
@@ -43,12 +44,15 @@ export function TodayMedicines() {
     );
   }
 
+  console.log("today: ", JSON.stringify(entries))
+
   const handleConfirm = async (regimenId: number) => {
     await createCareAction.mutateAsync({
       type: "MEDICINE",
       moment: new Date(),
       regimenId,
     });
+
     queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
   };
 

@@ -1,6 +1,8 @@
-import { View, Text, Switch, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Switch, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { Button } from "@/components/ui/Button";
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useMedicineRegimens, useToggleMedicineRegimen } from "@/hooks";
 import { MedicineRegimen } from "@/lib/api";
@@ -72,14 +74,12 @@ export function MedicineRegimenList() {
         ))
       )}
 
-      <TouchableOpacity
-        style={styles.addButton}
-        activeOpacity={0.7}
-        onPress={() => router.push("/care-actions/medicine-new")}
-      >
-        <Ionicons name="add-circle-outline" size={18} color={Colors.light.tint} />
-        <Text style={styles.addText}>Adicionar medicamento</Text>
-      </TouchableOpacity>
+
+      <Button
+        title="Cadastrar outro medicamento"
+        variant="dashed"
+        onPress={() => router.push('/care-actions/medicine-new')}
+      />
     </View>
   );
 }
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     gap: 12,
     ...Shadows.sm,
     borderRadius: BorderRadius.lg,
+    marginBottom: 5
   },
   iconWrap: {
     width: 32,

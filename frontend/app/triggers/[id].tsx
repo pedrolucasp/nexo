@@ -1,12 +1,12 @@
 import { useState, useEffect, use } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   Pressable,
   ActivityIndicator,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -112,7 +112,7 @@ export default function TriggerDetailsScreen() {
 
   const deleteButtonMsg = () => {
     const msg = "Excluir Registro";
-    const timeLeftStr = `(Disponível por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`;
+    const timeLeftStr = `(Disp. por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`;
     const suffix = canDelete ? timeLeftStr : "(Expirado)";
 
     return `${msg} ${suffix}`;
@@ -324,6 +324,7 @@ const styles = StyleSheet.create({
   },
   triggerLabel: {
     ...Typography.headlineLg,
+    fontWeight: 700,
     color: Colors.light.text,
   },
   centered: {

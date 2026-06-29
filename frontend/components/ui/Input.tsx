@@ -4,10 +4,10 @@ import {
   TextInputProps,
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
   Platform,
 } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Ionicons } from '@expo/vector-icons';
 

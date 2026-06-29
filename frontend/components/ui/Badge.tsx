@@ -1,8 +1,8 @@
 import {
   StyleSheet,
-  View,
-  Text
+  View
 } from 'react-native';
+import { Text } from '@/components/ui/Text';
 
 // Badge color palettes
 export const badgeVariants = {

@@ -4,10 +4,10 @@ import {
   Pressable,
   StyleSheet,
   Image,
-  Text,
   ImageSourcePropType,
   ViewStyle,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Spacing, Typography, BorderRadius } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 

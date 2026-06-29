@@ -1,11 +1,11 @@
 import {
   View,
-  Text,
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { router } from "expo-router";
 
 import { Spacing, Typography, Colors, BorderRadius, Shadows } from "@/constants/theme";

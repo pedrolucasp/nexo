@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Card } from "./Cards";
 import { Colors, Spacing, Typography } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";

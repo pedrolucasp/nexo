@@ -1,12 +1,12 @@
 import {
   View,
-  Text,
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Cards";

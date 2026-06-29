@@ -1,9 +1,9 @@
 import {
   TouchableOpacity,
-  Text,
   View,
   StyleSheet,
 } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import { Colors } from '@/constants/theme';
 
 export type CategoryOption<T extends string = string> = {

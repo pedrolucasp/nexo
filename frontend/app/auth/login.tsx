@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Animated,
   Easing
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Link, router } from "expo-router";
 import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   ScrollView,
   Pressable,
   ActivityIndicator,
 } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Card, SubtleInfoCard } from "@/components/ui/Cards";
@@ -182,7 +182,7 @@ export default function CareActionDetailScreen() {
   // TODO: Componentize this as well? It's on each of the details screens
   const deleteButtonMsg = () => {
     const suffix = canDelete
-      ? `(Disponível por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`
+      ? `(Disp. por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`
       : "(Expirado)";
     return `Excluir Registro ${suffix}`;
   };
@@ -452,6 +452,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.headlineLg,
+    fontWeight: 700,
     color: Colors.light.text,
   },
   subtitle: {

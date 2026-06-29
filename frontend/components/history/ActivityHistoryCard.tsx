@@ -1,4 +1,5 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Card } from "@/components/ui/Cards";
 import type { HistoryCard } from "@/lib/history/types";
