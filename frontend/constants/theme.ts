@@ -3,8 +3,6 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-import { Platform } from "react-native";
-
 // Primary Colors
 const NEON_GREEN = "#13ec5b";
 const PRIMARY_DARK = "#0f172a";
@@ -103,29 +101,20 @@ export const Colors = {
 export const Typography = {
   // Headlines
   headlineXg: {
-    fontFamily: Platform.select({
-      android: "Inter_900Black",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 36,
     fontWeight: "900" as const,
     lineHeight: 40,
   },
   headlineLg: {
-    fontFamily: Platform.select({
-      android: "Inter_900Black",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 20,
     fontWeight: "900" as const,
     lineHeight: 28,
     letterSpacing: -0.02,
   },
   headlineMd: {
-    fontFamily: Platform.select({
-      android: "Inter",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 18,
     fontWeight: "700" as const,
     lineHeight: 24,
@@ -133,19 +122,13 @@ export const Typography = {
 
   // Body
   bodyLg: {
-    fontFamily: Platform.select({
-      android: "Inter",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 16,
     fontWeight: "700" as const,
     lineHeight: 20,
   },
   bodyMd: {
-    fontFamily: Platform.select({
-      android: "Inter",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 14,
     fontWeight: "500" as const,
     lineHeight: 20,
@@ -153,10 +136,7 @@ export const Typography = {
 
   // Labels
   labelSm: {
-    fontFamily: Platform.select({
-      android: "Inter",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 12,
     fontWeight: "600" as const,
     lineHeight: 16,
@@ -165,20 +145,14 @@ export const Typography = {
 
   // Used for the Slider labels
   labelXs: {
-    fontFamily: Platform.select({
-      android: "Inter",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 10,
     lineHeight: 15,
     letterSpacing: 0.25,
   },
 
   cardHint: {
-    fontFamily: Platform.select({
-      android: "Inter",
-      default: "Inter",
-    }),
+    fontFamily: "Inter",
     fontSize: 11,
     lineHeight: 13.8,
     fontStyle: "italic",
@@ -225,14 +199,12 @@ export const Shadows = {
   },
 };
 
-export const Fonts = Platform.select({
-  default: {
-    sans: "Inter",
-    serif: "serif",
-    rounded: "Inter",
-    mono: "monospace",
-  },
-});
+export const Fonts = {
+  sans: "Inter",
+  serif: "serif",
+  rounded: "Inter",
+  mono: "monospace",
+};
 
 export const Theme = {
   colors: Colors,

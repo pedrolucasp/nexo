@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, router, useLocalSearchParams } from "expo-router";
 
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 
+import { Text } from "@/components/ui/Text";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/misc/themed-text";
 import { ThemedView } from "@/components/misc/themed-view";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useAuth } from "@/context/AuthContext";
@@ -89,21 +89,21 @@ export default function NewMoodEntry() {
       <ScrollView scrollEventThrottle={16}>
         <View style={styles.container}>
           <Center>
-            <ThemedText style={styles.statusPrefix}>
+            <Text style={styles.statusPrefix}>
               Como você está se sentindo agora?
-            </ThemedText>
+            </Text>
 
-            <ThemedText style={styles.statusText}>
+            <Text style={styles.statusText}>
               {selectedMood?.label || "Neutro"}
-            </ThemedText>
+            </Text>
           </Center>
 
           <Card style={styles.resumeCard}>
-            <ThemedText style={styles.infoText}>
+            <Text style={styles.infoText}>
               Não existe resposta certa ou errada. Estime, de 0 a 10, como tu
               percebe tua energia, estresse e ansiedade neste momento. O
               objetivo é registrar uma impressão geral, não uma medida precisa.
-            </ThemedText>
+            </Text>
 
             <Col gap={24}>
               <ScaleSlider

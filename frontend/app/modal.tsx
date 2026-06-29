@@ -1,15 +1,15 @@
 import { Link } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
-import { ThemedText } from '@/components/misc/themed-text';
+import { Text } from '@/components/ui/Text';
 import { ThemedView } from '@/components/misc/themed-view';
 
 export default function ModalScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">This is a modal</ThemedText>
+      <Text style={styles.title}>This is a modal</Text>
       <Link href="/" dismissTo style={styles.link}>
-        <ThemedText type="link">Go to home screen</ThemedText>
+        <Text style={styles.linkText}>Go to home screen</Text>
       </Link>
     </ThemedView>
   );
@@ -25,5 +25,15 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 15,
     paddingVertical: 15,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    lineHeight: 32,
+  },
+  linkText: {
+    lineHeight: 30,
+    fontSize: 16,
+    color: '#0a7ea4',
   },
 });

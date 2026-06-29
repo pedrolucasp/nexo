@@ -5,7 +5,7 @@ import {
   Pressable,
   ViewStyle,
 } from 'react-native';
-import { ThemedText } from '@/components/misc/themed-text'
+import { Text } from '@/components/ui/Text'
 import { Row, Between } from '@/components/ui/LayoutHelpers';
 
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
@@ -104,14 +104,14 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   return (
     <View style={[styles.headerContainer, style]}>
       <Between>
-        <ThemedText style={styles.title}>
+        <Text style={styles.title}>
           {title}
-        </ThemedText>
+        </Text>
 
         {info && !actionLabel && (
-          <ThemedText>
+          <Text>
             {info}
-          </ThemedText>
+          </Text>
         )}
 
         {actionLabel && !info && onActionPress && (
@@ -120,18 +120,18 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             onPress={onActionPress}
             hitSlop={8}
           >
-            <ThemedText style={styles.actionText}>
+            <Text style={styles.actionText}>
               {actionLabel}
-            </ThemedText>
+            </Text>
           </Pressable>
         )}
       </Between>
 
       {subtitle && (
         <Row>
-          <ThemedText style={styles.subtitle}>
+          <Text style={styles.subtitle}>
             {subtitle}
-          </ThemedText>
+          </Text>
         </Row>
       )}
     </View>

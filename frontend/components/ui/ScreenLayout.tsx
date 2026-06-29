@@ -14,7 +14,7 @@ import { useRouter } from "expo-router";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Typography, Spacing, BorderRadius } from "@/constants/theme";
-import { ThemedText } from "@/components/misc/themed-text";
+import { Text } from "@/components/ui/Text";
 
 interface ScreenLayoutProps {
   children: React.ReactNode;
@@ -114,7 +114,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
               <View style={styles.avatar} />
             )}
             <View>
-              <ThemedText style={styles.userName}>Olá, {userName}</ThemedText>
+              <Text style={styles.userName}>Olá, {userName}</Text>
             </View>
           </View>
 

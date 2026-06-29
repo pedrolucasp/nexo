@@ -1,6 +1,5 @@
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 
-import { ThemedText } from "@/components/misc/themed-text";
 import { ThemedView } from "@/components/misc/themed-view";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useAuth } from "@/context/AuthContext";

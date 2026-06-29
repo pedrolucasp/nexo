@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 
-import { ThemedText } from "@/components/misc/themed-text";
+import { Text } from "@/components/ui/Text";
 import { ThemedView } from "@/components/misc/themed-view";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useAuth } from "@/context/AuthContext";
@@ -57,11 +57,11 @@ export default function New() {
         <Card style={{ minHeight: 200 }}>
           <Col gap={16}>
             <Between style={styles.quickRegisterHeader}>
-              <ThemedText style={styles.quickRegisterTitle}>
+              <Text style={styles.quickRegisterTitle}>
                 Registro rápido
-              </ThemedText>
+              </Text>
 
-              <ThemedText style={styles.quickRegisterBadge}>HOJE</ThemedText>
+              <Text style={styles.quickRegisterBadge}>HOJE</Text>
             </Between>
 
             <MoodSelector

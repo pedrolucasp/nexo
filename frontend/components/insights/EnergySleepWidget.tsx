@@ -1,7 +1,7 @@
 import React from "react";
-import { Text, StyleSheet, ActivityIndicator } from "react-native";
+import { StyleSheet, ActivityIndicator } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Cards";
-import { ThemedText } from "@/components/misc/themed-text";
 import { useInsight } from "@/hooks/useInsights.queries";
 import { Spacing, Typography, Colors } from "@/constants/theme";
 import { InsightCard, MetricAccent } from "./InsightCard";

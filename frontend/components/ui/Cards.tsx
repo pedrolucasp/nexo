@@ -4,12 +4,11 @@ import {
   StyleSheet,
   Pressable,
   ViewStyle,
-  Text
 } from 'react-native';
 
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { ThemedText } from '@/components/misc/themed-text'
+import { Text } from '@/components/ui/Text'
 import { Ionicons } from '@expo/vector-icons';
 
 interface CardProps {

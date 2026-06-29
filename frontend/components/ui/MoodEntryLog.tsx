@@ -1,6 +1,7 @@
 import { format, isToday, isYesterday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import { router } from 'expo-router';
 
 import { Card } from '@/components/ui/Cards';

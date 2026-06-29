@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Text } from '@/components/ui/Text';
 import { Row } from '@/components/ui/LayoutHelpers';
 import { Card } from '@/components/ui/Cards';
 import { getMoodComponent, intensityLabel } from '@/constants/mood-components';

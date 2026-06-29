@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
 } from 'react-native';
 
+import { Text } from '@/components/ui/Text';
 import { ThemedView } from '@/components/ui/themed-view'
-import { ThemedText } from '@/components/ui/themed-text'
 import { Link, useLocalSearchParams, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
