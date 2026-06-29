@@ -12,6 +12,7 @@ import { TriggerHistoryCard } from "@/components/history/TriggerCard";
 import { MedicineHistoryCard } from "@/components/history/MedicineHistoryCard";
 import { AppointmentHistoryCard } from "@/components/history/AppointmentHistoryCard";
 import { ActivityHistoryCard } from "@/components/history/ActivityHistoryCard";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 function HistoryCardRenderer({ card }: { card: HistoryCard }) {
   switch (card.category) {
@@ -51,16 +52,24 @@ export default function History() {
       <ScrollView>
         <FilterPills active={activeFilter} onChange={setActiveFilter} />
 
-        {Object.entries(grouped).map(([date, cards]) => (
-          <Section key={date}>
-            <SectionHeader title={date} />
-            <View>
-              {cards.map((card) => (
-                <HistoryCardRenderer key={card.id} card={card} />
-              ))}
-            </View>
-          </Section>
-        ))}
+        {Object.keys(grouped).length === 0 ? (
+          <EmptyState
+            title="Nenhum registro encontrado"
+            subtitle="Tente mudar o filtro ou adicione um novo registro."
+            icon="time-outline"
+          />
+        ) : (
+          Object.entries(grouped).map(([date, cards]) => (
+            <Section key={date}>
+              <SectionHeader title={date} />
+              <View>
+                {cards.map((card) => (
+                  <HistoryCardRenderer key={card.id} card={card} />
+                ))}
+              </View>
+            </Section>
+          ))
+        )}
       </ScrollView>
     </ScreenLayout>
   );

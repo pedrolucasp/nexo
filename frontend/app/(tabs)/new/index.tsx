@@ -27,6 +27,7 @@ import { useThemeColor, useMoodEntries } from "@/hooks";
 import MoodEntryLog from "@/components/ui/MoodEntryLog";
 import { DailyEnergyWidget } from "@/components/ui/DailyEnergyWidget";
 import { DailySleepWidget } from "@/components/ui/DailySleepWidget";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function New() {
   const { user } = useAuth();
@@ -106,6 +107,11 @@ export default function New() {
 
         {isLoading ? (
           <ActivityIndicator />
+        ) : recentEntries.length === 0 ? (
+          <EmptyState
+            title="Nenhum registro ainda"
+            subtitle="Seus registros de humor aparecerão aqui."
+          />
         ) : (
           <Col gap={8}>
             {recentEntries.map((entry) => (
