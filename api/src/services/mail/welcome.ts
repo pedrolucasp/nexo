@@ -5,7 +5,7 @@ const email = (firstName: string, code: string) => {
   return (`
 Oi! Seja bem vindo, ${firstName}.
 
-Você criou sua conta com sucesso no orbit! Aqui seu código de ativação: ${code}.
+Você criou sua conta com sucesso no nexo! Aqui seu código de ativação: ${code}.
 
 Qualquer coisa prende o grito!
   `)
@@ -18,7 +18,7 @@ export async function sendWelcomeEmail(userId: number, code: string): Promise<vo
 
   const { data, error } = await sendEmail({
     to: user!.email,
-    subject: "Bem vindo ao orbit!",
+    subject: "Bem vindo ao nexo!",
     text: email(user!.firstName, code)
   });
 
