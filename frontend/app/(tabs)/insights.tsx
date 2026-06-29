@@ -11,6 +11,7 @@ import { Spacing, BorderRadius, Colors, Typography } from "@/constants/theme";
 import { WeeklyResume } from "@/components/insights/WeeklyResume";
 import { InsightCard, Highlight } from "@/components/insights/InsightCard";
 import { MoodTrendWidget } from "@/components/insights/MoodTrendWidget";
+import { EnergySleepWidget } from "@/components/insights/EnergySleepWidget";
 import { TriggerPatternWidget } from "@/components/insights/TriggerPatternWidget";
 
 export default function Insights() {
@@ -33,16 +34,7 @@ export default function Insights() {
       <Section>
         <SectionHeader title="Indicadores" />
 
-        <InsightCard
-          category="Energia"
-          body={
-            <Text style={styles.insightBody}>
-              Aumento de <Highlight>20%</Highlight> correlacionado ao sono.
-            </Text>
-          }
-          metric="+20%"
-          accent="green"
-        />
+        <EnergySleepWidget />
 
         <MoodTrendWidget />
 

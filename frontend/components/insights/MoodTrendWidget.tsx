@@ -26,7 +26,7 @@ export const MoodTrendWidget: React.FC = () => {
             tendências.
           </Text>
         }
-        accent="green"
+        accent="neutral"
         metric="—"
       />
     );
