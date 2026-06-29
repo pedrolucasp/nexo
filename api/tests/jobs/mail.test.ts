@@ -38,7 +38,7 @@ describe('sendWelcomeEmail', () => {
     expect(mockedSendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         to: 'welcome@example.com',
-        subject: expect.stringContaining('orbit'),
+        subject: expect.stringContaining('nexo'),
         text: expect.stringContaining('Maria'),
       })
     )
@@ -83,7 +83,7 @@ describe('sendResetPasswordEmail', () => {
     expect(mockedSendEmail).toHaveBeenCalledWith(
       expect.objectContaining({
         to: 'reset@example.com',
-        subject: expect.stringContaining('orbit'),
+        subject: expect.stringContaining('nexo'),
         text: expect.stringContaining('token-abc-xyz'),
       })
     )

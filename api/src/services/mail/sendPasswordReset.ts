@@ -20,7 +20,7 @@ export async function sendResetPasswordEmail(userId: number, token: string): Pro
 
   const { data, error } = await sendEmail({
     to: user!.email,
-    subject: "Esqueceu a senha do orbit?",
+    subject: "Esqueceu a senha do nexo?",
     text: email(user!.firstName, token)
   });
 
