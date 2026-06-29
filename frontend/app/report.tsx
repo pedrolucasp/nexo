@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from 'react-native'
 import { Stack } from 'expo-router'
-import { format, subDays } from 'date-fns'
+import { format, subDays, startOfDay, endOfDay } from 'date-fns'
 import { Paths, File } from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -48,8 +48,8 @@ export default function ReportScreen() {
     setLoading(true)
     try {
       const buffer = await apiClient.generateReport(
-        format(startDate, 'yyyy-MM-dd'),
-        format(endDate, 'yyyy-MM-dd'),
+        startOfDay(startDate).toISOString(),
+        endOfDay(endDate).toISOString(),
       )
 
       const fileName = `nexo-report-${format(startDate, 'yyyy-MM')}.pdf`

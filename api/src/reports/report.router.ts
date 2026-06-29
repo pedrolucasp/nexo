@@ -10,8 +10,8 @@ const router = Router()
 
 const ReportSchema = z
   .object({
-    periodStart: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    periodEnd: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    periodStart: z.iso.datetime({ offset: true }),
+    periodEnd: z.iso.datetime({ offset: true }),
   })
   .refine(
     (d) => {
@@ -28,6 +28,8 @@ router.post(
   requireAuth,
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
+      req.log.info("Requirements: %s", req.body.periodStart, req.body.periodEnd)
+
       const parsed = ReportSchema.safeParse(req.body)
       if (!parsed.success) {
         return res.status(400).json({ error: parsed.error.issues[0]?.message ?? 'Invalid request' })

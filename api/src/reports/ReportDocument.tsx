@@ -506,7 +506,7 @@ export default function ReportDocument({ data }: Props) {
                   String(entry.anxietyLevel),
                   String(entry.stressLevel),
                   String(entry.energyLevel),
-                  truncate(entry.annotation, 14),
+                  truncate(entry.annotation?.trim(), 73),
                 ]}
                 widths={[56, 78, 30, 30, 30, 75]}
                 colors={[

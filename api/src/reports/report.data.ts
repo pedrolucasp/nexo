@@ -59,6 +59,8 @@ export async function buildReportData(
 
   const total = moods.length
 
+  console.log(`[report] found ${moods.length} mood entries from ${start} - ${end}`)
+
   const moodCounts = Object.fromEntries(
     MOOD_ORDER.map(m => [m, 0]),
   ) as Record<BaseMoodOption, number>
