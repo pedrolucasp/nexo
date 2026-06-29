@@ -20,10 +20,12 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Button } from "@/components/ui/Button";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { usePatchUserMe } from "@/hooks/useUserPreferences.queries";
+import { useToast } from '@/context/ToastContext';
 
 export default function Settings() {
   const { user, logout, updateAuthUser } = useAuth();
   const [allowWeeklyInsights, setAllowWeeklyInsights] = useState(false);
+  const { showToast } = useToast();
 
   const notificationsEnabled = user?.notificationsEnabled ?? true;
   const dailyReminderTime = user?.dailyReminderTime ?? "20:00";
@@ -67,11 +69,7 @@ export default function Settings() {
         text: "Exportar",
         style: "destructive",
         onPress: () => {
-          Alert.alert(
-            "Exportar dados",
-            "Você receberá um e-mail com os dados exportados.",
-            [{ text: "OK", style: "default" }],
-          );
+          showToast("Você receberá um e-mail com os dados exportados", "success")
         },
       },
     ]);
