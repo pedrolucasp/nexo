@@ -4,8 +4,9 @@ O aplicativo proposto por esse trabalho, denominado "Nexo", se propõe a ser uma
 aplicação para dispositivos móveis, de forma a preencher essas lacunas
 demonstradas tanto pelo questionário, quanto também tentando preencher as
 questões analisadas em outros sistemas similares. Como mencionado
-anteriormente, o sistema é direcionado para pessoas com TAB, e portanto, o nome
-reflete essa escolha. A lógica é, de um aplicativo que consegue conectar
+anteriormente, o sistema é direcionado para pessoas com TAB, embora, ele também
+possa atuar isoladamente como um aplicativo de registro de humor, e portanto, o
+nome reflete essa escolha. A lógica é, de um aplicativo que consegue conectar
 diversos pontos, que em um primeiro momento parecem soltos: sono, rotina,
 práticas, humor, gatilhos.
 
@@ -156,15 +157,14 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
         \hline
 
         [RF10] &
-        Ver ciclo atual &
-        O sistema deve apresentar um resumo do ciclo emocional em andamento \\
+        Manter registro de sono &
+        O sistema deve permitir que o usuário possa cadastrar registros de sono \\
 
         \hline
 
         [RF11] &
-        Comparar ciclos passados &
-        O usuário deve poder visualizar diferenças entre ciclos emocionais
-        anteriores \\
+        Manter ações de cuidado &
+        O usuário deve poder cadastrar ações de cuidado (atividade, medicamentos, consultas) \\
 
         \hline
 
@@ -183,27 +183,19 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
         \hline
 
         [RF14] &
-        Manter registro de sono &
-        O sistema deve permitir que o usuário registre informações relacionadas
-        ao sono de forma simples \\
+        Associar humor à um gatilho &
+        O sistema deve permitir que o usuário vincule um humor específico com um gatilho \\
 
         \hline
 
         [RF15] &
-        Registrar intervenção &
-        O sistema deve permitir registrar intervenções realizadas para lidar
-        com um gatilho ou de forma habitual \\
-
-        \hline
-
-        [RF16] &
         Associar intervenção a gatilho &
         O sistema deve permitir vincular uma intervenção específica a um
         gatilho registrado \\
 
         \hline
 
-        [RF17] &
+        [RF16] &
         Avaliar eficácia de uma intervenção &
 
         O usuário deve poder avaliar se a intervenção aplicada foi eficaz ou
