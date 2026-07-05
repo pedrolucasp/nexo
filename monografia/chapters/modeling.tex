@@ -9,21 +9,91 @@ de validação dos requisitos levantados. Através da modelagem, é possível
 antever a estrutura do sistema, simular sua dinâmica e assegurar que ele
 atenderá às necessidades específicas dos usuários.
 
-Neste capítulo, são apresentados três tipos principais de diagramas da Unified
-Modeling Language (UML) empregados na modelagem do sistema proposto: o diagrama
-de casos de uso, que descreve as funcionalidades esperadas a partir da
-perspectiva do usuário; o diagrama de classes, que estrutura os elementos do
-domínio em termos de atributos e relacionamentos; e o diagrama de sequência,
-que detalha a comunicação entre os objetos ao longo do tempo. Esses diagramas
-complementam-se mutuamente, proporcionando uma visão abrangente do
+Neste capítulo, são apresentados três tipos principais de diagramas da
+\textit{Unified Modeling Language} (UML) empregados na modelagem do sistema
+proposto: o diagrama de casos de uso, que descreve as funcionalidades esperadas
+a partir da perspectiva do usuário; o diagrama de classes, que estrutura os
+elementos do domínio em termos de atributos e relacionamentos; e o diagrama de
+sequência, que detalha a comunicação entre os objetos ao longo do tempo. Esses
+diagramas complementam-se mutuamente, proporcionando uma visão abrangente do
 comportamento e da arquitetura do sistema.
 
 \section{Casos de Uso}
 
 O diagrama de casos de uso é o mais geral, informal e simples de compreender
 \cite{guedes:2022}. A base dele é o levantamento de requisitos e a pesquisa
-realizada, e serve como o pontapé para todo o processo de modelagem. Também
-sofre alterações ao longo do desenvolvimento e é o diagrama mais basilar do
-projeto inteiro \cite{guedes:2022}. Na Figura 1, pode-se observar o diagrama de
-caso de usos do sistema:
+realizada, e serve como o pontapé para todo o processo de modelagem.
+
+O diagrama de casos de uso, apresenta de forma simples, os atores, que são
+representações das entidades que interagem com o sistema (sejam eles usuários
+finais ou outros sistemas), e os casos de uso, que são as funcionalidades que o
+sistema oferece. Ambos são conectados por linhas de associação. O sistema
+também é delimitado por um retângulo, que contém os casos de uso
+\cite{ibm:2021}.
+
+Ao final desse processo, essa modelagem é transformada em documentação, e no
+apêndice B deste documento, contém a mesma, oferecendo uma visão mais detalhada
+para cada caso de uso, seus caminhos alternativos e caminhos de exceções.
+Pode-se verificar que esse acaba por ser o diagrama mais basilar do projeto
+inteiro \cite{guedes:2022}.
+
+\begin{figure}[h]
+\centering
+\caption{Diagrama de Casos de Uso}
+\label{fig:use-cases}
+\includegraphics[width=0.9\linewidth]{casos-de-uso.png}
+\source{O autor}
+\end{figure}
+
+Na Figura~\ref{fig:use-cases}, pode-se observar que apenas um ator interage
+com o sistema, o próprio usuário final. Também visualiza-se que cada elipse,
+se resume a um requisito funcional, e os casos de uso estão interligados por
+setas nomeadas com a palavra \textit{''<<extend>>''} que indica conexões onde a
+execução de um caso de uso adjacente pode ocorrer dado uma determinada
+condição em adição ao caso de uso inicial \cite{ibm:2021}.
+
+Permeando todas as interações no sistema, o caso de uso mais central, o
+''Login'', cujo qual estabelece uma base de autenticação, de forma que garante
+que apenas usuários autenticados possam interagir com o sistema.
+
+No caso de uso ''Manter Humor'' representa a funcionalidade central do sistema,
+permitindo que o usuário registre seu estado emocional ao longo do tempo. Essa
+ação ocorre por meio da inserção direta de uma informação de humor, cujo qual o
+usuário pode selecionar entre cinco humores ''basais'', além de elementos que
+ajudem a compreender, como escalas indicativas dos respectivos níveis de
+estresse, ansiedade e quais componentes do humor o usuário identifica com mais
+presença. A manutenção do humor no sistema contempla tanto a criação quanto a
+edição e a exclusão desses registros.
+
+O caso de uso ''Registrar Intervenção'' contempla o cadastro de estratégias,
+práticas ou sugestões que o usuário utiliza ou deseja utilizar para lidar com
+oscilações emocionais. As ações de cuidados, podem incluir desde ações
+práticas, como caminhar, até técnicas cognitivas ou expressivas, como
+atividades criativas, medicamentos utilizados ou atendimentos com profissionais
+da área. Essa funcionalidade contribui para que o sistema sirva como uma
+central e colabora para construir um registro mais criterioso, visto que o
+usuário reconstrói o que aconteceu naquele determinado ponto no tempo.
+
+O caso de uso ''Registrar Gatilho'' visa permitir que o usuário registre
+eventos, sejam eles pensamentos, situações, ou estímulos que tenham
+influenciado significativamente seu estado emocional. O objetivo é construir um
+histórico de causas associadas a variações no humor, de modo a fomentar a
+identificação de padrões recorrentes ou específicos. Essa funcionalidade é
+especialmente útil para usuários em contextos terapêuticos ou de
+autoconhecimento, favorecendo a análise de relações entre circunstâncias
+externas e reações internas.
+
+O caso de ''Registro de sono'', permite o usuário, de forma simples, criar no
+sistema um registro da quantidade de horas de sono, e adicionar alguma anotação
+breve. Esse elemento corrobora com a construção de indicadores, tanto da média
+de sono, quanto também de estimular uma correlação entre sono e os níveis de
+energia informado em cada humor.
+
+Por fim, o caso de uso ''Vincular humor a um gatilho'' permite ao usuário
+estabelecer vínculos entre os gatilhos identificados e os registros de humor,
+formando um mapeamento de ação e reação, ou causa e reação. Essa associação
+pode servir tanto para consulta futura quanto para, em um futuro, gerar
+indicadores. Ao conectar eventos e suas respostas, a funcionalidade fortalece o
+papel do sistema como uma ferramenta alinhada com o EMA, gerando assim uma
+narrativa emocional diária.
 
