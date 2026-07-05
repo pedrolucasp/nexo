@@ -1,0 +1,116 @@
+\chapter{Design}
+
+% TODO: Find citations
+
+As decisões de design do sistema foram fundamentadas tanto na análise dos
+aplicativos similares quanto nos resultados do questionário aplicado durante a
+etapa de pesquisa. Esses elementos permitiram identificar padrões recorrentes
+de interface e compreender as preferências do público-alvo, orientando a
+definição da identidade visual, da linguagem adotada e da organização dos
+elementos da interface.
+
+A análise dos aplicativos similares revelou uma linguagem visual comum entre as
+soluções existentes, caracterizada por interfaces lúdicas, linguagem informal
+e, em alguns casos, uso intenso de cores. Paralelamente, os resultados do
+questionário indicaram que 37,5\% dos participantes preferem uma comunicação
+acolhedora e empática, enquanto 25\% demonstraram preferência por uma linguagem
+neutra e objetiva.
+
+O design, no contexto de desenvolvimento de software é um elemento fundamental,
+considerando que influencia diretamente a experiência do usuário, na percepção
+e assimilação das informações.
+
+Diferentemente da maioria dos aplicativos analisados, optou-se por uma
+identidade visual menos lúdica e mais sóbria, reduzindo o uso de ilustrações e
+cores saturadas em favor de uma linguagem mais discreta e orientada ao
+conteúdo.
+
+\section{Logotipo e identidade visual}
+
+O logotipo do sistema foi planejado para representar o próprio nome do sistema.
+Nexo, que representa a conexão, convergência de vários elementos. Esse nome
+conversa com a ideia do projeto em trabalhar o EMA, visto que o objeto que o
+aplicativo trabalha para além de registrar o humor do usuário, mas sim
+construir uma narrativa diária do estado emocional, conectando informações
+contextuais como qualidade do sono, estresse, energia, ansiedade, sentimentos,
+emoções, atividades, psicofármacos, consultas, etc.
+
+Portanto, o nome representa exatamente esse propósito, é o que ``dá liga'' a
+várias coisas esparsas, dando sentido, racionalizando esses elementos.
+
+\begin{figure}[h]
+\centering
+\caption{Logotipo do sistema}
+\label{fig:logo}
+\includegraphics[width=0.9\linewidth]{logo.png}
+\source{O autor}
+\end{figure}
+
+Para convergir com a pesquisa de tonalidade, e abraçar uma estética
+``acolhedora'', o logo tenta fugir de parecer algo mecânico ao usar uma técnica
+que simule pinceladas ao invés de linhas retas, simulando também diferenças ou
+falhas na pressão utilizada por ter pequenas variações e espaços em branco no
+logotipo.
+
+\subsection{Hierarquia visual}
+
+
+No contexto de interfaces digitais, a hierarquia visual corresponde à
+estruturação de elementos de uma tela ou página de forma a narrar e orientar o
+usuário com os elementos que são mais significativos e que demandam mais
+atenção.
+
+Por meio de repetições de padrões de agrupamento de informações, contraste,
+tamanhos, espaçamentos, busca-se reduzir o esforço necessário para encontrar
+elementos importantes e quais ações necessitam de maior visibilidade. Segundo
+(?) uma hierarquia visual bem definida, ajda o usuário a interpretar
+rápidamente a interface, reduzindo a carga cognitiva e tornando a navegação
+mais intuitiva.
+
+Portanto, com esse foco em mente, produziu-se uma lista pequena de componentes
+com visual semelhante, reduzindo o contraste entre esses mesmo elementos, o que
+ajuda justamente a gerar uma sensação de consistência e previsibilidade entre
+telas e elementos gráficos.
+
+A estrutura da aplicação pode ser resumida em cinco componentes fundamentais:
+cartões (\textit{cards}), botões de ação, \textit{chips} para categorização de
+informações, campos de formulário e indicadores em escala (\textit{sliders}).
+Esses componentes aparecem de maneira recorrente em praticamente todas as telas
+do sistema, permitindo que o usuário reconheça rapidamente sua função sem
+necessidade de reaprendizado.
+
+Portanto, a organização de telas geralmente se dá nesses mesmos parâmetros, em
+que toda tela é dividida em seções, compostas de um cabeçalho, seguido dos
+respectivos elementos de interação. Posteriormente, a utilização de cartões,
+ajuda a reforçar esse foco visual, agrupando elementos que são interativos e/ou
+que necessitam interação e/ou atenção.
+
+\subsection{Paleta de Cores}
+
+Como discutido anteriormente, a definição da paleta de cores buscou equilibrar
+dois objetivos identificados durante a fase de pesquisa, transmitir uma
+identidade visual acolhedora, porém evitando excessos de cores e informações
+lúdicas. Portanto, para buscar esses pilares, optou-se por usar uma escolha de
+cores mais neutras e sóbrias, focando em tons de branco, cinza e preto, de
+forma a permitir que o conteúdo regstrado pelo usuário seja o maior foco de
+destaque.
+
+Contudo, para elementos que necessitam de uma maior atenção, ou elementos de
+interação, como botões de ações primárias, adotou-se uma escolha mais rádical,
+um tom de verde forte, que busca criar exatamente a sensação de destaque
+imediato. Além disso, o verde geralmente está associado como uma cor que
+transmite uma sensação de vitalidade, força, natureza, bem-estar e afins. Como
+mencionado anteriormente, limitou-se a utilização para indicadores, componentes
+de interação e elementos que representam progresso ou confirmação.
+
+Por fim, foi escolhido outras cores pasteis para ajudar a destacar elementos
+como sentimento e emoções, indicadores para cada tipo de registro gerado no
+sistema, de forma mínima e não intrusiva. A proposta aqui era recheiar um pouco
+mais a interface para adci
+
+\subsection{Tipografia}
+
+A tipografia escolhida é a Inter, criada por Rasmus Andersson, cujo é
+reconhecida justamente pela legibilidade e atenção para que seja bem
+renderizada no uso digital. A fonte hoje é usada por diversas plataformas, como
+o Figma.
