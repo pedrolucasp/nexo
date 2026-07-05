@@ -97,3 +97,42 @@ indicadores. Ao conectar eventos e suas respostas, a funcionalidade fortalece o
 papel do sistema como uma ferramenta alinhada com o EMA, gerando assim uma
 narrativa emocional diária.
 
+\section{Diagrama de Classes}
+
+O diagrama de classes é fundamental para o processo de modelagem de sistemas e
+constroem uma visão central tanto do relacionamento das entidades quanto de
+como elas são organizadas. Olhando para \cite[p. 101]{guedes:2022}: ''O
+principal enfoque é permitir a visualização das classes que o sistema e seus
+respectivos métodos e atributos''. Portanto, a base fundamental do sistema e
+seus relacionamentos, que será transformado posteriormente em código (ou
+diagramas posteriores) encontra-se nesse estágio.
+
+Sobre o diagrama em si, cada classe possui três partes: título, os atributos,
+que representam as características da classe em si, e seus métodos, que são as
+ações que o sistema deve realizar \cite{ibm:2021}. Na Figura 2, pode-se
+observar os elementos descritos acima:
+
+\begin{figure}[h]
+\centering
+\caption{Diagrama de Classes}
+\label{fig:classes}
+\includegraphics[width=0.9\linewidth]{diagrama-classes.png}
+\source{O autor}
+\end{figure}
+
+% TODO: Rewrite this, it feels, weird
+
+Essa representação não se delimita em apenas contribuir para a visualização dos
+dados e seus comportamentos, mas auxilia também na implementação e evolução da
+aplicação. A separação entre entidades como Humor, Gatilho, Ações de Cuidado e
+Usuário, permite a extensão modular do sistema, respeitando os princípios de
+coesão e baixo acoplamento no desenho da arquitetura.
+
+Ressalta-se, contudo, que o diagrama não contempla, padrões arquiteturais
+complementares, como \textit{Service Layer}, \textit{Repository} e \textit{Data
+Access Object (DAO)}, os quais são incorporados na etapa de implementação para
+garantir uma separação adequada de responsabilidades e facilitar a manutenção e
+escalabilidade do código, conforme as propostas de \citet{Fowler_2013} e
+\citet{Gamma:2011}. Esses elementos são importantes, considerando os princípios
+de legibilidade, simplicidade e responsabilidades, muitos organizados por
+\citet{Martin_2012}, asseguram que o código produzido seja limpo e sustentável.
