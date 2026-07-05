@@ -99,18 +99,17 @@ narrativa emocional diária.
 
 \section{Diagrama de Classes}
 
-O diagrama de classes é fundamental para o processo de modelagem de sistemas e
-constroem uma visão central tanto do relacionamento das entidades quanto de
-como elas são organizadas. Olhando para \cite[p. 101]{guedes:2022}: ''O
-principal enfoque é permitir a visualização das classes que o sistema e seus
-respectivos métodos e atributos''. Portanto, a base fundamental do sistema e
-seus relacionamentos, que será transformado posteriormente em código (ou
-diagramas posteriores) encontra-se nesse estágio.
+O diagrama de classes é um dos principais artefatos da UML, responsável por
+evidenciar a estrutura estática do sistema, seus atributos, operações e
+relacionamentos. Conforme \cite[p. 101]{guedes:2022}: ''O principal enfoque é
+permitir a visualização das classes que o sistema e seus respectivos métodos e
+atributos''. Dessa forma, esse diagrama constitui a base da modelagem
+estrutural que posteriormente será implementada em código.
 
 Sobre o diagrama em si, cada classe possui três partes: título, os atributos,
 que representam as características da classe em si, e seus métodos, que são as
-ações que o sistema deve realizar \cite{ibm:2021}. Na Figura 2, pode-se
-observar os elementos descritos acima:
+operações que o sistema pode operar nos objetos das classes \cite{ibm:2021}. Na
+Figura 2, pode-se observar os elementos descritos acima:
 
 \begin{figure}[h]
 \centering
@@ -120,13 +119,30 @@ observar os elementos descritos acima:
 \source{O autor}
 \end{figure}
 
-% TODO: Rewrite this, it feels, weird
+Essa representação apresenta alguns vários elementos importantes. Primeiro, um
+acoplamento entre \textit{Usuário} e as demais classes. Isso é natural, e
+desejado, considerando que é o único ator. Existe também a separação entre as
+entidades como Gatilho, Humor, muito embora exista uma relação de associação
+entre elas, através da classe denominada ''VinculoGatilhoHumor'', visto que ela
+seria representada por uma tabela auxiliar ligando as duas, aliadas do atributo
+de estimativa de impacto.
 
-Essa representação não se delimita em apenas contribuir para a visualização dos
-dados e seus comportamentos, mas auxilia também na implementação e evolução da
-aplicação. A separação entre entidades como Humor, Gatilho, Ações de Cuidado e
-Usuário, permite a extensão modular do sistema, respeitando os princípios de
-coesão e baixo acoplamento no desenho da arquitetura.
+Necessário destacar aqui que a classe ''AcaoCuidado'' é uma classe abstrata,
+representando uma generalização. Essa classe serve como um guarda-chuva para
+representar diversos tipos de ações que o usuário pode realizar. O papel dela
+aqui se torna guardar elementos em comum entre esses tipos de ações, seus
+respectivos vínculos com gatilhos ou humores. A partir dela então, traça-se
+outras sub-classes que contem um melhor contexto sobre a atividade em si, por
+exemplo, na classe ''Consulta'' guarda-se dados como a duração da consulta, que
+tipo de consulta, e potenciais anotações ou comentários em cima da mesma.
+Entretanto, uma classe ''RegistroMedicamento'' não precisa guardar mais do que
+a relação com qual medicamento e quando ele foi de fato tomado.
+
+Por fim, existe diversos tipos de enumeradores que delimitam exatamente quais
+tipos de valores podem ser escolhidos. Esses enumeradores servem também como um
+mecanismo de validação, sendo movidos tanto para o próprio banco de dados e
+posteriormente sendo implementados como forma de controle em outros pontos como
+na API.
 
 Ressalta-se, contudo, que o diagrama não contempla, padrões arquiteturais
 complementares, como \textit{Service Layer}, \textit{Repository} e \textit{Data
