@@ -111,9 +111,7 @@ async function setupLogoAnimations() {
   svg.appendChild(trail);
   svg.appendChild(dot);
 
-  const img = container.querySelector('img');
-  if (img) container.replaceChild(svg, img);
-  else container.appendChild(svg);
+  container.appendChild(svg);
 
   // Motion path
   const totalLen = logoPathEl.getTotalLength();
@@ -210,60 +208,16 @@ document.addEventListener('DOMContentLoaded', function () {
   setupLogoAnimations();
 
   document.querySelectorAll('.glide__slide .morph-icon').forEach(svg => {
-    const path = svg.querySelector(':scope > path');
+    const path    = svg.querySelector(':scope > path');
     const resting = svg.querySelector('defs .morph-resting');
-    const alt = svg.querySelector('defs .morph-alt');
-    const shape = svg.querySelector('defs .morph-shape');
-    const card = svg.closest('.group');
-
-    let hovered = false;
-    let spikeCycle = null;
-
-    const rotAnim = animate(svg, {
-      rotate: 360,
-      loop: true,
-      duration: 7000,
-      ease: 'linear',
-    });
-
-    function runSpikeCycle() {
-      if (hovered) return;
-      const targets = [resting, alt];
-      let i = 0;
-
-      function step() {
-        if (hovered) return;
-        i = (i + 1) % targets.length;
-        spikeCycle = animate(path, {
-          d: morphTo(targets[i]),
-          duration: 1800,
-          ease: 'inOutSine',
-          onComplete: () => setTimeout(step, 600),
-        });
-      }
-      step();
-    }
-
-    runSpikeCycle();
+    const shape   = svg.querySelector('defs .morph-shape');
+    const card    = svg.closest('.group');
 
     card.addEventListener('pointerenter', () => {
-      hovered = true;
-      spikeCycle?.pause();
-      rotAnim.pause();
-      animate(path, { d: morphTo(shape), duration: 500, ease: 'inOutCubic' });
+      animate(path, { d: morphTo(shape),   duration: 500, ease: 'inOutCubic' });
     });
-
     card.addEventListener('pointerleave', () => {
-      hovered = false;
-      animate(path, {
-        d: morphTo(resting),
-        duration: 500,
-        ease: 'inOutCubic',
-        onComplete: () => {
-          rotAnim.play();
-          runSpikeCycle();
-        },
-      });
+      animate(path, { d: morphTo(resting), duration: 500, ease: 'inOutCubic' });
     });
   });
 });
