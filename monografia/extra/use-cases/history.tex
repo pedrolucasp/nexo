@@ -1,0 +1,102 @@
+% UC08 -- Visualizar Histórico
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC08 -- Visualizar Histórico \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite consultar o histórico de registros de humor, sono e ações de
+cuidado agrupados por data. \\
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+Os registros históricos são apresentados ao usuário. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Acessa o histórico. & \\
+\cline{1-2}
+
+&
+2. O sistema recupera os registros do usuário. \\
+\cline{1-2}
+
+&
+3. O sistema agrupa os registros por data. \\
+\cline{1-2}
+
+&
+4. O sistema apresenta indicadores resumidos para cada registro. \\
+\cline{1-2}
+
+5. Seleciona um registro. & \\
+\cline{1-2}
+
+&
+6. O sistema apresenta os detalhes do registro selecionado. \\
+\cline{1-2}
+
+7. Seleciona editar ou remover o registro. & \\
+\cline{1-2}
+
+&
+8. O sistema verifica se o período permitido para alteração ainda é
+válido. \\
+\cline{1-2}
+
+&
+9. O sistema permite a edição ou remoção do registro. \\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+Somente registros do próprio usuário podem ser consultados. \\
+\cline{2-2}
+
+&
+Registros somente podem ser editados ou removidos durante os
+primeiros cinco minutos após sua criação. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 -- Histórico vazio}}\\
+\hline
+
+1. Acessa o histórico. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que não existem registros cadastrados. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 -- Tempo para edição expirado}}\\
+\hline
+
+1. Seleciona editar um registro expirado. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que o período permitido para alteração foi encerrado. \\
+\hline
+
+\end{longtable}

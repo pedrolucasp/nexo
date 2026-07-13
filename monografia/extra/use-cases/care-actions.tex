@@ -1,0 +1,123 @@
+% UC07 -- Manter Ações de Cuidado
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC07 -- Manter Ações de Cuidado \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite registrar ações de cuidado relacionadas ao acompanhamento da
+saúde do usuário, como medicamentos, atividades, consultas e tomadas
+de medicamentos. \\
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+A ação de cuidado é registrada e passa a compor o histórico do usuário. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona registrar ação de cuidado. & \\
+\cline{1-2}
+
+&
+
+2. O sistema apresenta os tipos de ações disponíveis. \\
+
+\cline{1-2}
+
+3. Seleciona o tipo desejado. & \\
+\cline{1-2}
+
+&
+4. O sistema apresenta o formulário correspondente. \\
+\cline{1-2}
+
+5. Informa os dados necessários. & \\
+\cline{1-2}
+
+&
+6. Confirma o registro. & \\
+\cline{1-2}
+
+&
+7. O sistema valida os dados informados. \\
+\cline{1-2}
+
+&
+8. O sistema registra a ação de cuidado. \\
+\cline{1-2}
+
+&
+9. O sistema atualiza os registros recentes. \\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+Os campos obrigatórios dependem do tipo de ação selecionada. \\
+\cline{2-2}
+
+&
+Somente ações válidas podem ser registradas. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 -- Registrar Consulta}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona vincular um registro de humor ou gatilho. & \\
+\cline{1-2}
+
+&
+2. O sistema encaminha para a tela de registro do vinculo escolhido. \\
+
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A2 -- Registrar Tomada de Medicamento}}\\
+\hline
+
+1. Seleciona registrar uma tomada de medicamento. & \\
+\cline{1-2}
+
+2. Seleciona um horário. & \\
+\cline{1-2}
+
+&
+3. O sistema registra a tomada do medicamento. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 -- Não existem medicamentos cadastrados}}\\
+\hline
+
+1. Seleciona registrar uma tomada de medicamento. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que não existem medicamentos cadastrados para
+registro de tomada. \\
+
+\hline
+
+\end{longtable}

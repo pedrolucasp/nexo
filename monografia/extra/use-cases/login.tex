@@ -1,0 +1,92 @@
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC01 -- Login \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite que o usuário realize a autenticação no sistema. \\
+\hline
+
+\textbf{Pré-condições} &
+O usuário deve possuir uma conta cadastrada. \\
+\hline
+
+\textbf{Pós-condições} &
+Usuário autenticado e direcionado ao painel inicial. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}} \\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Informa e-mail e senha.
+& \\
+\cline{1-2}
+
+&
+2. O sistema valida as credenciais. \\
+\cline{1-2}
+
+&
+3. O sistema cria a sessão autenticada. \\
+\cline{1-2}
+
+&
+4. O sistema apresenta o painel inicial. \\
+\hline
+
+\multirow{3}{4cm}{\textbf{Restrições\\e validações}}
+&
+O e-mail deve estar cadastrado. \\
+\cline{2-2}
+
+&
+A senha deve estar correta. \\
+\cline{2-2}
+
+&
+A conta deve estar ativada. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 -- Primeiro acesso}} \\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. O usuário realiza o primeiro login. & \\
+\cline{1-2}
+
+&
+2. O sistema solicita a ativação da conta. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 -- Credenciais inválidas}} \\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. O usuário informa dados inválidos. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta mensagem de erro e solicita nova tentativa. \\
+\hline
+
+\end{longtable}

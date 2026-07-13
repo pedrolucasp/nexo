@@ -1,0 +1,77 @@
+% UC06 -- Manter Sono
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC06 -- Manter Sono \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+Sistema (processamento em segundo plano) \\
+\hline
+
+\textbf{Resumo} &
+Permite registrar, editar e remover registros de sono do usuário. \\
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+O registro de sono é armazenado e os indicadores relacionados são atualizados. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona registrar sono. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta o formulário de registro. \\
+\cline{1-2}
+
+3. Informa a data do registro. &
+\\
+\cline{1-2}
+
+4. Informa uma média de horas de sono. &
+\\
+\cline{1-2}
+
+5. Informa uma anotação, caso desejar. &
+\\
+\cline{1-2}
+
+6. Confirma o registro. & \\
+\cline{1-2}
+
+& 7. O sistema valida os dados informados. \\
+\cline{1-2}
+
+& 8. O sistema registra o período de sono. \\
+\cline{1-2}
+
+& 9. O sistema agenda o cálculo da média diária de sono. \\
+\cline{1-2}
+
+& 10. O sistema atualiza os indicadores apresentados ao usuário. \\
+\hline
+
+\multirow{1}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+A data do registro é obrigatória. \\
+\cline{1-2}
+\hline
+
+\end{longtable}

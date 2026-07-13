@@ -1,0 +1,77 @@
+% UC05 -- Manter Gatilhos
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC05 -- Manter Gatilhos \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite cadastrar, editar e remover gatilhos emocionais que
+ocorreram naquele dia e que poderão ser associados aos registros
+de humor e consultas. \\
+
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+O gatilho é salvo e passa a compor o histórico do usuário. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona registrar gatilho. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta o formulário. \\
+\cline{1-2}
+
+3. Informa uma descrição do gatilho e seleciona um horário. & \\
+\cline{1-2}
+
+&
+4. O sistema valida os dados informados. \\
+\cline{1-2}
+
+&
+5. O sistema salva o novo gatilho. \\
+\cline{1-2}
+
+&
+6. O sistema apresenta uma mensagem de confirmação. \\
+\hline
+
+\multirow{1}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+O horário e a categoria do gatilho é obrigatório. \\
+\cline{1-2}
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 -- Horário inválido}}\\
+\hline
+
+1. Informa um horário inválido. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que o horário é inválido. \\
+\hline
+
+\end{longtable}

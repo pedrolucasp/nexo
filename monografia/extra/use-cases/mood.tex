@@ -1,0 +1,95 @@
+% UC04 -- Manter humor
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC04 -- Manter Humor \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite registrar, editar e remover registros de humor. \\
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+O registro de humor é armazenado e passa a compor o histórico do usuário. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona registrar humor. &
+2. O sistema apresenta o formulário de registro. \\
+\cline{1-2}
+
+3. Informa o humor principal. &
+\\
+\cline{1-2}
+
+4. Informa os níveis emocionais e demais informações. &
+\\
+\cline{1-2}
+
+5. Adiciona observações, caso desejar. &
+\\
+\cline{1-2}
+
+6. Confirma o registro. & \\
+\cline{1-2}
+
+&
+7. O sistema valida os dados informados. \\
+\cline{1-2}
+
+&
+8. O sistema registra as informações. \\
+\cline{1-2}
+
+&
+9. Sistema agenda a atualização dos indicadores e da correlação
+entre sono e energia. \\
+\hline
+
+\multirow{3}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+O humor principal é obrigatório. \\
+\cline{2-2}
+
+&
+Os níveis emocionais devem estar dentro do intervalo permitido. \\
+\cline{2-2}
+
+&
+A data do registro é obrigatória. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 -- Vincular gatilho}}\\
+\hline
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona um ou mais gatilhos. & \\
+\cline{1-2}
+
+&
+2. O sistema associa os gatilhos ao registro de humor. \\
+\hline
+
+\end{longtable}

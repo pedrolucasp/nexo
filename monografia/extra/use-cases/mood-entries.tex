@@ -1,0 +1,71 @@
+% UC03 -- Consultar registros de humor
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC03 -- Consultar Registros de Humor \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+
+Permite consultar os registros recentes de humor e sono, bem como os
+indicadores consolidados referentes aos níveis médios de energia e
+sono do usuário. \\
+
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+Os registros e indicadores são apresentados ao usuário. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Acessa o painel inicial. & \\
+\cline{1-2}
+
+& 2. O sistema recupera os registros de humor recentes. \\
+\cline{1-2}
+
+&
+3. O sistema recupera informações relacionadas ao sono e energia. \\
+\cline{1-2}
+
+&
+4. O sistema apresenta os registros e indicadores ao usuário. \\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+Somente registros pertencentes ao usuário autenticado podem ser consultados. \\
+\cline{2-2}
+
+&
+É necessário possuir sessão autenticada. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 -- Não existem registros}}\\
+\hline
+
+&
+O sistema apresenta uma mensagem informando que ainda não existem registros cadastrados.\\
+\hline
+
+\end{longtable}

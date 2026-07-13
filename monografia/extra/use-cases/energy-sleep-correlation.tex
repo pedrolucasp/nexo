@@ -1,0 +1,69 @@
+% UC09 -- Calcular Correlação Sono × Energia
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC09 -- Calcular Correlação Sono $\times$ Energia \\
+\hline
+
+\textbf{Ator Principal} &
+Sistema \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Calcula automaticamente a correlação entre os registros recentes de sono e os níveis de energia informados pelo usuário. \\
+\hline
+
+\textbf{Pré-condições} &
+Existem registros suficientes para o cálculo da correlação. \\
+\hline
+
+\textbf{Pós-condições} &
+O indicador de correlação é atualizado. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+&
+1. O sistema identifica a criação ou atualização de um registro de humor ou sono. \\
+\cline{2-2}
+
+&
+2. O sistema recupera os registros correspondentes aos últimos sete dias. \\
+\cline{2-2}
+
+&
+3. O sistema calcula a correlação utilizando o coeficiente de Pearson. \\
+\cline{2-2}
+
+&
+4. O sistema atualiza o indicador apresentado ao usuário. \\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições e validações}}
+&
+O cálculo considera apenas registros dos últimos sete dias. \\
+\cline{2-2}
+
+&
+É necessário existir quantidade mínima de registros para o cálculo estatístico. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 -- Dados insuficientes}}\\
+\hline
+
+&
+O sistema mantém o indicador indisponível até que existam registros suficientes para o cálculo. \\
+\hline
+
+\end{longtable}

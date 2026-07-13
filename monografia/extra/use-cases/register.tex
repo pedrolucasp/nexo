@@ -1,0 +1,83 @@
+% UC02 -- Registro
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC02 -- Cadastro \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite que um novo usuário crie uma conta para utilizar o sistema. \\
+\hline
+
+\textbf{Pré-condições} &
+O usuário não deve possuir cadastro prévio utilizando o mesmo endereço de e-mail. \\
+\hline
+
+\textbf{Pós-condições} &
+Conta criada com sucesso e apta para ativação. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona a opção de cadastro. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta o formulário de cadastro.\\
+\cline{1-2}
+
+3. Informa nome, e-mail e senha. & \\
+\cline{1-2}
+
+&
+4. O sistema valida os dados informados.\\
+\cline{1-2}
+
+&
+5. O sistema cria a conta do usuário.\\
+\cline{1-2}
+
+% XXX: Need to add a line break here since this specific column
+% goes into a new page
+
+&
+6. O sistema solicita a ativação da conta.\\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições e validações}} &
+O endereço de e-mail deve ser único.\\
+\cline{2-2}
+
+&
+A senha deve atender aos critérios mínimos de segurança.\\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 -- E-mail já cadastrado}}\\
+\hline
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. O usuário informa um e-mail existente. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que já existe uma conta cadastrada.\\
+\hline
+
+\end{longtable}
