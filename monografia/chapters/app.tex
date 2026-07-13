@@ -17,7 +17,7 @@ funcionamento do sistema parte da premissa de que o humor não é uma variável
 universal, mas sim composto por elementos subjetivos que variam entre
 indivíduos. Assim, fundamentalmente para cada entrada no diário, o usuário pode
 indicar que componentes de humor ele percebe em vigência naquele momento, como
-“raiva”, “tristeza”, “felicidade”, etc., elementos que ele considera mais
+``raiva'', ``tristeza'', ``felicidade'', etc., elementos que ele considera mais
 representativos de seu estado emocional, permitindo um mapeamento mais fiel da
 sua experiência.
 
@@ -29,7 +29,7 @@ de energia, estresse e ansiedade. Associado a isso, o sistema permitirá a
 entrada de gatilhos e eventos significativos, sejam positivos ou negativos, que
 poderão ser posteriormente correlacionados com os estados de humor, permitindo
 identificar padrões ou ciclos. Esses dados podem ser correlacionados/vinculados
-com "práticas" ou "intervenções", como fármacos, psicoterapia, atividades
+com ``práticas'' ou ``intervenções'', como fármacos, psicoterapia, atividades
 físicas.
 
 Outro ponto essencial é a exportação de dados em formatos acessíveis,
@@ -46,9 +46,9 @@ e não funcionais no qual o sistema deve necessitar.
 
 \section{Classificação dos Requisitos}
 
-Como observado por \cite[p.~58]{sommerville:2010}, "Os requisitos de um sistema são
+Como observado por \cite[p.~58]{sommerville:2010}, ``Os requisitos de um sistema são
 as descrições dos serviços que o sistema deve prestar e as restrições à sua
-operação". Portanto, requisitos são declarações articuladas descrevendo de
+operação''. Portanto, requisitos são declarações articuladas descrevendo de
 forma clara o que o sistema deve ser capaz de fazer para satisfazer as
 necessidades postas anteriormente. São definidas em duas categorias: requisitos
 funcionais que descrevem o comportamento e funções do sistema e requisitos não
@@ -110,9 +110,8 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
         \hline
 
         [RF03] &
-        Auto-cadastro &
-        O sistema deve permitir que o usuário crie uma conta ao acessar pela
-        primeira vez \\
+        Cadastro &
+        O sistema deve permitir que o usuário crie uma conta \\
 
         \hline
 
@@ -139,7 +138,7 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
         [RF07] &
         Visualizar histórico &
         O usuário deve ter acesso aos registros anteriores de humor e demais
-        entradas \\
+        tipos de dados como Gatilho, Sono, etc. \\
 
         \hline
 
@@ -151,8 +150,9 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
         \hline
 
         [RF09] &
-        Visualizar diário semanal &
-        O usuário deve poder consultar uma visão consolidada da semana \\
+        Visualizar registros de humor recente &
+        O usuário deve poder visualizar os ultimos registros de humor como
+        forma de ler \\
 
         \hline
 
@@ -176,30 +176,30 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
         \hline
 
         [RF13] &
-        Configurar lembretes &
-        O usuário pode configurar lembretes para registros de humor ou outras
-        atividades \\
+        Registrar que um medicamento foi tomado &
+        O usuário pode marcar que um determinado medicamento foi tomado
+        mediante que foi cadastrado \\
 
         \hline
 
         [RF14] &
         Associar humor à um gatilho &
-        O sistema deve permitir que o usuário vincule um humor específico com um gatilho \\
+        O sistema deve permitir que o usuário vincule um humor específico com
+        um gatilho \\
 
         \hline
 
         [RF15] &
-        Associar intervenção a gatilho &
-        O sistema deve permitir vincular uma intervenção específica a um
-        gatilho registrado \\
+        Associar consulta com um humor ou gatilho &
+        O sistema deve permitir vincular uma consulta específica a um
+        gatilho ou humor registrado \\
 
         \hline
 
         [RF16] &
-        Avaliar eficácia de uma intervenção &
-
-        O usuário deve poder avaliar se a intervenção aplicada foi eficaz ou
-        não para fins de controle \\
+        Gerar um relatório com os últimos dados &
+        O usuário deve selecionar um período e gerar/exportar um relatório com
+        os últimos dados  \\
 
         \hline
         \multicolumn{3}{c}{\small Fonte: Elaborado pelo autor (2026)} \\
@@ -207,8 +207,8 @@ no Quadro 2 é apresentado os requisitos que o sistema deve fornecer:
 
 \subsection{Requirementos não funcionais}
 
-De acordo com \cite[p.~89]{sommerville:2010}: "Requisitos não funcionais são
-restrições sobre os serviços ou funções oferecidas pelo sistema". Ou seja,
+De acordo com \cite[p.~89]{sommerville:2010}: ``Requisitos não funcionais são
+restrições sobre os serviços ou funções oferecidas pelo sistema''. Ou seja,
 definem os critérios de qualidade que o sistema deve seguir, abrangendo
 aspectos como segurança, usabilidade, desempenho e manutenção. Neste projeto,
 destacam-se especialmente a preservação da privacidade do usuário, a
