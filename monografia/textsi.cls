@@ -93,9 +93,10 @@ Versão: \currversion^^J
 \RequirePackage{natbib}
 \RequirePackage{chngcntr}
 \RequirePackage{eso-pic}
-\RequirePackage{color}
+\RequirePackage{xcolor}
 \RequirePackage{setspace}
 \RequirePackage{geometry}
+\RequirePackage{listings}
 
 \geometry{top=3cm,right=2cm,left=3cm,bottom=2cm}
 
@@ -103,6 +104,41 @@ Versão: \currversion^^J
 \definecolor{verdeufpel}{rgb}{0.09,0.7,0.44}
 \definecolor{azulufpel}{rgb}{0.07,0.49,0.72}
 \definecolor{cinzaufpel}{rgb}{0.85,0.85,0.85}
+
+%==============================================================================
+% Configuração de listagens de código (pacote listings)
+%==============================================================================
+\lstdefinelanguage{yaml}{
+  keywords={image,build,context,file,ports,environment,volumes,depends_on,
+            condition,healthcheck,test,interval,timeout,retries,start_period,
+            restart,command,shm_size,user,push,tags,labels,services,options},
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+}
+
+\lstset{
+  language=yaml,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{azulufpel}\bfseries,
+  commentstyle=\color{verdeufpel}\itshape,
+  stringstyle=\color{laranjaufpel},
+  backgroundcolor=\color{cinzaufpel!35},
+  rulecolor=\color{azulufpel},
+  frame=single,
+  framerule=0.6pt,
+  numbers=left,
+  numberstyle=\tiny\color{black!60},
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible,
+  captionpos=b,
+  tabsize=2,
+}
+
+\renewcommand*{\l@lstlisting}{\@dottedtocline{1}{0em}{5.5em}}
 
 %
 % definições para textos em português
@@ -123,6 +159,8 @@ Versão: \currversion^^J
   \def\listsymbolname{Lista de S{\'\i}mbolos}%
   \def\annexname{Anexo}%
   \def\keywordsname{Palavras-chave}%
+  \def\lstlistingname{C{\'o}digo}%
+  \def\lstlistlistingname{Lista de C{\'o}digos}%
 }
 
 \@namedef{datebrazilian}{%
@@ -155,6 +193,8 @@ Versão: \currversion^^J
   \def\listsymbolname{List of Symbols}%
   \def\annexname{Annex}%
   \def\keywordsname{Keywords}%
+  \def\lstlistingname{Listing}%
+  \def\lstlistlistingname{List of Listings}%
 }
 
 \@namedef{dateenglish}{%
@@ -200,7 +240,7 @@ Versão: \currversion^^J
   \let\@evenfoot\@empty%
   \def\@oddhead{\hspace*{\fill}{\small\thepage}}%
   \def\@evenhead{\hspace*{\fill}{\small\thepage}}%
-} 
+}
 
 \pagestyle{empty}%
 \let\ps@plain\ps@empty
@@ -328,7 +368,7 @@ Versão: \currversion^^J
     \includegraphics[width=3cm]{if}%
   }%
   \noindent%
-    \parbox[b]{0.8\textwidth}{%    
+    \parbox[b]{0.8\textwidth}{%
       \centering%
       \vskip 1cm%
       \MakeUppercase{\textbf{\@ministerio}}\\%
@@ -344,7 +384,7 @@ Versão: \currversion^^J
     }%
   \parbox[b][][t]{0.1\textwidth}{%
     \includegraphics[scale=0.175]{tsi.png}%
-  }%      
+  }%
   \noindent%
   \vskip 1cm%
   \noindent%
@@ -354,7 +394,7 @@ Versão: \currversion^^J
       \textbf{{\@authora}\\
       \@ifundefined{@authorb}{}{\@authorb\\}%
       \@ifundefined{@authorc}{}{\@authorc\\}%
-      \@ifundefined{@authord}{}{\@authord\\}}%      
+      \@ifundefined{@authord}{}{\@authord\\}}%
       \vskip .5cm%
     }%
   \vskip 3cm%
@@ -370,9 +410,9 @@ Versão: \currversion^^J
     \parbox[b]{\textwidth}{%
       \centering%
       \vskip .5cm%
-      \textbf{\@documento}   
+      \textbf{\@documento}
       \vskip .5cm%
-    }%    
+    }%
   \vfill%
   \noindent%
     \parbox[b]{\textwidth}{%
@@ -432,7 +472,7 @@ Versão: \currversion^^J
               \@ifundefined{@collaboratord}{}{\ &}
               \@ifundefined{@collaboratord}{}{\@collaboratord\\}}
           \end{tabular}
-        }                
+        }
       }
     }%
     \vfill%
@@ -487,7 +527,7 @@ Versão: \currversion^^J
             \@ifundefined{@collaboratord}{}{\ &}
             \@ifundefined{@collaboratord}{}{\@collaboratord\\}}
         \end{tabular}
-      }        
+      }
     }
   }
   \vskip 1cm%
@@ -507,25 +547,25 @@ Versão: \currversion^^J
       \vskip 0.5cm%
       ~\uline{\hspace{0.75\textwidth}}~\\%
       \@membroi~-~\@instituicaomembroi\\%
-      Membro titular\\%    
+      Membro titular\\%
     }
     \@ifundefined{@membroii}{}{
       \vskip 0.5cm%
       ~\uline{\hspace{0.75\textwidth}}~\\%
       \@membroii~-~\@instituicaomembroii\\%
-      Membro titular\\%    
+      Membro titular\\%
     }
     \@ifundefined{@membroiii}{}{
       \vskip 0.5cm%
       ~\uline{\hspace{0.75\textwidth}}~\\%
       \@membroiii~-~\@instituicaomembroiii\\%
-      Membro titular\\%    
-    }    
+      Membro titular\\%
+    }
   }
 }
 
 %==============================================================================
-% Ajuste do sumário (nada indentado) 
+% Ajuste do sumário (nada indentado)
 %==============================================================================
 
 % Nível do sumário
@@ -586,10 +626,10 @@ Versão: \currversion^^J
         \endgroup
 }
 
-\newcommand\annexmark[1]{} % define header/footer                            
+\newcommand\annexmark[1]{} % define header/footer
 \newcommand\annex{
   \clearpage%
-  \vspace*{90pt}%
+  \vspace*{50pt}%
   \@startsection{annex}{0}{0pt}{0pt}{42pt}{\centering\reset@font\ei@chapterfont\sffamily\bfseries\MakeUppercase}%
 }
 
@@ -612,10 +652,10 @@ Versão: \currversion^^J
         \endgroup
 }
 
-\newcommand\appendmark[1]{} % define header/footer                            
+\newcommand\appendmark[1]{} % define header/footer
 \newcommand\append{
   \clearpage%
-  \vspace*{90pt}%
+  \vspace*{50pt}%
   \@startsection{append}{0}{0pt}{0pt}{42pt}{\centering\reset@font\ei@chapterfont\sffamily\bfseries\MakeUppercase}%
 }
 
@@ -636,7 +676,7 @@ Versão: \currversion^^J
     }
   }{
   \end{list}
-} 
+}
 
 \newenvironment{listofsymbols}[1]{
   \chapter*{\listsymbolname}
@@ -702,7 +742,7 @@ Versão: \currversion^^J
 }
 
 \def\@makechapterhead#1{%
-  \vspace*{90pt}%
+  \vspace*{50pt}%
   \reset@font\noindent{\ei@chapterfont\sffamily\textbf{\@chapapp\thechapter\hspace{1em}\MakeUppercase{#1}}\par}%
   \addvspace{42pt}%
   \thispagestyle{empty}%
@@ -716,7 +756,7 @@ Versão: \currversion^^J
 }
 
 \def\@makeschapterhead#1{%
-  \vspace*{90pt}%
+  \vspace*{50pt}%
   \reset@font\centerline{\ei@chapterfont\sffamily\textbf{\MakeUppercase{#1}}}%
   \addvspace{42pt}%
 }
@@ -724,22 +764,22 @@ Versão: \currversion^^J
 %==============================================================================
 % Formatação das seções
 %==============================================================================
-\setcounter{secnumdepth}{4} 
+\setcounter{secnumdepth}{4}
 
 \renewcommand{\section}{%
   \@startsection{section}{1}{0pt}{18pt}{9pt}{\reset@font\large\MakeUppercase}
-} 
+}
 
 \renewcommand{\subsection}{%
   \@startsection{subsection}{2}{0pt}{12pt}{6pt}{\reset@font\bfseries}
-} 
+}
 
 \renewcommand{\subsubsection}{%
   \@startsection{subsubsection}{3}{0pt}{12pt}{6pt}{\reset@font\itshape}
-} 
+}
 
 \renewcommand{\paragraph}{%
-  \@startsection{paragraph}{4}{0pt}{12pt}{6pt}{\reset@font\uline} 
+  \@startsection{paragraph}{4}{0pt}{12pt}{6pt}{\reset@font\uline}
 }
 
 \renewcommand{\subparagraph}{%
@@ -755,6 +795,13 @@ Versão: \currversion^^J
 \counterwithout{figure}{chapter}
 \counterwithout{equation}{chapter}
 \counterwithout{table}{chapter}
+% O pacote listings só cria o contador "lstlisting" dentro de um
+% \AtBeginDocument próprio (ele decide o formato de numeração nesse
+% momento verificando se a classe tem capítulos). Por isso o
+% \counterwithout também precisa ser adiado da mesma forma, e registrado
+% depois de \RequirePackage{listings} para entrar na fila após o hook
+% do próprio pacote.
+\AtBeginDocument{\counterwithout{lstlisting}{chapter}}
 
 %==============================================================================
 % Redefinição do conteúdo das listas de figuras e tabelas
@@ -778,6 +825,47 @@ Versão: \currversion^^J
 
 \renewcommand*{\l@figure}{\@dottedtocline{1}{0em}{5.5em}}
 \let\l@table\l@figure
+\let\l@lstlisting\l@figure
+
+%==============================================================================
+% Compatibilização do "longtable" com a Lista de Tabelas
+%------------------------------------------------------------------------------
+% O pacote longtable define seu próprio mecanismo de legenda (\LT@c@ption),
+% que grava a entrada na Lista de Tabelas usando \thetable (só o número),
+% em vez de \fnum@table ("Tabela"~+~número), diferentemente do \@caption
+% padrão usado pelo ambiente "table" (redefinido acima). É por isso que uma
+% "tabela normal" mostra o prefixo "Tabela" na lista, mas uma "longtable"
+% mostra só o número, criando alinhamento/espaçamento diferente entre as
+% entradas. O trecho abaixo corrige isso, trocando \thetable por
+% \fnum@table para igualar ao comportamento das tabelas normais.
+%==============================================================================
+\RequirePackage{longtable}
+\def\LT@c@ption#1[#2]#3{%
+  \LT@makecaption#1\fnum@table{#3}%
+  \def\@tempa{#2}%
+  \ifx\@tempa\@empty\else
+     {\let\\\space
+     \addcontentsline{\ext@table}{table}{\protect\numberline{\fnum@table}{\ignorespaces #2}}}%
+  \fi}
+
+%==============================================================================
+% Compatibilização do "listings" com a Lista de Códigos
+%------------------------------------------------------------------------------
+% Pelo mesmo motivo acima: o pacote listings grava sua própria entrada na
+% Lista de Códigos usando apenas \thelstlisting (o número puro), sem passar
+% pelo \@caption customizado da classe, então o prefixo "Código" definido em
+% \lstlistingname nunca aparece nessa lista (só no corpo do texto). Aqui
+% forçamos o prefixo também na lista, análogo ao que já ocorre com Figura/
+% Tabela.
+%==============================================================================
+\let\oldlstlistoflistings\lstlistoflistings
+\renewcommand{\lstlistoflistings}{%
+  \begingroup
+    \let\oldnumberline\numberline
+    \renewcommand{\numberline}[1]{\lstlistingname\space\oldnumberline{##1}}%
+    \oldlstlistoflistings
+  \endgroup
+}
 
 %==============================================================================
 % Redefinição do formato de citações longas
@@ -835,4 +923,3 @@ Versão: \currversion^^J
   }{%
   \end{flushright}%
 }
-
