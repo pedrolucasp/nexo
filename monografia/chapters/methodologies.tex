@@ -220,6 +220,14 @@ emocional é realizado principalmente por meio de uma pontuação de humor, sem
 identificar ciclos emocionais ou relacionar registros a gatilhos e intervenções
 específicas.
 
+\begin{figure}[!htbp]
+\centering
+\caption{Aplicativo Baseline}
+\label{fig:screenshot-baseline}
+\includegraphics[width=0.40\textwidth,height=0.40\textheight,keepaspectratio]{screenshot-baseline.jpeg}
+\source{O autor}
+\end{figure}
+
 \subsubsection{DailyBeans}
 
 O DailyBeans é um dos aplicativos de monitoramento de humor mais populares
@@ -239,21 +247,37 @@ parte de suas funcionalidades mais avançadas à versão paga. Além disso, o fo
 em registros rápidos reduz a flexibilidade para inserção de reflexões textuais
 mais detalhadas.
 
-\subsubsection{Moodnotes}
 
-O Moodnotes é um diário emocional baseado em princípios da Terapia
-Cognitivo-Comportamental (TCC), buscando auxiliar usuários na identificação e
-reformulação de padrões de pensamento considerados disfuncionais.
+\begin{figure}[H]
+\centering
+\caption{Aplicativo DailyBeans}
+\label{fig:screenshot-dailybeans}
+\includegraphics[width=0.40\textwidth,height=0.40\textheight,keepaspectratio]{screenshot-dailybeans.jpeg}
+\source{O autor}
+\end{figure}
 
-O aplicativo oferece registros textuais reflexivos, sugestões de reestruturação
-cognitiva, gráficos históricos e geração automática de insights relacionados
-aos padrões emocionais identificados. Sua proposta diferencia-se por incorporar
-conceitos psicológicos de maneira mais explícita ao processo de registro.
+\subsubsection{DailyMood}
 
-Apesar dos recursos disponíveis, trata-se de uma solução proprietária e
-predominantemente paga. Adicionalmente, apresenta limitações relacionadas à
-exportação dos dados registrados e à personalização das informações
-armazenadas.
+DailyMood é um aplicativo voltado ao registro cotidiano do estado emocional,
+oferecendo uma solução enxuta para acompanhamento de humor. Sua
+proposta baseia-se em uma interação mínima, permitindo que o usuário
+selecione rapidamente o sentimento predominante do dia, sem a necessidade
+de descrições extensas. Os registros são organizados em um calendário
+visual, o que facilita a leitura histórica e a identificação de padrões
+emocionais ao longo do tempo.
+
+Apesar dos recursos disponíveis, trata-se de uma solução bastante
+simples, embora não necessite de contas. Adicionalmente, apresenta
+limitações relacionadas à exportação dos dados registrados e à
+personalização das informações armazenadas.
+
+\begin{figure}[H]
+\centering
+\caption{Aplicativo DailyMood}
+\label{fig:screenshot-dailymood}
+\includegraphics[width=0.40\textwidth,height=0.55\textheight,keepaspectratio]{screenshot-dailymood.jpeg}
+\source{O autor}
+\end{figure}
 
 \subsubsection{Reflectly}
 
@@ -266,33 +290,57 @@ Entre suas funcionalidades estão entradas textuais livres, perguntas guiadas
 diárias, análises emocionais automatizadas e personalização visual da
 interface. O sistema apresenta uma experiência moderna e intuitiva,
 incentivando o uso contínuo por meio de elementos de engajamento.
+Um ponto interessante é o fato do aplicativo separar o ``humor'' dos
+``sentimentos'', permitindo que os usuários avaliem ambos de forma
+independente.
 
 Como pontos observados, destaca-se o fato de ser uma solução proprietária e
 dependente de coleta significativa de dados para alimentar seus mecanismos de
-análise. Além disso, sua abordagem está mais voltada ao diário pessoal do que
+análise. Outro ponto negativo é o fato de que o aplicativo apresenta
+elementos como estatísticas e histórico, porém necessita de uma conta
+paga para acessar esses recursos.
+
+Além disso, sua abordagem está mais voltada ao diário pessoal do que
 ao acompanhamento sistemático de indicadores de saúde mental.
 
-\subsubsection{T2 Mood Tracker}
+\begin{figure}[H]
+\centering
+\caption{Aplicativo Reflectly}
+\label{fig:screenshot-reflectly}
+\includegraphics[width=0.40\textwidth,height=0.55\textheight,keepaspectratio]{screenshot-reflectly.jpeg}
+\source{O autor}
+\end{figure}
 
-O T2 Mood Tracker foi desenvolvido com foco em contextos clínicos e
-acompanhamento estruturado do humor. A ferramenta permite que usuários
-monitorem diferentes aspectos emocionais por meio de escalas configuráveis.
+\subsubsection{eMoods}
 
-Entre os recursos oferecidos estão escalas deslizantes de avaliação, criação de
-categorias personalizadas e geração de gráficos históricos para análise
-temporal dos registros. Sua proposta é particularmente útil para profissionais
-e pacientes que necessitam acompanhar indicadores específicos ao longo do
-tempo.
+O \textit{eMoods} é um aplicativo de registro de humor especificamente para
+pessoas com TAB. O aplicativo tem uma interface bem compacta, bastante
+poluída visualmente, em estilo formulário de entrada de dados.
+
+O aplicativo consegue registrar dados de sono, além de perguntas como
+ansiedade, estado depressivo, e outras coisas como ``você praticou higiene
+pessoal?'', ``você tomou medicamentos?'', ``você se alimentou bem?'' e afins.
+Um ponto positivo é que o aplicativo também permite exportar os dados em
+formato CSV e gerar relatórios em formato PDF.
 
 Entretanto, a aplicação apresenta limitações relacionadas à experiência do
 usuário, possuindo interface considerada desatualizada quando comparada a
 soluções contemporâneas. Também não oferece suporte para registros textuais
-extensos ou entradas por voz, reduzindo a riqueza contextual das informações
-coletadas.
+extensos ou entradas por voz, além de ser muito confuso de usar.
+
+\begin{figure}[H]
+\centering
+\caption{Aplicativo eMoods}
+\label{fig:screenshot-emoods}
+\includegraphics[width=0.40\textwidth,height=0.55\textheight,keepaspectratio]{screenshot-emoods.jpeg}
+\source{O autor}
+\end{figure}
+
+\FloatBarrier
 
 \subsection{Análise comparativa}
 
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \caption{Comparativo de funcionalidades entre aplicativos analisados}
     \label{tab:comparativo_apps}
@@ -300,15 +348,15 @@ coletadas.
         \hline
         Funcionalidade &
         Baseline &
-        Daylio &
-        Moodnotes &
+        DailyBeans &
+        DailyMood &
         Reflectly &
-        T2 \\
+        eMoods \\
 
         \hline
         Registro de humor & Sim & Sim & Sim & Sim & Sim \\
-        Registro de sono & Não & Não & Não & Não & Não \\
-        Texto livre & Sim & Parcial & Sim & Sim & Não \\
+        Registro de sono & Não & Não & Não & Não & Sim \\
+        Texto livre & Sim & Parcial & Sim & Sim & Sim \\
         Gráficos & Não & Sim & Sim & Sim & Sim \\
         Gatilhos/intervenções & Não & Parcial & Não & Não & Parcial \\
         Exportação de dados & Sim & Parcial & Parcial & Parcial & Sim \\
