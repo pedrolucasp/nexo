@@ -106,3 +106,100 @@ de forma versionada e sincronizada com o código da aplicação, reduzindo a
 chance de divergência entre a estrutura do banco e as entidades manipuladas
 pelo back-end, além de prover checagem de tipos em tempo de compilação para
 as consultas realizadas.
+
+\section{Implantação e Automação}
+
+\subsection{Docker e Docker Compose}
+
+Docker é uma plataforma de conteinerização que permite empacotar uma
+aplicação e suas dependências em uma unidade isolada e portátil, capaz de ser
+executada de forma consistente em diferentes ambientes \citep{docker:2026}. O
+Docker Compose é uma ferramenta complementar que permite definir e orquestrar
+múltiplos contêineres --- e as relações entre eles --- por meio de um único
+arquivo de configuração declarativo \citep{dockercompose:2026}.
+
+No projeto, o Docker Compose é utilizado tanto no ambiente de desenvolvimento
+quanto no ambiente de produção para orquestrar os serviços de banco de dados
+(PostgreSQL), armazenamento em memória (Valkey) e da própria API, garantindo
+que as versões e configurações desses serviços sejam idênticas entre as
+máquinas de desenvolvimento e o servidor de produção.
+
+O uso de \textit{healthchecks} em conjunto com a diretiva \texttt{depends\_on} e a
+condição \texttt{service\_healthy} assegura que a API só seja iniciada após o
+banco de dados e o \textit{Valkey} estarem de fato prontos para aceitar conexões,
+evitando falhas de inicialização por condição de corrida.
+
+% TODO: Add the listing here
+
+A adoção do Docker se justifica, no contexto de uma aplicação de saúde
+mental de código aberto, pelo objetivo de garantir a reprodutibilidade do
+ambiente de execução: qualquer pessoa que clone o repositório --- seja para
+contribuir com o projeto, auditar seu funcionamento ou realizar sua própria
+implantação --- consegue reproduzir o ambiente completo sem depender de
+configurações manuais específicas do sistema operacional hospedeiro, o que
+reforça o caráter \textit{self-service} do projeto.
+
+\subsection{GitHub Actions}
+
+GitHub Actions é uma plataforma de integração e entrega contínuas (CI/CD)
+nativa do GitHub, que permite a definição de fluxos de trabalho automatizados
+--- disparados por eventos como \textit{push} ou \textit{pull request} ---
+descritos de forma declarativa em arquivos YAML \citep{githubactions:2026}.
+
+No projeto, o fluxo de trabalho de CI/CD é dividido em três etapas
+sequenciais e dependentes entre si. A primeira etapa (\texttt{test}) sobe um
+serviço efêmero de PostgreSQL e executa a suíte de testes automatizados da
+API a cada \textit{push} ou \textit{pull request} que modifique arquivos do
+diretório da API. A segunda etapa (\texttt{build-and-push}), condicionada ao
+sucesso da primeira e restrita a eventos de \textit{push}, constrói a imagem
+Docker de produção da API e a publica no GitHub Container Registry (GHCR),
+com marcação automática pelo SHA do \textit{commit} e, condicionalmente, pela
+tag \texttt{latest} quando o \textit{push} ocorre na \textit{branch}
+\texttt{master}. A terceira etapa (\texttt{deploy-production}), restrita à
+\textit{branch} \texttt{master}, conecta-se ao servidor de produção via SSH e
+realiza a atualização do serviço da API por meio da atualização da tag da
+imagem no arquivo \texttt{.env} e da recriação do contêiner correspondente
+via Docker Compose.
+
+Essa automação elimina a necessidade de intervenção manual para a maior
+parte do ciclo de implantação, restringindo a ação humana direta sobre o
+servidor de produção a situações excepcionais, o que reduz a superfície de
+erro humano e aumenta a confiabilidade do processo de entrega de novas
+versões da aplicação.
+
+\subsection{Ansible}
+
+Ansible é uma ferramenta de automação de infraestrutura que permite
+descrever, de forma declarativa e idempotente, o estado desejado de um ou
+mais servidores, dispensando a necessidade de um agente instalado na máquina
+gerenciada, uma vez que se comunica com ela via SSH \citep{ansible:2026}.
+
+No escopo deste projeto, o papel do Ansible é ortogonal ao do Docker Compose
+e ao do GitHub Actions: enquanto estes automatizam, respectivamente, a
+orquestração dos serviços da aplicação e o ciclo de integração e entrega
+contínuas, o Ansible é responsável exclusivamente pelo provisionamento
+inicial do servidor de produção, executado uma única vez --- ou sempre que um
+novo servidor precisar ser provisionado. Esse provisionamento consiste em:
+(i) criar o usuário dedicado à aplicação; (ii) adicionar a chave pública SSH
+utilizada pelo GitHub Actions para se autenticar no servidor durante a etapa
+de implantação; (iii) criar os diretórios da aplicação com as permissões
+adequadas; e (iv) instalar o Docker no servidor. A cópia do arquivo de
+variáveis de ambiente de produção (\texttt{.env.production}), por conter
+segredos e credenciais sensíveis, é deliberadamente mantida como uma etapa
+manual, não automatizada, e não é versionada no repositório.
+
+A separação entre o provisionamento inicial (\textit{Ansible}), a orquestração de
+execução (\textit{Docker Compose}) e a automação do ciclo de
+entrega (\textit{GitHub Actions}) reflete uma decisão arquitetural:
+cada ferramenta atua em uma camada distinta e bem delimitada do processo
+de implantação, o que favorece a reprodutibilidade de todo o processo,
+do zero, por qualquer pessoa que deseje hospedar sua própria instância da aplicação.
+
+Essa preocupação é particularmente relevante no contexto de um
+aplicativo de saúde mental de código aberto: ao reduzir a dependência
+de serviços proprietários de implantação (\textit{walled gardens}) e
+ao documentar e automatizar o processo de provisionamento, o projeto
+favorece um modelo mais alinhado aos princípios de privacidade e de
+autonomia sobre os dados dos usuários, permitindo que instituições ou
+indivíduos preocupados com a confidencialidade de dados sensíveis de
+saúde mental hospedem e controlem sua própria instância da aplicação.
