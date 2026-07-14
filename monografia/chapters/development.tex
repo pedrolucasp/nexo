@@ -226,10 +226,13 @@ funcionalidade definitiva.
 
 \section{Histórico}
 
-Nessa tela é apresentado o histórico de registros de humor, sono, gatilho,
-e ações de cuidado. Como os dados são diferentes, é consultado os
-\textit{endpoints} respectivos de cada dado, paralelamente, e então é
-processado no aplicativo.
+
+Nessa tela é apresentado o histórico consolidado de registros de humor,
+sono, gatilho e ações de cuidado (como sessões de terapia), organizados
+cronologicamente e agrupados por dia, conforme a figura
+\ref{fig:screenshot-history}. O usuário pode ainda filtrar a listagem por
+categoria (``Humor'', ``Sono'', ``Gatilho'' e ``Ações de Cuidado''),
+reduzindo o volume de informação exibida.
 
 \begin{figure}[H]
 \centering
@@ -239,9 +242,14 @@ processado no aplicativo.
 \source{O autor, 2026}
 \end{figure}
 
-Para fazer isso, é utilizado um pequeno serviço que atua com o padrão
-de \textit{mappers} para transformar os dados de cada \textit{endpoint}
-em um formato comum, que é utilizado pelo restante da tela.
+Como os quatro tipos de dado residem em recursos distintos da API, a
+tela consulta os respectivos \textit{endpoints} em paralelo e, em
+seguida, processa o resultado no próprio aplicativo. Para isso, é
+utilizado um pequeno serviço que atua como \textit{mapper}, transformando
+os dados de cada \textit{endpoint} em um formato comum, apresentado no
+código \ref{lst:history-card}.
+
+\newpage
 
 \begin{lstlisting}[caption={Formato comum da tela de histórico}, label={lst:history-card}]
 export type HistoryCard = {
@@ -256,24 +264,25 @@ export type HistoryCard = {
 };
 \end{lstlisting}
 
-Conforme pode-se ver no código \ref{lst:history-card}, o formato comum
-utilizado na tela de histórico, mapeia em essencialmente quatro propriedades
-do dado original, além de uma propriedade adicional para identificar a categoria.
+Após a normalização, os quatro conjuntos de dados são combinados em uma
+única lista ordenada pelo campo \texttt{timestamp} e reagrupados por dia
+para exibição, conforme visto na figura \ref{fig:screenshot-history}, nos
+cabeçalhos ``terça-feira, 14 de julho'' e ``segunda-feira, 13 de julho''.
+Essa unificação é proposital: ao invés de apresentar quatro telas
+separadas por tipo de dado, o histórico busca reconstruir uma narrativa
+única do dia do usuário, aproximando-se do princípio de \textit{Ecological
+Momentary Assessment} já mencionado anteriormente — o contexto de um
+registro de humor (por exemplo, o gatilho ``Interno'' registrado três
+minutos antes, na mesma figura) fica visualmente próximo do evento que
+possivelmente o motivou.
 
-A propriedade \texttt{raw} é utilizada para armazenar o dado original,
-permitindo que seja recuperado posteriormente quando necessário. A
-propriedade \texttt{badge} é utilizada para armazenar qual dado é mostrado
-como um ``indicador'' mais importante para aquele dado em específico,
-por exemplo, que um determinado registro de sono foi ``Insuficiente'', se for
-menor que 7 horas, mostrar se existem vínculos com aquele registro em
-especial, ou mostrar qual nível de um determinado registro de humor
-é considerado importante prestar atenção, como ``Ansiedade alta'',
-``Energia alta'', etc. O último é importante também saber, por que uma
-pessoa com TAB, pode estar com a energia alta e significar que ela está
-em um período de mania, o que é útil para se detectar alguma alteração
-ou mudança de ciclos.
-
-Vale notar também que o badge é similar ao \textit{badge} que aparece na
-tela de consulta de registros, apresentado na figura \ref{fig:screenshot-consulta-registros}.
+A propriedade \texttt{raw} armazena o dado original, permitindo que a
+listagem redirecione o usuário para a tela de detalhe correta ao tocar em
+um card, independentemente da categoria. Já a propriedade \texttt{badge}
+reaproveita o mesmo mecanismo já descrito na seção de indicadores: para
+um registro de sono, sinaliza se a duração foi insuficiente; para um
+registro de humor, destaca a dimensão mais relevante daquele registro
+(como ``Ansiedade alta'' na figura \ref{fig:screenshot-history}); para um
+gatilho, indica sua categoria, e assim por diante.
 
 \FloatBarrier
