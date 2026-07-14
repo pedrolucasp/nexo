@@ -1,13 +1,108 @@
 \chapter{Tecnologias}
 
-\lipsum[1-2]
+Este capítulo apresenta as principais tecnologias empregadas no desenvolvimento
+do aplicativo, organizadas de acordo com a camada da arquitetura em que
+atuam: front-end, back-end e infraestrutura/persistência de dados.
 
-\section{API}
+\section{Front-end}
 
-\lipsum[1-2]
+\subsection{React Native}
 
-\subsection{Express}
+React Native é um \textit{framework} de código aberto, mantido pela Meta, que
+permite o desenvolvimento de aplicativos móveis multiplataforma a partir de
+uma única base de código escrita em JavaScript/TypeScript, utilizando
+componentes que são traduzidos para elementos nativos tanto no iOS quanto no
+Android \citep{reactnative:2026}.
 
-\lipsum[1-2]
+A escolha do React Native se justifica pelo escopo reduzido da equipe de
+desenvolvimento (um único desenvolvedor) e facilidade de conhecimento e
+manutenção, sem trazer, para este projeto, benefícios que justifiquem esse
+custo adicional. Além disso, o ecossistema maduro do React Native oferece
+ampla disponibilidade de bibliotecas para funcionalidades já previstas no
+aplicativo, como notificações locais e gráficos.
 
-\section{Expo e React Native}
+\subsection{Zustand}
+
+Zustand é uma biblioteca leve de gerenciamento de estado para aplicações
+React e React Native, que dispensa a estrutura verbosa de \textit{providers}
+e \textit{reducers} tipicamente associada a bibliotecas como Redux
+\citep{zustand:2026}.
+
+Ela foi escolhida para gerenciar o estado efêmero da aplicação (por exemplo,
+dados de formulários em preenchimento ou estados de navegação temporários)
+por sua API minimalista e baixo \textit{overhead} de configuração, adequada a um
+projeto de escopo individual em que a complexidade adicional de soluções
+mais robustas de gerenciamento de estado não se justifica.
+
+\section{Back-end}
+
+\subsection{Express.js}
+
+Express.js é um \textit{framework} minimalista para aplicações web em
+Node.js, amplamente utilizado para a construção de APIs \textit{REST},
+oferecendo uma camada fina de abstração sobre o roteamento de requisições HTTP e
+\textit{middlewares} \citep{express:2026}.
+
+Sua adoção se deve à simplicidade e à flexibilidade não opinativa do
+\textit{framework}, que permite estruturar a API de acordo com as
+necessidades específicas do projeto, sem impor convenções rígidas de
+arquitetura, além de sua ampla documentação e maturidade no ecossistema
+Node.js.
+
+\subsection{Zod}
+
+Zod é uma biblioteca de validação e definição de esquemas de dados para
+TypeScript, que permite declarar formatos esperados de entrada (como corpos
+de requisição) e inferir automaticamente os tipos estáticos correspondentes
+\citep{zod:2026}.
+
+Zod foi escolhido para validar os dados recebidos pela API antes de seu
+processamento, garantindo que registros de humor, sono e demais entradas do
+usuário estejam em conformidade com o formato esperado. A inferência
+automática de tipos a partir dos esquemas evita a duplicação de definições de
+tipo entre a camada de validação e o restante do código TypeScript do
+back-end.
+
+\subsection{Valkey e BullMQ}
+
+Valkey é um banco de dados em memória, do tipo chave-valor, criado como
+\textit{fork} de código aberto do Redis, mantido sob a governança da Linux
+Foundation \citep{valkey:2026}. BullMQ é uma biblioteca para gerenciamento de
+filas de tarefas em Node.js, construída sobre bancos de dados compatíveis com
+o protocolo Redis \citep{bullmq:2026}.
+
+A combinação das duas ferramentas foi adotada para o processamento paralelo
+e assíncrono de tarefas que não precisam bloquear a resposta imediata da API,
+como o disparo de notificações programadas e o processamento de indicadores
+a partir do histórico de registros do usuário. A escolha do Valkey em
+específico, e não do Redis diretamente, se deve à mudança de licenciamento do
+Redis em 2024, que passou a restringir certos usos comerciais; o Valkey
+mantém compatibilidade total de protocolo, permanecendo sob licença
+permissiva de código aberto.
+
+\section{Infraestrutura e Persistência de Dados}
+
+\subsection{PostgreSQL}
+
+PostgreSQL é um sistema gerenciador de banco de dados relacional, de código
+aberto, reconhecido por sua conformidade com o padrão SQL, robustez e suporte
+a tipos de dados avançados \citep{postgresql:2026}.
+
+Sua escolha se justifica pela natureza estruturada e relacional dos dados do
+domínio da aplicação (registros de humor associados a usuários, horários,
+gatilhos e categorias), que se beneficia das garantias de integridade
+referencial e das transações ACID oferecidas por um banco relacional
+maduro, em detrimento de soluções não relacionais.
+
+\subsection{Prisma}
+
+Prisma é um \textit{Object-Relational Mapper} (ORM) para o ecossistema
+Node.js/TypeScript, que gera automaticamente um cliente de acesso ao banco de
+dados tipado a partir de um esquema declarativo, além de oferecer um sistema
+de migrações versionadas \citep{prisma:2026}.
+
+O Prisma foi escolhido por permitir a manutenção do esquema do banco de dados
+de forma versionada e sincronizada com o código da aplicação, reduzindo a
+chance de divergência entre a estrutura do banco e as entidades manipuladas
+pelo back-end, além de prover checagem de tipos em tempo de compilação para
+as consultas realizadas.
