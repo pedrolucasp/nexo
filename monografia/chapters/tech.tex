@@ -118,6 +118,37 @@ Docker Compose é uma ferramenta complementar que permite definir e orquestrar
 múltiplos contêineres --- e as relações entre eles --- por meio de um único
 arquivo de configuração declarativo \citep{dockercompose:2026}.
 
+
+No projeto, o Docker Compose é utilizado tanto no ambiente de desenvolvimento
+quanto no ambiente de produção para orquestrar os serviços de banco de dados
+(PostgreSQL), armazenamento em memória (Valkey) e da própria API, garantindo
+que as versões e configurações desses serviços sejam idênticas entre as
+máquinas de desenvolvimento e o servidor de produção. O uso de
+\textit{healthchecks} em conjunto com a diretiva \texttt{depends\_on} e a
+condição \texttt{service\_healthy} assegura que a API só seja iniciada após o
+banco de dados e o Valkey estarem de fato prontos para aceitar conexões,
+evitando falhas de inicialização por condição de corrida (race condition), como ilustrado no
+Código~\ref{lst:healthcheck-compose}.
+
+\begin{lstlisting}[caption={Configuração de \textit{healthcheck} do Valkey e de dependência condicional da API no \texttt{docker-compose.yml}}, label={lst:healthcheck-compose}]
+valkey:
+  image: valkey/valkey:9.0-alpine
+  healthcheck:
+    test: ["CMD", "valkey-cli", "ping"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 5s
+
+api:
+  build: ./api
+  depends_on:
+    valkey:
+      condition: service_healthy
+    db:
+      condition: service_healthy
+\end{lstlisting}
+
 No projeto, o Docker Compose é utilizado tanto no ambiente de desenvolvimento
 quanto no ambiente de produção para orquestrar os serviços de banco de dados
 (PostgreSQL), armazenamento em memória (Valkey) e da própria API, garantindo
