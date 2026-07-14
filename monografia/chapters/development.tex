@@ -1,0 +1,224 @@
+\chapter{Desenvolvimento}
+
+Este capítulo detalha o funcionamento de algumas funcionalidades
+desenvolvidas durante o projeto. Apenas algumas funcionalidades mais
+chaves são abordadas neste capítulo, como o registro de humor, vinculo
+de um gatilho, indicadores, e o registro de atividades.
+
+\section{Processo de Login}
+
+Logo ao abrir o aplicativo, o usuário é redirecionado para a tela de
+login. A tela em si é relativamente simples, e contem os campos de
+email e senha. Existe um elemento proposital aqui, uma forma de gerar
+um certo nível de anonicidade, onde o usuário não precisa se identificar
+com um nome ou número de telefone, ou mesmo ativar através de uma conta
+de outra plataforma, como por exemplo, Google ou Facebook.
+
+Em especial por dois motivos, (1) necessitaria uma conexão OAuth, de
+forma que as plataformas de terceiro poderiam rastrear dados de qual
+usuário tem acesso a qual aplicativo. Isso é importante porque existe,
+e é fartamente documentado, sobre os mecanismos usados por tais plataformas
+para rastrear e monitorar o acesso aos dados dos usuários, de forma a
+vender e monetizar os dados dos usuários.
+
+% TODO: Write citations, link to news articles about it
+
+Por fim, ainda retomando a proposta de oferecer a possibilidade de
+\textit{self-service} para o usuário, o usuário que decidisse
+ter uma instância do aplicativo própria para si, não precisaria de uma
+conta em uma plataforma de terceiro, como Google ou Facebook e tampouco
+precisaria registrar-se nessas plataformas.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de login}
+\label{fig:screenshot-login}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-login.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Por fim, destaca-se aqui que, conforme mencionado anteriormente, na
+modelagem de casos de uso \ref{fig:use-cases}, ao realizar o login,
+no primeiro acesso é enviado um email com um código de verificação,
+seguindo a logistica de \textit{magic links}, onde adiciona uma camada
+extra de segurança, garantindo que apenas o usuário que solicitou o login
+possa acessar a conta.
+
+\section{Página de Consulta de Registros}
+
+A tela inicial é a tela nomeada apenas como ``Novo''. A proposta aqui
+é ser a tela de cadastro rápido de um humor, e também é a tela que
+visualmente mais destoa das demais. O usuário é apresentado com três
+seções distintas:
+
+\begin{itemize}
+    \item Cadastro rápido de um humor
+    \item Entre ontem e hoje
+    \item Registros recentes
+\end{itemize}
+
+Sendo respectivamente, uma seção onde o usuário é convidado a
+``escolher um humor'', e iniciar o processo de registro de uma nova entrada
+de humor, a seção onde é computado os indicadores do nível de energia
+acumulado entre o dia de ontem e hoje, além da informação da média de
+sono do dia atual e comparada com o dia anterior. Por fim, também é
+listado os últimos dez registros de humor que o usuário cadastrou.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de Consulta de Registros}
+\label{fig:screenshot-consulta-registros}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-initial-page.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Aqui já é introduzido para o usuário um padrão de organização e hierarquia:
+todos elementos centrais são organizados em \textit{cards}, que são
+exibidos em no máximo duas colunas. Também é introduzido, caso o usuário
+já tenha registros de humor cadastrados, como será resumido esses registros
+cadastrados pelo usuário em todas as seções do aplicativo: geralmente,
+tendo um ícone, um título e alguma informação adicional destacada.
+
+\section{Criação de Registros de Humor}
+
+Nesta seção, o usuário pode criar novos registros de humor, escolhendo
+entre uma lista de opções pré-definidas. O humor selecionado na tela
+anterior é mostrado aqui, e o usuário é convidado a julgar como ele se
+sente referente a uma escala de 1 a 10, sobre os níveis de energia,
+estresse e ansiedade, respectivamente.
+
+\begin{figure}[H]
+\centering
+\caption{Criação de Registros de Humor}
+\label{fig:screenshot-consulta-humor}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-create-mood.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Naturalmente, é uma questão dificil de responder, porém é importante
+que seja um momento reflexivo e tampouco, como descreve o aplicativo,
+não necessariamente sendo preciso.
+
+O usuário pode adicionar uma anotação sobre aquele registro em
+específico, que igualmente é um padrão que se repete/apresenta durante
+outras telas.
+
+Por fim, o usuário pode escolher "o que compõe aquele registro", que
+ou seja, escolher emoções e estados/sentimentos que ele sente naquele
+momento. Aqui uma listagem mista desses elementos é apresentado, e que
+cujo ele pode selecionar os que mais se aplica a ele, e julgar um nível
+de intensidade para cada um. Aqui a escala é menor e mais fácil, visando
+facilitar a escolha e julgamento do usuário, entre ``Leve'', ``Moderado'',
+e ``Intenso'', conforme a figura \ref{fig:screenshot-add-components}.
+
+\begin{figure}[H]
+\centering
+\caption{Adicionando sentimentos/emoções}
+\label{fig:screenshot-add-components}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-add-components.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Ao concluir esse processo, e salvar, é apresentado para o usuário
+uma tela de confirmação, onde ele pode opcionalmente vincular
+esse registro a um gatilho em específico, que pode ter ocorrido
+antes de ele salvar o registro, ou opcionalmente, criar um novo
+gatilho. Aqui o projeto novamente, se ancora no EMA, recheando o registro
+de humor com mais contexto sobre o que aconteceu.
+
+\begin{figure}[H]
+\centering
+\caption{Vinculando um humor com um gatilho}
+\label{fig:screenshot-link-mood-trigger}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-link-mood-with-trigger.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Posteriormente, o usuário pode delimitar o impacto que aquele gatilho
+pode ter exercído naquele registro de humor em especial. Aqui, é,
+novamente o processo de chute de impacto, nada com muita precisão.
+
+\begin{figure}[H]
+\centering
+\caption{Avaliando o impacto de um gatilho no humor}
+\label{fig:screenshot-assess-trigger-mood-impact}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-link-mood-assess-impact.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Por fim, vale mencionar que após esse processo, internamente, é enfileirado
+um \textit{background job} que processa alguns indicadores: recalcular
+o nível de energia daquele dia, apresentado na figura \ref{fig:screenshot-consulta-registros},
+recalcular o indicador de correlação entre humor e energia, e agendar
+o \textit{background job} que recalculará o nível de energia daquele
+período (os últimos sete dias), apresentado na figura \ref{fig:screenshot-consulta-registros}.
+
+\section{Indicadores}
+
+Nessa tela é apresentado os indicadores construídos a partir dos
+registros de humor, sono, gatilho. Além disso, embora em estado experimental,
+também é apresentado um ``resumo semanal'' que condensa o mais central
+de todos os indicadores, apresentando o nível de humor, média de sono
+total do período.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de indicadores}
+\label{fig:screenshot-insights}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-insights.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+\section{Histórico}
+
+Nessa tela é apresentado o histórico de registros de humor, sono, gatilho,
+e ações de cuidado. Como os dados são diferentes, é consultado os
+\textit{endpoints} respectivos de cada dado, paralelamente, e então é
+processado no aplicativo.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de Histórico}
+\label{fig:screenshot-history}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-history.jpeg}
+\source{O autor, 2026}
+\end{figure}
+
+Para fazer isso, é utilizado um pequeno serviço que atua com o padrão
+de \textit{mappers} para transformar os dados de cada \textit{endpoint}
+em um formato comum, que é utilizado pelo restante da tela.
+
+\begin{lstlisting}[caption={Formato comum da tela de histórico}, label={lst:history-card}]
+export type HistoryCard = {
+  id: string; // "<category>-<id>" to avoid collisions
+  category: HistoryCategory;
+  subtype?: CareActionSubtype; // only set when category === "care_action"
+  timestamp: string; // ISO string — used for sorting and display
+  title: string;
+  summary: string;
+  badge?: HistoryBadge;
+  raw: MoodEntry | SleepRecord | Trigger | CareAction;
+};
+\end{lstlisting}
+
+Conforme pode-se ver no código \ref{lst:history-card}, o formato comum
+utilizado na tela de histórico, mapeia em essencialmente quatro propriedades
+do dado original, além de uma propriedade adicional para identificar a categoria.
+
+A propriedade \texttt{raw} é utilizada para armazenar o dado original,
+permitindo que seja recuperado posteriormente quando necessário. A
+propriedade \texttt{badge} é utilizada para armazenar qual dado é mostrado
+como um ``indicador'' mais importante para aquele dado em específico,
+por exemplo, que um determinado registro de sono foi ``Insuficiente'', se for
+menor que 7 horas, mostrar se existem vínculos com aquele registro em
+especial, ou mostrar qual nível de um determinado registro de humor
+é considerado importante prestar atenção, como ``Ansiedade alta'',
+``Energia alta'', etc. O último é importante também saber, por que uma
+pessoa com TAB, pode estar com a energia alta e significar que ela está
+em um período de mania, o que é útil para se detectar alguma alteração
+ou mudança de ciclos.
+
+Vale notar também que o badge é similar ao \textit{badge} que aparece na
+tela de consulta de registros, apresentado na figura \ref{fig:screenshot-consulta-registros}.
+
+\FloatBarrier
