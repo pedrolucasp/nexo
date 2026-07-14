@@ -155,11 +155,16 @@ período (os últimos sete dias), apresentado na figura \ref{fig:screenshot-cons
 
 \section{Indicadores}
 
-Nessa tela é apresentado os indicadores construídos a partir dos
-registros de humor, sono, gatilho. Além disso, embora em estado experimental,
-também é apresentado um ``resumo semanal'' que condensa o mais central
-de todos os indicadores, apresentando o nível de humor, média de sono
-total do período.
+Nessa tela é apresentado um conjunto de indicadores construídos a partir
+dos registros de humor, sono e gatilho do usuário. Diferente das demais
+telas do aplicativo, que operam sobre dados em tempo real, os indicadores
+são artefatos pré-computados: um \textit{worker} assíncrono (BullMQ)
+percorre semanalmente todos os usuários ativos e enfileira, para cada
+um, um conjunto de \textit{jobs} — um por tipo de indicador — que
+processam a janela dos últimos sete dias e persistem o resultado em uma
+tabela dedicada. O aplicativo móvel apenas consulta esse resultado já
+calculado, o que evita repetir cálculos custosos a cada abertura da tela
+e desacopla a lógica analítica do restante da API.
 
 \begin{figure}[H]
 \centering
@@ -168,6 +173,56 @@ total do período.
 \includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-insights.jpeg}
 \source{O autor, 2026}
 \end{figure}
+
+% TODO: referenciar EMA / momentary assessment como justificativa da janela de 7 dias
+
+São três os indicadores semanais exibidos: tendência de humor, correlação
+entre sono e energia, e padrão de gatilhos.
+
+\begin{itemize}
+    \item \textbf{Tendência de humor}: compara a média de humor da
+    primeira metade da semana com a da segunda metade, expressando a
+    diferença como uma variação percentual. O resultado é classificado
+    como melhora, piora ou estabilidade a partir de uma margem de $\pm10\%$.
+
+    \item \textbf{Correlação entre sono e energia}: relaciona a duração
+    do sono de uma noite com o nível de energia relatado na manhã
+    seguinte, através do coeficiente de correlação de Pearson. Exige um
+    mínimo de observações pareadas para ser calculado — caso contrário,
+    o indicador simplesmente não é exibido.
+
+    \item \textbf{Padrão de gatilhos}: identifica a categoria de gatilho
+    mais frequente na semana e expressa sua predominância como percentual
+    do total de registros.
+\end{itemize}
+
+É intencional, na figura \ref{fig:screenshot-insights}, que o bloco de
+``Energia'' apareça vazio: o cálculo da correlação depende da existência
+simultânea de registros de sono \emph{e} de humor em quantidade mínima,
+e no período retratado o usuário ainda não havia acumulado dados
+suficientes de ambos os tipos. Optou-se por não exibir uma correlação
+calculada com poucos pontos, preferindo comunicar a ausência de dado a
+apresentar um número pouco confiável.
+
+O bloco maior no topo da tela, o ``Resumo Semanal'', condensa os
+indicadores mais centrais — média de sono do período e um rótulo de
+humor (``Estável'', no exemplo). Esse rótulo, no entanto, é o elemento
+mais delicado de toda a funcionalidade. Embora exista uma fórmula capaz
+de produzir uma classificação de estabilidade a partir da variância dos
+registros de humor, atribuir esse tipo de afirmação a um usuário —
+especialmente em um aplicativo que é utilizado por pessoas com
+Transtorno Afetivo Bipolar, para quem uma leitura equivocada de
+``estabilidade'' pode mascarar justamente o início de um episódio —
+exige um embasamento mais cuidadoso do que uma regra estatística
+simples. Por esse motivo, o rótulo apresentado nesta versão do
+aplicativo é estático (não deriva de fato do cálculo de estabilidade) e
+a funcionalidade pode ser inteiramente desabilitada pelo usuário nas
+configurações. A decisão de manter ou não uma afirmação automatizada
+desse tipo, e sob quais critérios, permanece um ponto em aberto que
+mereceria revisão de literatura específica antes de ser tratado como
+funcionalidade definitiva.
+
+% TODO: literatura sobre riscos de auto-monitoramento automatizado de humor / mood-tracking apps e TAB
 
 \section{Histórico}
 
