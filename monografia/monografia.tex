@@ -17,7 +17,15 @@
 \usepackage{longtable}
 \usepackage{placeins}
 \usepackage{float}
+\usepackage{xcolor}
 \graphicspath{{images/}}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  columns=fullflexible,
+}
 
 % Título do trabalho
 \title{nexo - Um aplicativo para rastrear flutuações de humor para pessoas com TAB}
@@ -139,6 +147,9 @@
 %Lista de Tabelas
 \listoftables
 
+% Lista de códigos
+\lstlistoflistings
+
 %lista de abreviaturas e siglas
 \begin{listofabbrv}{REST} % <- Insira aqui a maior sigla da sua lista de siglas.
 	% O conteúdo dentro dos colchetes é a sigla, e o texto ao lado é o seu significado
@@ -150,6 +161,9 @@
   \item[REST] \textit{Representational State Transfer}
   \item[API] \textit{Application Programming Interface}
   \item[UX] \textit{User Experience}
+  \item[SSH] \textit{Secure Shell}
+  \item[CI] \textit{Continuous Integration}
+  \item[CD] \textit{Continuous Deployment}
 \end{listofabbrv}
 
 %Sumario
@@ -163,6 +177,7 @@
 \input{chapters/modeling}
 \input{chapters/design}
 \input{chapters/tech}
+\input{chapters/development}
 
 \bibliography{monografia}
 \bibliographystyle{abnt}
