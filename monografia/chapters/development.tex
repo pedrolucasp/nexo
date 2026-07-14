@@ -82,8 +82,8 @@ um ícone, um título e alguma informação adicional em destaque.
 
 Nesta seção, o usuário pode criar novos registros de humor, escolhendo
 entre uma lista de opções pré-definidas. O humor selecionado na tela
-anterior é mostrado aqui, e o usuário é convidado a julgar como ele se
-sente referente a uma escala de 1 a 10, sobre os níveis de energia,
+anterior é mostrado aqui, e o usuário é convidado a julgar, em uma
+escala de 1 a 10, como se sente em relação aos níveis de energia,
 estresse e ansiedade, respectivamente.
 
 \begin{figure}[H]
@@ -94,21 +94,21 @@ estresse e ansiedade, respectivamente.
 \source{O autor, 2026}
 \end{figure}
 
-Naturalmente, é uma questão dificil de responder, porém é importante
-que seja um momento reflexivo e tampouco, como descreve o aplicativo,
-não necessariamente sendo preciso.
+Naturalmente, é uma questão difícil de responder — e, como o próprio
+aplicativo procura deixar claro, é importante que seja um momento
+reflexivo, não necessariamente preciso.
 
 O usuário pode adicionar uma anotação sobre aquele registro em
-específico, que igualmente é um padrão que se repete/apresenta durante
-outras telas.
+específico, padrão que se repete em outras telas do aplicativo.
 
-Por fim, o usuário pode escolher "o que compõe aquele registro", que
-ou seja, escolher emoções e estados/sentimentos que ele sente naquele
-momento. Aqui uma listagem mista desses elementos é apresentado, e que
-cujo ele pode selecionar os que mais se aplica a ele, e julgar um nível
-de intensidade para cada um. Aqui a escala é menor e mais fácil, visando
-facilitar a escolha e julgamento do usuário, entre ``Leve'', ``Moderado'',
-e ``Intenso'', conforme a figura \ref{fig:screenshot-add-components}.
+Por fim, o usuário pode escolher o que compõe aquele registro, ou
+seja, selecionar emoções e estados/sentimentos que sente naquele
+momento. É apresentada uma listagem mista desses elementos, na qual o
+usuário seleciona os que mais se aplicam a ele e atribui um nível de
+intensidade para cada um. Aqui a escala é menor e mais simples, visando
+facilitar a escolha e o julgamento do usuário, entre ``Leve'',
+``Moderado'' e ``Intenso'', conforme a figura
+\ref{fig:screenshot-add-components}.
 
 \begin{figure}[H]
 \centering
@@ -118,12 +118,12 @@ e ``Intenso'', conforme a figura \ref{fig:screenshot-add-components}.
 \source{O autor, 2026}
 \end{figure}
 
-Ao concluir esse processo, e salvar, é apresentado para o usuário
-uma tela de confirmação, onde ele pode opcionalmente vincular
-esse registro a um gatilho em específico, que pode ter ocorrido
-antes de ele salvar o registro, ou opcionalmente, criar um novo
-gatilho. Aqui o projeto novamente, se ancora no EMA, recheando o registro
-de humor com mais contexto sobre o que aconteceu.
+Ao concluir esse processo e salvar, é apresentada ao usuário uma tela
+de confirmação, na qual ele pode, opcionalmente, vincular o registro a
+um gatilho específico — que pode ter ocorrido antes de ele salvar o
+registro — ou criar um novo gatilho. O projeto novamente se ancora no
+EMA, enriquecendo o registro de humor com mais contexto sobre o que
+aconteceu.
 
 \begin{figure}[H]
 \centering
@@ -133,9 +133,9 @@ de humor com mais contexto sobre o que aconteceu.
 \source{O autor, 2026}
 \end{figure}
 
-Posteriormente, o usuário pode delimitar o impacto que aquele gatilho
-pode ter exercído naquele registro de humor em especial. Aqui, é,
-novamente o processo de chute de impacto, nada com muita precisão.
+Em seguida, o usuário pode indicar o impacto que aquele gatilho
+exerceu sobre o registro de humor em questão. Novamente, trata-se de
+uma estimativa subjetiva, sem pretensão de precisão.
 
 \begin{figure}[H]
 \centering
@@ -145,23 +145,31 @@ novamente o processo de chute de impacto, nada com muita precisão.
 \source{O autor, 2026}
 \end{figure}
 
-Por fim, vale mencionar que após esse processo, internamente, é enfileirado
-um \textit{background job} que processa alguns indicadores: recalcular
-o nível de energia daquele dia, apresentado na figura \ref{fig:screenshot-consulta-registros},
-recalcular o indicador de correlação entre humor e energia, e agendar
-o \textit{background job} que recalculará o nível de energia daquele
-período (os últimos sete dias), apresentado na figura \ref{fig:screenshot-consulta-registros}.
+Por fim, vale mencionar que, após esse processo, é enfileirado
+internamente um \textit{background job} que recalcula, sob demanda, o
+indicador de energia daquele dia, apresentado na figura
+\ref{fig:screenshot-consulta-registros}. Diferentemente deste, os
+indicadores semanais — como a correlação entre sono e energia,
+descrita na seção \ref{sec:insights} — não são recalculados a cada
+registro individual, sendo processados apenas pelo job semanal
+agendado (seção \ref{sec:insights}).
 
-\section{Indicadores}
+\section{Indicadores}\label{sec:insights}
 
 Nessa tela é apresentado um conjunto de indicadores construídos a partir
 dos registros de humor, sono e gatilho do usuário. Diferente das demais
 telas do aplicativo, que operam sobre dados em tempo real, os indicadores
-são artefatos pré-computados: um \textit{worker} assíncrono (BullMQ)
+são artefatos pré-computados: um \textit{worker} assíncrono (\textit{BullMQ})
 percorre semanalmente todos os usuários ativos e enfileira, para cada
 um, um conjunto de \textit{jobs} — um por tipo de indicador — que
 processam a janela dos últimos sete dias e persistem o resultado em uma
-tabela dedicada. O aplicativo móvel apenas consulta esse resultado já
+tabela dedicada. Vale notar que nem todos os indicadores seguem esse
+fluxo agendado: os indicadores diários (energia e sono) são recalculados
+sob demanda, no momento em que o usuário registra um novo humor ou
+sessão de sono, enquanto os indicadores semanais dependem
+exclusivamente do \textit{job} de \textit{fan-out} de segunda-feira.
+
+O aplicativo móvel apenas consulta esse resultado já
 calculado, o que evita repetir cálculos custosos a cada abertura da tela
 e desacopla a lógica analítica do restante da API.
 
