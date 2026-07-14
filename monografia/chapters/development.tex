@@ -8,26 +8,25 @@ de um gatilho, indicadores, e o registro de atividades.
 \section{Processo de Login}
 
 Logo ao abrir o aplicativo, o usuário é redirecionado para a tela de
-login. A tela em si é relativamente simples, e contem os campos de
-email e senha. Existe um elemento proposital aqui, uma forma de gerar
-um certo nível de anonicidade, onde o usuário não precisa se identificar
-com um nome ou número de telefone, ou mesmo ativar através de uma conta
-de outra plataforma, como por exemplo, Google ou Facebook.
+login. A tela em si é relativamente simples, e contém os campos de
+email e senha. Existe aqui um elemento proposital: uma forma de
+garantir um certo nível de anonimato, em que o usuário não precisa se
+identificar com um nome ou número de telefone, tampouco ativar a conta
+através de uma plataforma de terceiro, como Google ou Facebook.
 
-Em especial por dois motivos, (1) necessitaria uma conexão OAuth, de
-forma que as plataformas de terceiro poderiam rastrear dados de qual
-usuário tem acesso a qual aplicativo. Isso é importante porque existe,
-e é fartamente documentado, sobre os mecanismos usados por tais plataformas
-para rastrear e monitorar o acesso aos dados dos usuários, de forma a
-vender e monetizar os dados dos usuários.
+Isso se dá, em especial, por dois motivos. Primeiro, o uso de OAuth
+exigiria uma conexão com plataformas de terceiro, que poderiam então
+rastrear quais usuários têm acesso a qual aplicativo — algo que é
+fartamente documentado na literatura sobre os mecanismos usados por
+tais plataformas para rastrear e monitorar o acesso a dados de
+usuários, com o fim de vender e monetizar essas informações.
 
 % TODO: Write citations, link to news articles about it
 
-Por fim, ainda retomando a proposta de oferecer a possibilidade de
-\textit{self-service} para o usuário, o usuário que decidisse
-ter uma instância do aplicativo própria para si, não precisaria de uma
-conta em uma plataforma de terceiro, como Google ou Facebook e tampouco
-precisaria registrar-se nessas plataformas.
+Segundo, e retomando a proposta de oferecer ao usuário a possibilidade
+de \textit{self-service}, aquele que decidisse manter uma instância
+própria do aplicativo não precisaria de uma conta em uma plataforma de
+terceiro, nem se cadastrar nelas.
 
 \begin{figure}[H]
 \centering
@@ -37,12 +36,12 @@ precisaria registrar-se nessas plataformas.
 \source{O autor, 2026}
 \end{figure}
 
-Por fim, destaca-se aqui que, conforme mencionado anteriormente, na
-modelagem de casos de uso \ref{fig:use-cases}, ao realizar o login,
-no primeiro acesso é enviado um email com um código de verificação,
-seguindo a logistica de \textit{magic links}, onde adiciona uma camada
-extra de segurança, garantindo que apenas o usuário que solicitou o login
-possa acessar a conta.
+Por fim, destaca-se aqui que, conforme mencionado anteriormente na
+modelagem de casos de uso (figura \ref{fig:use-cases}), ao realizar o
+login pela primeira vez é enviado um email com um código de
+verificação, seguindo a lógica dos \textit{magic links}. Isso adiciona
+uma camada extra de segurança, garantindo que apenas o usuário que
+solicitou o login possa acessar a conta.
 
 \section{Página de Consulta de Registros}
 
@@ -57,12 +56,12 @@ seções distintas:
     \item Registros recentes
 \end{itemize}
 
-Sendo respectivamente, uma seção onde o usuário é convidado a
-``escolher um humor'', e iniciar o processo de registro de uma nova entrada
-de humor, a seção onde é computado os indicadores do nível de energia
-acumulado entre o dia de ontem e hoje, além da informação da média de
-sono do dia atual e comparada com o dia anterior. Por fim, também é
-listado os últimos dez registros de humor que o usuário cadastrou.
+Respectivamente: uma seção em que o usuário é convidado a ``escolher
+um humor'' e iniciar o processo de registro de uma nova entrada; a
+seção em que são apresentados os indicadores de nível de energia
+acumulado entre o dia anterior e o dia atual, além da média de sono do
+dia comparada com a do dia anterior; e, por fim, a listagem dos dez
+últimos registros de humor cadastrados pelo usuário.
 
 \begin{figure}[H]
 \centering
@@ -72,12 +71,12 @@ listado os últimos dez registros de humor que o usuário cadastrou.
 \source{O autor, 2026}
 \end{figure}
 
-Aqui já é introduzido para o usuário um padrão de organização e hierarquia:
-todos elementos centrais são organizados em \textit{cards}, que são
-exibidos em no máximo duas colunas. Também é introduzido, caso o usuário
-já tenha registros de humor cadastrados, como será resumido esses registros
-cadastrados pelo usuário em todas as seções do aplicativo: geralmente,
-tendo um ícone, um título e alguma informação adicional destacada.
+Aqui já é introduzido ao usuário um padrão de organização e hierarquia:
+todos os elementos centrais são organizados em \textit{cards}, exibidos
+em no máximo duas colunas. Também é introduzido, caso o usuário já
+possua registros de humor cadastrados, o padrão pelo qual esses
+registros são resumidos em todas as seções do aplicativo: geralmente
+um ícone, um título e alguma informação adicional em destaque.
 
 \section{Criação de Registros de Humor}
 
