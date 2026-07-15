@@ -61,6 +61,11 @@ Versão: \currversion^^J
 
 \newcommand{\source}[1]{\\ Fonte: #1}
 
+\newcommand{\sourcecode}[1]{%
+  \smallskip
+  {\centering Fonte: #1\par}%
+}
+
 % Opções
 
 \DeclareOption{tcc}{
@@ -134,7 +139,7 @@ Versão: \currversion^^J
   showstringspaces=false,
   breaklines=true,
   columns=fullflexible,
-  captionpos=b,
+  captionpos=t,
   tabsize=2,
 }
 
@@ -862,7 +867,8 @@ Versão: \currversion^^J
 \renewcommand{\lstlistoflistings}{%
   \begingroup
     \let\oldnumberline\numberline
-    \renewcommand{\numberline}[1]{\lstlistingname\space\oldnumberline{##1}}%
+    \renewcommand{\numberline}[1]{\oldnumberline{\lstlistingname\space##1}}%
+    %\renewcommand{\numberline}[1]{\lstlistingname\space\oldnumberline{##1}}%
     \oldlstlistoflistings
   \endgroup
 }

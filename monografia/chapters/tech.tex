@@ -123,11 +123,13 @@ No projeto, o Docker Compose é utilizado tanto no ambiente de desenvolvimento
 quanto no ambiente de produção para orquestrar os serviços de banco de dados
 (PostgreSQL), armazenamento em memória (Valkey) e da própria API, garantindo
 que as versões e configurações desses serviços sejam idênticas entre as
-máquinas de desenvolvimento e o servidor de produção. O uso de
-\textit{healthchecks} em conjunto com a diretiva \texttt{depends\_on} e a
-condição \texttt{service\_healthy} assegura que a API só seja iniciada após o
-banco de dados e o Valkey estarem de fato prontos para aceitar conexões,
-evitando falhas de inicialização por condição de corrida (race condition), como ilustrado no
+máquinas de desenvolvimento e o servidor de produção.
+
+O uso de \textit{healthchecks} em conjunto com a diretiva
+\texttt{depends\_on} e a condição \texttt{service\_healthy} assegura
+que a API só seja iniciada após o banco de dados e o Valkey estarem de
+fato prontos para aceitar conexões, evitando falhas de inicialização
+por condição de corrida (\textit{race condition}), como ilustrado no
 Código~\ref{lst:healthcheck-compose}.
 
 \begin{lstlisting}[caption={Configuração de \textit{healthcheck} do Valkey e de dependência condicional da API no \texttt{docker-compose.yml}}, label={lst:healthcheck-compose}]
@@ -149,18 +151,7 @@ api:
       condition: service_healthy
 \end{lstlisting}
 
-No projeto, o Docker Compose é utilizado tanto no ambiente de desenvolvimento
-quanto no ambiente de produção para orquestrar os serviços de banco de dados
-(PostgreSQL), armazenamento em memória (Valkey) e da própria API, garantindo
-que as versões e configurações desses serviços sejam idênticas entre as
-máquinas de desenvolvimento e o servidor de produção.
-
-O uso de \textit{healthchecks} em conjunto com a diretiva \texttt{depends\_on} e a
-condição \texttt{service\_healthy} assegura que a API só seja iniciada após o
-banco de dados e o \textit{Valkey} estarem de fato prontos para aceitar conexões,
-evitando falhas de inicialização por condição de corrida.
-
-% TODO: Add the listing here
+\sourcecode{Elaborado pelo autor (2026)}
 
 A adoção do Docker se justifica, no contexto de uma aplicação de saúde
 mental de código aberto, pelo objetivo de garantir a reprodutibilidade do
@@ -181,18 +172,22 @@ No projeto, o fluxo de trabalho de CI/CD é dividido em três etapas
 sequenciais e dependentes entre si. A primeira etapa (\texttt{test}) sobe um
 serviço efêmero de PostgreSQL e executa a suíte de testes automatizados da
 API a cada \textit{push} ou \textit{pull request} que modifique arquivos do
-diretório da API. A segunda etapa (\texttt{build-and-push}), condicionada ao
+diretório da API.
+
+A segunda etapa (\texttt{build-and-push}), condicionada ao
 sucesso da primeira e restrita a eventos de \textit{push}, constrói a imagem
 Docker de produção da API e a publica no GitHub Container Registry (GHCR),
 com marcação automática pelo SHA do \textit{commit} e, condicionalmente, pela
 tag \texttt{latest} quando o \textit{push} ocorre na \textit{branch}
-\texttt{master}. A terceira etapa (\texttt{deploy-production}), restrita à
+\texttt{master}.
+
+Por último, a terceira etapa (\texttt{deploy-production}), restrita à
 \textit{branch} \texttt{master}, conecta-se ao servidor de produção via SSH e
 realiza a atualização do serviço da API por meio da atualização da tag da
 imagem no arquivo \texttt{.env} e da recriação do contêiner correspondente
 via Docker Compose.
 
-Essa automação elimina a necessidade de intervenção manual para a maior
+Esse processo elimina a necessidade de intervenção manual para a maior
 parte do ciclo de implantação, restringindo a ação humana direta sobre o
 servidor de produção a situações excepcionais, o que reduz a superfície de
 erro humano e aumenta a confiabilidade do processo de entrega de novas
@@ -211,10 +206,10 @@ orquestração dos serviços da aplicação e o ciclo de integração e entrega
 contínuas, o Ansible é responsável exclusivamente pelo provisionamento
 inicial do servidor de produção, executado uma única vez --- ou sempre que um
 novo servidor precisar ser provisionado. Esse provisionamento consiste em:
-(i) criar o usuário dedicado à aplicação; (ii) adicionar a chave pública SSH
+(1) criar o usuário dedicado à aplicação; (2) adicionar a chave pública SSH
 utilizada pelo GitHub Actions para se autenticar no servidor durante a etapa
-de implantação; (iii) criar os diretórios da aplicação com as permissões
-adequadas; e (iv) instalar o Docker no servidor. A cópia do arquivo de
+de implantação; (3) criar os diretórios da aplicação com as permissões
+adequadas; e (4) instalar o Docker no servidor. A cópia do arquivo de
 variáveis de ambiente de produção (\texttt{.env.production}), por conter
 segredos e credenciais sensíveis, é deliberadamente mantida como uma etapa
 manual, não automatizada, e não é versionada no repositório.
