@@ -21,7 +21,33 @@ fartamente documentado na literatura sobre os mecanismos usados por
 tais plataformas para rastrear e monitorar o acesso a dados de
 usuários, com o fim de vender e monetizar essas informações.
 
-% TODO: Write citations, link to news articles about it
+Essa preocupação não é hipotética: um estudo que interceptou o tráfego de rede de
+36 dos aplicativos mais populares de saúde mental (depressão e cessação de
+tabagismo) encontrou transmissão de dados a pelo menos um terceiro em 92\% deles,
+sendo que 81\% enviavam dados especificamente a serviços operados por Google ou
+Facebook — e apenas 59\% desses casos declaravam esse compartilhamento em política
+de privacidade \cite{Huckvale2019}.
+
+Um estudo posterior, focado exclusivamente em 27 aplicativos de saúde
+mental mais populares da Google Play Store, confirmou o mesmo padrão e
+o caracterizou formalmente como uma ameaça de \textit{linkability}
+(vinculabilidade) e \textit{identifiability} (identificabilidade): mesmo quando os
+identificadores enviados a terceiros são pseudônimos (como \textit{advertising IDs}
+ou hashes), eles ainda permitem que provedores de publicidade associem o
+comportamento de um usuário através de diferentes aplicativos e serviços
+\cite{Iwaya:22}. Como os próprios autores resumem, a mera vinculação de um
+usuário a um aplicativo de saúde mental já pode revelar que essa pessoa possui
+uma condição psicológica — seja ansiedade, depressão, ou, no caso de um
+aplicativo como o Nexo, Transtorno Afetivo Bipolar —, tornando usuários desses
+aplicativos particularmente vulneráveis a esse tipo de exposição
+\cite{Iwaya:22}.
+
+No caso do Nexo, essa cadeia de inferência é especialmente
+sensível: a presença do aplicativo na lista de apps instalados de um usuário,
+associada ao seu identificador publicitário, permitiria a uma plataforma como a
+Meta inferir uma possível condição de saúde mental do usuário para fins de
+segmentação de anúncios, sem que este tenha conhecimento ou consentimento
+explícito disso.
 
 Segundo, e retomando a proposta de oferecer ao usuário a possibilidade
 de \textit{self-service}, aquele que decidisse manter uma instância
