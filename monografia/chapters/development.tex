@@ -1,5 +1,18 @@
 \chapter{Desenvolvimento}
 
+Como delineado as tecnologias no capítulo anterior, aqui se apresenta a
+arquitetura, demonstrando como todas as tecnologias apresentadas acima se
+conectam e conversam entre si.
+
+\begin{figure}[h]
+\centering
+\caption{Arquitetura e elementos do Sistema}
+\label{fig:arch}
+\includegraphics[width=0.9\linewidth]{arch.png}
+\source{O autor}
+\end{figure}
+
+
 Este capítulo detalha o funcionamento de algumas funcionalidades
 desenvolvidas durante o projeto. Apenas algumas funcionalidades mais
 chaves são abordadas neste capítulo, como o registro de humor, vinculo
@@ -14,33 +27,41 @@ garantir um certo nível de anonimato, em que o usuário não precisa se
 identificar com um nome ou número de telefone, tampouco ativar a conta
 através de uma plataforma de terceiro, como Google ou Facebook.
 
-Isso se dá, em especial, por dois motivos. Primeiro, o uso de OAuth
-exigiria uma conexão com plataformas de terceiro, que poderiam então
-rastrear quais usuários têm acesso a qual aplicativo — algo que é
-fartamente documentado na literatura sobre os mecanismos usados por
-tais plataformas para rastrear e monitorar o acesso a dados de
-usuários, com o fim de vender e monetizar essas informações.
+Isso se dá, em especial, por dois motivos. Primeiro, o uso de uma tecnologia de
+autenticação, como por exemplo, \textit{OAuth} \cite{Hardt:2012} exigiria uma
+conexão com plataformas de terceiro, que poderiam então rastrear quais usuários
+têm acesso a qual aplicativo -- algo que é fartamente documentado na literatura
+sobre os mecanismos usados por tais plataformas para rastrear e monitorar o
+acesso a dados de usuários, com o fim de vender e monetizar essas informações.
 
-Essa preocupação não é hipotética: um estudo que interceptou o tráfego de rede de
-36 dos aplicativos mais populares de saúde mental (depressão e cessação de
-tabagismo) encontrou transmissão de dados a pelo menos um terceiro em 92\% deles,
-sendo que 81\% enviavam dados especificamente a serviços operados por Google ou
-Facebook — e apenas 59\% desses casos declaravam esse compartilhamento em política
-de privacidade \cite{Huckvale2019}.
+Essa preocupação não é hipotética: um estudo que interceptou o tráfego de rede
+de 36 dos aplicativos mais populares de saúde mental (depressão e cessação de
+tabagismo) encontrou transmissão de dados a pelo menos um terceiro em 92\%
+deles, sendo que 81\% enviavam dados especificamente a serviços operados por
+Google ou Facebook -- e apenas 59\% desses casos declaravam esse
+compartilhamento em política de privacidade \cite{Huckvale2019}.
 
 Um estudo posterior, focado exclusivamente em 27 aplicativos de saúde
 mental mais populares da Google Play Store, confirmou o mesmo padrão e
-o caracterizou formalmente como uma ameaça de \textit{linkability}
-(vinculabilidade) e \textit{identifiability} (identificabilidade): mesmo quando os
-identificadores enviados a terceiros são pseudônimos (como \textit{advertising IDs}
-ou hashes), eles ainda permitem que provedores de publicidade associem o
-comportamento de um usuário através de diferentes aplicativos e serviços
-\cite{Iwaya:22}. Como os próprios autores resumem, a mera vinculação de um
-usuário a um aplicativo de saúde mental já pode revelar que essa pessoa possui
-uma condição psicológica — seja ansiedade, depressão, ou, no caso de um
-aplicativo como o Nexo, Transtorno Afetivo Bipolar —, tornando usuários desses
-aplicativos particularmente vulneráveis a esse tipo de exposição
-\cite{Iwaya:22}.
+o caracterizou formalmente como uma ameaça:
+
+\begin{quote}
+  A maioria dos aplicativos representa ameaças relacionadas à rastreabilidade,
+  à identificação e à detecção. Isso constitui um risco, pois  alguns terceiros
+  podem rastrear, reidentificar e detectar as ações e os dados dos usuários. A
+  falta de conscientização também está relacionada a essas ameaças, uma vez que
+  os aplicativos não explicam (por exemplo, na política de privacidade) os
+  riscos que a publicidade direcionada representa para pessoas com problemas
+  mentais, bem como o risco de reidentificação e divulgação de condições de
+  saúde mental (por exemplo, ansiedade, depressão).
+  \cite[p.~3, tradução nossa]{Iwaya:22}
+\end{quote}
+
+Como os próprios autores resumem, a mera vinculação de um usuário a um
+aplicativo de saúde mental já pode revelar que essa pessoa possui uma condição
+psicológica -- seja ansiedade, depressão, ou, no caso de um aplicativo como o
+Nexo, Transtorno Afetivo Bipolar --, tornando usuários desses aplicativos
+particularmente vulneráveis a esse tipo de exposição \cite{Iwaya:22}.
 
 No caso do Nexo, essa cadeia de inferência é especialmente
 sensível: a presença do aplicativo na lista de apps instalados de um usuário,
