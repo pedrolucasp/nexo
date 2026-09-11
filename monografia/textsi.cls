@@ -576,7 +576,7 @@ Versão: \currversion^^J
 % Nível do sumário
 \setcounter{tocdepth}{4}
 
-\newlength{\ei@chapnumindent}\setlength{\ei@chapnumindent}{1em}
+\newlength{\ei@chapnumindent}\setlength{\ei@chapnumindent}{1.8em}
 
 \renewcommand*{\l@chapter}[2]{
         \addpenalty{-\@highpenalty}
