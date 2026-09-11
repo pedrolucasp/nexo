@@ -152,6 +152,7 @@ Versão: \currversion^^J
   \def\bibname{Refer{\^e}ncias}%
   \def\abstractname{Resumo}%
   \def\appendixname{Ap{\^e}ndice}%
+  \def\appendicesname{Ap{\^e}ndices}%
   \def\contentsname{Sum{\'a}rio}%
   \def\listfigurename{Lista de Ilustra\c{c}{\~o}es}%
   \def\listtablename{Lista de Tabelas}%
@@ -163,6 +164,7 @@ Versão: \currversion^^J
   \def\listabbrvname{Lista de Abreviaturas e Siglas}%
   \def\listsymbolname{Lista de S{\'\i}mbolos}%
   \def\annexname{Anexo}%
+  \def\annexesname{Anexos}%
   \def\keywordsname{Palavras-chave}%
   \def\lstlistingname{C{\'o}digo}%
   \def\lstlistlistingname{Lista de C{\'o}digos}%
@@ -186,6 +188,7 @@ Versão: \currversion^^J
   \def\bibname{References}%
   \def\abstractname{Abstract}%
   \def\appendixname{Appendix}%
+  \def\appendicesname{Appendices}%
   \def\contentsname{Contents}%
   \def\listfigurename{List of Figures}%
   \def\listtablename{List of Tables}%
@@ -197,6 +200,7 @@ Versão: \currversion^^J
   \def\listabbrvname{List of Abbreviations and Acronyms}%
   \def\listsymbolname{List of Symbols}%
   \def\annexname{Annex}%
+  \def\annexesname{Annexes}%
   \def\keywordsname{Keywords}%
   \def\lstlistingname{Listing}%
   \def\lstlistlistingname{List of Listings}%
@@ -663,6 +667,30 @@ Versão: \currversion^^J
   \vspace*{50pt}%
   \@startsection{append}{0}{0pt}{0pt}{42pt}{\centering\reset@font\ei@chapterfont\sffamily\bfseries\MakeUppercase}%
 }
+
+%==============================================================================
+% Folha de abertura de Anexos/Apêndices
+%------------------------------------------------------------------------------
+% A ABNT NBR 14724 pede que o conjunto de anexos (ou de apêndices) seja
+% precedido por uma folha simples, contendo apenas "ANEXOS" ou "APÊNDICES"
+% centralizado e em negrito, sem mais nada, distinta da folha de cada
+% anexo/apêndice individual (que já leva "ANEXO A -- Título", produzida por
+% \annex/\append). Use \annexescover ou \appendicescover uma vez, antes
+% do primeiro \annex ou \append do grupo
+%==============================================================================
+\newcommand{\@ei@dividerpage}[1]{%
+  \clearpage%
+  \thispagestyle{empty}%
+  \vspace*{\fill}%
+  \begin{center}
+    \reset@font\ei@chapterfont\sffamily\bfseries\MakeUppercase{#1}%
+  \end{center}
+  \vspace*{\fill}%
+  \clearpage%
+}
+
+\newcommand{\annexescover}{\@ei@dividerpage{\annexesname}}
+\newcommand{\appendicescover}{\@ei@dividerpage{\appendicesname}}
 
 %==============================================================================
 % Definição das listas de abreviaturas e siglas e de símbolos
