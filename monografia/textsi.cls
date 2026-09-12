@@ -844,8 +844,19 @@ Versão: \currversion^^J
 
 %==============================================================================
 % Redefinição do conteúdo das listas de figuras e tabelas
+%------------------------------------------------------------------------------
+% Empacotado em \AtBeginDocument: o pacote hyperref redefine \@caption
+% incondicionalmente e imediatamente no momento em que é carregado (não
+% em seu próprio \AtBeginDocument), descartando o prefixo "Figura"/"Tabela"
+% especificamente na entrada da Lista de Ilustrações/Tabelas (mas não na
+% legenda visível, que continua correta) -- daí a legenda no corpo do texto
+% aparecer certa ("Figura 1: ...") mas a entrada na lista aparecer sem o
+% prefixo. Adiando nossa redefinição para \AtBeginDocument garante que ela
+% seja a última a rodar, independentemente de onde \usepackage{hyperref}
+% aparece no preâmbulo do documento.
 %==============================================================================
 \newif\if@captionlisting\@captionlistingtrue
+\AtBeginDocument{%
 \long\def\@caption#1[#2]#3{%
   \par
   \if@captionlisting%
@@ -860,6 +871,7 @@ Versão: \currversion^^J
     \normalsize
     \@makecaption{\csname fnum@#1\endcsname}{\ignorespaces #3}\par
   \endgroup%
+}%
 }
 
 \renewcommand*{\l@figure}{\@dottedtocline{1}{0em}{5.5em}}
