@@ -123,6 +123,38 @@ Versão: \currversion^^J
   morestring=[b]',
 }
 
+\lstdefinelanguage{javascript}{
+  keywords={async,await,break,case,catch,class,const,continue,debugger,default,
+            delete,do,else,export,extends,false,finally,for,function,if,import,
+            in,instanceof,let,new,null,of,return,static,super,switch,this,throw,
+            true,try,typeof,var,void,while,with,yield},
+  otherkeywords={=>},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]`,
+}
+
+\lstdefinelanguage{typescript}{
+  keywords={abstract,any,as,async,await,boolean,break,case,catch,class,const,
+            continue,debugger,declare,default,delete,do,else,enum,export,
+            extends,false,finally,for,from,function,get,if,implements,import,
+            in,infer,instanceof,interface,keyof,let,module,namespace,never,
+            new,null,number,object,of,override,private,protected,public,readonly,
+            return,set,static,string,super,switch,symbol,this,throw,true,try,
+            type,typeof,undefined,unique,unknown,var,void,while,with,yield},
+  otherkeywords={=>,:},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morecomment=[s]{/**C@}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]`,
+}
+
 \lstset{
   language=yaml,
   basicstyle=\ttfamily\small,
