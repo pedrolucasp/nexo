@@ -101,7 +101,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={surfaceColor} />
+      <StatusBar barStyle="dark-content" />
       <SafeAreaView
         style={styles.safeAreaView}
         edges={["top", "left", "right"]}

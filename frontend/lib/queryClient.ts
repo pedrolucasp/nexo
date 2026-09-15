@@ -3,7 +3,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { persistQueryClient }  from '@tanstack/react-query-persist-client';
 import { createMMKV } from 'react-native-mmkv';
 
-export const storage = new createMMKV({ id: 'query-cache' });
+export const storage = createMMKV({ id: 'query-cache' });
 
 const mmkvStorage = {
   getItem: (key: string) => storage.getString(key) ?? null,

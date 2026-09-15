@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "orbit",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#F6F8F6",
@@ -15,7 +14,6 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.eletrotupi.orbit",
       "googleServicesFile": "./google-services.json"
@@ -37,38 +35,50 @@
       [
         "expo-font",
         {
-          "fonts": [
-            {
-              "fontFamily": "Inter",
-              "fontDefinitions": [
-                {
-                  "weight": 400,
-                  "path": "node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf"
-                },
-                {
-                  "weight": 400,
-                  "style": "italic",
-                  "path": "node_modules/@expo-google-fonts/inter/400Regular_Italic/Inter_400Regular_Italic.ttf"
-                },
-                {
-                  "weight": 500,
-                  "path": "node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf"
-                },
-                {
-                  "weight": 600,
-                  "path": "node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf"
-                },
-                {
-                  "weight": 700,
-                  "path": "node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
-                },
-                {
-                  "weight": 900,
-                  "path": "node_modules/@expo-google-fonts/inter/900Black/Inter_900Black.ttf"
-                }
-              ]
-            }
-          ]
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Inter",
+                "fontDefinitions": [
+                  {
+                    "weight": 400,
+                    "path": "node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf"
+                  },
+                  {
+                    "weight": 400,
+                    "style": "italic",
+                    "path": "node_modules/@expo-google-fonts/inter/400Regular_Italic/Inter_400Regular_Italic.ttf"
+                  },
+                  {
+                    "weight": 500,
+                    "path": "node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf"
+                  },
+                  {
+                    "weight": 600,
+                    "path": "node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf"
+                  },
+                  {
+                    "weight": 700,
+                    "path": "node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf"
+                  },
+                  {
+                    "weight": 900,
+                    "path": "node_modules/@expo-google-fonts/inter/900Black/Inter_900Black.ttf"
+                  }
+                ]
+              }
+            ]
+          },
+          "ios": {
+            "fonts": [
+              "node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+              "node_modules/@expo-google-fonts/inter/400Regular_Italic/Inter_400Regular_Italic.ttf",
+              "node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
+              "node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+              "node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf",
+              "node_modules/@expo-google-fonts/inter/900Black/Inter_900Black.ttf"
+            ]
+          }
         }
       ],
       "expo-secure-store",

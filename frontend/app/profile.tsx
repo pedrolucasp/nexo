@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
-import { apiClient, ApiError } from '@/lib/api'
+import { apiClient, ApiError, User } from '@/lib/api'
 import { useToast } from '@/context/ToastContext';
 import { translateError, translateFields } from '@/lib/errors/translations';
 import { Card } from '@/components/ui/Cards';
@@ -113,17 +113,8 @@ export default function Profile() {
     }
   }
 
-  const onChangeAvatar = (userData) => {
-    const { id, avatarKey, avatarURL, firstName, lastName, email } = userData;
-
-    updateAuthUser({
-      id,
-      avatarKey,
-      avatarURL,
-      firstName,
-      lastName,
-      email
-    });
+  const onChangeAvatar = (user: User) => {
+    updateAuthUser(user);
   }
 
   return (

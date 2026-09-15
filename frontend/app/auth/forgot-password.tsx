@@ -101,8 +101,8 @@ export default function ForgotPasswordScreen() {
               style={styles.resendButton}
             />
 
-            <Link href="/auth/login" asChild style={[styles.link, { color: tintColor }]}>
-              <Text style={[styles.link, { color: tintColor }]}>
+            <Link href="/auth/login" asChild style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
+              <Text style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
                 Voltar para login
               </Text>
             </Link>
@@ -152,8 +152,8 @@ export default function ForgotPasswordScreen() {
             <Text style={[styles.footerText, { color: textColor, opacity: 0.7 }]}>
               Lembra tua senha?{' '}
             </Text>
-            <Link href="/auth/login" asChild style={[styles.link, { color: tintColor }]}>
-              <Text style={[styles.link, { color: tintColor }]}>
+            <Link href="/auth/login" asChild style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
+              <Text style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
                 Faça login
               </Text>
             </Link>

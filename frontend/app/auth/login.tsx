@@ -167,11 +167,11 @@ export default function LoginScreen() {
 
             <Link
               href="/auth/forgot-password"
-              style={[styles.link, { color: tintColor }]}
+              style={StyleSheet.flatten([styles.link, { color: tintColor }])}
               asChild
             >
               <Text
-                style={[styles.footerText, { color: textColor, opacity: 0.7 }]}
+                style={StyleSheet.flatten([styles.footerText, { color: textColor, opacity: 0.7 }])}
               >
                 Esqueceu a senha?
               </Text>
@@ -188,10 +188,10 @@ export default function LoginScreen() {
             <Link
               href="/auth/signup"
               asChild
-              style={[styles.link, { color: tintColor }]}
+              style={StyleSheet.flatten([styles.link, { color: tintColor }])}
             >
               <Text
-                style={[styles.footerText, { color: textColor, opacity: 0.7 }]}
+                style={StyleSheet.flatten([styles.footerText, { color: textColor, opacity: 0.7 }])}
               >
                 Cadastre-se
               </Text>

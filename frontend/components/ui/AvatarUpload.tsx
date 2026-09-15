@@ -10,16 +10,18 @@ import {
 } from 'react-native';
 import { Text } from '@/components/ui/Text';
 import * as ImagePicker from 'expo-image-picker';
+import { File } from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import { apiClient, ApiError } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
 import { translateError } from '@/lib/errors/translations';
 import { Colors } from '@/constants/theme';
+import type { User } from '@/lib/api/types';
 
 interface AvatarUploadProps {
   currentAvatar?: string | null;
-  onUploadSuccess?: () => void;
-  onRemoveSuccess?: () => void;
+  onUploadSuccess?: (user: User) => void;
+  onRemoveSuccess?: (user: User) => void;
 }
 
 const AvatarUpload: React.FC<AvatarUploadProps> = ({
@@ -49,7 +51,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
         setPreview(asset.uri);
-        await uploadAvatar(asset.fileName, asset.uri, asset.mimeType);
+        await uploadAvatar(asset.uri);
       }
     } catch (error) {
       console.error('Image picker error:', error);
@@ -57,20 +59,16 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
     }
   };
 
-  const uploadAvatar = async (fileName: string, imageUri: string, mimeType: string): Promise<void> => {
+  const uploadAvatar = async (imageUri: string): Promise<void> => {
     setIsLoading(true);
 
     try {
       const formData = new FormData();
-      formData.append('avatar', {
-        uri: imageUri,
-        type: mimeType,
-        name: fileName,
-      } as any);
+      formData.append('avatar', new File(imageUri));
 
-      const response = await apiClient.avatar(formData);
+      const { user } = await apiClient.avatar(formData);
 
-      onUploadSuccess?.(response.user);
+      onUploadSuccess?.(user);
     } catch (error) {
       console.error('Upload error:', error);
       showToast(
@@ -96,10 +94,10 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
           setIsLoading(true);
 
           try {
-            const response = await apiClient.removeAvatar();
+            const { user } = await apiClient.removeAvatar();
 
             setPreview(null);
-            onRemoveSuccess?.(response.user);
+            onRemoveSuccess?.(user);
           } catch (error) {
             console.error('Remove error:', error);
             showToast(

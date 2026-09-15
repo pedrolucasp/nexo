@@ -12,6 +12,19 @@ export interface User {
   dailyReminderTime?: string;
 }
 
+export interface AvatarResponse {
+  message: string;
+  fileLocation: string;
+  key: string;
+  filename: string;
+  size: number;
+  user: User;
+}
+
+export interface RemoveAvatarResponse {
+  user: User;
+}
+
 // Auth
 export interface AuthResponse {
   token: string;

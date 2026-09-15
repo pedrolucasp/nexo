@@ -49,6 +49,8 @@ import {
   PatchCareActionPayload,
   TriggerMoodLink,
   LinkMoodPayload,
+  AvatarResponse,
+  RemoveAvatarResponse,
 } from "@/lib/api/types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -109,9 +111,13 @@ class ApiClient {
     };
 
     let response: Response;
+
+    console.log(`${API_BASE_URL}${endpoint} => with ${JSON.stringify(config)}`)
+
     try {
       response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    } catch {
+    } catch (err) {
+      console.error("Underlying error: ", err)
       throw new ApiError("Sem conexão com o servidor", 0);
     }
 
@@ -216,18 +222,15 @@ class ApiClient {
     });
   }
 
-  async avatar(formData: FormData): Promise<User> {
-    return await this.request(`/users/me/avatar`, {
+  async avatar(formData: FormData): Promise<AvatarResponse> {
+    return await this.request<AvatarResponse>(`/users/me/avatar`, {
       method: "POST",
       body: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      } as any,
     });
   }
 
-  async removeAvatar(): Promise<void> {
-    return await this.request(`/users/me/avatar`, {
+  async removeAvatar(): Promise<RemoveAvatarResponse> {
+    return await this.request<RemoveAvatarResponse>(`/users/me/avatar`, {
       method: "DELETE",
     });
   }
