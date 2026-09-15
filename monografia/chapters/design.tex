@@ -154,3 +154,56 @@ identidade moderna e funcional proposta pelo aplicativo. Por ser amplamente
 utilizada em plataformas digitais e ferramentas de interface, como o Figma, a
 fonte transmite familiaridade ao usuário e mantém consistência com os padrões
 contemporâneos de design de interfaces.
+
+\subsection{Wireframes}
+
+\textit{Wireframes} são representações simplificadas de uma interface, focadas
+na estrutura e na disposição dos elementos, sem se preocupar ainda com
+componentes visuais definitivos, cores ou tipografia. Essa camada de abstração
+permite válidar rapidamente o que cada tela precisa conter e como o usuário
+navegaria entre elas, antes de investir tempo no design em alta fidelidade, no
+qual esses elementos visuais são então aplicados. Quando elementos
+clicáveis/interativos são adicionados aos \textit{wireframes}, eles também
+podem se tornar protótipos, usados para modelar e avaliar o fluxo de navegação
+entre as telas.
+
+No desenvolvimento do aplicativo, essa prática foi usada para mapear as telas
+existentes e definir quais elementos cada uma apresentaria, como exemplifica a
+tela inicial na Figura \ref{fig:wireframe-initial}:
+
+\begin{figure}[h]
+  \centering
+  \caption{\textit{Wireframe} da tela inicial}
+  \label{fig:wireframe-initial}
+  \includegraphics[width=10cm, height=8cm, keepaspectratio]{wireframe-initial.png}
+  \source{Elaborado pelo autor (2026)}
+\end{figure}
+
+Alguns elementos podem ser notados nessa tela, como a presença de
+\textit{cards} e emojis, utilizados para criar destaque visual. A escolha de
+emojis foi inspirada pelo aplicativo analisado no
+Capítulo~\ref{chapter:methodologies}, DailyBeans que utiliza ícones para cada
+tipo de emoção. Portanto, a escolha de emojis se dá como uma saída rápida e
+fácil, visto que não demanda conhecimentos de íconografia.
+
+Um segundo \textit{wireframe}, apresentado na Figura
+\ref{fig:wireframe-insights}, mostra uma proposta inicial para a tela de
+Indicadores. Nessa versão inicial, o usuário selecionava, por meio de um menu
+suspenso, (``Flutuação de:''), qual indicador desejava visualizar, sendo os
+dados apresentados em um gráfico de linha que representava a flutuação dos
+níveis informados de um humor (``Energia'', ``Ansiedade'' e/ou ``Estresse''),
+além de seções para gatilhos frequentes e um indicador de estabilidade de
+humor.
+
+\begin{figure}[h]
+  \centering
+  \caption{\textit{Wireframe} da tela de indicadores}
+  \label{fig:wireframe-insights}
+  \includegraphics[width=10cm, height=8cm, keepaspectratio]{wireframe-insights.png}
+  \source{Elaborado pelo autor (2026)}
+\end{figure}
+
+Essa abordagem, contudo, foi descartada na versão final do aplicativo: o
+gráfico com seletor de tipo de indicador foi removido, e a tela foi repaginada
+para simplificar usando três tipos de indicadores automaticamente cálculados
+pelo sistema, conforme detalhado no Capítulo~\ref{sec:insights}.
