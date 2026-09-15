@@ -86,6 +86,44 @@ automática de tipos a partir dos esquemas evita a duplicação de definições 
 tipo entre a camada de validação e o restante do código TypeScript do
 back-end.
 
+\begin{lstlisting}[language=typescript, caption={Validação e Inferência usando Zod}, label={lst:zod-inference}]
+import {
+  BaseMoodOption,
+  MoodComponentOption,
+  IntensityLevel
+} from '@prisma/client';
+
+export const MoodComponentSchema = z.object({
+  component: z.nativeEnum(MoodComponentOption),
+  intensity: z.nativeEnum(IntensityLevel)
+});
+
+export const CreateMoodSchema = z.object({
+  annotation: z.string().optional(),
+  moment: z.coerce.date(),
+  selectedMood: z.nativeEnum(BaseMoodOption),
+  anxietyLevel: z.number().int().min(0).max(10),
+  stressLevel: z.number().int().min(0).max(10),
+  energyLevel: z.number().int().min(0).max(10),
+  moodComponents: z.array(MoodComponentSchema).min(1)
+});
+
+export type CreateMoodInput = z.infer<typeof CreateMoodSchema>;
+\end{lstlisting}
+
+\sourcecode{Elaborado pelo autor (2026)}
+
+Aqui, é possível observar alguns elementos, como a extração direta dos
+\textit{enums} mapeados pelo Prisma, citado anteriormente nas linhas 1--5. Em
+seguida, são criados os \textit{schemas} de validação: um valida os componentes
+de humor de forma aninhada dentro do objeto recebido, e o outro valida os dados
+do próprio registro -- os níveis aceitos de ansiedade, estresse e energia; a
+conversão do campo \texttt{moment} para um objeto de data a partir da entrada
+recebida; a exigência de ao menos um componente de humor selecionado; entre
+outros. Por fim, esses dados são exportados como um \textit{type} do
+TypeScript, usado pelo compilador para a verificação estática de tipos no
+restante do back-end.
+
 \subsection{Valkey e BullMQ}
 
 Valkey é um banco de dados em memória, do tipo chave-valor, criado como
