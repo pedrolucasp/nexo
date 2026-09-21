@@ -1,0 +1,113 @@
+---
+# roles/uacme/tasks/main.yml
+# Installs uacme and manages certificates as an unprivileged `acme` user
+#
+# NOTE: uacme account registration is INTERACTIVE (it asks for an email address
+# and to accept the terms). It is done once, by hand:
+#
+#   doas -u acme uacme new <email>
+#
+# After that, `acme-update-certs <domain>` (used by the nginx role and the cron)
+# works non-interactively
+
+- name: Install uacme and openssl
+  community.general.apk:
+    name:
+      - uacme
+      - openssl
+    state: present
+    update_cache: true
+  tags: [packages, prepare]
+
+- name: Create the acme group
+  ansible.builtin.group:
+    name: "{{ acme_group }}"
+    state: present
+  tags: [prepare]
+
+- name: Create the acme user
+  ansible.builtin.user:
+    name: "{{ acme_user }}"
+    home: /var/lib/acme
+    system: true
+    shell: /sbin/nologin
+    groups: "{{ acme_group }},{{ acme_web_group }}"
+    append: true
+    state: present
+  tags: [prepare]
+
+- name: Create the uacme certificates directory
+  ansible.builtin.file:
+    path: "{{ acme_cert_dir }}"
+    state: directory
+    owner: "{{ acme_user }}"
+    group: "{{ acme_group }}"
+    mode: "0750"
+  tags: [prepare]
+
+- name: Create the uacme private directory
+  ansible.builtin.file:
+    path: "{{ acme_cert_dir }}/private"
+    state: directory
+    owner: "{{ acme_user }}"
+    group: "{{ acme_group }}"
+    mode: "0750"
+  tags: [prepare]
+
+- name: Create the ACME challenge webroot
+  ansible.builtin.file:
+    path: /var/www/.well-known/acme-challenge
+    state: directory
+    owner: "{{ acme_user }}"
+    group: "{{ acme_web_group }}"
+    mode: "0755"
+  tags: [prepare]
+
+- name: Create the acme log files
+  ansible.builtin.file:
+    path: "/var/log/acme-{{ item }}.log"
+    state: touch
+    owner: "{{ acme_user }}"
+    group: "{{ acme_group }}"
+    mode: "0640"
+    modification_time: preserve
+    access_time: preserve
+  loop: "{{ vhosts }}"
+  tags: [prepare, acme-install]
+
+- name: Install the acme-update-certs wrapper
+  ansible.builtin.template:
+    src: acme-update-certs.j2
+    dest: "{{ acme_wrapper }}"
+    owner: root
+    group: root
+    mode: "0755"
+  tags: [prepare, acme-install]
+
+- name: Check whether the uacme account is registered
+  ansible.builtin.stat:
+    path: "{{ acme_cert_dir }}/private/account.key"
+  register: acme_account
+  tags: [prepare, acme-install]
+
+- name: Explain the one-time interactive registration
+  ansible.builtin.debug:
+    msg: |-
+      uacme is not registered yet. Registration is interactive: it asks for an
+      email address and to accept the terms, so run it by hand, once:
+
+        doas -u {{ acme_user }} uacme new <email>
+
+      Then re-run deploy.yml to publish HTTPS.
+  when: not acme_account.stat.exists
+  tags: [prepare, acme-install]
+
+- name: Renew certificates
+  ansible.builtin.command:
+    cmd: "{{ acme_wrapper }} {{ item }}"
+  loop: "{{ vhosts }}"
+  register: acme_renew
+  changed_when: false
+  failed_when: false
+  notify: nginx reload
+  tags: [renew-certs]

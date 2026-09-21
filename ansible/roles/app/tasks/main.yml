@@ -1,0 +1,72 @@
+---
+# roles/app/tasks/main.yml
+# Places the production app config in /srv/app/<env>/
+# Secrets are NOT created here: the .example files are dropped in and you fill
+# them in by hand (that part is deliberately manual, so get ready to SSH and copy it)
+
+- name: Ensure /srv/app exists
+  ansible.builtin.file:
+    path: /srv/app
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0750"
+  tags: [app]
+
+- name: Ensure the per-environment app directories exist
+  ansible.builtin.file:
+    path: "/srv/app/{{ item }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0750"
+  loop: "{{ app_environments }}"
+  tags: [app]
+
+- name: Install the production compose file
+  ansible.builtin.copy:
+    src: docker-compose.production.yml
+    dest: "/srv/app/{{ app_env }}/docker-compose.yml"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0640"
+  tags: [app]
+
+- name: Install the valkey configuration
+  ansible.builtin.copy:
+    src: valkey.conf
+    dest: "/srv/app/{{ app_env }}/valkey.conf"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0640"
+  tags: [app]
+
+- name: Install the environment example files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/srv/app/{{ app_env }}/{{ item }}.example"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0640"
+  loop:
+    - env
+    - env.production
+  tags: [app]
+
+- name: Check whether the real env files exist on the server
+  ansible.builtin.stat:
+    path: "/srv/app/{{ app_env }}/{{ item }}"
+  loop:
+    - .env
+    - .env.production
+  register: app_env_stat
+  tags: [app]
+
+- name: Remind to fill in the env files
+  ansible.builtin.debug:
+    msg: >-
+      {{ item.item }} is missing: copy it from {{ item.item }}.example and fill
+      it in before the first `docker compose up -d`
+  loop: "{{ app_env_stat.results }}"
+  when: not item.stat.exists
+  tags: [app]

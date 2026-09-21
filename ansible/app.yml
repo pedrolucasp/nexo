@@ -1,0 +1,14 @@
+---
+# ansible/app.yml
+# Sets up the deploy target: /srv/app/<env>/ with the compose file, valkey
+# config and env examples
+#
+#   ansible-playbook -i inventory/hosts.yml app.yml --ask-become-pass
+
+- name: Configure the app deploy target
+  hosts: vps
+  become: yes
+  become_method: doas
+
+  roles:
+    - app

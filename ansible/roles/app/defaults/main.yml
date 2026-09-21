@@ -1,0 +1,7 @@
+---
+# roles/app/defaults/main.yml
+# Host-side application configuration
+
+app_env: production
+# ghcr.io/<owner>/<repo> must match the image the deploy workflow pushes
+app_github_repo: "your-org/nexo"

@@ -1,0 +1,4 @@
+---
+# Domains served by nginx, ACME-issued by uacme
+vhosts:
+  - usenexo.xyz

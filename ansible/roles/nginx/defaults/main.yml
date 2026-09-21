@@ -1,0 +1,9 @@
+---
+# roles/nginx/defaults/main.yml
+
+nginx_conf_dir: /etc/nginx/http.d          # Alpine nginx include dir
+nginx_well_known_root: /var/www            # served for ACME HTTP-01 challenges
+nginx_static_root: /srv/static             # thesis PDF lives here
+nginx_proxy_pass: http://127.0.0.1:3000    # the api container
+nginx_cert_dir: /etc/ssl/uacme
+nginx_acme_wrapper: /usr/local/bin/acme-update-certs

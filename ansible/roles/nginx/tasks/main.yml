@@ -1,0 +1,101 @@
+---
+# roles/nginx/tasks/main.yml
+# Publishes the vhost, two-phase around the ACME certificate
+#
+#   deploy.yml (this role) will HTTP-only block, then obtain cert via the wrapper then
+#   HTTPS block. The certificate itself is managed by the `uacme` role; if the
+#   account is not registered yet, this role leaves the HTTP block in place and
+#   tells you the one manual command to run
+
+- name: Install nginx
+  community.general.apk:
+    name: nginx
+    state: present
+    update_cache: true
+  tags: [packages, nginx]
+
+- name: Remove the default nginx server block
+  ansible.builtin.file:
+    path: "{{ nginx_conf_dir }}/default.conf"
+    state: absent
+  notify: reload nginx
+  tags: [nginx]
+
+- name: Ensure the ACME webroot exists
+  ansible.builtin.file:
+    path: "{{ nginx_well_known_root }}/.well-known"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags: [nginx]
+
+- name: Ensure /srv/static exists for the thesis PDF
+  ansible.builtin.file:
+    path: "{{ nginx_static_root }}"
+    state: directory
+    owner: "{{ deploy_user }}"
+    group: nginx
+    mode: "0750"
+  tags: [nginx]
+
+- name: Ensure nginx is enabled and running
+  ansible.builtin.service:
+    name: nginx
+    enabled: true
+    state: started
+  tags: [nginx]
+
+- name: Check whether the certificate exists
+  ansible.builtin.stat:
+    path: "{{ nginx_cert_dir }}/{{ vhosts[0] }}/cert.pem"
+  register: nginx_cert
+  tags: [nginx]
+
+- name: Deploy the HTTP-only server block
+  ansible.builtin.template:
+    src: site.http.j2
+    dest: "{{ nginx_conf_dir }}/{{ vhosts[0] }}.conf"
+    mode: "0644"
+  notify: reload nginx
+  when: not nginx_cert.stat.exists
+  tags: [nginx]
+
+- name: Flush handlers so the HTTP block is live before requesting a certificate
+  ansible.builtin.meta: flush_handlers
+  tags: [nginx]
+
+- name: Obtain the certificate via the acme wrapper
+  ansible.builtin.command:
+    cmd: "{{ nginx_acme_wrapper }} {{ vhosts[0] }}"
+    creates: "{{ nginx_cert_dir }}/{{ vhosts[0] }}/cert.pem"
+  when: not nginx_cert.stat.exists
+  register: nginx_acme
+  changed_when: nginx_acme.rc == 0
+  failed_when: false
+  tags: [nginx]
+
+- name: Re-check whether the certificate now exists
+  ansible.builtin.stat:
+    path: "{{ nginx_cert_dir }}/{{ vhosts[0] }}/cert.pem"
+  register: nginx_cert_after
+  tags: [nginx]
+
+- name: Deploy the HTTPS server block
+  ansible.builtin.template:
+    src: site.https.j2
+    dest: "{{ nginx_conf_dir }}/{{ vhosts[0] }}.conf"
+    mode: "0644"
+  notify: reload nginx
+  when: nginx_cert_after.stat.exists
+  tags: [nginx]
+
+- name: Explain the manual step when no certificate is available yet
+  ansible.builtin.debug:
+    msg: |-
+      No TLS certificate for {{ vhosts[0] }} yet. If uacme is not registered,
+      run this once by hand and then re-run deploy.yml:
+
+        doas -u acme uacme -v -h /usr/share/uacme/uacme.sh new {{ vhosts[0] }}
+  when: not nginx_cert_after.stat.exists
+  tags: [nginx]

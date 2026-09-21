@@ -1,0 +1,18 @@
+---
+# ansible/cert.yml
+# Installs uacme and manages certificates as the unprivileged `acme` user
+#
+# Registration is interactive and must be done by hand once: see the debug
+# message this playbook prints
+#
+#   ansible-playbook -i inventory/hosts.yml cert.yml --ask-become-pass
+
+- name: Provision ACME certificates
+  hosts: vps
+  become: yes
+  become_method: doas
+  vars_files:
+    - vars/vhosts.yml
+
+  roles:
+    - uacme

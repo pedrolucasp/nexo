@@ -1,0 +1,31 @@
+#!/bin/sh -eu
+
+stats() {
+	cert="/etc/ssl/uacme/$1/cert.pem"
+
+	if ! [ -e "$cert" ]
+	then
+		return
+	fi
+
+	expiration="$(openssl x509 -enddate -noout -in "$cert" \
+		| cut -d= -f2)"
+
+	printf 'Domain %s will expire in: "%s" %s\n' "$1" "$expiration"
+}
+
+acme() {
+	exec >>/var/log/acme-$1.log 2>&1
+	date
+
+	site=$1
+	shift
+
+	/usr/bin/uacme -v -h {{ acme_hook }} issue $site $* || true
+
+	stats $site
+
+	echo "Done \n\n" >> "/var/log/acme-$site.log"
+}
+
+acme $1

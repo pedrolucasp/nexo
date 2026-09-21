@@ -1,0 +1,11 @@
+---
+# roles/uacme/defaults/main.yml
+# ACME certificate management (uacme)
+# setup: everything runs as an unprivileged `acme` user
+
+acme_user: acme
+acme_group: acme
+acme_web_group: nginx
+acme_hook: /usr/share/uacme/uacme.sh
+acme_cert_dir: /etc/ssl/uacme
+acme_wrapper: /usr/local/bin/acme-update-certs

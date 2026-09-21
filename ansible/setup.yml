@@ -1,0 +1,27 @@
+---
+# ansible/setup.yml
+# Base host setup: baseline packages, Docker, the deploy user and its key
+#
+#   ansible-playbook -i inventory/hosts.yml setup.yml --ask-become-pass
+
+- name: Base host setup
+  hosts: vps
+  become: yes
+  become_method: doas
+
+  roles:
+    - bootstrap
+    - docker
+    - appuser
+
+  post_tasks:
+    - name: Confirm deploy user can reach Docker
+      ansible.builtin.command: docker info
+      become_user: "{{ deploy_user }}"
+      changed_when: false
+      register: docker_check
+
+    - name: Show Docker status
+      ansible.builtin.debug:
+        msg: "Docker is reachable by {{ deploy_user }}"
+      when: docker_check.rc == 0

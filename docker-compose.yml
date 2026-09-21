@@ -24,7 +24,7 @@ services:
       - '6379:6379'
     volumes:
       - valkey_data:/data
-      - ./etc/valkey.conf:/etc/valkey/valkey.conf
+      - ./ansible/roles/app/files/valkey.conf:/etc/valkey/valkey.conf
     command: valkey-server /etc/valkey/valkey.conf
     environment:
       - ALLOW_EMPTY_PASSWORD=yes

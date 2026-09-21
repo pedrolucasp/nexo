@@ -1,0 +1,15 @@
+---
+# ansible/deploy.yml
+# Publishes the nginx vhost (two-phase around the ACME certificate)
+#
+#   ansible-playbook -i inventory/hosts.yml deploy.yml --ask-become-pass
+
+- name: Configure nginx
+  hosts: vps
+  become: yes
+  become_method: doas
+  vars_files:
+    - vars/vhosts.yml
+
+  roles:
+    - nginx

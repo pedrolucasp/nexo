@@ -1,0 +1,50 @@
+# /srv/app/production/docker-compose.yml
+# Secrets: cp .env.production.example .env.production and fill in values
+# Start:   docker compose up -d
+# Logs:    docker compose logs -f api
+
+services:
+  db:
+    image: postgres:17-alpine
+    shm_size: 1g
+    user: postgres
+    restart: unless-stopped
+    healthcheck:
+      test: "pg_isready -U ${POSTGRES_USER} --dbname=${POSTGRES_DB}"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # No ports exposed: only reachable inside the Docker network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  valkey:
+    image: valkey/valkey:9.0-alpine
+    restart: unless-stopped
+    # No ports exposed
+    volumes:
+      - valkey_data:/data
+      - ./valkey.conf:/etc/valkey/valkey.conf
+    command: valkey-server /etc/valkey/valkey.conf
+
+  api:
+    image: ghcr.io/${GITHUB_REPOSITORY}:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      # Only bind on localhost: Nginx proxies to this
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - .env.production
+    depends_on:
+      valkey:
+        condition: service_started
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  valkey_data:

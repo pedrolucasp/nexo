@@ -1,0 +1,46 @@
+server {
+    listen 80;
+    server_name {{ vhosts[0] }};
+
+    location ^~ /.well-known {
+        root /var/www;
+    }
+
+    location / {
+        return 302 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name {{ vhosts[0] }};
+
+    ssl_certificate {{ nginx_cert_dir }}/{{ vhosts[0] }}/cert.pem;
+    ssl_certificate_key {{ nginx_cert_dir }}/private/{{ vhosts[0] }}/key.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    add_header X-Clacks-Overhead "GNU Terry Pratchett";
+    add_header Permissions-Policy interest-cohort=();
+
+    location = /monografia {
+        alias {{ nginx_static_root }}/monografia.pdf;
+        add_header Content-Type application/pdf;
+        add_header Content-Disposition "inline";
+    }
+
+    location / {
+        proxy_pass {{ nginx_proxy_pass }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+
+    location ^~ /.well-known {
+        root /var/www;
+    }
+}
