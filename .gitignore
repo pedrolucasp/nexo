@@ -1,2 +1,7 @@
 # Personal scratch area for local notes, not part of the project
 /notes/
+
+# Secrets
+.env
+.env.*
+!.env.example
