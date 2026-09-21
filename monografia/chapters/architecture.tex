@@ -30,7 +30,7 @@ através de uma plataforma de terceiro, como Google ou Facebook.
 Isso se dá, em especial, por dois motivos. Primeiro, o uso de uma tecnologia de
 autenticação, como por exemplo, \textit{OAuth} \cite{Hardt:2012} exigiria uma
 conexão com plataformas de terceiro, que poderiam então rastrear quais usuários
-têm acesso a qual aplicativo -- algo que é fartamente documentado na literatura
+têm acesso a qual aplicativo --- algo que é fartamente documentado na literatura
 sobre os mecanismos usados por tais plataformas para rastrear e monitorar o
 acesso a dados de usuários, com o fim de vender e monetizar essas informações.
 
@@ -38,7 +38,7 @@ Essa preocupação não é hipotética: um estudo que interceptou o tráfego de 
 de 36 dos aplicativos mais populares de saúde mental (depressão e cessação de
 tabagismo) encontrou transmissão de dados a pelo menos um terceiro em 92\%
 deles, sendo que 81\% enviavam dados especificamente a serviços operados por
-Google ou Facebook -- e apenas 59\% desses casos declaravam esse
+Google ou Facebook --- e apenas 59\% desses casos declaravam esse
 compartilhamento em política de privacidade \cite{Huckvale2019}.
 
 Um estudo posterior, focado exclusivamente em 27 aplicativos de saúde
@@ -59,8 +59,8 @@ o caracterizou formalmente como uma ameaça:
 
 Como os próprios autores resumem, a mera vinculação de um usuário a um
 aplicativo de saúde mental já pode revelar que essa pessoa possui uma condição
-psicológica -- seja ansiedade, depressão, ou, no caso de um aplicativo como o
-Nexo, Transtorno Afetivo Bipolar --, tornando usuários desses aplicativos
+psicológica --- seja ansiedade, depressão, ou, no caso de um aplicativo como o
+Nexo, Transtorno Afetivo Bipolar ---, tornando usuários desses aplicativos
 particularmente vulneráveis a esse tipo de exposição \cite{Iwaya:22}.
 
 No caso do Nexo, essa cadeia de inferência é especialmente
@@ -141,7 +141,7 @@ estresse e ansiedade, respectivamente.
 \source{Elaborado pelo autor (2026)}
 \end{figure}
 
-Naturalmente, é uma questão difícil de responder — e, como o próprio
+Naturalmente, é uma questão difícil de responder --- e, como o próprio
 aplicativo procura deixar claro, é importante que seja um momento
 reflexivo, não necessariamente preciso.
 
@@ -167,8 +167,8 @@ facilitar a escolha e o julgamento do usuário, entre ``Leve'',
 
 Ao concluir esse processo e salvar, é apresentada ao usuário uma tela
 de confirmação, na qual ele pode, opcionalmente, vincular o registro a
-um gatilho específico — que pode ter ocorrido antes de ele salvar o
-registro — ou criar um novo gatilho. O projeto novamente se ancora no
+um gatilho específico --- que pode ter ocorrido antes de ele salvar o
+registro --- ou criar um novo gatilho. O projeto novamente se ancora no
 EMA, enriquecendo o registro de humor com mais contexto sobre o que
 aconteceu.
 
@@ -196,8 +196,8 @@ Por fim, vale mencionar que, após esse processo, é enfileirado
 internamente um \textit{background job} que recalcula, sob demanda, o
 indicador de energia daquele dia, apresentado na figura
 \ref{fig:screenshot-consulta-registros}. Diferentemente deste, os
-indicadores semanais — como a correlação entre sono e energia,
-descrita na seção \ref{sec:insights} — não são recalculados a cada
+indicadores semanais --- como a correlação entre sono e energia,
+descrita na seção \ref{sec:insights} --- não são recalculados a cada
 registro individual, sendo processados apenas pelo job semanal
 agendado (seção \ref{sec:insights}).
 
@@ -208,7 +208,7 @@ dos registros de humor, sono e gatilho do usuário. Diferente das demais
 telas do aplicativo, que operam sobre dados em tempo real, os indicadores
 são artefatos pré-computados: um \textit{worker} assíncrono (\textit{BullMQ})
 percorre semanalmente todos os usuários ativos e enfileira, para cada
-um, um conjunto de \textit{jobs} — um por tipo de indicador — que
+um, um conjunto de \textit{jobs} --- um por tipo de indicador --- que
 processam a janela dos últimos sete dias e persistem o resultado em uma
 tabela dedicada. Vale notar que nem todos os indicadores seguem esse
 fluxo agendado: os indicadores diários (energia e sono) são recalculados
@@ -242,7 +242,7 @@ entre sono e energia, e padrão de gatilhos.
     \item \textbf{Correlação entre sono e energia}: relaciona a duração
     do sono de uma noite com o nível de energia relatado na manhã
     seguinte, através do coeficiente de correlação de Pearson. Exige um
-    mínimo de observações pareadas para ser calculado — caso contrário,
+    mínimo de observações pareadas para ser calculado --- caso contrário,
     o indicador simplesmente não é exibido.
 
     \item \textbf{Padrão de gatilhos}: identifica a categoria de gatilho
@@ -259,14 +259,14 @@ calculada com poucos pontos, preferindo comunicar a ausência de dado a
 apresentar um número pouco confiável.
 
 O bloco maior no topo da tela, o ``Resumo Semanal'', condensa os
-indicadores mais centrais — média de sono do período e um rótulo de
+indicadores mais centrais --- média de sono do período e um rótulo de
 humor (``Estável'', no exemplo). Esse rótulo, no entanto, é o elemento
 mais delicado de toda a funcionalidade. Embora exista uma fórmula capaz
 de produzir uma classificação de estabilidade a partir da variância dos
-registros de humor, atribuir esse tipo de afirmação a um usuário —
+registros de humor, atribuir esse tipo de afirmação a um usuário ---
 especialmente em um aplicativo que é utilizado por pessoas com
 Transtorno Afetivo Bipolar, para quem uma leitura equivocada de
-``estabilidade'' pode mascarar justamente o início de um episódio —
+``estabilidade'' pode mascarar justamente o início de um episódio ---
 exige um embasamento mais cuidadoso do que uma regra estatística
 simples. Por esse motivo, o rótulo apresentado nesta versão do
 aplicativo é estático (não deriva de fato do cálculo de estabilidade) e
@@ -325,7 +325,7 @@ cabeçalhos ``terça-feira, 14 de julho'' e ``segunda-feira, 13 de julho''.
 Essa unificação é proposital: ao invés de apresentar quatro telas
 separadas por tipo de dado, o histórico busca reconstruir uma narrativa
 única do dia do usuário, aproximando-se do princípio de \textit{Ecological
-Momentary Assessment} já mencionado anteriormente — o contexto de um
+Momentary Assessment} já mencionado anteriormente --- o contexto de um
 registro de humor (por exemplo, o gatilho ``Interno'' registrado três
 minutos antes, na mesma figura) fica visualmente próximo do evento que
 possivelmente o motivou.
