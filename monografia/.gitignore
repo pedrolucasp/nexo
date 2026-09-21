@@ -9,3 +9,5 @@
 *.blg
 *.bbl
 *.lol
+*.out
+*.pdf
