@@ -1,6 +1,6 @@
 # Debug helper (NOT part of the smoke suite): isolates the "add a mood
-# component" interaction to reproduce the auto-navigation issue observed on
-# 2026-09-15 (see docs/STACK.md). Run directly:
+# component" interaction, i.e. the push to entry/mood-components and back
+# Run directly:
 #   maestro test frontend/e2e/debug-mood-components.yaml
 appId: com.eletrotupi.orbit
 name: Debug — mood components

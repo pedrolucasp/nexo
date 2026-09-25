@@ -13,9 +13,9 @@ tags:
     visible:
       id: text-status-prefix
     timeout: 30000
-# NOTE: if `screen-mood-components` times out below, the app is likely
-# auto-navigating back to the entry screen right after this push — see
-# docs/STACK.md "Known issues" (investigated with hierarchy dumps).
+# NOTE: `screen-mood-components` is a formSheet, which on Android is a hideable
+# Material bottom sheet. If it ever dismisses itself after this push, that is
+# where it shows up
 - scrollUntilVisible:
     element:
       id: button-add-mood-components
