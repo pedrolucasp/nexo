@@ -31,13 +31,20 @@ npm run test:e2e          # adb prep + the tagged smoke flows
 npm run test:e2e:env      # print the EXPO_PUBLIC_* values Metro needs
 ```
 
+`scripts/e2e.sh` is POSIX `sh`, so it runs unchanged on Debian/Ubuntu and on
+Alpine (busybox ash). It turns the device's animation scales off for the run and
+restores the previous values on exit — that setting is persisted on the device,
+so it is never left behind.
+
 A single flow, while iterating (a few minutes faster than the whole suite):
 
 ```sh
 cd frontend
+npm run test:e2e:env      # prints HOST_IP, the one machine-specific value
+
 maestro test e2e/mood.yaml \
-  --env HOST_IP=$(ip route get 1 | awk '/src/{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1);exit}}') \
-  --env PORT=8081 --env E2E_EMAIL=e2e@example.com --env E2E_PASSWORD=e2e-password
+  --env HOST_IP=<lan-ip> --env PORT=8081 \
+  --env E2E_EMAIL=e2e@example.com --env E2E_PASSWORD=e2e-password
 ```
 
 Three flows take roughly 8 minutes: every flow clears app state, so each one
