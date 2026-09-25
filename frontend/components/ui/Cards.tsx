@@ -16,6 +16,7 @@ interface CardProps {
   onPress?: () => void;
   variant?: 'default' | 'highlighted';
   style?: ViewStyle;
+  testID?: string;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -23,6 +24,7 @@ export const Card: React.FC<CardProps> = ({
   onPress,
   variant = 'default',
   style,
+  testID,
 }) => {
   const isHighlighted = variant === 'highlighted';
 
@@ -50,6 +52,7 @@ export const Card: React.FC<CardProps> = ({
     <Pressable
       onPress={onPress}
       disabled={!onPress}
+      testID={testID}
       style={({ pressed }) => [
         styles.card,
         pressed && onPress && {

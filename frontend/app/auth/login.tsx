@@ -129,7 +129,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.header}>
-            <Text style={[styles.title, { color: textColor }]}>
+            <Text style={[styles.title, { color: textColor }]} testID="text-welcome">
               Bem vindo de volta
             </Text>
             <Text style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
@@ -156,6 +156,7 @@ export default function LoginScreen() {
               placeholder="Qual sua senha?"
               error={errors.password}
               showPasswordToggle
+              testID="input-password"
             />
 
             <Button
@@ -163,6 +164,7 @@ export default function LoginScreen() {
               onPress={handleLogin}
               loading={loading}
               style={styles.loginButton}
+              testID="button-login"
             />
 
             <Link

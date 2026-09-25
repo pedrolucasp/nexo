@@ -28,10 +28,12 @@ export const Section: React.FC<SectionProps> = ({ children, style }) => {
 interface SectionHeaderProps {
   title: string;
   subtitle?: string;
+  info?: string;
   actionLabel?: string;
   onActionPress?: () => void;
   style?: ViewStyle;
   variant?: 'default' | 'subtle';
+  testID?: string;
 }
 
 // XXX: A Section must either have a label as a pill/informative thing
@@ -44,6 +46,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   onActionPress,
   variant,
   style,
+  testID,
 }) => {
   const textColor = useThemeColor({}, 'text');
   const tintColor = useThemeColor({}, 'tint');
@@ -104,7 +107,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   return (
     <View style={[styles.headerContainer, style]}>
       <Between>
-        <Text style={styles.title}>
+        <Text style={styles.title} testID={testID}>
           {title}
         </Text>
 

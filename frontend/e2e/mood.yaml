@@ -1,0 +1,59 @@
+appId: com.eletrotupi.orbit
+name: Smoke — Mood entry
+tags:
+  - smoke
+---
+- runFlow:
+    file: helpers/_login.yaml
+- tapOn:
+    id: mood-great
+- tapOn:
+    id: button-save-mood
+- extendedWaitUntil:
+    visible:
+      id: text-status-prefix
+    timeout: 30000
+# NOTE: if `screen-mood-components` times out below, the app is likely
+# auto-navigating back to the entry screen right after this push — see
+# docs/STACK.md "Known issues" (investigated with hierarchy dumps).
+- scrollUntilVisible:
+    element:
+      id: button-add-mood-components
+    direction: DOWN
+- tapOn:
+    id: button-add-mood-components
+- extendedWaitUntil:
+    visible:
+      id: screen-mood-components
+    timeout: 15000
+# The sheet opens at its half detent and the component list scrolls, so only the
+# first rows are mounted
+- tapOn:
+    id: component-joy
+- tapOn:
+    id: header-done
+- tapOn:
+    id: input-notes
+- inputText: "e2e smoke register"
+- hideKeyboard
+- tapOn:
+    id: button-save-entry
+- extendedWaitUntil:
+    visible:
+      id: text-mood-saved
+    timeout: 30000
+- tapOn:
+    id: button-conclude
+- extendedWaitUntil:
+    visible:
+      id: text-welcome-quick-register
+    timeout: 15000
+- tapOn:
+    id: tab-history
+- extendedWaitUntil:
+    visible:
+      id: history-list
+    timeout: 15000
+# Only content (data) assertion in the suite: checks the annotation we typed
+# persisted on the history card. UI chrome is greeted via testIDs only
+- assertVisible: "e2e smoke register"

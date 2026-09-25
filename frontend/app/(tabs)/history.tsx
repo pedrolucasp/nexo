@@ -49,7 +49,7 @@ export default function History() {
       userAvatar={user.avatarURL}
       showNotificationBadge={true}
     >
-      <ScrollView>
+      <ScrollView testID="history-list">
         <FilterPills active={activeFilter} onChange={setActiveFilter} />
 
         {Object.keys(grouped).length === 0 ? (

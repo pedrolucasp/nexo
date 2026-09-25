@@ -89,7 +89,7 @@ export default function NewMoodEntry() {
       <ScrollView scrollEventThrottle={16}>
         <View style={styles.container}>
           <Center>
-            <Text style={styles.statusPrefix}>
+            <Text style={styles.statusPrefix} testID="text-status-prefix">
               Como você está se sentindo agora?
             </Text>
 
@@ -150,6 +150,7 @@ export default function NewMoodEntry() {
               minRows={4}
               maxRows={6}
               placeholder="Escreva uma nota rápida sobre o seu dia até o momento..."
+              testID="input-notes"
             />
           </Card>
 
@@ -172,6 +173,7 @@ export default function NewMoodEntry() {
               onPress={editComponents}
               textStyle={{ fontWeight: 500 }}
               variant="dashed"
+              testID="button-add-mood-components"
             />
           </Section>
 
@@ -179,6 +181,7 @@ export default function NewMoodEntry() {
             title="Salvar Registro"
             onPress={saveMoodEntry}
             disabled={!components.length}
+            testID="button-save-entry"
           />
         </View>
       </ScrollView>

@@ -11,6 +11,15 @@ import { Text } from '@/components/ui/Text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Ionicons } from '@expo/vector-icons';
 
+function toTestId(label: string): string {
+  return label
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 type InputVariant = 'default' | 'ghost' | 'darkGhost';
 
 interface BaseInputProps {
@@ -75,6 +84,7 @@ export const Input: React.FC<InputProps> = ({
 
   const keyboardType = type === 'email' ? 'email-address' : 'default';
   const secureTextEntry = type === 'password' && !showPassword;
+  const testID = props.testID ?? (label ? `input-${toTestId(label)}` : undefined);
 
   return (
     <View style={styles.container}>
@@ -84,6 +94,7 @@ export const Input: React.FC<InputProps> = ({
       <View style={styles.inputContainer}>
         <TextInput
           key={`${type}-${showPassword}`}
+          testID={testID}
           style={[styles.input, inputStyle, style]}
           placeholderTextColor={placeholderColor}
           keyboardType={keyboardType}
@@ -136,6 +147,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
 
   const minHeight = minRows * 24;
   const maxHeight = maxRows ? maxRows * 24 : undefined;
+  const testID = props.testID ?? (label ? `input-${toTestId(label)}` : undefined);
 
   return (
     <View style={styles.container}>
@@ -143,6 +155,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         <Label text={label} />
       )}
       <TextInput
+        testID={testID}
         style={[
           styles.textArea,
           inputStyle,

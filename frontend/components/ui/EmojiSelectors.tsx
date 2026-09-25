@@ -96,6 +96,8 @@ export const MoodSelector: React.FC<MoodSelectorProps> = ({
             <Pressable
               onPress={() => !disabled && onSelect(item.id)}
               disabled={disabled}
+              testID={`mood-${item.id}`}
+              accessibilityLabel={item.label}
               style={({ pressed }) => [
                 styles.itemButton,
                 isSelected && styles.itemButtonActive,

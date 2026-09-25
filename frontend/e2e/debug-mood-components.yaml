@@ -1,0 +1,37 @@
+# Debug helper (NOT part of the smoke suite): isolates the "add a mood
+# component" interaction to reproduce the auto-navigation issue observed on
+# 2026-09-15 (see docs/STACK.md). Run directly:
+#   maestro test frontend/e2e/debug-mood-components.yaml
+appId: com.eletrotupi.orbit
+name: Debug — mood components
+---
+- runFlow:
+    file: helpers/_login.yaml
+- tapOn:
+    id: mood-great
+- tapOn:
+    id: button-save-mood
+- extendedWaitUntil:
+    visible:
+      id: text-status-prefix
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: button-add-mood-components
+    direction: DOWN
+- tapOn:
+    id: button-add-mood-components
+- extendedWaitUntil:
+    visible:
+      id: screen-mood-components
+    timeout: 15000
+- tapOn:
+    id: component-joy
+# If the app pops back to the entry screen here, `screen-mood-components`
+# disappears this wait fails fast and pinpoints the regression
+- extendedWaitUntil:
+    visible:
+      id: screen-mood-components
+    timeout: 10000
+- assertVisible:
+    id: header-done

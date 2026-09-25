@@ -1,0 +1,26 @@
+appId: com.eletrotupi.orbit
+name: Smoke — Logout
+tags:
+  - smoke
+---
+- runFlow:
+    file: helpers/_login.yaml
+- tapOn:
+    id: tab-settings
+- scrollUntilVisible:
+    element:
+      id: button-logout
+    direction: DOWN
+- tapOn:
+    id: button-logout
+# RN Alert renders a native system dialog, the only screen that can't expose
+# testIDs. These two text matches are a deliberate, unavoidable exception
+# TODO: Fix that to use some other, more custom (and pretty) confirm dialog
+- assertVisible: "Tem certeza que quer sair?"
+- tapOn:
+    text: "^Sair$"
+    index: 1
+- extendedWaitUntil:
+    visible:
+      id: text-welcome
+    timeout: 15000

@@ -1,0 +1,14 @@
+name: nexo e2e
+
+# NOTE: `appId` is deliberately NOT set here. Maestro 2.x requires appId in the
+# config section of *every* flow file, subflows included; an appId in this
+# workspace config is ignored. Each flow under ../e2e declares it itself
+
+env:
+  PORT: "8081"
+  E2E_EMAIL: e2e@example.com
+  E2E_PASSWORD: e2e-password
+  # HOST_IP is intentionally NOT set here: it must be the machine's LAN IP
+  # `frontend/scripts/e2e.sh` detects it and passes `--env HOST_IP=...`;
+  # when running `maestro test` directly, pass it yourself:
+  #   maestro test e2e --include-tags=smoke --env HOST_IP=192.168.x.y

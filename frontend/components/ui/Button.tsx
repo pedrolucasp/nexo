@@ -10,6 +10,15 @@ import {
 import { Text } from '@/components/ui/Text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+function toTestId(title: string): string {
+  return title
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'dashed' | 'danger';
@@ -141,6 +150,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <TouchableOpacity
+      testID={props.testID ?? `button-${toTestId(title)}`}
       style={[
         styles.button,
         {

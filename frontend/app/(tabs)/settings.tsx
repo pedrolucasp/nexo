@@ -318,6 +318,7 @@ export default function Settings() {
         onPress={handleLogout}
         variant="outline"
         style={{ borderColor: Colors.light.danger }}
+        testID="button-logout"
         textStyle={{ color: Colors.light.danger }}
       />
     </ScreenLayout>

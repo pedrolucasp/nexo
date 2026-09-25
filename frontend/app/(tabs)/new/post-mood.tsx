@@ -58,7 +58,7 @@ export default function PostMood() {
             <Ionicons name="checkmark" size={32} color="#fff" />
           </View>
         </View>
-        <Text style={styles.confirmTitle}>Humor Salvo!</Text>
+        <Text style={styles.confirmTitle} testID="text-mood-saved">Humor Salvo!</Text>
         <Text style={styles.confirmSubtitle}>
           Seu registro foi armazenado com sucesso.
         </Text>
@@ -200,6 +200,7 @@ export default function PostMood() {
         variant="ghost"
         onPress={() => router.replace("/(tabs)/new")}
         style={styles.concludeButton}
+        testID="button-conclude"
       />
     </ScreenLayout>
   );

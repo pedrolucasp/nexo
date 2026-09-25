@@ -1,0 +1,9 @@
+appId: com.eletrotupi.orbit
+name: Smoke — Login
+tags:
+  - smoke
+---
+- runFlow:
+    file: helpers/_login.yaml
+- assertVisible:
+    id: card-quick-register

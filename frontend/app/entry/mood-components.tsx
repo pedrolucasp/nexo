@@ -35,14 +35,14 @@ export default function MoodComponentsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="screen-mood-components">
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={8}>
           <Ionicons name="close" size={24} color={Theme.colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Adicionar estados</Text>
-        <Pressable onPress={handleDone} hitSlop={8}>
+        <Pressable onPress={handleDone} hitSlop={8} testID="header-done">
           <Text style={styles.headerAction}>Pronto</Text>
         </Pressable>
       </View>
@@ -122,6 +122,7 @@ export default function MoodComponentsScreen() {
                   <Pressable
                     onPress={() => addComponent(def.id)}
                     style={styles.availableItemInternalWrapper}
+                    testID={`component-${def.id}`}
                   >
                     <Row gap={8} style={styles.availableInner}>
                       <View

@@ -35,8 +35,6 @@ export default function New() {
   const { data, isLoading } = useMoodEntries({ limit: 5 });
   const recentEntries = data?.entries ?? [];
 
-  console.log("entries: ", data, recentEntries);
-
   const initQuickRegister = () => {
     // TODO: Set down on camelCase vs kebab case
     router.navigate(`/new/entry?initialMood=${mood}`);
@@ -52,9 +50,10 @@ export default function New() {
         <SectionHeader
           title="Como você está hoje?"
           subtitle="Sua jornada começa agora"
+          testID="text-welcome-quick-register"
         ></SectionHeader>
 
-        <Card style={{ minHeight: 200 }}>
+        <Card style={{ minHeight: 200 }} testID="card-quick-register">
           <Col gap={16}>
             <Between style={styles.quickRegisterHeader}>
               <Text style={styles.quickRegisterTitle}>
@@ -75,6 +74,7 @@ export default function New() {
               title="Salvar Humor"
               onPress={initQuickRegister}
               style={styles.quickRegisterButton}
+              testID="button-save-mood"
             />
           </Col>
         </Card>

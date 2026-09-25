@@ -1,0 +1,42 @@
+appId: com.eletrotupi.orbit
+---
+# Self-contained login: every flow starts from a clean, logged-out app so the
+# suite is order-independent (Maestro runs the flows in an arbitrary order)
+- clearState
+- openLink: orbit://expo-development-client/?url=http%3A%2F%2F${HOST_IP}%3A${PORT}
+# clearState resets expo-dev-client itself, so its first-run overlays can show
+# up before the JS app loads: the "developer menu" intro ("Continue") and then
+# the dev-menu panel ("Close"). Both are dev tooling, not app UI, two more
+# unavoidable copy matches; both optional so they cost nothing when absent
+- waitForAnimationToEnd:
+    timeout: 5000
+- tapOn:
+    text: "^Continue$"
+    optional: true
+- tapOn:
+    text: "^Close$"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: text-welcome
+    timeout: 90000
+- tapOn:
+    id: input-email
+- inputText: ${E2E_EMAIL}
+- tapOn:
+    id: input-password
+- inputText: ${E2E_PASSWORD}
+# The soft keyboard covers the login button; without this the tap misses
+- hideKeyboard
+- tapOn:
+    id: button-login
+# clearState resets runtime permissions, so the app asks for notifications
+# after login. Allow it, otherwise the system dialog blocks the next step.
+# System dialog, so no testID; the AOSP resource-id is the stable selector
+- tapOn:
+    id: com.android.permissioncontroller:id/permission_allow_button
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: text-welcome-quick-register
+    timeout: 15000
