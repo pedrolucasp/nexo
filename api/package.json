@@ -18,7 +18,8 @@
     "test:setup:db": "dotenv -e .env.test -o -- node scripts/create-test-db.mjs",
     "test:setup:generate": "dotenv -e .env.test -o -- npx prisma generate",
     "test:setup:migrate": "dotenv -e .env.test -o -- npx prisma db push",
-    "dev": "prisma generate && prisma migrate deploy && npm run start"
+    "dev": "prisma generate && prisma migrate deploy && npm run start",
+    "seed": "dotenv -e .env.development -o -- npx prisma db seed"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1048.0",
