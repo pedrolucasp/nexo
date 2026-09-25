@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { apiClient, User } from "@/lib/api";
 import { queryClient, storage } from "@/lib/queryClient";
 
@@ -150,19 +150,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(user);
   };
 
-  const value: AuthContextType = {
-    user,
-    isLoading,
-    isAuthenticated,
-    login,
-    signup,
-    logout,
-    forgotPassword,
-    resetPassword,
-    updateAuthUser,
-    activate,
-    requestActivateCode,
-  };
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user,
+      isLoading,
+      isAuthenticated,
+      login,
+      signup,
+      logout,
+      forgotPassword,
+      resetPassword,
+      updateAuthUser,
+      activate,
+      requestActivateCode,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [user, isLoading, isAuthenticated],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

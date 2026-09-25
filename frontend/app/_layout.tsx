@@ -25,7 +25,7 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={DefaultTheme}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <ToastProvider>
         <AuthProvider>
           <AppBootstrap />
@@ -54,6 +54,7 @@ export default function RootLayout() {
                 title: "Editar Componentes",
                 sheetAllowedDetents: [0.25, 0.5, 1],
                 sheetInitialDetentIndex: 1,
+                animation: "slide_from_bottom",
               }}
             />
 
@@ -83,6 +84,7 @@ export default function RootLayout() {
                 title: "Registrar Ação de Cuidado",
                 sheetAllowedDetents: [0.25, 0.5, 0.7],
                 sheetInitialDetentIndex: 1,
+                animation: "slide_from_bottom",
               }}
             />
             <Stack.Screen

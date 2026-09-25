@@ -1,5 +1,5 @@
 import { BottomTabBarButtonProps } from 'expo-router/js-tabs';
-import { Pressable } from 'react-native';
+import { Platform, Pressable } from 'react-native';
 import type { Ref } from 'react';
 import type { View } from 'react-native';
 import * as Haptics from 'expo-haptics';
@@ -11,6 +11,9 @@ export function HapticTab(props: BottomTabBarButtonProps) {
       {...rest}
       ref={ref as Ref<View>}
       onPressIn={(ev) => {
+        if (Platform.OS === "ios") {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
         onPressIn?.(ev);
       }}
     />

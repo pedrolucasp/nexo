@@ -1,23 +1,14 @@
 import { Tabs } from "expo-router/js-tabs";
-import { Redirect, router } from "expo-router";
-import React, { useEffect } from "react";
+import { Redirect } from "expo-router";
 import { View, ActivityIndicator } from "react-native";
 
 import { HapticTab } from "@/components/misc/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useAuth } from "@/context/AuthContext";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { isAuthenticated, isLoading } = useAuth();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.replace("/auth/login");
-    }
-  }, [isAuthenticated, isLoading]);
 
   if (isLoading) {
     return (
@@ -38,6 +29,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors["light"].tabIconSelected,
         headerShown: false,
         tabBarButton: HapticTab,
+        freezeOnBlur: true,
       }}
     >
       <Tabs.Screen
@@ -47,6 +39,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="history" color={color} />
           ),
+          tabBarButton: (props) => <HapticTab {...props} testID="tab-history" />,
         }}
       />
 
@@ -57,6 +50,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="book" color={color} />
           ),
+          tabBarButton: (props) => <HapticTab {...props} testID="tab-journey" />,
         }}
       />
 
@@ -67,6 +61,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="add-circle" color={color} />
           ),
+          tabBarButton: (props) => <HapticTab {...props} testID="tab-new" />,
         }}
       />
 
@@ -77,6 +72,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="bolt" color={color} />
           ),
+          tabBarButton: (props) => <HapticTab {...props} testID="tab-actions" />,
         }}
       />
 
@@ -87,6 +83,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="settings.fill" color={color} />
           ),
+          tabBarButton: (props) => <HapticTab {...props} testID="tab-settings" />,
         }}
       />
     </Tabs>

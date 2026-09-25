@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   View,
   ScrollView,
@@ -34,87 +32,29 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   scrollEnabled = true,
 }) => {
   const router = useRouter();
-  const textColor = useThemeColor({}, "text");
-  const backgroundColor = useThemeColor({}, "background");
-  const surfaceColor = useThemeColor({}, "surface");
-  const dividerColor = useThemeColor({}, "divider");
-  const accentBlue = useThemeColor({}, "accentBlue");
-  const tintColor = useThemeColor({}, "tint");
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: backgroundColor,
-    },
-    safeAreaView: {
-      flex: 1,
-      backgroundColor: backgroundColor,
-    },
-    header: {
-      paddingHorizontal: Spacing.containerPadding,
-      paddingVertical: 12,
-      backgroundColor: surfaceColor,
-      borderBottomWidth: 1,
-      borderBottomColor: dividerColor,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-    headerLeft: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing.inlineGapSm,
-    },
-    avatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: accentBlue,
-    },
-    userName: {
-      fontSize: Typography.bodyLg.fontSize,
-      fontWeight: "600",
-      color: textColor,
-    },
-    notificationButton: {
-      width: 40,
-      height: 40,
-      borderRadius: BorderRadius.md,
-      justifyContent: "center",
-      alignItems: "center",
-      activeOpacity: 0.7,
-    },
-    notificationBadge: {
-      position: "absolute",
-      top: 4,
-      right: 4,
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      backgroundColor: tintColor,
-    },
-    scrollContent: {
-      paddingHorizontal: Spacing.containerPadding,
-      paddingVertical: Spacing.sectionGap,
-    },
-  });
+  const textColor = useThemeColor({}, "text") as string;
+  const backgroundColor = useThemeColor({}, "background") as string;
+  const surfaceColor = useThemeColor({}, "surface") as string;
+  const dividerColor = useThemeColor({}, "divider") as string;
+  const accentBlue = useThemeColor({}, "accentBlue") as string;
+  const tintColor = useThemeColor({}, "tint") as string;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView
-        style={styles.safeAreaView}
+        style={[styles.safeAreaView, { backgroundColor }]}
         edges={["top", "left", "right"]}
       >
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: surfaceColor, borderBottomColor: dividerColor }]}>
           <View style={styles.headerLeft}>
             {userAvatar ? (
-              <Image source={{ uri: userAvatar }} style={styles.avatar} />
+              <Image source={{ uri: userAvatar }} style={[styles.avatar, { backgroundColor: accentBlue }]} />
             ) : (
-              <View style={styles.avatar} />
+              <View style={[styles.avatar, { backgroundColor: accentBlue }]} />
             )}
             <View>
-              <Text style={styles.userName}>Olá, {userName}</Text>
+              <Text style={[styles.userName, { color: textColor }]}>Olá, {userName}</Text>
             </View>
           </View>
 
@@ -123,15 +63,10 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
             onPress={onNotificationPress ?? (() => router.push("/notifications"))}
             hitSlop={8}
           >
-            <View
-              style={{
-                fontSize: 24,
-                color: textColor,
-              }}
-            >
-              <IconSymbol size={24} name="notifications" color={textColor} />
-            </View>
-            {showNotificationBadge && <View style={styles.notificationBadge} />}
+            <IconSymbol size={24} name="notifications" color={textColor} />
+            {showNotificationBadge && (
+              <View style={[styles.notificationBadge, { backgroundColor: tintColor }]} />
+            )}
           </Pressable>
         </View>
 
@@ -147,5 +82,55 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  safeAreaView: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: Spacing.containerPadding,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.inlineGapSm,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  userName: {
+    fontSize: Typography.bodyLg.fontSize,
+    fontWeight: "600",
+  },
+  notificationButton: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  notificationBadge: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  scrollContent: {
+    paddingHorizontal: Spacing.containerPadding,
+    paddingVertical: Spacing.sectionGap,
+  },
+});
 
 export default ScreenLayout;
