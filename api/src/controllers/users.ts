@@ -33,11 +33,23 @@ import s3 from '@app/lib/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
 import { addMinutes } from 'date-fns';
+import { User } from '@prisma/client';
 
 // XXX: I've regreted already
 interface SingleFileRequest extends AuthenticatedRequest {
   file?: any;
 }
+
+const withoutSecrets = (user: User) => {
+  const {
+    encryptedPassword,
+    passwordResetToken,
+    passwordResetExpires,
+    ...safe
+  } = user;
+
+  return safe;
+};
 
 export const UsersController = {
   create: async (req: Request, res: Response, next: NextFunction) => {
@@ -71,16 +83,22 @@ export const UsersController = {
     }
   },
 
-  update: async (req: Request, res: Response, next: NextFunction) => {
+  update: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const targetId = Number(req.params.id);
+
+      if (targetId !== req.userId) {
+        return res.status(403).json({
+          error: "Você só pode atualizar o próprio perfil"
+        });
+      }
 
       const parsed = UpdateUserSchema.safeParse(req.body.user);
       if (!parsed.success) {
         return res.status(400).json(formatValidationError(parsed.error!));
       }
 
-      const user = await findUserById(Number(id));
+      const user = await findUserById(targetId);
 
       if (!user) {
         return res.status(404).json({
@@ -88,11 +106,10 @@ export const UsersController = {
         });
       }
 
-      const updated = await updateUser(parsed.data);
+      const updated = await updateUser({ ...parsed.data, id: targetId });
 
-      // TODO: Drop encrypted password & token here
       return res.status(200).json({
-        user: updated
+        user: withoutSecrets(updated)
       });
     } catch (err) {
       next(err);
