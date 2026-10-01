@@ -21,7 +21,7 @@ import {
 } from '@app/services/user.service';
 
 import {
-  storeActivationCode
+  issueActivationCode
 } from '@app/services/auth.service';
 
 import {
@@ -31,8 +31,6 @@ import {
 import { prisma } from '@app/lib/prisma';
 import s3 from '@app/lib/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
-import crypto from 'crypto';
-import { addMinutes } from 'date-fns';
 import { User } from '@prisma/client';
 
 // XXX: I've regreted already
@@ -63,11 +61,7 @@ export const UsersController = {
       const user = await createUser(parsed.data);
       const jwtToken = generateToken(user.id, user.email);
 
-      const code = [...Array(6)].map(() => crypto.randomInt(9))
-        .join("");
-
-      const expiresAt = addMinutes(new Date(), 5);
-      await storeActivationCode(user.id, code, expiresAt);
+      const code = await issueActivationCode(user.id);
 
       const mailQueue = getQueue('mail');
       const job = await mailQueue.add(MailJobName.WelcomeEmail, {

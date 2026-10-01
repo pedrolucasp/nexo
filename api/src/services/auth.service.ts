@@ -1,6 +1,8 @@
 import { prisma } from '@app/lib/prisma';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import { addMinutes } from "date-fns";
 
 import {
   generateToken as createJWT,
@@ -117,14 +119,37 @@ export const activateUser = async(user: User): Promise<User> => {
   });
 }
 
-export const storeActivationCode = async(userId: number, code: string, expiresAt: Date): Promise<User> => {
-  return await prisma.user.update({
-    where: {
-      id: userId
-    },
-    data: {
-      activationCode: code,
-      activationCodeExpiresAt: expiresAt
+const ACTIVATION_CODE_LENGTH = 6;
+const ACTIVATION_CODE_TTL_MINUTES = 5;
+const ACTIVATION_CODE_MAX_ATTEMPTS = 5;
+
+export const generateActivationCode = (): string =>
+  Array.from({ length: ACTIVATION_CODE_LENGTH }, () => crypto.randomInt(0, 10)).join("");
+
+const isUniqueConstraintViolation = (err: unknown): boolean =>
+  err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002";
+
+export const issueActivationCode = async(userId: number): Promise<string> => {
+  for (let attempt = 0; attempt < ACTIVATION_CODE_MAX_ATTEMPTS; attempt++) {
+    const code = generateActivationCode();
+    const expiresAt = addMinutes(new Date(), ACTIVATION_CODE_TTL_MINUTES);
+
+    try {
+      await prisma.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          activationCode: code,
+          activationCodeExpiresAt: expiresAt
+        }
+      });
+
+      return code;
+    } catch (err) {
+      if (!isUniqueConstraintViolation(err)) throw err;
     }
-  })
+  }
+
+  throw new Error("Could not issue a unique activation code");
 }

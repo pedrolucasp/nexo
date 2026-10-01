@@ -7,7 +7,7 @@ import {
   requestPasswordReset,
   resetPassword,
   activateUser,
-  storeActivationCode,
+  issueActivationCode,
 } from "@app/services/auth.service";
 
 import { verifyToken } from "@app/lib/jwt";
@@ -26,9 +26,7 @@ import {
 } from "@app/schemas";
 import { formatValidationError } from "@app/lib/errors/validationError";
 
-import { addMinutes } from "date-fns";
 import { getQueue, MailJobName } from "@app/lib/queue";
-import crypto from "crypto";
 
 export const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
@@ -45,10 +43,7 @@ export const AuthController = {
         !user.active &&
         new Date() > new Date(user.activationCodeExpiresAt!)
       ) {
-        const code = [...Array(6)].map(() => crypto.randomInt(9)).join("");
-
-        const expiresAt = addMinutes(new Date(), 5);
-        await storeActivationCode(user.id, code, expiresAt);
+        const code = await issueActivationCode(user.id);
 
         const mailQueue = getQueue("mail");
         const job = await mailQueue.add(MailJobName.ActivateAccountEmail, {
@@ -189,10 +184,7 @@ export const AuthController = {
         });
       }
 
-      const code = [...Array(6)].map(() => crypto.randomInt(9)).join("");
-
-      const expiresAt = addMinutes(new Date(), 5);
-      await storeActivationCode(user.id, code, expiresAt);
+      const code = await issueActivationCode(user.id);
 
       const mailQueue = getQueue("mail");
       const job = await mailQueue.add(MailJobName.ActivateAccountEmail, {

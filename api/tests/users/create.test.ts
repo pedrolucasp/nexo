@@ -2,12 +2,17 @@ import { describe, it, expect, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
 import { createApp } from '@app/createApp'
 import { buildPrisma, cleanupTestDb } from '../test-helper'
+import { recordedJobs, resetQueueMocks } from '../mocks/queue'
 
 const app = createApp()
 const db = buildPrisma()
 
 afterAll(() => db.$disconnect())
-beforeEach(() => cleanupTestDb(db))
+beforeEach(async () => {
+  await cleanupTestDb(db)
+
+  resetQueueMocks()
+})
 
 describe('POST /users', () => {
   it('creates a user and returns a JWT token', async () => {
@@ -21,6 +26,15 @@ describe('POST /users', () => {
     const dbUser = await db.user.findUnique({ where: { email: 'new@example.com' } })
     expect(dbUser).not.toBeNull()
     expect(dbUser!.firstName).toBe('Novo')
+    expect(dbUser!.activationCode).toMatch(/^\d{6}$/)
+
+    expect(recordedJobs).toContainEqual(
+      expect.objectContaining({
+        queue: 'mail',
+        name: 'mail:welcome',
+        data: { userId: dbUser!.id, code: dbUser!.activationCode },
+      })
+    )
   })
 
   it('returns 409 for duplicate email', async () => {
