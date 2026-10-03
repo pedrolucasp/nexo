@@ -44,6 +44,7 @@ describe('POST /auth/activate', () => {
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
     expect(dbUser!.active).toBe(true)
     expect(dbUser!.activationCode).toBeNull()
+    expect(dbUser!.activationCodeExpiresAt).toBeNull()
   })
 
   it('activates an account whose code begins with zero', async () => {
@@ -62,6 +63,32 @@ describe('POST /auth/activate', () => {
     expect(dbUser!.activationCode).toBeNull()
   })
 
+  it('rejects a correctly issued code past its expiry', async () => {
+    const user = await createTestUser(db, { email: 'expired@example.com' })
+    await seedActivationCode(user.id, '123456', -1000)
+
+    const res = await request(app)
+      .post('/auth/activate')
+      .send({ code: '123456' })
+
+    expect(res.status).toBe(422)
+    expect(res.body.error).toBeTruthy()
+  })
+
+  it('rejects a code recorded without an expiry', async () => {
+    const user = await createTestUser(db, { email: 'no-expiry@example.com' })
+    await db.user.update({
+      where: { id: user.id },
+      data: { activationCode: '123456', activationCodeExpiresAt: null },
+    })
+
+    const res = await request(app)
+      .post('/auth/activate')
+      .send({ code: '123456' })
+
+    expect(res.status).toBe(422)
+  })
+
   it('returns 422 for a well-formed but unknown code', async () => {
     await createTestUser(db, { email: 'activate@example.com' })
 
@@ -71,6 +98,33 @@ describe('POST /auth/activate', () => {
 
     expect(res.status).toBe(422)
     expect(res.body.error).toBeTruthy()
+  })
+
+  it('cannot tell an expired code from an unknown one', async () => {
+    const user = await createTestUser(db, { email: 'indistinct@example.com' })
+    await seedActivationCode(user.id, '123456', -1000)
+
+    const expired = await request(app)
+      .post('/auth/activate')
+      .send({ code: '123456' })
+
+    const unknown = await request(app)
+      .post('/auth/activate')
+      .send({ code: '654321' })
+
+    expect(expired.status).toBe(unknown.status)
+    expect(expired.body).toEqual(unknown.body)
+  })
+
+  it('leaves the stored code in place when an expired code is rejected', async () => {
+    const user = await createTestUser(db, { email: 'no-reissue@example.com' })
+    await seedActivationCode(user.id, '123456', -1000)
+
+    await request(app).post('/auth/activate').send({ code: '123456' })
+
+    const dbUser = await db.user.findUnique({ where: { id: user.id } })
+    expect(dbUser!.active).toBe(false)
+    expect(dbUser!.activationCode).toBe('123456')
   })
 
   it.each([

@@ -37,7 +37,8 @@ export const findUserByEmail = async(email: string): Promise<User | null> => {
 export const findUserByActivationCode = async(code: string): Promise<User | null> => {
   return await prisma.user.findUnique({
     where: {
-      activationCode: code
+      activationCode: code,
+      activationCodeExpiresAt: { gt: new Date() }
     }
   });
 }
