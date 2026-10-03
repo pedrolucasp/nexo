@@ -35,7 +35,7 @@ describe('POST /auth/activate', () => {
 
     const res = await request(app)
       .post('/auth/activate')
-      .send({ code: 123456 })
+      .send({ code: '123456' })
 
     expect(res.status).toBe(200)
     expect(res.body.user.active).toBe(true)
@@ -46,24 +46,47 @@ describe('POST /auth/activate', () => {
     expect(dbUser!.activationCode).toBeNull()
   })
 
-  it('returns 422 for an unknown code', async () => {
+  it('activates an account whose code begins with zero', async () => {
+    const user = await createTestUser(db, { email: 'leading-zero@example.com' })
+    await seedActivationCode(user.id, '012345')
+
+    const res = await request(app)
+      .post('/auth/activate')
+      .send({ code: '012345' })
+
+    expect(res.status).toBe(200)
+    expect(res.body.user.active).toBe(true)
+
+    const dbUser = await db.user.findUnique({ where: { id: user.id } })
+    expect(dbUser!.active).toBe(true)
+    expect(dbUser!.activationCode).toBeNull()
+  })
+
+  it('returns 422 for a well-formed but unknown code', async () => {
     await createTestUser(db, { email: 'activate@example.com' })
 
     const res = await request(app)
       .post('/auth/activate')
-      .send({ code: 999999 })
+      .send({ code: '999999' })
 
     expect(res.status).toBe(422)
     expect(res.body.error).toBeTruthy()
   })
 
-  it('returns 400 when the code is not a number', async () => {
+  it.each([
+    ['too short', '12345'],
+    ['too long', '1234567'],
+    ['non-digit', '12a456'],
+    ['a number', 123456],
+  ])('rejects a code that is %s as malformed', async (_shape, code) => {
+    await createTestUser(db, { email: 'activate@example.com' })
+
     const res = await request(app)
       .post('/auth/activate')
-      .send({ code: '123456' })
+      .send({ code })
 
     expect(res.status).toBe(400)
-    expect(res.body.fields).toBeTruthy()
+    expect(res.body.fields.code).toBeTruthy()
   })
 })
 

@@ -152,7 +152,7 @@ export const AuthController = {
         return res.status(400).json(formatValidationError(parsed.error!));
       }
 
-      const user = await findUserByActivationCode(String(parsed.data.code));
+      const user = await findUserByActivationCode(parsed.data.code);
 
       if (!user) {
         return res.status(422).json({

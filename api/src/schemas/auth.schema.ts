@@ -15,7 +15,7 @@ export const PasswordResetSchema = z.object({
 });
 
 export const ActivateUserSchema = z.object({
-  code: z.number()
+  code: z.string().regex(/^\d{6}$/)
 });
 
 export type LoginInput = z.infer<typeof LoginSchema>;

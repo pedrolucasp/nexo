@@ -156,7 +156,7 @@ class ApiClient {
     return response;
   }
 
-  async activate(code: number): Promise<ActivateResponse> {
+  async activate(code: string): Promise<ActivateResponse> {
     return this.request("/auth/activate", {
       method: "POST",
       body: JSON.stringify({ code }),

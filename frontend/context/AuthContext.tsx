@@ -23,7 +23,7 @@ interface AuthContextType {
     email: string,
   ) => Promise<{ message: string; token?: string }>;
   resetPassword: (token: string, password: string) => Promise<void>;
-  activate: (code: number) => Promise<void>;
+  activate: (code: string) => Promise<void>;
   requestActivateCode: () => Promise<void>;
 }
 
@@ -137,7 +137,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     await apiClient.resetPassword(token, password);
   };
 
-  const activate = async (code: number) => {
+  const activate = async (code: string) => {
     const response = await apiClient.activate(code);
     setUser(response.user);
   };

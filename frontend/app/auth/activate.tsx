@@ -48,7 +48,7 @@ export default function ActivateScreen() {
 
     setLoading(true);
     try {
-      await activate(Number(code.replaceAll(' ', '')));
+      await activate(code);
       showToast('Conta ativada com sucesso!', 'success');
       router.replace('/');
     } catch (error: any) {
