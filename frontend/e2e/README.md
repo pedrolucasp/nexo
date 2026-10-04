@@ -98,7 +98,6 @@ on:
 
 | Where | Selector | Why |
 | --- | --- | --- |
-| Logout confirm `Alert` | `^Sair$` with `index: 1` | RN native dialog, no ids, will be fixed eventually |
 | History card annotation | `"e2e smoke register"` | the one *data* assertion; proves write-through |
 | Notification permission | `com.android.permissioncontroller:id/permission_allow_button` | AOSP system dialog |
 | expo-dev-client onboarding | `^Continue$` | dev tooling, not app UI |

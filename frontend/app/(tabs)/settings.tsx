@@ -18,6 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Button } from "@/components/ui/Button";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { usePatchUserMe } from "@/hooks/useUserPreferences.queries";
 import { useToast } from '@/context/ToastContext';
@@ -25,6 +26,7 @@ import { useToast } from '@/context/ToastContext';
 export default function Settings() {
   const { user, logout, updateAuthUser } = useAuth();
   const [allowWeeklyInsights, setAllowWeeklyInsights] = useState(false);
+  const [logoutVisible, setLogoutVisible] = useState(false);
   const { showToast } = useToast();
 
   const notificationsEnabled = user?.notificationsEnabled ?? true;
@@ -45,15 +47,8 @@ export default function Settings() {
 
   const textColor = useThemeColor({}, "text");
 
-  const handleLogout = async () => {
-    Alert.alert("Sair", "Tem certeza que quer sair?", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Sair",
-        style: "destructive",
-        onPress: logout,
-      },
-    ]);
+  const handleLogout = () => {
+    setLogoutVisible(true);
   };
 
   const handleProfilePress = () => {
@@ -320,6 +315,21 @@ export default function Settings() {
         style={{ borderColor: Colors.light.danger }}
         testID="button-logout"
         textStyle={{ color: Colors.light.danger }}
+      />
+
+      <ConfirmModal
+        visible={logoutVisible}
+        title="Sair da conta"
+        message="Tem certeza que quer sair?"
+        confirmLabel="Sair"
+        cancelLabel="Cancelar"
+        destructive
+        onCancel={() => setLogoutVisible(false)}
+        onConfirm={() => {
+          setLogoutVisible(false);
+          logout();
+        }}
+        testID="logout-confirm"
       />
     </ScreenLayout>
   );

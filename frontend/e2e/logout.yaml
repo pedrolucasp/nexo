@@ -13,13 +13,10 @@ tags:
     direction: DOWN
 - tapOn:
     id: button-logout
-# RN Alert renders a native system dialog, the only screen that can't expose
-# testIDs. These two text matches are a deliberate, unavoidable exception
-# TODO: Fix that to use some other, more custom (and pretty) confirm dialog
-- assertVisible: "Tem certeza que quer sair?"
+- assertVisible:
+    id: logout-confirm
 - tapOn:
-    text: "^Sair$"
-    index: 1
+    id: logout-confirm-confirm
 - extendedWaitUntil:
     visible:
       id: text-welcome
