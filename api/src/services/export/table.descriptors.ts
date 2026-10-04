@@ -1,13 +1,24 @@
-import { Mood, MoodComponent, User } from "@prisma/client";
+import {
+  Mood,
+  MoodComponent,
+  SleepRecord,
+  Trigger,
+  TriggerMoodLink,
+  User,
+} from "@prisma/client";
 
 import {
   baseMoodLabel,
   intensityLabel,
   moodComponentLabel,
+  triggerTypeLabel,
 } from "@app/services/export/label.map";
 import { CsvTable } from "@app/services/export/types";
 
 const booleanLabel = (value: boolean): string => (value ? "Sim" : "Não");
+
+// Sleep records carry a day-granular date, so they drop the time and offset.
+const dateOnly = (value: Date): string => value.toISOString().slice(0, 10);
 
 export const profileTable: CsvTable<User> = {
   filename: "profile.csv",
@@ -53,5 +64,43 @@ export const moodComponentTable: CsvTable<MoodComponent> = {
       header: "Intensidade",
       value: (component) => intensityLabel[component.intensity],
     },
+  ],
+};
+
+export const sleepRecordTable: CsvTable<SleepRecord> = {
+  filename: "sleep_records.csv",
+  columns: [
+    { header: "id", value: (record) => record.id },
+    { header: "Data", value: (record) => dateOnly(record.date) },
+    { header: "Média", value: (record) => record.average },
+    { header: "Anotações", value: (record) => record.annotations },
+    { header: "Criado em", value: (record) => record.createdAt },
+    { header: "Atualizado em", value: (record) => record.updatedAt },
+  ],
+};
+
+export const triggerTable: CsvTable<Trigger> = {
+  filename: "triggers.csv",
+  columns: [
+    { header: "id", value: (trigger) => trigger.id },
+    {
+      header: "Categoria",
+      value: (trigger) => triggerTypeLabel[trigger.category],
+    },
+    { header: "Momento", value: (trigger) => trigger.moment },
+    { header: "Comentário", value: (trigger) => trigger.comment },
+    { header: "Criado em", value: (trigger) => trigger.createdAt },
+    { header: "Atualizado em", value: (trigger) => trigger.updatedAt },
+  ],
+};
+
+export const triggerMoodLinkTable: CsvTable<TriggerMoodLink> = {
+  filename: "trigger_mood_links.csv",
+  columns: [
+    { header: "id", value: (link) => link.id },
+    { header: "trigger_id", value: (link) => link.triggerId },
+    { header: "mood_id", value: (link) => link.moodId },
+    { header: "Impacto percebido", value: (link) => link.perceivedImpact },
+    { header: "Vinculado em", value: (link) => link.linkedAt },
   ],
 };

@@ -2,6 +2,7 @@ import {
   BaseMoodOption,
   IntensityLevel,
   MoodComponentOption,
+  TriggerType,
 } from "@prisma/client";
 
 // Temporary copy of the labels the app shows. The app-wide map will eventually
@@ -35,4 +36,15 @@ export const intensityLabel: Record<IntensityLevel, string> = {
   LIGHT: "Suave",
   MODERATE: "Moderada",
   HIGH: "Intensa",
+};
+
+export const triggerTypeLabel: Record<TriggerType, string> = {
+  SOCIAL: "Social",
+  WORK: "Trabalho",
+  HEALTH: "Saúde",
+  PHYSICAL: "Físico",
+  FAMILY: "Família",
+  THERAPY: "Terapia",
+  INTERNAL: "Interno",
+  OTHER: "Outro",
 };
