@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,73 +6,85 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { Text } from '@/components/ui/Text';
-import { Link, useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Button, Input } from '@/components/ui';
-import { Colors } from '@/constants/theme'
+import { Button, CodeInput } from '@/components/ui';
+import type { CodeInputHandle } from '@/components/ui/CodeInput';
+import { Colors } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { translateError } from '@/lib/errors/translations';
 
+const CODE_LENGTH = 6;
+const RESEND_COOLDOWN_SECONDS = 60;
+
 export default function ActivateScreen() {
-  const { userId } = useLocalSearchParams();
   const [code, setCode] = useState('');
-  const [errors, setErrors] = useState<{
-    code?: string;
-  }>({});
+  const [codeError, setCodeError] = useState<string>();
+  const [loading, setLoading] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(RESEND_COOLDOWN_SECONDS);
+  const codeInputRef = useRef<CodeInputHandle>(null);
 
   const { activate, requestActivateCode } = useAuth();
   const { showToast } = useToast();
-  const [loading, setLoading] = useState(false);
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
-  const tintColor = useThemeColor({}, 'tint');
 
-  const validateForm = () => {
-    const newErrors: typeof errors = {};
+  useEffect(() => {
+    if (secondsLeft <= 0) return;
 
-    if (!code) {
-      newErrors.code = 'O código é obrigatório';
-    } else if (code.length < 6) {
-      newErrors.code = 'O código deve conter pelo menos 6 caracteres';
+    const timer = setTimeout(() => setSecondsLeft((value) => value - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [secondsLeft]);
+
+  const submitCode = async (value: string) => {
+    if (loading) return;
+
+    if (value.length !== CODE_LENGTH) {
+      setCodeError(`O código deve ter ${CODE_LENGTH} dígitos`);
+      return;
     }
 
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleActivate = async () => {
-    if (!validateForm()) return;
-
+    setCodeError(undefined);
     setLoading(true);
     try {
-      await activate(code);
+      await activate(value);
       showToast('Conta ativada com sucesso!', 'success');
       router.replace('/');
     } catch (error: any) {
-      showToast(translateError(error.message) || 'Falha em ativar a conta', 'error');
+      setCode('');
+      setCodeError(
+        translateError(error.message) ||
+          'Código incorreto. Verifique o código e tente novamente.',
+      );
+      codeInputRef.current?.focus();
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCodeChange = (value: string) => {
+    setCode(value);
+    setCodeError(undefined);
+  };
+
   const resendCode = async () => {
+    if (secondsLeft > 0) return;
+
+    setSecondsLeft(RESEND_COOLDOWN_SECONDS);
     try {
       await requestActivateCode();
       showToast('Novo código enviado. Verifique sua caixa de entrada.', 'success');
     } catch {
+      setSecondsLeft(0);
       showToast('Falha ao reenviar o código. Tente novamente.', 'error');
     }
-  }
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <KeyboardAvoidingView
-        behavior='height'
-        style={styles.keyboardView}
-      >
+      <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
@@ -80,26 +92,28 @@ export default function ActivateScreen() {
           <View style={styles.header}>
             <Text style={[styles.title, { color: textColor }]}>Ativar a conta</Text>
             <Text style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
-              Digite o código de ativação enviado para seu email
+              Digite o código de 6 dígitos enviado para seu email
             </Text>
           </View>
 
           <View style={styles.form}>
-            <Input
-              label="Código"
-              type="text"
+            <CodeInput
+              ref={codeInputRef}
               value={code}
-              onChangeText={setCode}
-              keyboardType="number-pad"
-              placeholder="Digite o código enviado para sua conta"
-              error={errors.code}
+              onChange={handleCodeChange}
+              onComplete={submitCode}
+              length={CODE_LENGTH}
+              error={codeError}
+              editable={!loading}
+              accessibilityLabel="Código de ativação de 6 dígitos"
+              testIdPrefix="activate-code"
             />
 
             <Button
               title="Ativar conta"
-              onPress={handleActivate}
+              onPress={() => submitCode(code)}
               loading={loading}
-              style={styles.resetButton}
+              style={styles.activateButton}
             />
           </View>
 
@@ -108,7 +122,16 @@ export default function ActivateScreen() {
               Não recebeu?{' '}
             </Text>
 
-            <Button variant="outline" title="Reenviar um novo código" onPress={resendCode} />
+            <Button
+              variant="outline"
+              title={
+                secondsLeft > 0
+                  ? `Reenviar em ${secondsLeft}s`
+                  : 'Reenviar um novo código'
+              }
+              onPress={resendCode}
+              disabled={secondsLeft > 0}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -145,17 +168,17 @@ const styles = StyleSheet.create({
   form: {
     marginBottom: 32,
   },
-  resetButton: {
+  activateButton: {
     marginTop: 8,
   },
   footer: {
     marginTop: 20,
     borderTopColor: Colors.light.accentBlue,
     borderTopWidth: 1,
-    paddingTop: 20
+    paddingTop: 20,
   },
   footerText: {
     textAlign: 'center',
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
