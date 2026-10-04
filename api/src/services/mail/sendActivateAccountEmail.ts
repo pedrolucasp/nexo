@@ -8,6 +8,7 @@ Oi, ${firstName}.
 Você criou sua conta no nexo. Porém, precisa ativar sua conta.
 
 Aqui seu código de ativação: ${code}.
+O código expira em cinco minutos.
 
 Qualquer coisa prende o grito!
   `)
@@ -15,8 +16,6 @@ Qualquer coisa prende o grito!
 
 export async function sendActivateAccountEmail(userId: number, code: string): Promise<void> {
   const user = await findUserById(userId)!;
-
-  console.log("Email/activateAccount: ", user, code);
 
   const { data, error } = await sendEmail({
     to: user!.email,

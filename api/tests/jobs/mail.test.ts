@@ -46,6 +46,7 @@ describe('sendWelcomeEmail', () => {
     // The code itself is in the body so the user knows what to enter
     const [call] = mockedSendEmail.mock.calls
     expect(call[0].text).toContain('123456')
+    expect(call[0].text).toContain('expira em cinco minutos')
   })
 })
 
@@ -67,6 +68,7 @@ describe('sendActivateAccountEmail', () => {
     )
     const [call] = mockedSendEmail.mock.calls
     expect(call[0].text).toContain('654321')
+    expect(call[0].text).toContain('expira em cinco minutos')
   })
 })
 

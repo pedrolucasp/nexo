@@ -16,8 +16,6 @@ Qualquer coisa prende o grito!
 export async function sendResetPasswordEmail(userId: number, token: string): Promise<void> {
   const user = await findUserById(userId)!;
 
-  console.log("Email/passwdReset: ", user);
-
   const { data, error } = await sendEmail({
     to: user!.email,
     subject: "Esqueceu a senha do nexo?",

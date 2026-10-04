@@ -20,7 +20,7 @@ export async function mailProcessor(
   switch (job.name as MailJobName) {
     case MailJobName.WelcomeEmail: {
       const data = job.data as WelcomeEmailPayload;
-      console.log("Dispatching an welcome email", data);
+      console.log("Dispatching a welcome email for user", data.userId);
 
       await sendWelcomeEmail(Number(data.userId), data.code);
 
@@ -29,7 +29,7 @@ export async function mailProcessor(
 
     case MailJobName.ActivateAccountEmail: {
       const data = job.data as ActivateAccountEmailPayload;
-      console.log("Dispatching an activate account email", data);
+      console.log("Dispatching an activation email for user", data.userId);
 
       await sendActivateAccountEmail(Number(data.userId), data.code);
 
@@ -38,7 +38,7 @@ export async function mailProcessor(
 
     case MailJobName.PasswordReset: {
       const data = job.data as PasswordResetPayload;
-      console.log("Dispatching an welcome email", data);
+      console.log("Dispatching a password reset email for user", data.userId);
 
       await sendResetPasswordEmail(data.userId, data.token);
 

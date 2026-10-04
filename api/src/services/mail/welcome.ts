@@ -6,6 +6,7 @@ const email = (firstName: string, code: string) => {
 Oi! Seja bem vindo, ${firstName}.
 
 Você criou sua conta com sucesso no nexo! Aqui seu código de ativação: ${code}.
+O código expira em cinco minutos.
 
 Qualquer coisa prende o grito!
   `)
@@ -13,8 +14,6 @@ Qualquer coisa prende o grito!
 
 export async function sendWelcomeEmail(userId: number, code: string): Promise<void> {
   const user = await findUserById(userId)!;
-
-  console.log("Email/welcome: ", user, code);
 
   const { data, error } = await sendEmail({
     to: user!.email,
