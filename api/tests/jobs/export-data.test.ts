@@ -34,6 +34,9 @@ async function attachmentFromLastEmail() {
   return { payload, attachment }
 }
 
+const csvLines = (csv: string): string[] =>
+  csv.slice(1).split('\r\n').filter(Boolean)
+
 afterAll(() => db.$disconnect())
 beforeEach(async () => {
   await cleanupTestDb(db)
@@ -59,12 +62,17 @@ describe('exportProcessor', () => {
     expect(attachment.filename).toMatch(/^nexo-dados-\d{4}-\d{2}-\d{2}\.zip$/)
 
     const zip = await JSZip.loadAsync(attachment.content)
-    expect(Object.keys(zip.files).sort()).toEqual(['leia-me.md', 'profile.csv'])
+    expect(Object.keys(zip.files).sort()).toEqual([
+      'leia-me.md',
+      'mood_components.csv',
+      'moods.csv',
+      'profile.csv',
+    ])
 
     const csv = await zip.file('profile.csv')!.async('string')
     expect(csv.startsWith('\ufeff')).toBe(true)
 
-    const lines = csv.slice(1).split('\r\n').filter(Boolean)
+    const lines = csvLines(csv)
     expect(lines).toHaveLength(2)
     expect(lines[0]).toContain('Nome')
     expect(lines[0]).toContain('Email')
@@ -87,6 +95,82 @@ describe('exportProcessor', () => {
     expect(manifest).toContain('`profile.csv`')
     expect(manifest).toContain('1 registro')
     expect(manifest).toContain('_id')
+  })
+
+  it('exports mood entries and their components with pt-BR labels', async () => {
+    const user = await createTestUser(db, { email: 'moods@example.com' })
+    const firstMood = await db.mood.create({
+      data: {
+        userId: user.id,
+        selectedMood: 'GREAT',
+        anxietyLevel: 1,
+        stressLevel: 2,
+        energyLevel: 9,
+        moment: new Date('2026-03-05T10:15:00.000Z'),
+        annotation: 'Bom, "ótimo"\ndia',
+        moodComponents: {
+          create: [{ component: 'JOY', intensity: 'HIGH' }],
+        },
+      },
+      include: { moodComponents: true },
+    })
+    const secondMood = await db.mood.create({
+      data: {
+        userId: user.id,
+        selectedMood: 'SAD',
+        anxietyLevel: 6,
+        stressLevel: 7,
+        energyLevel: 3,
+        moment: new Date('2026-03-06T21:40:00.000Z'),
+        moodComponents: {
+          create: [{ component: 'GRATITUDE', intensity: 'MODERATE' }],
+        },
+      },
+      include: { moodComponents: true },
+    })
+
+    await exportProcessor(buildJob({ userId: user.id }))
+
+    const { attachment } = await attachmentFromLastEmail()
+    const zip = await JSZip.loadAsync(attachment.content)
+
+    const moodsCsv = await zip.file('moods.csv')!.async('string')
+    const moodLines = csvLines(moodsCsv)
+    expect(moodLines[0]).toContain('Humor')
+    expect(moodLines[0]).toContain('Anotação')
+    expect(moodLines[1]).toContain('"Ótimo"')
+    expect(moodLines[1]).toContain('"Bom, ""ótimo""\ndia"')
+    expect(moodLines[2]).toContain('"Triste"')
+
+    const componentsCsv = await zip.file('mood_components.csv')!.async('string')
+    const componentLines = csvLines(componentsCsv)
+    expect(componentLines[0]).toContain('Sentimento')
+    expect(componentLines[0]).toContain('Intensidade')
+
+    const moodIdFor = new Map(
+      [...firstMood.moodComponents, ...secondMood.moodComponents].map((component) => [
+        component.id,
+        component.moodId,
+      ]),
+    )
+    const header = componentLines[0].split(',').map((field) => field.replace(/"/g, ''))
+    const idIndex = header.indexOf('id')
+    const moodIdIndex = header.indexOf('mood_id')
+
+    const componentRows = componentLines.slice(1)
+    expect(componentRows).toHaveLength(2)
+    for (const row of componentRows) {
+      const fields = row.split(',')
+      expect(Number(fields[moodIdIndex])).toBe(moodIdFor.get(Number(fields[idIndex])))
+    }
+    expect(componentsCsv).toContain('"Alegria"')
+    expect(componentsCsv).toContain('"Intensa"')
+    expect(componentsCsv).toContain('"Gratidão"')
+    expect(componentsCsv).toContain('"Moderada"')
+
+    const manifest = await zip.file('leia-me.md')!.async('string')
+    expect(manifest).toContain('`moods.csv` — 2 registros')
+    expect(manifest).toContain('`mood_components.csv` — 2 registros')
   })
 
   it('preserves commas, quotes and newlines inside a field', async () => {
