@@ -72,6 +72,10 @@ export interface UserPreferencesPayload {
   dailyReminderTime?: string | null;
 }
 
+export interface ExportDataResponse {
+  message: string;
+}
+
 // Mood entries
 export interface MoodComponentPayload {
   component: string;

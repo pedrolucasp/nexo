@@ -3,7 +3,6 @@ import {
   StyleSheet,
   SectionList,
   View,
-  Alert,
   Switch,
   Pressable,
 } from "react-native";
@@ -22,11 +21,14 @@ import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { usePatchUserMe } from "@/hooks/useUserPreferences.queries";
 import { useToast } from '@/context/ToastContext';
+import { apiClient } from "@/lib/api";
 
 export default function Settings() {
   const { user, logout, updateAuthUser } = useAuth();
   const [allowWeeklyInsights, setAllowWeeklyInsights] = useState(false);
   const [logoutVisible, setLogoutVisible] = useState(false);
+  const [exportVisible, setExportVisible] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const { showToast } = useToast();
 
   const notificationsEnabled = user?.notificationsEnabled ?? true;
@@ -58,16 +60,27 @@ export default function Settings() {
   const handleInvisibleMode = () => {};
 
   const handleDataExport = () => {
-    Alert.alert("Exportar dados", "Deseja exportar seus dados?", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Exportar",
-        style: "destructive",
-        onPress: () => {
-          showToast("Você receberá um e-mail com os dados exportados", "success")
-        },
-      },
-    ]);
+    setExportVisible(true);
+  };
+
+  const handleExportConfirm = async () => {
+    setExporting(true);
+
+    try {
+      const { message } = await apiClient.exportData();
+
+      setExportVisible(false);
+      showToast(message, "success");
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível exportar seus dados",
+        "error",
+      );
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -330,6 +343,22 @@ export default function Settings() {
           logout();
         }}
         testID="logout-confirm"
+      />
+
+      <ConfirmModal
+        visible={exportVisible}
+        title="Exportar meus dados"
+        message={
+          "Vamos preparar um arquivo com todos os seus dados e enviá-lo " +
+          "para o e-mail abaixo. Pode levar alguns instantes."
+        }
+        detail={user?.email}
+        confirmLabel="Exportar"
+        cancelLabel="Cancelar"
+        loading={exporting}
+        onCancel={() => setExportVisible(false)}
+        onConfirm={handleExportConfirm}
+        testID="export-confirm"
       />
     </ScreenLayout>
   );

@@ -64,3 +64,17 @@ export enum DailyReminderJobName {
 export type DailyReminderPayload = {
   userId: number;
 };
+
+// Export queue
+export enum ExportJobName {
+  Data = "export:data",
+}
+
+export type ExportPayload = {
+  userId: number;
+};
+
+export type ExportJobData = {
+  name: ExportJobName.Data;
+  data: ExportPayload;
+};

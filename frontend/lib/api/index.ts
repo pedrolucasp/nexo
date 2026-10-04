@@ -39,6 +39,7 @@ export type {
   UpdateMedicineRegimenPayload,
   TodayMedicineEntry,
   UserPreferencesPayload,
+  ExportDataResponse,
   UpdateTriggerPayload,
   // Trigger-Mood linking
   TriggerMoodLink,

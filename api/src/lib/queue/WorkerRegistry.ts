@@ -4,6 +4,7 @@ import { mailProcessor } from "@app/lib/queue/processors/mail";
 import { insightProcessor } from "@app/lib/queue/processors/insights";
 import { medicineReminderProcessor } from "@app/lib/queue/processors/medicineReminders";
 import { dailyReminderProcessor } from "@app/lib/queue/processors/dailyReminders";
+import { exportProcessor } from "@app/lib/queue/processors/exports";
 import { InsightJobName } from "@app/lib/queue/types";
 
 type ProcessorMap = Record<QueueName, Processor>;
@@ -13,6 +14,7 @@ const processorMap: ProcessorMap = {
   insights: insightProcessor,
   "medicine-reminders": medicineReminderProcessor,
   "daily-reminders": dailyReminderProcessor,
+  exports: exportProcessor,
 };
 
 // Per-queue concurrency
@@ -22,6 +24,7 @@ const concurrencyMap: Record<QueueName, number> = {
   insights: 5,
   "medicine-reminders": 5,
   "daily-reminders": 5,
+  exports: 5,
 };
 
 const workers: Worker[] = [];
