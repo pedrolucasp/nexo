@@ -1,5 +1,5 @@
-import React from 'react';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Animated, Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/ui/Button';
 import { Text } from '@/components/ui/Text';
@@ -38,6 +38,19 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onCancel,
   testID = 'confirm-modal',
 }) => {
+  const [fade] = useState(() => new Animated.Value(0));
+
+  useEffect(() => {
+    if (visible) {
+      fade.setValue(0);
+      Animated.timing(fade, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [visible, fade]);
+
   const dismiss = () => {
     if (!loading) {
       onCancel();
@@ -48,11 +61,11 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="none"
       statusBarTranslucent
       onRequestClose={dismiss}
     >
-      <View style={styles.overlay}>
+      <Animated.View style={[styles.overlay, { opacity: fade }]}>
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={dismiss}
@@ -95,7 +108,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </View>
           </Pressable>
         </View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };
