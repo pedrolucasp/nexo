@@ -51,6 +51,7 @@ import {
   LinkMoodPayload,
   AvatarResponse,
   RemoveAvatarResponse,
+  ExportDataResponse,
 } from "@/lib/api/types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
@@ -421,6 +422,10 @@ class ApiClient {
       method: 'PATCH',
       body: JSON.stringify({ user: payload }),
     });
+  }
+
+  async exportData(): Promise<ExportDataResponse> {
+    return this.request('/exports', { method: 'POST' });
   }
 
   // Care Actions

@@ -1,6 +1,11 @@
 import { Queue, QueueOptions } from "bullmq";
 
-export type QueueName = "mail" | "insights" | "medicine-reminders" | "daily-reminders";
+export type QueueName =
+  | "mail"
+  | "insights"
+  | "medicine-reminders"
+  | "daily-reminders"
+  | "exports";
 
 const queues = new Map<QueueName, Queue>();
 
