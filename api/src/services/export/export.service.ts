@@ -5,18 +5,31 @@ import {
   moodComponentTable,
   moodTable,
   profileTable,
+  sleepRecordTable,
+  triggerMoodLinkTable,
+  triggerTable,
 } from "@app/services/export/table.descriptors";
 import { buildZip } from "@app/services/export/zip.builder";
 import { ExportArchive, ExportFile } from "@app/services/export/types";
 
 export async function buildExportArchive(userId: number): Promise<ExportArchive> {
-  const { user, moods, moodComponents } = await gatherExportData(userId);
+  const {
+    user,
+    moods,
+    moodComponents,
+    sleepRecords,
+    triggers,
+    triggerMoodLinks,
+  } = await gatherExportData(userId);
   const generatedAt = new Date();
 
   const files: ExportFile[] = [
     serializeCsv(profileTable, [user]),
     serializeCsv(moodTable, moods),
     serializeCsv(moodComponentTable, moodComponents),
+    serializeCsv(sleepRecordTable, sleepRecords),
+    serializeCsv(triggerTable, triggers),
+    serializeCsv(triggerMoodLinkTable, triggerMoodLinks),
   ];
   const manifest = buildManifest(files, generatedAt);
 

@@ -67,6 +67,9 @@ describe('exportProcessor', () => {
       'mood_components.csv',
       'moods.csv',
       'profile.csv',
+      'sleep_records.csv',
+      'trigger_mood_links.csv',
+      'triggers.csv',
     ])
 
     const csv = await zip.file('profile.csv')!.async('string')
@@ -171,6 +174,89 @@ describe('exportProcessor', () => {
     const manifest = await zip.file('leia-me.md')!.async('string')
     expect(manifest).toContain('`moods.csv` — 2 registros')
     expect(manifest).toContain('`mood_components.csv` — 2 registros')
+  })
+
+  it('exports sleep records, triggers and their mood links', async () => {
+    const user = await createTestUser(db, { email: 'timeline@example.com' })
+    const mood = await db.mood.create({
+      data: {
+        userId: user.id,
+        selectedMood: 'GOOD',
+        anxietyLevel: 3,
+        stressLevel: 3,
+        energyLevel: 6,
+        moment: new Date('2026-03-05T10:00:00.000Z'),
+      },
+    })
+    await db.sleepRecord.create({
+      data: {
+        userId: user.id,
+        date: new Date('2026-03-05T00:00:00.000Z'),
+        average: 7.5,
+        annotations: 'Dormi bem, "profundo"',
+      },
+    })
+    const trigger = await db.trigger.create({
+      data: {
+        userId: user.id,
+        category: 'WORK',
+        moment: new Date('2026-03-05T14:30:00.000Z'),
+        comment: 'Reunião difícil',
+      },
+    })
+    await db.trigger.create({
+      data: {
+        userId: user.id,
+        category: 'HEALTH',
+        moment: new Date('2026-03-05T18:00:00.000Z'),
+        comment: 'Consulta',
+      },
+    })
+    await db.triggerMoodLink.create({
+      data: {
+        triggerId: trigger.id,
+        moodId: mood.id,
+        perceivedImpact: 4,
+        linkedAt: new Date('2026-03-05T15:00:00.000Z'),
+      },
+    })
+
+    await exportProcessor(buildJob({ userId: user.id }))
+
+    const { attachment } = await attachmentFromLastEmail()
+    const zip = await JSZip.loadAsync(attachment.content)
+
+    const sleepCsv = await zip.file('sleep_records.csv')!.async('string')
+    const sleepLines = csvLines(sleepCsv)
+    expect(sleepLines[0]).toContain('Data')
+    expect(sleepLines[0]).toContain('Média')
+    expect(sleepLines[0]).toContain('Anotações')
+    expect(sleepLines[1]).toContain('"2026-03-05"')
+    expect(sleepLines[1]).toContain('7.5')
+    expect(sleepLines[1]).toContain('"Dormi bem, ""profundo"""')
+
+    const triggersCsv = await zip.file('triggers.csv')!.async('string')
+    const triggerLines = csvLines(triggersCsv)
+    expect(triggerLines[0]).toContain('Categoria')
+    expect(triggerLines[0]).toContain('Comentário')
+    expect(triggerLines[1]).toContain('"Trabalho"')
+    expect(triggerLines[1]).toContain('"Reunião difícil"')
+    expect(triggerLines[2]).toContain('"Saúde"')
+
+    const linksCsv = await zip.file('trigger_mood_links.csv')!.async('string')
+    const linkLines = csvLines(linksCsv)
+    expect(linkLines[0]).toContain('Impacto percebido')
+    expect(linkLines[0]).toContain('Vinculado em')
+
+    const header = linkLines[0].split(',').map((field) => field.replace(/"/g, ''))
+    const fields = linkLines[1].split(',')
+    expect(Number(fields[header.indexOf('trigger_id')])).toBe(trigger.id)
+    expect(Number(fields[header.indexOf('mood_id')])).toBe(mood.id)
+
+    const manifest = await zip.file('leia-me.md')!.async('string')
+    expect(manifest).toContain('`sleep_records.csv` — 1 registro')
+    expect(manifest).toContain('`triggers.csv` — 2 registros')
+    expect(manifest).toContain('`trigger_mood_links.csv` — 1 registro')
   })
 
   it('preserves commas, quotes and newlines inside a field', async () => {
