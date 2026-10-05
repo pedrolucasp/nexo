@@ -1,4 +1,9 @@
 import {
+  Activity,
+  Appointment,
+  CareAction,
+  MedicineLog,
+  MedicineRegimen,
   Mood,
   MoodComponent,
   SleepRecord,
@@ -8,8 +13,12 @@ import {
 } from "@prisma/client";
 
 import {
+  activityCategoryLabel,
+  appointmentTypeLabel,
   baseMoodLabel,
+  careActionTypeLabel,
   intensityLabel,
+  medicinePeriodicityLabel,
   moodComponentLabel,
   triggerTypeLabel,
 } from "@app/services/export/label.map";
@@ -102,5 +111,75 @@ export const triggerMoodLinkTable: CsvTable<TriggerMoodLink> = {
     { header: "mood_id", value: (link) => link.moodId },
     { header: "Impacto percebido", value: (link) => link.perceivedImpact },
     { header: "Vinculado em", value: (link) => link.linkedAt },
+  ],
+};
+
+export const careActionTable: CsvTable<CareAction> = {
+  filename: "care_actions.csv",
+  columns: [
+    { header: "id", value: (action) => action.id },
+    { header: "Tipo", value: (action) => careActionTypeLabel[action.type] },
+    { header: "Momento", value: (action) => action.moment },
+    { header: "trigger_id", value: (action) => action.triggerId },
+    { header: "mood_id", value: (action) => action.moodId },
+    { header: "Criado em", value: (action) => action.createdAt },
+    { header: "Atualizado em", value: (action) => action.updatedAt },
+  ],
+};
+
+export const medicineLogTable: CsvTable<MedicineLog> = {
+  filename: "medicine_logs.csv",
+  columns: [
+    { header: "id", value: (log) => log.id },
+    { header: "care_action_id", value: (log) => log.careActionId },
+    { header: "regimen_id", value: (log) => log.regimenId },
+    { header: "Tomado em", value: (log) => log.takenAt },
+  ],
+};
+
+export const appointmentTable: CsvTable<Appointment> = {
+  filename: "appointments.csv",
+  columns: [
+    { header: "id", value: (appointment) => appointment.id },
+    {
+      header: "care_action_id",
+      value: (appointment) => appointment.careActionId,
+    },
+    {
+      header: "Tipo",
+      value: (appointment) => appointmentTypeLabel[appointment.type],
+    },
+    { header: "Duração", value: (appointment) => appointment.duration },
+    { header: "Observação", value: (appointment) => appointment.note },
+  ],
+};
+
+export const activityTable: CsvTable<Activity> = {
+  filename: "activities.csv",
+  columns: [
+    { header: "id", value: (activity) => activity.id },
+    { header: "care_action_id", value: (activity) => activity.careActionId },
+    {
+      header: "Tipo",
+      value: (activity) => activityCategoryLabel[activity.type],
+    },
+    { header: "Duração", value: (activity) => activity.duration },
+  ],
+};
+
+export const medicineRegimenTable: CsvTable<MedicineRegimen> = {
+  filename: "medicine_regimens.csv",
+  columns: [
+    { header: "id", value: (regimen) => regimen.id },
+    { header: "Nome", value: (regimen) => regimen.name },
+    { header: "Dosagem", value: (regimen) => regimen.dosage },
+    {
+      header: "Periodicidade",
+      value: (regimen) => medicinePeriodicityLabel[regimen.periodicity],
+    },
+    { header: "Horários", value: (regimen) => regimen.scheduledAt.join(" · ") },
+    { header: "Ativo", value: (regimen) => booleanLabel(regimen.active) },
+    { header: "Criado em", value: (regimen) => regimen.createdAt },
+    { header: "Atualizado em", value: (regimen) => regimen.updatedAt },
   ],
 };

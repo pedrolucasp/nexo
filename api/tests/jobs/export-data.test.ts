@@ -63,7 +63,12 @@ describe('exportProcessor', () => {
 
     const zip = await JSZip.loadAsync(attachment.content)
     expect(Object.keys(zip.files).sort()).toEqual([
+      'activities.csv',
+      'appointments.csv',
+      'care_actions.csv',
       'leia-me.md',
+      'medicine_logs.csv',
+      'medicine_regimens.csv',
       'mood_components.csv',
       'moods.csv',
       'profile.csv',
@@ -257,6 +262,169 @@ describe('exportProcessor', () => {
     expect(manifest).toContain('`sleep_records.csv` — 1 registro')
     expect(manifest).toContain('`triggers.csv` — 2 registros')
     expect(manifest).toContain('`trigger_mood_links.csv` — 1 registro')
+  })
+
+  it('exports care actions, their subtypes and medicine regimens', async () => {
+    const user = await createTestUser(db, { email: 'care@example.com' })
+    const mood = await db.mood.create({
+      data: {
+        userId: user.id,
+        selectedMood: 'GOOD',
+        anxietyLevel: 3,
+        stressLevel: 3,
+        energyLevel: 6,
+        moment: new Date('2026-03-05T10:00:00.000Z'),
+      },
+    })
+    const trigger = await db.trigger.create({
+      data: {
+        userId: user.id,
+        category: 'WORK',
+        moment: new Date('2026-03-05T14:00:00.000Z'),
+      },
+    })
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00', '20:00'],
+        active: true,
+      },
+    })
+
+    const medicineAction = await db.careAction.create({
+      data: {
+        userId: user.id,
+        type: 'MEDICINE',
+        moment: new Date('2026-03-05T08:05:00.000Z'),
+        triggerId: trigger.id,
+        moodId: mood.id,
+        medicineLog: {
+          create: {
+            regimenId: regimen.id,
+            takenAt: new Date('2026-03-05T08:05:00.000Z'),
+          },
+        },
+      },
+      include: { medicineLog: true },
+    })
+    const appointmentAction = await db.careAction.create({
+      data: {
+        userId: user.id,
+        type: 'APPOINTMENT',
+        moment: new Date('2026-03-06T15:00:00.000Z'),
+        appointment: {
+          create: { type: 'ANALYST', duration: 50, note: 'Primeira sessão' },
+        },
+      },
+      include: { appointment: true },
+    })
+    const activityAction = await db.careAction.create({
+      data: {
+        userId: user.id,
+        type: 'ACTIVITY',
+        moment: new Date('2026-03-07T07:30:00.000Z'),
+        activity: { create: { type: 'WALK', duration: 30 } },
+      },
+      include: { activity: true },
+    })
+
+    await exportProcessor(buildJob({ userId: user.id }))
+
+    const { attachment } = await attachmentFromLastEmail()
+    const zip = await JSZip.loadAsync(attachment.content)
+
+    for (const file of [
+      'care_actions.csv',
+      'medicine_logs.csv',
+      'appointments.csv',
+      'activities.csv',
+      'medicine_regimens.csv',
+    ]) {
+      expect(zip.file(file)).not.toBeNull()
+    }
+
+    const careCsv = await zip.file('care_actions.csv')!.async('string')
+    const careLines = csvLines(careCsv)
+    expect(careLines[0]).toContain('Tipo')
+    expect(careLines[0]).toContain('trigger_id')
+    expect(careLines[0]).toContain('mood_id')
+    expect(careLines[0]).toContain('Criado em')
+    expect(careLines[0]).toContain('Atualizado em')
+    expect(careCsv).toContain('"Medicação"')
+    expect(careCsv).toContain('"Consulta"')
+    expect(careCsv).toContain('"Atividade"')
+
+    const careHeader = careLines[0].split(',').map((field) => field.replace(/"/g, ''))
+    const idIndex = careHeader.indexOf('id')
+    const triggerIndex = careHeader.indexOf('trigger_id')
+    const moodIndex = careHeader.indexOf('mood_id')
+    const careIds = new Set(
+      careLines.slice(1).map((row) => Number(row.split(',')[idIndex])),
+    )
+    expect(careIds.size).toBe(3)
+
+    const medicineRow = careLines.slice(1).find((row) => row.includes('"Medicação"'))!
+    const medicineFields = medicineRow.split(',')
+    expect(Number(medicineFields[triggerIndex])).toBe(trigger.id)
+    expect(Number(medicineFields[moodIndex])).toBe(mood.id)
+
+    const logsCsv = await zip.file('medicine_logs.csv')!.async('string')
+    const logLines = csvLines(logsCsv)
+    expect(logLines[0]).toContain('care_action_id')
+    expect(logLines[0]).toContain('regimen_id')
+    expect(logLines[0]).toContain('Tomado em')
+    const logHeader = logLines[0].split(',').map((field) => field.replace(/"/g, ''))
+    const logFields = logLines[1].split(',')
+    expect(Number(logFields[logHeader.indexOf('care_action_id')])).toBe(medicineAction.id)
+    expect(Number(logFields[logHeader.indexOf('regimen_id')])).toBe(regimen.id)
+
+    const appointmentCsv = await zip.file('appointments.csv')!.async('string')
+    const appointmentLines = csvLines(appointmentCsv)
+    expect(appointmentLines[0]).toContain('Tipo')
+    expect(appointmentLines[0]).toContain('Duração')
+    expect(appointmentLines[0]).toContain('Observação')
+    expect(appointmentCsv).toContain('"Analista"')
+    expect(appointmentCsv).toContain('50')
+    expect(appointmentCsv).toContain('"Primeira sessão"')
+    const appointmentHeader = appointmentLines[0]
+      .split(',')
+      .map((field) => field.replace(/"/g, ''))
+    expect(
+      Number(appointmentLines[1].split(',')[appointmentHeader.indexOf('care_action_id')]),
+    ).toBe(appointmentAction.id)
+
+    const activityCsv = await zip.file('activities.csv')!.async('string')
+    const activityLines = csvLines(activityCsv)
+    expect(activityLines[0]).toContain('Duração')
+    expect(activityCsv).toContain('"Caminhada"')
+    expect(activityCsv).toContain('30')
+    const activityHeader = activityLines[0].split(',').map((field) => field.replace(/"/g, ''))
+    expect(
+      Number(activityLines[1].split(',')[activityHeader.indexOf('care_action_id')]),
+    ).toBe(activityAction.id)
+
+    const regimenCsv = await zip.file('medicine_regimens.csv')!.async('string')
+    const regimenLines = csvLines(regimenCsv)
+    expect(regimenLines[0]).toContain('Nome')
+    expect(regimenLines[0]).toContain('Dosagem')
+    expect(regimenLines[0]).toContain('Periodicidade')
+    expect(regimenLines[0]).toContain('Horários')
+    expect(regimenLines[0]).toContain('Ativo')
+    expect(regimenLines[1]).toContain('"Sertralina"')
+    expect(regimenLines[1]).toContain('"50mg"')
+    expect(regimenLines[1]).toContain('"Diário"')
+    expect(regimenLines[1]).toContain('"08:00 · 20:00"')
+    expect(regimenLines[1]).toContain('"Sim"')
+
+    const manifest = await zip.file('leia-me.md')!.async('string')
+    expect(manifest).toContain('`care_actions.csv` — 3 registros')
+    expect(manifest).toContain('`medicine_logs.csv` — 1 registro')
+    expect(manifest).toContain('`appointments.csv` — 1 registro')
+    expect(manifest).toContain('`activities.csv` — 1 registro')
+    expect(manifest).toContain('`medicine_regimens.csv` — 1 registro')
   })
 
   it('preserves commas, quotes and newlines inside a field', async () => {
