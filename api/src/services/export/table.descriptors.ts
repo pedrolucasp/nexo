@@ -2,6 +2,7 @@ import {
   Activity,
   Appointment,
   CareAction,
+  Insight,
   MedicineLog,
   MedicineRegimen,
   Mood,
@@ -17,6 +18,8 @@ import {
   appointmentTypeLabel,
   baseMoodLabel,
   careActionTypeLabel,
+  insightPeriodLabel,
+  insightTypeLabel,
   intensityLabel,
   medicinePeriodicityLabel,
   moodComponentLabel,
@@ -25,6 +28,9 @@ import {
 import { CsvTable } from "@app/services/export/types";
 
 const booleanLabel = (value: boolean): string => (value ? "Sim" : "Não");
+
+const jsonValue = (value: Insight["metadata"]): string | null =>
+  value === null ? null : JSON.stringify(value);
 
 // Sleep records carry a day-granular date, so they drop the time and offset.
 const dateOnly = (value: Date): string => value.toISOString().slice(0, 10);
@@ -181,5 +187,20 @@ export const medicineRegimenTable: CsvTable<MedicineRegimen> = {
     { header: "Ativo", value: (regimen) => booleanLabel(regimen.active) },
     { header: "Criado em", value: (regimen) => regimen.createdAt },
     { header: "Atualizado em", value: (regimen) => regimen.updatedAt },
+  ],
+};
+
+export const insightTable: CsvTable<Insight> = {
+  filename: "insights.csv",
+  columns: [
+    { header: "id", value: (insight) => insight.id },
+    { header: "Tipo", value: (insight) => insightTypeLabel[insight.type] },
+    { header: "Período", value: (insight) => insightPeriodLabel[insight.period] },
+    { header: "Título", value: (insight) => insight.title },
+    { header: "Corpo", value: (insight) => insight.body },
+    { header: "Metadados", value: (insight) => jsonValue(insight.metadata) },
+    { header: "Início do período", value: (insight) => insight.periodStart },
+    { header: "Fim do período", value: (insight) => insight.periodEnd },
+    { header: "Gerado em", value: (insight) => insight.generatedAt },
   ],
 };
