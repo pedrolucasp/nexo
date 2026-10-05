@@ -1,6 +1,10 @@
 import {
+  ActivityType,
+  AppointmentType,
   BaseMoodOption,
+  CareActionType,
   IntensityLevel,
+  MedicinePeriodicity,
   MoodComponentOption,
   TriggerType,
 } from "@prisma/client";
@@ -47,4 +51,39 @@ export const triggerTypeLabel: Record<TriggerType, string> = {
   THERAPY: "Terapia",
   INTERNAL: "Interno",
   OTHER: "Outro",
+};
+
+export const careActionTypeLabel: Record<CareActionType, string> = {
+  MEDICINE: "Medicação",
+  APPOINTMENT: "Consulta",
+  ACTIVITY: "Atividade",
+};
+
+export const appointmentTypeLabel: Record<AppointmentType, string> = {
+  ANALYST: "Analista",
+  PSYCHIATRIST: "Psiquiatra",
+  GP: "Clínico geral",
+  NUTRITIONIST: "Nutricionista",
+  PHYSIOTHERAPIST: "Fisioterapeuta",
+  OTHER: "Consulta",
+};
+
+export const activityCategoryLabel: Record<ActivityType, string> = {
+  WALK: "Caminhada",
+  YOGA: "Yoga",
+  GYM: "Academia",
+  MEDITATION: "Meditação",
+  SOCIAL: "Momento social",
+  CREATIVE: "Atividade criativa",
+  OTHER: "Atividade",
+};
+
+export const medicinePeriodicityLabel: Record<MedicinePeriodicity, string> = {
+  ONCE: "Uma vez",
+  DAILY: "Diário",
+  TWICE_DAILY: "2x ao dia",
+  THREE_TIMES_DAILY: "3x ao dia",
+  WEEKLY: "Semanal",
+  BIWEEKLY: "Quinzenal",
+  MONTHLY: "Mensal",
 };

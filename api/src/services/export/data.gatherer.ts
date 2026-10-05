@@ -1,4 +1,9 @@
 import {
+  Activity,
+  Appointment,
+  CareAction,
+  MedicineLog,
+  MedicineRegimen,
   Mood,
   MoodComponent,
   SleepRecord,
@@ -17,6 +22,11 @@ export type ExportData = {
   sleepRecords: SleepRecord[];
   triggers: Trigger[];
   triggerMoodLinks: TriggerMoodLink[];
+  careActions: CareAction[];
+  medicineLogs: MedicineLog[];
+  appointments: Appointment[];
+  activities: Activity[];
+  medicineRegimens: MedicineRegimen[];
 };
 
 export async function gatherExportData(userId: number): Promise<ExportData> {
@@ -26,7 +36,14 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
     throw new Error(`Usuário ${userId} não encontrado para exportação`);
   }
 
-  const [moods, sleepRecords, triggers, triggerMoodLinks] = await Promise.all([
+  const [
+    moods,
+    sleepRecords,
+    triggers,
+    triggerMoodLinks,
+    careActions,
+    medicineRegimens,
+  ] = await Promise.all([
     prisma.mood.findMany({
       where: { userId },
       include: { moodComponents: true },
@@ -44,6 +61,15 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
       where: { trigger: { userId } },
       orderBy: { linkedAt: "asc" },
     }),
+    prisma.careAction.findMany({
+      where: { userId },
+      include: { medicineLog: true, appointment: true, activity: true },
+      orderBy: { moment: "asc" },
+    }),
+    prisma.medicineRegimen.findMany({
+      where: { userId },
+      orderBy: { createdAt: "asc" },
+    }),
   ]);
 
   return {
@@ -53,5 +79,16 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
     sleepRecords,
     triggers,
     triggerMoodLinks,
+    careActions,
+    medicineLogs: careActions.flatMap((action) =>
+      action.medicineLog ? [action.medicineLog] : [],
+    ),
+    appointments: careActions.flatMap((action) =>
+      action.appointment ? [action.appointment] : [],
+    ),
+    activities: careActions.flatMap((action) =>
+      action.activity ? [action.activity] : [],
+    ),
+    medicineRegimens,
   };
 }
