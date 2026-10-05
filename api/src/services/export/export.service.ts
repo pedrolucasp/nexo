@@ -5,6 +5,7 @@ import {
   activityTable,
   appointmentTable,
   careActionTable,
+  insightTable,
   medicineLogTable,
   medicineRegimenTable,
   moodComponentTable,
@@ -30,6 +31,7 @@ export async function buildExportArchive(userId: number): Promise<ExportArchive>
     appointments,
     activities,
     medicineRegimens,
+    insights,
   } = await gatherExportData(userId);
   const generatedAt = new Date();
 
@@ -45,6 +47,7 @@ export async function buildExportArchive(userId: number): Promise<ExportArchive>
     serializeCsv(appointmentTable, appointments),
     serializeCsv(activityTable, activities),
     serializeCsv(medicineRegimenTable, medicineRegimens),
+    serializeCsv(insightTable, insights),
   ];
   const manifest = buildManifest(files, generatedAt);
 

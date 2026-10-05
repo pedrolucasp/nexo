@@ -3,6 +3,8 @@ import {
   AppointmentType,
   BaseMoodOption,
   CareActionType,
+  InsightPeriod,
+  InsightType,
   IntensityLevel,
   MedicinePeriodicity,
   MoodComponentOption,
@@ -85,5 +87,21 @@ export const medicinePeriodicityLabel: Record<MedicinePeriodicity, string> = {
   THREE_TIMES_DAILY: "3x ao dia",
   WEEKLY: "Semanal",
   BIWEEKLY: "Quinzenal",
+  MONTHLY: "Mensal",
+};
+
+export const insightTypeLabel: Record<InsightType, string> = {
+  MOOD_TREND: "Tendência de Humor",
+  ENERGY_SLEEP_CORRELATION: "Sono e Energia",
+  TRIGGER_PATTERN: "Padrão de Gatilho",
+  WEEKLY_SUMMARY: "Resumo Semanal",
+  STREAK: "Sequência",
+  DAILY_ENERGY: "Energia do Dia",
+  DAILY_SLEEP: "Sono",
+};
+
+export const insightPeriodLabel: Record<InsightPeriod, string> = {
+  DAILY: "Diário",
+  WEEKLY: "Semanal",
   MONTHLY: "Mensal",
 };

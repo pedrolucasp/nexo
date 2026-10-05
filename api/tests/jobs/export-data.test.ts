@@ -66,6 +66,7 @@ describe('exportProcessor', () => {
       'activities.csv',
       'appointments.csv',
       'care_actions.csv',
+      'insights.csv',
       'leia-me.md',
       'medicine_logs.csv',
       'medicine_regimens.csv',
@@ -425,6 +426,66 @@ describe('exportProcessor', () => {
     expect(manifest).toContain('`appointments.csv` — 1 registro')
     expect(manifest).toContain('`activities.csv` — 1 registro')
     expect(manifest).toContain('`medicine_regimens.csv` — 1 registro')
+  })
+
+  it('exports insights with pt-BR labels and JSON metadata', async () => {
+    const user = await createTestUser(db, { email: 'insights@example.com' })
+    await db.insight.create({
+      data: {
+        userId: user.id,
+        type: 'WEEKLY_SUMMARY',
+        period: 'WEEKLY',
+        title: 'Sua semana',
+        body: 'Você registrou sete dias.',
+        metadata: { note: 'bom, "ótimo"' },
+        generatedAt: new Date('2026-03-08T09:00:00.000Z'),
+        periodStart: new Date('2026-03-01T00:00:00.000Z'),
+        periodEnd: new Date('2026-03-07T23:59:59.000Z'),
+      },
+    })
+    await db.insight.create({
+      data: {
+        userId: user.id,
+        type: 'STREAK',
+        period: 'DAILY',
+        title: 'Sequência de 3 dias',
+        body: 'Continue assim!',
+        generatedAt: new Date('2026-03-09T09:00:00.000Z'),
+        periodStart: new Date('2026-03-09T00:00:00.000Z'),
+        periodEnd: new Date('2026-03-09T23:59:59.000Z'),
+      },
+    })
+
+    await exportProcessor(buildJob({ userId: user.id }))
+
+    const { attachment } = await attachmentFromLastEmail()
+    const zip = await JSZip.loadAsync(attachment.content)
+
+    const insightsCsv = await zip.file('insights.csv')!.async('string')
+    const lines = csvLines(insightsCsv)
+    expect(lines[0]).toContain('Tipo')
+    expect(lines[0]).toContain('Período')
+    expect(lines[0]).toContain('Título')
+    expect(lines[0]).toContain('Corpo')
+    expect(lines[0]).toContain('Metadados')
+    expect(lines[0]).toContain('Início do período')
+    expect(lines[0]).toContain('Fim do período')
+    expect(lines[0]).toContain('Gerado em')
+    expect(lines).toHaveLength(3)
+
+    expect(insightsCsv).toContain('"Resumo Semanal"')
+    expect(insightsCsv).toContain('"Semanal"')
+    expect(insightsCsv).toContain('"Sequência"')
+    expect(insightsCsv).toContain('"Diário"')
+
+    // The JSON travels as one quoted cell; un-escaping it yields the original.
+    const metadataCell = '"{""note"":""bom, \\""ótimo\\""""}"'
+    expect(insightsCsv).toContain(metadataCell)
+    const unescaped = metadataCell.slice(1, -1).replace(/""/g, '"')
+    expect(JSON.parse(unescaped)).toEqual({ note: 'bom, "ótimo"' })
+
+    const manifest = await zip.file('leia-me.md')!.async('string')
+    expect(manifest).toContain('`insights.csv` — 2 registros')
   })
 
   it('preserves commas, quotes and newlines inside a field', async () => {

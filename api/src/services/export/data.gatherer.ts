@@ -2,6 +2,7 @@ import {
   Activity,
   Appointment,
   CareAction,
+  Insight,
   MedicineLog,
   MedicineRegimen,
   Mood,
@@ -27,6 +28,7 @@ export type ExportData = {
   appointments: Appointment[];
   activities: Activity[];
   medicineRegimens: MedicineRegimen[];
+  insights: Insight[];
 };
 
 export async function gatherExportData(userId: number): Promise<ExportData> {
@@ -43,6 +45,7 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
     triggerMoodLinks,
     careActions,
     medicineRegimens,
+    insights,
   ] = await Promise.all([
     prisma.mood.findMany({
       where: { userId },
@@ -70,6 +73,10 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
       where: { userId },
       orderBy: { createdAt: "asc" },
     }),
+    prisma.insight.findMany({
+      where: { userId },
+      orderBy: { generatedAt: "asc" },
+    }),
   ]);
 
   return {
@@ -90,5 +97,6 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
       action.activity ? [action.activity] : [],
     ),
     medicineRegimens,
+    insights,
   };
 }
