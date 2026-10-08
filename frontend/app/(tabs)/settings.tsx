@@ -11,7 +11,7 @@ import { useState } from "react";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Cards";
 import ScreenLayout from "@/components/ui/ScreenLayout";
-import { BorderRadius, Colors, Fonts, Spacing } from "@/constants/theme";
+import { BorderRadius, Colors, Spacing, Typography } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useAuth } from "@/context/AuthContext";
 import { Section, SectionHeader } from "@/components/ui/Sections";
@@ -107,8 +107,8 @@ export default function Settings() {
                 justifyContent: "space-between",
               }}
             >
-              <Text style={styles.cardTitle}>Dados Pessoais</Text>
-              <Text style={styles.cardSubtitle}>Nome, Email e senha</Text>
+              <Text style={styles.rowLabel}>Dados Pessoais</Text>
+              <Text style={styles.rowSubtitle}>Nome, Email e senha</Text>
             </View>
 
             <Ionicons name="chevron-forward" size={24} color={textColor} />
@@ -149,8 +149,10 @@ export default function Settings() {
                 flex: 1,
               }}
             >
-              <Text style={styles.cardTitle}>Lembrete diário de humor</Text>
-              <Text>{notificationsEnabled ? `Diário às ${dailyReminderTime}` : "Desativado"}</Text>
+              <Text style={styles.rowLabel}>Lembrete diário de humor</Text>
+              <Text style={styles.rowSubtitle}>
+                {notificationsEnabled ? `Diário às ${dailyReminderTime}` : "Desativado"}
+              </Text>
             </View>
 
             <Switch
@@ -204,8 +206,8 @@ export default function Settings() {
                 flex: 1,
               }}
             >
-              <Text style={styles.cardTitle}>Indicadores semanais</Text>
-              <Text>Relatórios de progressos</Text>
+              <Text style={styles.rowLabel}>Indicadores semanais</Text>
+              <Text style={styles.rowSubtitle}>Relatórios de progressos</Text>
             </View>
 
             <Switch
@@ -240,7 +242,7 @@ export default function Settings() {
                 size={24}
                 color={Colors.light.textSecondary}
               />
-              <Text style={{ marginLeft: 8, ...styles.cardTitle }}>
+              <Text style={[styles.rowLabel, { marginLeft: 8 }]}>
                 Gerar Relatório
               </Text>
             </View>
@@ -268,14 +270,7 @@ export default function Settings() {
                 color={Colors.light.textSecondary}
               />
 
-              <Text
-                style={{
-                  marginLeft: 8,
-                  color: Colors.light.text,
-                  fontSize: 14,
-                  fontWeight: "500" as const,
-                }}
-              >
+              <Text style={[styles.rowLabel, { marginLeft: 8 }]}>
                 Privacidade
               </Text>
             </View>
@@ -300,14 +295,7 @@ export default function Settings() {
                 color={Colors.light.textSecondary}
               />
 
-              <Text
-                style={{
-                  marginLeft: 8,
-                  color: Colors.light.text,
-                  fontSize: 14,
-                  fontWeight: "500" as const,
-                }}
-              >
+              <Text style={[styles.rowLabel, { marginLeft: 8 }]}>
                 Exportar Meus Dados
               </Text>
             </View>
@@ -365,35 +353,19 @@ export default function Settings() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginHorizontal: 16,
-    paddingTop: 10,
-  },
-  item: {
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
   cardIcon: {
     paddingVertical: 15,
     paddingHorizontal: 14,
     width: 48,
     borderRadius: BorderRadius.md,
   },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
+  rowLabel: {
+    ...Typography.bodyLg,
+    color: Colors.light.text,
   },
-  cardSubtitle: {
-    fontSize: 12,
+  rowSubtitle: {
+    ...Typography.bodyMd,
     color: Colors.light.textSecondary,
-  },
-  logout: {
-    color: "#FF2C2C",
   },
   divider: {
     height: StyleSheet.hairlineWidth,
