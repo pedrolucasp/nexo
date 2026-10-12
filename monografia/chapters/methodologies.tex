@@ -3,30 +3,32 @@
 
 Como primeiro passo, para conseguir viabilizar construir um \textit{software}
 com qualidade, é necessário adotar metodologias que fundamentam a ideia e o
-processo. De tal sorte que, ajudem a levantar requisitos, priorizar
-funcionalidades, quebrar o escopo em entregáveis que possam ser validados, e
-desenvolver o aplicativo/sistema de forma sustentável. Esse capítulo se
-debruça, tanto na abordagem da metodologia de pesquisa do projeto, quanto
-também detalha o método de desenvolvimento de \textit{software} implementado.
+embasem o processo. De tal sorte que, ajudem a levantar quais requisitos esse
+\textit{software} deve atender, priorizar funcionalidades, quebrar o escopo em
+entregáveis que possam ser validados, e desenvolver os mesmos de forma
+sustentável. Esse capítulo se debruça, tanto na abordagem da metodologia de
+pesquisa do projeto, quanto também detalha o método de desenvolvimento de
+\textit{software} escolhido.
 
 \section{Metodologia de Desenvolvimento de \textit{software}}
 
-Existem diversos métodos de desenvolvimento, cada um com seus respectivos prós
-e contras. Todos tentam, de sua forma, responder à necessidade de como dar
-forma ao processo de desenvolvimento, para que ele flua e assegure que os
-requisitos levantados sejam atendidos, que os membros envolvidos no processo,
-tanto de desenvolvimento em si, quanto dos atores que o demandam tenham seus
-anseios respondidos de forma minimamente transparente e satisfatória.
+Existem diversas abordagens para o desenvolvimento de \textit{software}, cada
+uma com seus respectivos prós e contras. Todos procuram responder a uma mesma
+necessidade: dar forma ao processo de desenvolvimento, para que ele flua e
+assegure que os requisitos levantados sejam atendidos, que os membros
+envolvidos no processo, sejam eles os desenvolvedores quanto os usuários finais
+ou atores que o demandam tenham seus anseios respondidos de forma minimamente
+transparente e satisfatória.
 
-Além disso, a escolha de uma boa metodologia, adequada para as necessidades do
-sistema, permite que os prazos de entrega sejam melhor controlados e mais
-precisos \cite{pressman:2021}, minimizando a ocorrência de falhas e gestão do
-tempo.
+Além disso, a escolha de uma abordagem adequada para as necessidades do
+sistema, permite que os prazos de entrega sejam mais bem controlados e mais
+precisos \cite{pressman:2021}, minimizando a ocorrência de falhas e melhorando
+a gestão do tempo.
 
 As ideias fundamentais que norteiam esse projeto são baseadas em dois conceitos
-chaves da engenharia de \textit{software}: desenvolvimento incremental e
-desenvolvimento de \textit{software} ágil. O IEEE define que a engenharia de
-\textit{software} é:
+chaves da engenharia de \textit{software}: o modelo de desenvolvimento
+incremental e desenvolvimento de \textit{software} ágil. O IEEE define que a
+engenharia de \textit{software} é:
 
 \begin{quote}
   Engenharia de \textit{software}: A aplicação de uma abordagem sistemática,
@@ -36,73 +38,58 @@ desenvolvimento de \textit{software} ágil. O IEEE define que a engenharia de
 \end{quote}
 
 Portanto, a engenharia de \textit{software} propõe estruturar a criação de
-\textit{software} de forma mais organizada e eficiente. Pressman vai dar um
-destaque para os modelos de desenvolvimento de \textit{software} sequenciais e
-incrementais que moldam boa parte das práticas de engenharia de
-\textit{software} nas últimas décadas.
+\textit{software} de forma mais organizada e eficiente. \citet{pressman:2021}
+aborda, entre os diversos modelos de processo, \citet{pressman:2021} aborda o
+de desenvolvimento em cascata e desenvolvimento incremental que moldaram boa
+parte das práticas da área nas últimas décadas.
 
-O modelo em cascata (\textit{waterfall}) é um modelo sequencial, dos mais
-tradicionais e antigos a existirem, cujo qual necessita que cada etapa ---
-levantamento de requisitos, projeto, implementação, testes --- estejam
-concluídas antes da próxima etapa começar. Embora forneça uma estrutura rígida
-e lógica, é frequentemente criticado pela baixa adaptabilidade em relação às
-mudanças durante o processo de desenvolvimento.
+O modelo em cascata (\textit{waterfall}) é linear e um dos mais tradicionais.
+Levantamento de requisitos, projeto, implementação e testes formam uma única
+linha reta e única, na qual cada etapa precisa estar concluída antes da entrega
+final. Como não há entrega intermediária, o retorno sobre o produto só é
+coletado depois que ele está pronto. Embora forneça uma estrutura lógica e
+rígida, o modelo é frequentemente criticado pela baixa adaptabilidade em
+relação às mudanças durante o processo de desenvolvimento.
 
-Em outro âmbito, o modelo incremental, trabalha com a premissa de que um
-desenvolvimento, feito em pequenas porções, agrupam-se para totalizar o projeto
-em si. Trabalho a concepção de incrementos funcionais, permitindo uma maior
-flexibilidade com as mudanças no processo ao todo. Também ajuda a iterar
-rápidamente em cima do desenvolvimento do sistemas, criando um produto mínimo
-viável, que possa preencher a proposta, usando o mínimo de tempo, reduzindo as
-funcionalidades ao seu estado basal. Essa metodologia também ajuda a reduzir
-custos e riscos, já que necessita que as funcionalidades estejam em seu estado
-mínimo, porém funcionais.
-
-Outros modelos tradicionais citados por Pressman incluem o modelo de
-prototipação e o modelo em espiral, o primeiro trabalhando na ideia de
-elaboração de protótipos pequenos que validem a hipótese, e depois passe para a
-implementação final; e o modelo em espiral une a natureza iterativa da
-prototipação com os aspectos sistemáticos do modelo em cascata, sendo que acaba
-por ser um modelo geralmente usado para desenvolvimento de aplicações em larga
-escala, visto que oferece mais segurança ao processo de desenvolvimento. Apesar
-da influência histórica, tais modelos acabam por serem um tanto quanto
-burocráticos e em um projeto com um escopo de equipe reduzida e onde necessita
-um nível de flexibilidade maior, como este, portanto, uma adoção de uma
-metodologia mais flexível se faz necessária.
+Em outro oposto, o modelo incremental, trabalha com a premissa de construir em
+pequenas porções. Cada incremento percorre seu próprio mini-ciclo de
+levantamento de requisitos, projeto, implementação e testes, e ao fim de cada
+ciclo curto, entrega-se um sistema funcional, ainda que parcial. Isso permite
+colher retorno precocemente, lidar melhor com requisitos incertos ou mutáveis e
+ajustar o rumo a cada entrega \cite{pressman:2021}.
 
 Pressman, comenta que, por meados de 2001, um grupo de desenvolvedores
-deflagrou o ``Manifesto Ágil'', um documento desenhando uma nova metodologia de
-desenvolvimento, destacando a satisfação dos patrocinadores do sistema,
+renomados publicou o ``Manifesto Ágil'', um documento desenhando um conjunto de
+valores/princípios de forma a explicitar elementos chaves do ciclo de
+desenvolvimento, destacando a satisfação dos \textit{stakeholders} do sistema,
 entregas mais rápidas, flexibilidade durante o desenvolvimento do
 \textit{software} de forma a evitar que os desenvolvedores ficassem empacados e
-reduzissem rigidez. Os principais destaques da abordagem ágil é a proposta de
-que a mesma não é escrita em pedra, ou seja, permite flexibilidade no como
-aplicá-la. Nesse cenário, existem algumas abordagens sobre ela, como o
-\textit{Kanban} e o \textit{Scrum}, que dão um pouco mais de forma a ideia
-apresentada com o desenvolvimento ágil o que casa relativamente bem com o
-modelo de desenvolvimento incremental.
+ajudasse a remover a rigidez de modelos prescritivos.
 
-Com base nesse panorama, o presente trabalho adota uma abordagem baseada na
-filosofia ágil, estruturada por meio da utilização de um quadro de Kanban,
-adaptado à realidade de um desenvolvimento individual. Diferentemente de
-modelos tradicionais que envolvem um maior formalismo, o \textit{Kanban}
-permite visualizar e gerenciar o fluxo de trabalho de forma contínua, com foco
-na entrega incremental de funcionalidades. Por ser um método não prescritivo, o
-\textit{Kanban} oferece liberdade para que as tarefas possam ser priorizadas,
-ajustadas ou redefinidas conforme a evolução do desenvolvimento, característica
-especialmente útil quando há apenas um desenvolvedor responsável por todas as
-etapas do processo. Vale ressaltar também, que a metodologia adotada acaba por
-ajudar a manter o fluxo de desenvolvimento contínuo sem sobrecarga, já que
-limita a quantidade de tarefas em progresso, gerando um movimento de maior
-produtividade e entregas.
+Por serem princípios, e não procedimentos, os valores ágeis não são aplicados
+diretamente: precisam ser instanciados em métodos concretos, como o
+\textit{Kanban} e o \textit{Scrum}. O \textit{Scrum} organiza o trabalho em
+papéis e cerimônias (\textit{Product Owner}, \textit{Scrum Master},
+\textit{dailies}, \textit{sprint reviews}) pensados para coordenar uma equipe.
+O \textit{Kanban}, por sua vez, baseia-se na visualização do fluxo de trabalho
+e na limitação de tarefas em progresso, sem pressupor uma estrutura de equipe.
 
-A escolha pelo \textit{Kanban}, portanto, oferece um equilíbrio sustentável
-entre estrutura e flexibilidade, permitindo que o desenvolvimento avance de
-maneira organizada, e sem os entraves burocráticos dos modelos mais rígidos.
-Essa abordagem permite que o projeto se beneficie dos princípios ágeis, tais
-como a entrega contínua de valor, adaptação a mudanças e foco na simplicidade,
-ao mesmo tempo que mantém o controle sobre o progresso e a qualidade do produto
-final.
+Por ser um método não prescritivo, o \textit{Kanban} não define um ciclo de
+vida de desenvolvimento; ele organiza a execução do trabalho definido por outro
+modelo. Isso permite que as tarefas sejam priorizadas, ajustadas ou
+redefinidas, conforme a evolução do projeto, característica especialmente útil
+quando há apenas um desenvolvedor responsável por todas as etapas do processo.
+
+Com base nesse panorama, o presente trabalho adotou um misto: utiliza o modelo
+incremental estrutura o ciclo de desenvolvimento em entregas funcionais
+sucessivas; os princípios ágeis orientam as decisões, priorizando em entregas
+funcionais sucessivas; os princípios ágeis orientam as decisões, priorizando a
+entrega contínua de valor e a adaptação a mudanças; e o \textit{Kanban}
+organiza a execução por meio de um quadro que separa o que precisa ser feito, o
+que está em andamento e o que já foi concluído, limitando a quantidade de
+tarefas em progresso. Essa combinação mantém o controle sobre o andamento e a
+qualidade do produto sem os entraves de cerimônias e papéis pensados para
+equipes, o que a torna adequada a um desenvolvimento individual.
 
 \section{Metodologia de Pesquisa}
 
