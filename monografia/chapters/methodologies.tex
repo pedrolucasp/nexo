@@ -118,11 +118,13 @@ exploratória, uma vez que busca investigar práticas, limitações e necessidad
 relacionadas a ferramentas digitais para acompanhamento emocional, com o
 objetivo de desenvolver uma solução tecnológica prática.
 
-Conforme Jung (2009), a pesquisa aplicada visa gerar conhecimento para
+Conforme \cite{Gerhardt:09}, a pesquisa aplicada visa gerar conhecimento para
 aplicação direta em problemas específicos, com interesse prático e utilitário,
 sendo comum em projetos de desenvolvimento de \textit{software}, especialmente
 nas áreas de Sistemas de Informação e Ciência da Computação, nas quais o
-produto final visa resolver uma demanda concreta do público-alvo.
+produto final visa resolver uma demanda concreta do público-alvo. Nesse
+contexto, a coleta de dados junto a potenciais usuários orienta as decisões do
+projeto, conforme detalhado a seguir.
 
 \subsection{Instrumento de coleta de dados}
 
@@ -156,40 +158,50 @@ tentado. Na pergunta específica sobre histórico, 26 dos 47 respondentes
 ocasional ou interrompida. A Tabela~\ref{tab:survey-summary} sintetiza os
 resultados mais relevantes para as decisões do projeto.
 
-\begin{table}[htb]
+\begin{table}[H]
     \centering
     \caption{Síntese dos resultados do questionário}
     \label{tab:survey-summary}
     \small
-    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X
-                                   >{\raggedright\arraybackslash}X
+    \renewcommand{\arraystretch}{1.3}   % respiro vertical
+    \setlength{\aboverulesep}{0.4ex}
+    \setlength{\belowrulesep}{0.4ex}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.25\hsize}X
+                                   >{\raggedright\arraybackslash\hsize=0.75\hsize}X
                                    r r@{}}
         \toprule
         \textbf{Pergunta} & \textbf{Resposta} & \textbf{Freq./base} & \textbf{\%} \\
         \midrule
         Interesse ou experiência com monitoramento de humor
             & ``Tenho interesse, mas nunca tentei'' & 25/48 & 52,1 \\
+        \cmidrule[0.25pt]{1-4}
         Já monitorou o humor em algum momento da vida
             & Sim (regular, ocasional ou interrompido) & 26/47 & 55,3 \\
+        \cmidrule[0.25pt]{1-4}
         Já recebeu diagnóstico relacionado à saúde mental
             & Sim & 18/48 & 37,5 \\
         \midrule
         Motivo mais citado para abandono ou dificuldade\textsuperscript{1}
             & Esquecimento & 14/25 & 56,0 \\
+        \cmidrule[0.25pt]{1-4}
         Segundo motivo mais citado\textsuperscript{1}
             & Falta de tempo & 10/25 & 40,0 \\
+        \cmidrule[0.25pt]{1-4}
         Terceiro motivo mais citado\textsuperscript{1}
             & Preocupações com privacidade & 6/25 & 24,0 \\
         \midrule
         Importância de ter controle total sobre os próprios dados
             & Nota máxima (5) & 32/47 & 68,1 \\
+        \cmidrule[0.25pt]{1-4}
         Preferência de armazenamento
             & Apenas no dispositivo (sem nuvem) & 14/48 & 29,2 \\
+        \cmidrule[0.25pt]{1-4}
         Conforto em compartilhar dados anonimamente para pesquisa
             & Sim & 28/48 & 58,3 \\
         \midrule
         Tom de comunicação preferido
             & ``Acolhedor e empático'' & 18/48 & 37,5 \\
+        \cmidrule[0.25pt]{1-4}
         Utilidade de o aplicativo avisar sobre possíveis ciclos de humor
             & Sim & 36/48 & 75,0 \\
         \bottomrule
