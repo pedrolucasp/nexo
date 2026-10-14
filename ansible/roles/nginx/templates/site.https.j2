@@ -31,6 +31,21 @@ server {
         add_header Content-Disposition "inline";
     }
 
+    location = /logs {
+        return 302 /logs/select/vmui/;
+    }
+
+    location /logs/ {
+        auth_basic "nexo logs";
+        auth_basic_user_file {{ nginx_logs_htpasswd_file }};
+
+        proxy_pass {{ nginx_logs_proxy_pass }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
     location / {
         proxy_pass {{ nginx_proxy_pass }};
         proxy_set_header Host $host;

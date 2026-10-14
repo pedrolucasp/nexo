@@ -7,3 +7,11 @@ nginx_static_root: /srv/static             # thesis PDF lives here
 nginx_proxy_pass: http://127.0.0.1:3000    # the api container
 nginx_cert_dir: /etc/ssl/uacme
 nginx_acme_wrapper: /usr/local/bin/acme-update-certs
+
+# VictoriaLogs UI (vmui), proxied at https://<host>/logs/ behind basic auth
+# Must match -http.pathPrefix on the victorialogs service
+nginx_logs_proxy_pass: http://127.0.0.1:9428
+nginx_logs_htpasswd_file: /etc/nginx/.htpasswd-logs
+# CHANGE ME: a "user:hash" line, e.g. from `openssl passwd -apr1`
+# The default is the throwaway "logs" user with password "nexo-logs"
+nginx_logs_htpasswd: "logs:$apr1$Bb2qaSgH$TUfwUmDTRR/FpOLRu.Jnj/"

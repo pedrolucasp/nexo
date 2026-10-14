@@ -46,6 +46,16 @@
     state: started
   tags: [nginx]
 
+- name: Install the logs UI htpasswd file
+  ansible.builtin.copy:
+    dest: "{{ nginx_logs_htpasswd_file }}"
+    content: "{{ nginx_logs_htpasswd }}\n"
+    owner: root
+    group: root
+    mode: "0640"
+  notify: reload nginx
+  tags: [nginx]
+
 - name: Check whether the certificate exists
   ansible.builtin.stat:
     path: "{{ nginx_cert_dir }}/{{ vhosts[0] }}/cert.pem"
