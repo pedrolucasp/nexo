@@ -1,0 +1,37 @@
+# Collects Docker container logs and forwards them to VictoriaLogs
+# Bind-mounted by docker-compose.yml (dev) and installed into /srv/app/<env>/
+# by the Ansible `app` role (production)
+sources:
+  docker:
+    type: docker_logs
+
+transforms:
+  parse_json_message:
+    type: remap
+    inputs: [docker]
+    # pino writes one JSON object per line — when a line parses we lift its
+    # fields to the top level so level/msg/userId become queryable in
+    # VictoriaLogs, otherwise the raw line stays as the message
+    source: |
+      parsed, err = parse_json(.message)
+      if err == null && is_object(parsed) {
+        . = merge(., parsed) ?? .
+      }
+
+sinks:
+  victorialogs:
+    type: elasticsearch
+    inputs: [parse_json_message]
+    endpoints: ["http://victorialogs:9428/logs/insert/elasticsearch/"]
+    mode: bulk
+    api_version: v8
+    compression: gzip
+    healthcheck:
+      enabled: false
+    request:
+      headers:
+        VL-Stream-Fields: label.com.docker.compose.service
+        VL-Time-Field: timestamp
+        VL-Msg-Field: msg,message,_msg
+        AccountID: "0"
+        ProjectID: "0"

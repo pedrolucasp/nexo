@@ -41,6 +41,15 @@
     mode: "0640"
   tags: [app]
 
+- name: Install the Vector configuration
+  ansible.builtin.copy:
+    src: vector.yaml
+    dest: "/srv/app/{{ app_env }}/vector.yaml"
+    owner: "{{ deploy_user }}"
+    group: "{{ deploy_user }}"
+    mode: "0640"
+  tags: [app]
+
 - name: Install the environment example files
   ansible.builtin.template:
     src: "{{ item }}.j2"

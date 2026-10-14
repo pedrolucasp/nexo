@@ -17,6 +17,11 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - db_data:/var/lib/postgresql/data
+    logging: &default-logging
+      driver: json-file
+      options:
+        max-size: "${LOG_MAX_SIZE:-10m}"
+        max-file: "${LOG_MAX_FILE:-3}"
 
   valkey:
     image: valkey/valkey:9.0-alpine
@@ -34,6 +39,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    logging: *default-logging
 
   api:
     build: ./api
@@ -50,7 +56,37 @@ services:
       db:
         condition: service_healthy
     restart: always
+    logging: *default-logging
+
+  # Logs store — UI at http://localhost:9428/logs/select/vmui/ (loopback only)
+  victorialogs:
+    image: victoriametrics/victoria-logs:${VICTORIALOGS_TAG:-v1.53.0}
+    command:
+      - "-storageDataPath=/vlogs"
+      - "-http.pathPrefix=/logs"
+      - "-retentionPeriod=${VICTORIALOGS_RETENTION:-14d}"
+      - "-retention.maxDiskSpaceUsageBytes=${VICTORIALOGS_MAX_DISK:-2GiB}"
+    volumes:
+      - vlogs_data:/vlogs
+    ports:
+      - "127.0.0.1:${VICTORIALOGS_PORT:-9428}:9428"
+    restart: unless-stopped
+    logging: *default-logging
+
+  # Reads container logs through the Docker API and ships them to VictoriaLogs
+  # `docker compose logs` keeps working: this does not replace the log driver
+  vector:
+    image: timberio/vector:${VECTOR_TAG:-0.59.X-distroless-libc}
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./ansible/roles/app/files/vector.yaml:/etc/vector/vector.yaml:ro
+    depends_on:
+      - victorialogs
+    restart: unless-stopped
+    logging: *default-logging
 
 volumes:
   db_data:
   valkey_data:
+  vlogs_data:
