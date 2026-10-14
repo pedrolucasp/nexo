@@ -66,6 +66,8 @@ render_nginx() {
     -e 's/{{ nginx_cert_dir }}/\/etc\/ssl\/uacme/g' \
     -e 's/{{ nginx_static_root }}/\/srv\/static/g' \
     -e 's/{{ nginx_proxy_pass }}/http:\/\/127.0.0.1:3000/g' \
+    -e 's/{{ nginx_logs_proxy_pass }}/http:\/\/127.0.0.1:9428/g' \
+    -e 's/{{ nginx_logs_htpasswd_file }}/\/etc\/nginx\/.htpasswd-logs/g' \
     "$ansible_dir/roles/nginx/templates/site.https.j2"
 }
 
