@@ -1,6 +1,7 @@
 import { MedicineRegimen } from "@prisma/client";
 import { getQueue } from "@app/lib/queue/QueueRegistry";
 import { MedicineReminderJobName } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 
 function timeToCron(time: string): string {
   const [hour, minute] = time.split(":").map(Number);
@@ -10,7 +11,14 @@ function timeToCron(time: string): string {
 export async function syncMedicineReminderJobs(
   regimen: MedicineRegimen
 ): Promise<void> {
-  console.log(`[medicine-sync] syncing regimen ${regimen.id} (active=${regimen.active}, times=[${regimen.scheduledAt}])`);
+  logger.info(
+    {
+      regimenId: regimen.id,
+      active: regimen.active,
+      scheduledAt: regimen.scheduledAt,
+    },
+    "[medicine-sync] syncing regimen",
+  );
 
   const queue = getQueue("medicine-reminders");
 
@@ -24,16 +32,25 @@ export async function syncMedicineReminderJobs(
     }
   }
 
-  console.log(`[medicine-sync] removed ${removedCount} existing jobs for regimen ${regimen.id}`);
+  logger.info(
+    { regimenId: regimen.id, removedCount },
+    "[medicine-sync] removed existing jobs",
+  );
 
   if (!regimen.active) {
-    console.log(`[medicine-sync] regimen ${regimen.id} inactive, no jobs scheduled`);
+    logger.info(
+      { regimenId: regimen.id },
+      "[medicine-sync] regimen inactive, no jobs scheduled",
+    );
 
     return;
   }
 
   if (regimen.scheduledAt.length === 0) {
-    console.log(`[medicine-sync] regimen ${regimen.id} has no scheduledAt times, skipping`);
+    logger.info(
+      { regimenId: regimen.id },
+      "[medicine-sync] regimen has no scheduledAt times, skipping",
+    );
 
     return;
   }
@@ -55,6 +72,9 @@ export async function syncMedicineReminderJobs(
       }
     );
 
-    console.log(`[medicine-sync] scheduled job for regimen ${regimen.id} at ${time} => cron ${cron}`);
+    logger.info(
+      { regimenId: regimen.id, time, cron },
+      "[medicine-sync] scheduled job",
+    );
   }
 }

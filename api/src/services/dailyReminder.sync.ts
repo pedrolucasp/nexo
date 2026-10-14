@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import { getQueue } from "@app/lib/queue/QueueRegistry";
 import { DailyReminderJobName } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 
 // XXX: Might be moved to the utilities?
 function timeToCron(time: string): string {
@@ -9,7 +10,7 @@ function timeToCron(time: string): string {
 }
 
 export async function syncDailyReminderJob(user: User): Promise<void> {
-  console.log(`[daily-sync] syncing user ${user.id}`);
+  logger.info({ userId: user.id }, "[daily-sync] syncing user");
 
   const queue = getQueue("daily-reminders");
 
@@ -21,7 +22,14 @@ export async function syncDailyReminderJob(user: User): Promise<void> {
   }
 
   if (!user.notificationsEnabled || !user.dailyReminderTime) {
-    console.log(`[daily-sync] user ${user.id} skipped (enabled=${user.notificationsEnabled}, time=${user.dailyReminderTime})`);
+    logger.info(
+      {
+        userId: user.id,
+        enabled: user.notificationsEnabled,
+        time: user.dailyReminderTime,
+      },
+      "[daily-sync] user skipped",
+    );
 
     return;
   }
@@ -37,5 +45,8 @@ export async function syncDailyReminderJob(user: User): Promise<void> {
     }
   );
 
-  console.log(`[daily-sync] scheduled daily reminder for user ${user.id} at ${user.dailyReminderTime} => cron ${cron}`);
+  logger.info(
+    { userId: user.id, time: user.dailyReminderTime, cron },
+    "[daily-sync] scheduled daily reminder",
+  );
 }

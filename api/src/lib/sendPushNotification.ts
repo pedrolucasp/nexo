@@ -1,3 +1,5 @@
+import { logger } from "@app/lib/logger";
+
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
 type PushPayload = {
@@ -13,7 +15,10 @@ export async function sendPushNotification({
   body,
   data,
 }: PushPayload): Promise<void> {
-  console.log(`[push] => token ${token.slice(0, 24)}... title="${title}"`);
+  logger.info(
+    { tokenPrefix: token.slice(0, 24), title },
+    "[push] sending notification",
+  );
 
   const response = await fetch(EXPO_PUSH_URL, {
     method: "POST",
@@ -24,7 +29,10 @@ export async function sendPushNotification({
   if (!response.ok) {
     const errBody = await response.text();
 
-    console.error(`[push] Expo API ${response.status}: ${errBody}`);
+    logger.error(
+      { status: response.status, body: errBody },
+      "[push] Expo API error",
+    );
     throw new Error(`Expo push API returned ${response.status}`);
   }
 }

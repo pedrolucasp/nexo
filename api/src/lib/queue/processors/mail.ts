@@ -6,6 +6,7 @@ import {
   PasswordResetPayload,
   ActivateAccountEmailPayload,
 } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 
 import {
   sendWelcomeEmail,
@@ -20,7 +21,7 @@ export async function mailProcessor(
   switch (job.name as MailJobName) {
     case MailJobName.WelcomeEmail: {
       const data = job.data as WelcomeEmailPayload;
-      console.log("Dispatching a welcome email for user", data.userId);
+      logger.info({ userId: data.userId }, "[mail] dispatching welcome email");
 
       await sendWelcomeEmail(Number(data.userId), data.code);
 
@@ -29,7 +30,10 @@ export async function mailProcessor(
 
     case MailJobName.ActivateAccountEmail: {
       const data = job.data as ActivateAccountEmailPayload;
-      console.log("Dispatching an activation email for user", data.userId);
+      logger.info(
+        { userId: data.userId },
+        "[mail] dispatching activation email",
+      );
 
       await sendActivateAccountEmail(Number(data.userId), data.code);
 
@@ -38,7 +42,10 @@ export async function mailProcessor(
 
     case MailJobName.PasswordReset: {
       const data = job.data as PasswordResetPayload;
-      console.log("Dispatching a password reset email for user", data.userId);
+      logger.info(
+        { userId: data.userId },
+        "[mail] dispatching password reset email",
+      );
 
       await sendResetPasswordEmail(data.userId, data.token);
 

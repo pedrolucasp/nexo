@@ -1,5 +1,6 @@
 import { findUserById } from '@app/services/user.service';
 import { sendEmail }  from '@app/lib/mail';
+import { logger } from '@app/lib/logger';
 
 const email = (firstName: string, code: string) => {
   return (`
@@ -22,9 +23,8 @@ export async function sendWelcomeEmail(userId: number, code: string): Promise<vo
   });
 
   if (error) {
-    console.error("Error sending email: ", error);
+    logger.error({ err: error }, "Error sending email");
   }
 
-  console.log("Email sent successfully!");
-  console.log("Email ID:", data?.id);
+  logger.info({ emailId: data?.id }, "Email sent successfully");
 }

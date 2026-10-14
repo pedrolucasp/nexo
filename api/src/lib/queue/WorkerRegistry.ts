@@ -6,6 +6,7 @@ import { medicineReminderProcessor } from "@app/lib/queue/processors/medicineRem
 import { dailyReminderProcessor } from "@app/lib/queue/processors/dailyReminders";
 import { exportProcessor } from "@app/lib/queue/processors/exports";
 import { InsightJobName } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 
 type ProcessorMap = Record<QueueName, Processor>;
 
@@ -30,11 +31,11 @@ const concurrencyMap: Record<QueueName, number> = {
 const workers: Worker[] = [];
 
 export function bootWorkers(): void {
-  console.log("Booting workers...");
+  logger.info("Booting workers...");
   for (const [name, processor] of Object.entries(processorMap)) {
     const queueName = name as QueueName;
 
-    console.log(`Worker ${queueName} booting...`);
+    logger.info({ queue: queueName }, "Worker booting...");
     const worker = new Worker(queueName, processor, {
       connection: {
         host: process.env.VALKEY_HOST,
@@ -44,11 +45,11 @@ export function bootWorkers(): void {
     } satisfies WorkerOptions);
 
     worker.on("failed", (job, err) => {
-      console.error(`[${queueName}] job ${job?.id} failed:`, err.message);
+      logger.error({ err, queue: queueName, jobId: job?.id }, "job failed");
     });
 
     worker.on("error", (err) => {
-      console.error(`[${queueName}] worker error:`, err.message);
+      logger.error({ err, queue: queueName }, "worker error");
     });
 
     workers.push(worker);

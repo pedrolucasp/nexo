@@ -4,14 +4,11 @@ import { isDomainError } from "@app/lib/errors/base";
 
 export const errorHandler = (
   err: unknown,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ) => {
-  if (process.env.NODE_ENV === "development") {
-    // TODO: Rig some improved, centralized error logging here
-    console.error(`[ErrorHandler]: ${err}`);
-  }
+  req.log.error({ err }, "request failed");
 
   if (isDomainError(err)) {
     return res.status(err.status)

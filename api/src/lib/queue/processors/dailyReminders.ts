@@ -2,11 +2,12 @@ import { Job } from "bullmq";
 import { prisma } from "@app/lib/prisma";
 import { sendPushNotification } from "@app/lib/sendPushNotification";
 import { DailyReminderPayload } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 
 export async function dailyReminderProcessor(job: Job): Promise<void> {
   const { userId } = job.data as DailyReminderPayload;
 
-  console.log(`[daily-reminder] job ${job.id}: user=${userId}`);
+  logger.info({ jobId: job.id, userId }, "[daily-reminder] job started");
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -14,19 +15,19 @@ export async function dailyReminderProcessor(job: Job): Promise<void> {
   });
 
   if (!user) {
-    console.warn(`[daily-reminder] user ${userId} not found, skipping`);
+    logger.warn({ userId }, "[daily-reminder] user not found, skipping");
 
     return;
   }
 
   if (!user.notificationsEnabled) {
-    console.warn(`[daily-reminder] user ${userId} has notifications disabled, skipping`);
+    logger.warn({ userId }, "[daily-reminder] notifications disabled, skipping");
 
     return;
   }
 
   if (!user.pushToken) {
-    console.warn(`[daily-reminder] user ${userId} has no pushToken, skipping`);
+    logger.warn({ userId }, "[daily-reminder] no pushToken, skipping");
 
     return;
   }
@@ -40,5 +41,5 @@ export async function dailyReminderProcessor(job: Job): Promise<void> {
     data: { screen: "moods" },
   });
 
-  console.log(`[daily-reminder] sent OK to user ${userId}`);
+  logger.info({ userId }, "[daily-reminder] push sent");
 }

@@ -6,6 +6,7 @@ import {
 } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue/QueueRegistry";
 import { prisma } from "@app/lib/prisma";
+import { logger } from "@app/lib/logger";
 import { processMoodTrend } from "@app/lib/queue/processors/insights/moodTrend";
 import { processEnergySleep } from "@app/lib/queue/processors/insights/energySleep";
 import { processTriggerPattern } from "@app/lib/queue/processors/insights/triggerPattern";
@@ -15,7 +16,7 @@ import { processDailySleep } from "@app/lib/queue/processors/insights/dailySleep
 export async function insightProcessor(
   job: Job<InsightJobData["data"]>,
 ): Promise<void> {
-  console.log(`Insight job ${job.name} started`);
+  logger.info({ job: job.name }, "[insights] job started");
 
   switch (job.name as InsightJobName) {
     case InsightJobName.FanOut:

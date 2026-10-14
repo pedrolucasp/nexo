@@ -2,12 +2,16 @@ import { Job } from "bullmq";
 import { prisma } from "@app/lib/prisma";
 import { sendPushNotification } from "@app/lib/sendPushNotification";
 import { MedicineReminderPayload } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 
 export async function medicineReminderProcessor(job: Job): Promise<void> {
   const { userId, regimenId, medicineName, dosage } =
     job.data as MedicineReminderPayload;
 
-  console.log(`[medicine-reminder] job ${job.id}: user=${userId} regimen=${regimenId} medicine=${medicineName}`);
+  logger.info(
+    { jobId: job.id, userId, regimenId, medicine: medicineName },
+    "[medicine-reminder] job started",
+  );
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -15,11 +19,11 @@ export async function medicineReminderProcessor(job: Job): Promise<void> {
   });
 
   if (!user) {
-    console.warn(`[medicine-reminder] user ${userId} not found, skipping`);
+    logger.warn({ userId }, "[medicine-reminder] user not found, skipping");
     return;
   }
   if (!user.pushToken) {
-    console.warn(`[medicine-reminder] user ${userId} has no pushToken, skipping`);
+    logger.warn({ userId }, "[medicine-reminder] no pushToken, skipping");
     return;
   }
 
@@ -30,5 +34,5 @@ export async function medicineReminderProcessor(job: Job): Promise<void> {
     data: { screen: "medicine-regimens", regimenId },
   });
 
-  console.log(`[medicine-reminder] sent OK to user ${userId}`);
+  logger.info({ userId }, "[medicine-reminder] push sent");
 }

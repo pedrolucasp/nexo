@@ -10,6 +10,7 @@ import {
   sendExportFailedEmail,
   sendExportReadyEmail,
 } from "@app/services/mail";
+import { logger } from "@app/lib/logger";
 
 export async function exportProcessor(
   job: Job<ExportJobData["data"]>,
@@ -30,9 +31,9 @@ export async function exportProcessor(
           try {
             await sendExportFailedEmail(userId);
           } catch (mailErr) {
-            console.error(
-              `[exports] failed to send the failure email for user ${userId}:`,
-              mailErr,
+            logger.error(
+              { err: mailErr, userId },
+              "[exports] failed to send the failure email",
             );
           }
         }

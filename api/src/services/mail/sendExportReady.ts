@@ -1,5 +1,6 @@
 import { sendEmail } from '@app/lib/mail';
 import { findUserById } from '@app/services/user.service';
+import { logger } from '@app/lib/logger';
 
 const email = (firstName: string) => (`
 Oi, ${firstName}!
@@ -26,7 +27,7 @@ export async function sendExportReadyEmail(
   });
 
   if (error) {
-    console.error("Error sending export email: ", error);
+    logger.error({ err: error }, "Error sending export email");
     throw new Error("Não foi possível enviar o e-mail com seus dados");
   }
 }

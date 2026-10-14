@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import morgan from "morgan";
 import mainRouter from "@app/routes/main";
 import userRouter from "@app/routes/users";
 import authRouter from "@app/routes/auth";
@@ -14,6 +13,7 @@ import medicineRegimensRouter from "@app/routes/medicineRegimens";
 import exportsRouter from "@app/routes/exports";
 import reportRouter from "@app/reports/report.router";
 import { errorHandler } from "@app/middleware/errorHandler";
+import { logger } from "@app/lib/logger";
 import { PrismaClient } from "@prisma/client";
 import {
   bootWorkers,
@@ -22,14 +22,32 @@ import {
   scheduleInsights,
 } from "@app/lib/queue";
 
-import pino from "pino";
 import pinoHttp from "pino-http";
+import { randomUUID } from "crypto";
 import path from "path";
 
 export function createApp() {
   const app = express();
   bootWorkers();
   scheduleInsights();
+
+  // Use pino-http for HTTP logging (better than Morgan for structured logs)
+  // Registered before the rest so every request has a logger attached,
+  // including errors raised by the CORS and body-parsing middleware below
+  app.use(
+    pinoHttp({
+      logger,
+      genReqId: (req, res) => {
+        const header = req.headers["x-request-id"];
+        const requestId =
+          (Array.isArray(header) ? header[0] : header) || randomUUID();
+
+        res.setHeader("X-Request-Id", requestId);
+
+        return requestId;
+      },
+    }),
+  );
 
   // Configure CORS
   app.use(
@@ -40,25 +58,6 @@ export function createApp() {
   );
 
   app.use(bodyParser.json());
-
-  const isDev = process.env.NODE_ENV !== "production";
-
-  const logger = pino({
-    level: process.env.LOG_LEVEL || "info",
-    ...(isDev && {
-      transport: {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-          singleLine: false,
-          messageFormat: "{if levelLabel}{levelLabel} - {end}{msg}",
-        },
-      },
-    }),
-  });
-
-  // Use pino-http for HTTP logging (better than Morgan for structured logs)
-  app.use(pinoHttp({ logger }));
 
   app.use("/users", userRouter);
   app.use("/auth", authRouter);

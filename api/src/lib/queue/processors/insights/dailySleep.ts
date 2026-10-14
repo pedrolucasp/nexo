@@ -1,6 +1,7 @@
 import { prisma } from "@app/lib/prisma";
 import { InsightType, InsightPeriod } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
+import { logger } from "@app/lib/logger";
 // XXX: date-fns?
 import { formatHours, formatDiff } from "@app/utils/calc";
 import { startOfDay, addDays, subDays } from "date-fns";
@@ -24,7 +25,10 @@ export async function processDailySleep({
     }),
   ]);
 
-  console.log("todayRecords, yesterdayRecords", todayRecords, yesterdayRecords);
+  logger.debug(
+    { todayRecords, yesterdayRecords },
+    "[insights] daily sleep records",
+  );
 
   if (todayRecords.length === 0) return;
 

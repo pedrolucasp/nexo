@@ -1,5 +1,6 @@
 import { sendEmail } from '@app/lib/mail';
 import { findUserById } from '@app/services/user.service';
+import { logger } from '@app/lib/logger';
 
 const email = (firstName: string) => (`
 Oi, ${firstName}.
@@ -21,7 +22,7 @@ export async function sendExportFailedEmail(userId: number): Promise<void> {
   });
 
   if (error) {
-    console.error("Error sending export failure email: ", error);
+    logger.error({ err: error }, "Error sending export failure email");
     throw new Error("Não foi possível enviar o e-mail de falha da exportação");
   }
 }

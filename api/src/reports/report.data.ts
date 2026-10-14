@@ -1,5 +1,6 @@
 import { eachDayOfInterval, format } from 'date-fns'
 import { prisma } from '@app/lib/prisma'
+import { logger } from '@app/lib/logger'
 import {
   BaseMoodOption,
   MoodComponentOption,
@@ -59,7 +60,10 @@ export async function buildReportData(
 
   const total = moods.length
 
-  console.log(`[report] found ${moods.length} mood entries from ${start} - ${end}`)
+  logger.info(
+    { count: moods.length, start, end },
+    '[report] found mood entries',
+  )
 
   const moodCounts = Object.fromEntries(
     MOOD_ORDER.map(m => [m, 0]),
