@@ -12,6 +12,6 @@ nginx_acme_wrapper: /usr/local/bin/acme-update-certs
 # Must match -http.pathPrefix on the victorialogs service
 nginx_logs_proxy_pass: http://127.0.0.1:9428
 nginx_logs_htpasswd_file: /etc/nginx/.htpasswd-logs
-# CHANGE ME: a "user:hash" line, e.g. from `openssl passwd -apr1`
-# The default is the throwaway "logs" user with password "nexo-logs"
-nginx_logs_htpasswd: "logs:$apr1$Bb2qaSgH$TUfwUmDTRR/FpOLRu.Jnj/"
+# "user:hash" line; the credential comes from the encrypted vault, with a
+# throwaway fallback so the role still renders before the vault is imported
+nginx_logs_htpasswd: "{{ vault_nginx_logs_htpasswd | default('logs:$apr1$Bb2qaSgH$TUfwUmDTRR/FpOLRu.Jnj/') }}"

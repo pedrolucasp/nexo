@@ -1,8 +1,8 @@
 ---
 # roles/app/tasks/main.yml
 # Places the production app config in /srv/app/<env>/
-# Secrets are NOT created here: the .example files are dropped in and you fill
-# them in by hand (that part is deliberately manual, so get ready to SSH and copy it)
+# The env files are rendered from group_vars (secrets come from the encrypted
+# vault.yml), so there is nothing to fill in by hand anymore
 
 - name: Ensure /srv/app exists
   ansible.builtin.file:
@@ -50,32 +50,16 @@
     mode: "0640"
   tags: [app]
 
-- name: Install the environment example files
+- name: Install the environment files
   ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "/srv/app/{{ app_env }}/{{ item }}.example"
+    src: "{{ item.src }}"
+    dest: "/srv/app/{{ app_env }}/{{ item.dest }}"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
-    mode: "0640"
+    mode: "0600"
   loop:
-    - env
-    - env.production
-  tags: [app]
-
-- name: Check whether the real env files exist on the server
-  ansible.builtin.stat:
-    path: "/srv/app/{{ app_env }}/{{ item }}"
-  loop:
-    - .env
-    - .env.production
-  register: app_env_stat
-  tags: [app]
-
-- name: Remind to fill in the env files
-  ansible.builtin.debug:
-    msg: >-
-      {{ item.item }} is missing: copy it from {{ item.item }}.example and fill
-      it in before the first `docker compose up -d`
-  loop: "{{ app_env_stat.results }}"
-  when: not item.stat.exists
+    - { src: env.j2, dest: .env }
+    - { src: env.production.j2, dest: .env.production }
+  loop_control:
+    label: "{{ item.dest }}"
   tags: [app]

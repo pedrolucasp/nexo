@@ -5,3 +5,7 @@
 .env
 .env.*
 !.env.example
+
+# Ansible: local inventory (server address, key path) and vault password
+ansible/inventory/hosts.yml
+ansible/.vault_pass

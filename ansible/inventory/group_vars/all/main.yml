@@ -1,0 +1,57 @@
+# Shared, non-secret configuration for every host
+#
+# Secrets live in the encrypted sibling file, vault.yml. It is produced by
+# scripts/import-vault.sh and holds these variables:
+#
+#   vault_postgres_password
+#   vault_jwt_secret
+#   vault_resend_api_key
+#   vault_s3_access_key
+#   vault_s3_access_secret
+#   vault_nginx_logs_htpasswd
+
+# The deploy user to create
+deploy_user: deploy
+
+# The SSH public key that will be authorised for the deploy user
+deploy_ssh_pubkey_file: ~/.ssh/nexo_deploy_key.pub
+
+# App directories to create under /srv/app
+app_environments:
+  - production
+  - staging
+
+# Image pushed by the deploy workflow
+app_github_repo: pedrolucasp/nexo
+image_tag: latest
+
+# API runtime
+app_port: 3000
+app_log_level: info
+app_frontend_url: https://usenexo.xyz
+
+# Postgres (the password is in the vault)
+postgres_user: nexo
+postgres_db: nexo_production
+
+# Valkey
+valkey_host: valkey
+valkey_port: 6379
+
+# Email (Resend); the API key is in the vault
+# XXX: the display name still says "orbit"
+resend_from: "orbit <naoresponda@updates.cabotia.dev>"
+
+# Object storage (S3-compatible); the keys are in the vault
+s3_region: br
+s3_url: br-gru-1.linodeobjects.com
+s3_bucket: nexo-stg
+
+# Logging stack
+victorialogs_tag: v1.53.0
+victorialogs_port: 9428
+victorialogs_retention: 14d
+victorialogs_max_disk: 2GiB
+vector_tag: 0.59.X-distroless-libc
+log_max_size: 10m
+log_max_file: 3
