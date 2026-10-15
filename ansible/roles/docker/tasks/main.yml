@@ -11,6 +11,29 @@
       - docker-cli-compose
     state: present
 
+- name: Ensure /etc/docker exists
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# Bound every container's json-file logs globally, not just the ones that set
+# an explicit logging block in a compose file
+- name: Configure the Docker daemon log rotation
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "log-driver": "json-file",
+        "log-opts": { "max-size": "10m", "max-file": "3" }
+      }
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart docker
+
 - name: Enable Docker service
   ansible.builtin.service:
     name: docker
