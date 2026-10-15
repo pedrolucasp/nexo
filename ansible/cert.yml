@@ -11,6 +11,7 @@
   hosts: vps
   become: yes
   become_method: doas
+  force_handlers: true
   vars_files:
     - vars/vhosts.yml
 

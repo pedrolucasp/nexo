@@ -8,6 +8,9 @@
   hosts: vps
   become: yes
   become_method: doas
+  # Reload even if an earlier task failed, so a late failure cannot leave the
+  # vhost changed but nginx still serving the old config
+  force_handlers: true
   vars_files:
     - vars/vhosts.yml
 

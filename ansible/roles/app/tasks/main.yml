@@ -32,13 +32,15 @@
     mode: "0640"
   tags: [app]
 
+# The valkey image drops to its own unprivileged user, so this file has to be
+# readable by it. valkey.conf holds no secrets (no password), so 0644 is fine
 - name: Install the valkey configuration
   ansible.builtin.copy:
     src: valkey.conf
     dest: "/srv/app/{{ app_env }}/valkey.conf"
     owner: "{{ deploy_user }}"
     group: "{{ deploy_user }}"
-    mode: "0640"
+    mode: "0644"
   tags: [app]
 
 - name: Install the Vector configuration

@@ -51,7 +51,8 @@
     dest: "{{ nginx_logs_htpasswd_file }}"
     content: "{{ nginx_logs_htpasswd }}\n"
     owner: root
-    group: root
+    # nginx workers run unprivileged and must be able to read this
+    group: nginx
     mode: "0640"
   notify: reload nginx
   tags: [nginx]
@@ -98,6 +99,12 @@
     mode: "0644"
   notify: reload nginx
   when: nginx_cert_after.stat.exists
+  tags: [nginx]
+
+- name: Validate the nginx configuration
+  ansible.builtin.command:
+    cmd: nginx -t
+  changed_when: false
   tags: [nginx]
 
 - name: Explain the manual step when no certificate is available yet
