@@ -2,7 +2,7 @@
   "name": "orbit-api",
   "version": "0.0.0",
   "description": "",
-  "license": "ISC",
+  "license": "GPL-3.0-only",
   "author": "Pedro Lucas Porcellis <porcellis@eletrotupi.com>",
   "main": "src/index.ts",
   "directories": {
