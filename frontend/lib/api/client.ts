@@ -1,4 +1,5 @@
 import * as SecureStore from "expo-secure-store";
+import Constants from "expo-constants";
 
 export class ApiError extends Error {
   status: number;
@@ -54,7 +55,13 @@ import {
   ExportDataResponse,
 } from "@/lib/api/types";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+// Development builds already talk to Metro, so the API is on the same host.
+// Release builds have no hostUri and always take the env var.
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_BASE_URL ??
+  (Constants.expoConfig?.hostUri
+    ? `http://${Constants.expoConfig.hostUri.split(":")[0]}:3000`
+    : undefined);
 const TOKEN_KEY = process.env.EXPO_PUBLIC_TOKEN_KEY;
 
 class ApiClient {
