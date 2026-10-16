@@ -17,7 +17,7 @@ import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Colors, Spacing } from "@/constants/theme";
 import { getMood } from "@/constants/moods";
-import { useMoodEntry, useDeleteMoodEntry } from "@/hooks";
+import { useMoodEntry, useMoodEntries, useDeleteMoodEntry } from "@/hooks";
 import { formatMoment } from "@/lib/utils/time";
 import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -35,6 +35,7 @@ const impactColor = (n: number) => {
 export default function MoodDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: entry, isLoading, isError } = useMoodEntry(id);
+  const { data: latestEntries } = useMoodEntries({ limit: 1 });
   const deleteMoodEntry = useDeleteMoodEntry();
   const [minutesLeft, setMinutesLeft] = useState(0);
   const [canDelete, setCanDelete] = useState(false);
@@ -84,6 +85,7 @@ export default function MoodDetailScreen() {
 
   const moment = new Date(entry.moment);
   const moodDef = getMood(entry.selectedMood.toLowerCase());
+  const isLatestEntry = latestEntries?.entries[0]?.id === entry.id;
 
   const handleDelete = async () => {
     await deleteMoodEntry.mutateAsync(String(entry.id));
@@ -125,7 +127,7 @@ export default function MoodDetailScreen() {
               </Col>
             </Row>
             {/* If this is the latest mood entry, show the active badge */}
-            <Badge label="Registro Ativo" variant="green" />
+            {isLatestEntry && <Badge label="Registro Ativo" variant="green" />}
           </Between>
         </Card>
 
