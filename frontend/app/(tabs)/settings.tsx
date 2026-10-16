@@ -85,8 +85,8 @@ export default function Settings() {
 
   return (
     <ScreenLayout
-      userName={user.firstName}
-      userAvatar={user.avatarURL}
+      userName={user?.firstName}
+      userAvatar={user?.avatarURL}
       showNotificationBadge={true}
     >
       <Section>

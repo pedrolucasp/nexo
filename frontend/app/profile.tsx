@@ -24,26 +24,21 @@ import { Typography, Spacing, Colors } from '@/constants/theme';
 export default function Profile() {
   const { user, updateAuthUser } = useAuth();
   const { showToast } = useToast();
-  const [firstName, setFirstName] = useState(user.firstName);
-  const [lastName, setLastName] = useState(user.lastName);
-  const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
-  const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState(user?.firstName ?? '');
+  const [lastName, setLastName] = useState(user?.lastName ?? '');
+  const [email, setEmail] = useState(user?.email ?? '');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading] = useState(false);
   const [errors, setErrors] = useState<{
     firstName?: string;
+    lastName?: string;
+    email?: string;
     password?: string;
     confirmPassword?: string;
   }>({});
 
-  useEffect(() => {
-    setFirstName(user.firstName)
-    setLastName(user.lastName)
-    setEmail(user.email)
-  }, [user])
-
   const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
 
   const validateForm = () => {
     const newErrors: {
@@ -77,17 +72,8 @@ export default function Profile() {
   }
 
   const handleUpdate = async () => {
+    if (!user) return;
     if (!validateForm()) return;
-
-    const data = {};
-
-    data.firstName = firstName
-    data.lastName = lastName
-    data.email = email
-
-    if (password) {
-      data.password = password
-    }
 
     try {
       const id = user.id;
@@ -129,7 +115,7 @@ export default function Profile() {
           showsVerticalScrollIndicator={false}
         >
           <AvatarUpload
-            currentAvatar={user.avatarURL}
+            currentAvatar={user?.avatarURL}
             onUploadSuccess={onChangeAvatar}
             onRemoveSuccess={onChangeAvatar} />
 

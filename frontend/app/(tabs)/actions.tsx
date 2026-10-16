@@ -30,8 +30,8 @@ export default function Actions() {
 
   return (
     <ScreenLayout
-      userName={user.firstName}
-      userAvatar={user.avatarURL}
+      userName={user?.firstName}
+      userAvatar={user?.avatarURL}
       showNotificationBadge={true}
     >
       <Section>

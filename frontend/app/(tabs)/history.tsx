@@ -45,8 +45,8 @@ export default function History() {
 
   return (
     <ScreenLayout
-      userName={user.firstName}
-      userAvatar={user.avatarURL}
+      userName={user?.firstName}
+      userAvatar={user?.avatarURL}
       showNotificationBadge={true}
     >
       <ScrollView testID="history-list">

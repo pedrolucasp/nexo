@@ -15,7 +15,7 @@ export default function Index() {
   }
 
   if (isAuthenticated) {
-    if (user.active) {
+    if (user?.active) {
       url = "/(tabs)/new";
     } else {
       url = "/auth/activate";
