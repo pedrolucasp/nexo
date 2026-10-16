@@ -2,17 +2,15 @@ import { prisma } from "@app/lib/prisma";
 import { InsightType, InsightPeriod } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
 import { logger } from "@app/lib/logger";
-// XXX: date-fns?
 import { formatHours, formatDiff } from "@app/utils/calc";
-import { startOfDay, addDays, subDays } from "date-fns";
+import { appDayWindow } from "@app/lib/queue/processors/insights/utils";
 
 export async function processDailySleep({
   userId,
   periodStart,
 }: InsightPeriodPayload): Promise<void> {
-  const today = startOfDay(new Date(periodStart));
-  const tomorrow = addDays(today, 1);
-  const yesterday = subDays(today, 1);
+  const { start: today, end: tomorrow } = appDayWindow(new Date(periodStart));
+  const { start: yesterday } = appDayWindow(new Date(today.getTime() - 1));
 
   const [todayRecords, yesterdayRecords] = await Promise.all([
     prisma.sleepRecord.findMany({

@@ -2,10 +2,12 @@ import { prisma } from '@app/lib/prisma';
 import { SleepRecord } from '@prisma/client';
 
 import { CreateSleepRecordInput, UpdateSleepRecordInput } from '@app/schemas';
-import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
+import {
+  rollingPeriod,
+  appDayPeriod,
+} from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
-import { startOfDay } from "date-fns";
 
 export const createSleepRecord = async (
   userId: number, input: CreateSleepRecordInput
@@ -100,13 +102,13 @@ export const updateSleepRecordById = async (
 
 async function enqueueEnergySleepInsights(userId: number): Promise<void> {
   const queue = getQueue("insights");
-  const period = rollingPeriod(7);
-  const payload = { userId, ...period };
+  const week = { userId, ...rollingPeriod(7) };
+  const day = { userId, ...appDayPeriod() };
 
-  await getQueue('insights').addBulk([
+  await queue.addBulk([
     {
       name: InsightJobName.EnergySleep,
-      data: payload,
+      data: week,
       opts: {
         jobId: `energy-sleep-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
@@ -115,11 +117,7 @@ async function enqueueEnergySleepInsights(userId: number): Promise<void> {
     },
     {
       name: InsightJobName.DailySleep,
-      data: {
-        userId,
-        periodStart: startOfDay(new Date()).toISOString(),
-        periodEnd: new Date()
-      },
+      data: day,
       opts: {
         jobId: `daily-sleep-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
