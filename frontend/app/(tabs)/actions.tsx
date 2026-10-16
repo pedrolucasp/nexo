@@ -130,8 +130,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   cardDescriptionHeadline: {
-    ...Typography.bodyLg,
+    ...Typography.bodyMd,
     color: Colors.light.textSecondary,
+    fontWeight: "600" as const,
     marginTop: 4,
   },
   cardDescription: {
