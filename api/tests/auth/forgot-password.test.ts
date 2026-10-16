@@ -24,18 +24,18 @@ describe('POST /auth/forgot-password', () => {
 
     expect(res.status).toBe(200)
     expect(res.body.success).toBe(true)
-    expect(res.body.token).toBeTruthy()
+    expect(res.body.token).toBeUndefined()
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
 
-    expect(dbUser!.passwordResetToken).toBe(res.body.token)
+    expect(dbUser!.passwordResetToken).toBeTruthy()
     expect(dbUser!.passwordResetExpires).not.toBeNull()
 
     expect(recordedJobs).toContainEqual(
       expect.objectContaining({
         queue: 'mail',
         name: 'mail:password-reset',
-        data: { userId: user.id, token: res.body.token },
+        data: { userId: user.id, token: dbUser!.passwordResetToken },
       })
     )
   })

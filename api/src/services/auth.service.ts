@@ -70,10 +70,7 @@ export const requestPasswordReset = async ({ email }: PasswordResetRequestInput)
     token: resetToken
   });
 
-  return {
-    success: true,
-    token: resetToken
-  };
+  return { success: true };
 };
 
 export const resetPassword = async ({ token, newPassword }: PasswordResetInput) => {

@@ -90,6 +90,20 @@ describe('sendResetPasswordEmail', () => {
       })
     )
   })
+
+  it('renders a clickable deep link in the html body', async () => {
+    const user = await createTestUser(db, {
+      email: 'reset-html@example.com',
+      firstName: 'Ana'
+    })
+
+    await sendResetPasswordEmail(user.id, 'token-abc-xyz')
+
+    const [call] = mockedSendEmail.mock.calls
+    expect(call[0].html).toContain(
+      'href="orbit://auth/reset-password?token=token-abc-xyz"'
+    )
+  })
 })
 
 describe('mailProcessor', () => {
