@@ -5,7 +5,6 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Platform,
 } from 'react-native';
 import { Text } from '@/components/ui/Text';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -76,7 +75,6 @@ export const Input: React.FC<InputProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const {
-    textColor,
     placeholderColor,
     errorColor,
     inputStyle
@@ -139,7 +137,6 @@ export const TextArea: React.FC<TextAreaProps> = ({
   ...props
 }) => {
   const {
-    textColor,
     placeholderColor,
     errorColor,
     inputStyle

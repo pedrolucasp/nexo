@@ -4,9 +4,10 @@ import {
   StyleSheet,
   Pressable,
   ViewStyle,
+  type StyleProp,
 } from 'react-native';
 
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Text } from '@/components/ui/Text'
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +16,7 @@ interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
   variant?: 'default' | 'highlighted';
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
@@ -68,7 +69,7 @@ export const Card: React.FC<CardProps> = ({
 
 interface SubtleInfoCardProps {
   text: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const SubtleInfoCard: React.FC<SubtleInfoCardProps> = ({

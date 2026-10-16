@@ -1,11 +1,9 @@
 import React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { MaterialIcons } from "@expo/vector-icons";
 import { Card } from "@/components/ui/Cards";
 import { useInsight } from "@/hooks/useInsights.queries";
 import { Colors, Spacing } from "@/constants/theme";
-import { getTriggerCategory } from "@/constants/trigger-categories";
 import { InsightCard } from "./InsightCard";
 
 export const TriggerPatternWidget: React.FC = () => {
@@ -45,8 +43,6 @@ export const TriggerPatternWidget: React.FC = () => {
     metadata.total > 0
       ? Math.round((metadata.topCount / metadata.total) * 100)
       : 0;
-
-  const topMeta = getTriggerCategory(metadata.topCategory);
 
   return (
     <InsightCard
