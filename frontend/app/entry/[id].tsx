@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 import { Card, SubtleInfoCard } from "@/components/ui/Cards";
 import { NoLinkMessage } from "@/components/misc/NoLinkMessage";
@@ -19,13 +17,8 @@ import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Colors, Spacing } from "@/constants/theme";
 import { getMood } from "@/constants/moods";
-import {
-  getMoodComponent,
-  intensityLabel,
-  intensityToValue,
-} from "@/constants/mood-components";
 import { useMoodEntry, useDeleteMoodEntry } from "@/hooks";
-import { getTimeBadge, formatMoment } from "@/lib/utils/time";
+import { formatMoment } from "@/lib/utils/time";
 import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { getTriggerCategory } from "@/constants/trigger-categories";
@@ -48,8 +41,8 @@ export default function MoodDetailScreen() {
 
   useEffect(() => {
     const updateTimer = () => {
-      const moment = new Date(entry?.moment);
-      const createdAt = new Date(entry?.moment);
+      if (!entry?.moment) return;
+      const createdAt = new Date(entry.moment);
       const msSinceCreation = Date.now() - createdAt.getTime();
       const deletionWindowMs = 5 * 60 * 1000;
 
@@ -91,7 +84,6 @@ export default function MoodDetailScreen() {
 
   const moment = new Date(entry.moment);
   const moodDef = getMood(entry.selectedMood.toLowerCase());
-  const badge = getTimeBadge(moment);
 
   const handleDelete = async () => {
     await deleteMoodEntry.mutateAsync(String(entry.id));
@@ -144,7 +136,7 @@ export default function MoodDetailScreen() {
             { id: "energy", label: "Energia", value: entry.energyLevel },
             { id: "stress", label: "Estresse", value: entry.stressLevel },
             { id: "anxiety", label: "Ansiedade", value: entry.anxietyLevel },
-          ].map((item, index, arr) => (
+          ].map((item) => (
             <Card key={item.id} style={{ padding: Spacing.cardGap }}>
               <View key={item.label}>
                 <View style={styles.componentRow}>
@@ -187,7 +179,7 @@ export default function MoodDetailScreen() {
           <SectionHeader title="Vínculo" variant="subtle" />
           {!!hasAnyLinks ? (
             <Col gap={8}>
-              {entry.triggerLinks.map((link) => {
+              {(entry.triggerLinks ?? []).map((link) => {
                 const cat = getTriggerCategory(link.trigger.category);
                 return (
                   <Pressable
