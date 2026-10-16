@@ -105,7 +105,7 @@ export default function Settings() {
                 justifyContent: "space-between",
               }}
             >
-              <Text style={styles.rowLabel}>Dados Pessoais</Text>
+              <Text style={[styles.rowLabel, { width: '100%' }]}>Dados Pessoais</Text>
               <Text style={styles.rowSubtitle}>Nome, Email e senha</Text>
             </View>
 
