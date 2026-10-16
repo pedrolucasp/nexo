@@ -304,6 +304,31 @@ export default function Settings() {
               color={Colors.light.textSecondary}
             />
           </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+            onPress={() => router.push("/terms")}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <MaterialIcons
+                name="description"
+                size={24}
+                color={Colors.light.textSecondary}
+              />
+
+              <Text style={[styles.rowLabel, { marginLeft: 8 }]}>
+                Termos e Condições
+              </Text>
+            </View>
+
+            <Ionicons name="chevron-forward" size={24} color={textColor} />
+          </TouchableOpacity>
         </Card>
       </Section>
 
