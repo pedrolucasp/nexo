@@ -12,6 +12,7 @@ export type {
   UserUpdateResponse,
   // Sleep
   SleepRecordPayload,
+  UpdateSleepRecordPayload,
   SleepRecord,
   // Trigger
   Trigger,
