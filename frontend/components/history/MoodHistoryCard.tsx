@@ -1,7 +1,6 @@
 // components/history/cards/MoodHistoryCard.tsx
 import { View, StyleSheet } from 'react-native';
 import { Text } from '@/components/ui/Text';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Card } from '@/components/ui/Cards';
 import { Badge } from '@/components/ui/Badge';
 import type { HistoryCard } from '@/lib/history/types';
@@ -42,12 +41,10 @@ export function MoodHistoryCard({ card }: Props) {
       <View style={styles.row}>
         <View style={[styles.iconWrap, { backgroundColor: meta.bg }]}>
           <Text style={styles.moodIconEmoji}>{moodDef?.icon ?? '😐'}</Text>
-
-          {false && (<MaterialIcons name={meta.icon} size={22} color={meta.color} />)}
         </View>
         <View style={styles.body}>
           <View style={styles.titleRow}>
-            <Text style={styles.title}>{moodDef.label}</Text>
+            <Text style={styles.title}>{moodDef?.label ?? card.raw.selectedMood}</Text>
             <Text style={styles.time}>{time}</Text>
           </View>
           {card.raw.annotation ? (
