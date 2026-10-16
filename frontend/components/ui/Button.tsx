@@ -43,19 +43,25 @@ export const Button: React.FC<ButtonProps> = ({
   const primaryColor = useThemeColor({}, 'tint');
   const textColor = useThemeColor({}, 'text');
   const textSecondaryColor = useThemeColor({}, 'textSecondary');
-  const backgroundColor = useThemeColor({}, 'background');
-  const borderColor = useThemeColor({}, 'border');
+  const secondaryBackgroundColor = useThemeColor({}, 'secondaryBackground');
+  const dangerColor = useThemeColor({}, 'danger');
+  const whiteColor = useThemeColor({}, 'white');
+  const disabledBackgroundColor = useThemeColor(
+    { light: '#e5e5e5', dark: '#404040' },
+    'background',
+  );
+  const disabledBorderColor = useThemeColor({}, 'disabled');
   const borderDashedColor = useThemeColor({}, 'borderDashed');
 
   const getBackgroundColor = () => {
-    if (disabled) return useThemeColor({ light: '#e5e5e5', dark: '#404040' }, 'background');
+    if (disabled) return disabledBackgroundColor;
     switch (variant) {
       case 'primary':
         return primaryColor;
       case 'secondary':
-        return useThemeColor({}, 'secondaryBackground');
+        return secondaryBackgroundColor;
       case 'danger':
-        return useThemeColor({}, 'danger');
+        return dangerColor;
       case 'outline':
       case 'ghost':
       case 'dashed':
@@ -66,13 +72,13 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextColor = () => {
-    if (disabled) return useThemeColor({}, 'text');
+    if (disabled) return textColor;
 
     switch (variant) {
       case 'primary':
         return textColor;
       case 'secondary':
-        return useThemeColor({}, 'white');
+        return whiteColor;
       case 'outline':
       case 'ghost':
         return textColor;
@@ -94,7 +100,7 @@ export const Button: React.FC<ButtonProps> = ({
   const getBorderColor = () => {
     if (variant === 'outline' || variant === 'dashed') {
       if (disabled) {
-        return borderColor;
+        return disabledBorderColor;
       } else if (variant === 'dashed') {
         return borderDashedColor;
       } else {
