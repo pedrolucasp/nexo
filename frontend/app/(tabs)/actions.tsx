@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   cardDescriptionHeadline: {
-    ...Typography.bodyMg,
+    ...Typography.bodyLg,
     color: Colors.light.textSecondary,
     marginTop: 4,
   },
