@@ -65,6 +65,10 @@ jobs:
           npx prisma generate
           npx prisma db push
 
+      - name: Typecheck (advisory)
+        run: |
+          npm run typecheck || echo "::warning title=API typecheck::tsc reported errors (advisory, see log above)"
+
       - name: Run tests
         run: npx vitest run
 
