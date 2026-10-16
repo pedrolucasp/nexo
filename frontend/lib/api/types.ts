@@ -169,50 +169,55 @@ export type InsightType =
 
 export type InsightPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
 
-export type InsightMetadata =
-  | {
-      type: "MOOD_TREND";
-      delta: number;
-      avgFirst: number;
-      avgSecond: number;
-      dominantMood: string;
-      avgEnergy: number;
-    }
-  | {
-      type: "ENERGY_SLEEP_CORRELATION";
-      correlationScore: number;
-      sampleSize: number;
-    }
-  | {
-      type: "TRIGGER_PATTERN";
-      topCategory: string;
-      topCount: number;
-      total: number;
-      distribution: Record<string, number>;
-    }
-  | {
-      type: "DAILY_ENERGY";
-      avgEnergy: number;
-      dayTrend: number | null;
-      peak: number;
-      trough: number;
-      entryCount: number;
-    }
-  | {
-      type: "DAILY_SLEEP";
-      totalHours: number;
-      diffMinutes: number;
-      sessionCount: number;
-      hadNaps: boolean;
-    };
+export interface InsightMetadataByType {
+  MOOD_TREND: {
+    delta: number;
+    avgFirst: number;
+    avgSecond: number;
+    dominantMood: string;
+    avgEnergy: number;
+  };
+  ENERGY_SLEEP_CORRELATION: {
+    correlationScore: number;
+    sampleSize: number;
+  };
+  TRIGGER_PATTERN: {
+    topCategory: string;
+    topCount: number;
+    total: number;
+    distribution: Record<string, number>;
+  };
+  DAILY_ENERGY: {
+    avgEnergy: number;
+    dayTrend: number | null;
+    peak: number;
+    trough: number;
+    entryCount: number;
+    yesterdayAvg: number | null;
+    diffEnergy: number | null;
+    windowLabel: string;
+  };
+  DAILY_SLEEP: {
+    totalHours: number;
+    diffMinutes: number | null;
+    diffStr: string;
+    sessionCount: number;
+    napStr: string;
+    hadNaps: boolean;
+    windowLabel: string;
+  };
+}
 
-export type Insight = {
+export type InsightMetadata<T extends InsightType = InsightType> =
+  InsightMetadataByType[T];
+
+export type Insight<T extends InsightType = InsightType> = {
   id: number;
-  type: InsightType;
+  type: T;
   period: InsightPeriod;
   title: string;
   body: string;
-  metadata: InsightMetadata;
+  metadata: InsightMetadata<T>;
   generatedAt: string;
   periodStart: string;
   periodEnd: string;

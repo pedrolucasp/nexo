@@ -364,18 +364,20 @@ class ApiClient {
   }
 
   // Insights
-  async getInsights(filters?: {
-    type?: InsightType;
+  async getInsights<T extends InsightType = InsightType>(filters?: {
+    type?: T;
     period?: InsightPeriod;
     limit?: number;
-  }): Promise<{ insights: Insight[] }> {
+  }): Promise<{ insights: Insight<T>[] }> {
     const query = new URLSearchParams();
     if (filters?.type) query.set("type", filters.type);
     if (filters?.period) query.set("period", filters.period);
     if (filters?.limit) query.set("limit", String(filters.limit));
 
     const qs = query.toString();
-    return this.request(`/insights${qs ? `?${qs}` : ""}`);
+    return this.request<{ insights: Insight<T>[] }>(
+      `/insights${qs ? `?${qs}` : ""}`,
+    );
   }
 
   // Medicine Regimens

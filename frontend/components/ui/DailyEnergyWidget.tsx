@@ -8,17 +8,12 @@ import { Typography, Spacing, Colors, BorderRadius } from "@/constants/theme";
 export const DailyEnergyWidget = () => {
   const { data: insight, isLoading } = useInsight("DAILY_ENERGY");
 
-  const metadata = insight?.metadata as {
-    peak: number;
-    trough: number;
-    entryCount: number;
-    avgEnergy: number;
-  };
+  const metadata = insight?.metadata;
 
-  const avgEnergy = metadata?.avgEnergy;
-  const peak = metadata?.peak;
+  const avgEnergy = metadata?.avgEnergy ?? 0;
+  const peak = metadata?.peak ?? 0;
 
-  const energyWidth = (avgEnergy / peak) * 100;
+  const energyWidth = peak > 0 ? (avgEnergy / peak) * 100 : 0;
   const energySummary = () => {
     if (avgEnergy < 3) return "Energia baixa";
     if (avgEnergy < 5) return "Media baixa";

@@ -9,12 +9,7 @@ import { useInsight } from "@/hooks/useInsights.queries";
 export const DailySleepWidget = () => {
   const { data: insight, isLoading } = useInsight("DAILY_SLEEP");
 
-  const metadata = insight?.metadata as
-    | {
-        diffStr: string;
-        diffMinutes: number;
-      }
-    | undefined;
+  const metadata = insight?.metadata;
 
   const diffColor = metadata?.diffMinutes
     ? metadata.diffMinutes < 0
