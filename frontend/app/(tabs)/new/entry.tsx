@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 import { View, StyleSheet, ScrollView } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedView } from "@/components/misc/themed-view";
-import { ScreenLayout } from "@/components/ui/ScreenLayout";
-import { useAuth } from "@/context/AuthContext";
-import { Grid, Col, Row, Between, Center } from "@/components/ui/LayoutHelpers";
+import { Grid, Col, Center } from "@/components/ui/LayoutHelpers";
 import { Card } from "@/components/ui/Cards";
 import { Button } from "@/components/ui/Button";
-import { Input, TextArea } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/Input";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors } from "@/constants/theme";
 import { ScaleSlider } from "@/components/ui/ScaleSlider";
@@ -20,18 +16,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor, useCreateMoodEntry, usePatchCareAction } from "@/hooks";
 import { useMoodEntryStore, useCareActionLinkStore } from "@/stores";
 
-import { MOODS, getMood } from "@/constants/moods";
+import { getMood } from "@/constants/moods";
 
 import { intensityToValue } from "@/constants/mood-components";
 
-import { apiClient } from "@/lib/api";
-
 export default function NewMoodEntry() {
-  const { user } = useAuth();
   const tintColor = useThemeColor({}, "tint");
 
-  const { initialMood } = useLocalSearchParams();
-  const [annotation, setAnnotation] = useState();
+  const { initialMood } = useLocalSearchParams<{ initialMood?: string }>();
+  const [annotation, setAnnotation] = useState('');
   const [stress, setStress] = useState(0);
   const [anxiety, setAnxiety] = useState(0);
   const [energy, setEnergy] = useState(0);
@@ -43,16 +36,16 @@ export default function NewMoodEntry() {
   const patchCareAction = usePatchCareAction();
 
   useEffect(() => {
-    if (initialMood) setSelectedMood(getMood(initialMood));
-  }, [initialMood]);
+    if (initialMood) setSelectedMood(initialMood);
+  }, [initialMood, setSelectedMood]);
 
   useEffect(() => {
     return () => reset();
-  }, []);
+  }, [reset]);
 
   const saveMoodEntry = async () => {
     const data = {
-      selectedMood: selectedMood?.id.toUpperCase(),
+      selectedMood: (selectedMood ?? 'neutral').toUpperCase(),
       stressLevel: stress,
       energyLevel: energy,
       anxietyLevel: anxiety,
@@ -94,7 +87,7 @@ export default function NewMoodEntry() {
             </Text>
 
             <Text style={styles.statusText}>
-              {selectedMood?.label || "Neutro"}
+              {getMood(selectedMood ?? '')?.label ?? "Neutro"}
             </Text>
           </Center>
 
@@ -143,7 +136,6 @@ export default function NewMoodEntry() {
           <Card style={styles.annotationsCard}>
             <TextArea
               label="Notas sobre o dia"
-              type="text"
               variant="darkGhost"
               onChangeText={(val) => setAnnotation(val)}
               value={annotation}
