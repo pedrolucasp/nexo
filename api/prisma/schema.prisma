@@ -28,6 +28,10 @@ model User {
   notificationsEnabled Boolean  @default(true) @map("notifications_enabled")
   dailyReminderTime    String?  @map("daily_reminder_time")
 
+  onboardingSeenAt DateTime? @map("onboarding_seen_at")
+  termsAcceptedAt  DateTime? @map("terms_accepted_at")
+  termsVersion     String?   @map("terms_version")
+
   moods            Mood[]
   triggers         Trigger[]
   sleepRecords     SleepRecord[]
