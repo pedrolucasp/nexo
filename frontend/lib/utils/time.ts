@@ -1,9 +1,10 @@
 import { format, isToday, isYesterday } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import type { BadgeVariant } from '@/components/ui/Badge';
 
 type TimeBadgeVariant = 'morning' | 'afternoon' | 'night' | 'latenight';
 
-export const TIME_BADGES: Record<TimeBadgeVariant, { label: string; variant: string; }> = {
+export const TIME_BADGES: Record<TimeBadgeVariant, { label: string; variant: BadgeVariant; }> = {
   morning:   { label: 'Manhã',     variant: "green" },
   afternoon: { label: 'Tarde',     variant: "orange" },
   night:     { label: 'Noite',     variant: "blue" },

@@ -27,12 +27,12 @@ export function mapMoodToHistoryCard(mood: MoodEntry): HistoryCard {
 // Sleep Records
 
 function sleepQualityBadge(hours: number): HistoryCard["badge"] {
-  if (hours >= 7) return { label: "Excelente", variant: "success" };
-  if (hours >= 5) return { label: "Regular", variant: "warning" };
+  if (hours >= 7) return { label: "Excelente", variant: "green" };
+  if (hours >= 5) return { label: "Regular", variant: "yellow" };
 
   return {
     label: "Ruim",
-    variant: "danger",
+    variant: "red",
   };
 }
 
@@ -129,7 +129,7 @@ export function mapCareActionToHistoryCard(record: CareAction): HistoryCard {
           linkedCount > 0
             ? {
                 label: `${linkedCount} vínculo${linkedCount > 1 ? "s" : ""}`,
-                variant: "info",
+                variant: "blue",
               }
             : undefined,
         raw: record,

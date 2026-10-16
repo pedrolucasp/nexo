@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { TriggerCategory } from "@/constants/triggers";
+import type { BadgeVariant } from "@/components/ui/Badge";
 
 export interface TriggerCategoryDefinition {
   id: TriggerCategory;
@@ -7,7 +8,7 @@ export interface TriggerCategoryDefinition {
   icon: keyof typeof MaterialIcons.glyphMap;
   color: string;
   iconBackground: string;
-  variant: string;
+  variant: BadgeVariant;
 }
 
 export const TRIGGER_CATEGORY_DEFINITIONS: TriggerCategoryDefinition[] = [

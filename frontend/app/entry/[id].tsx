@@ -133,11 +133,7 @@ export default function MoodDetailScreen() {
               </Col>
             </Row>
             {/* If this is the latest mood entry, show the active badge */}
-            <Badge
-              label="Registro Ativo"
-              backgroundColor={Theme.colors.activeBackground}
-              color={Theme.colors.tint}
-            />
+            <Badge label="Registro Ativo" variant="green" />
           </Between>
         </Card>
 
@@ -239,24 +235,24 @@ export default function MoodDetailScreen() {
                 );
               })}
 
-              {entry.careActions.map((ca) => {
+              {(entry.careActions ?? []).map((ca) => {
                 const meta = getCareActionMeta(ca);
 
                 return (
                   <Pressable
                     key={ca.id}
-                    onPress={() => (router.push as any)(`/care-actions/${ca.id}`)}
+                    onPress={() => router.push(`/care-actions/${ca.id}`)}
                     style={({ pressed }) => [pressed && { opacity: 0.7 }]}
                   >
                     <Card style={styles.linkCard}>
                       <Row style={{ alignItems: 'center', gap: 12 }}>
                         <View style={[styles.linkIconCircle, { backgroundColor: meta.iconBackground }]}>
-                          <MaterialIcons name={meta.icon as any} size={22} color={meta.color} />
+                          <MaterialIcons name={meta.icon} size={22} color={meta.color} />
                         </View>
                         <Col gap={3} style={{ flex: 1 }}>
                           <Row style={{ alignItems: 'center', gap: 6 }}>
                             <Text style={styles.linkLabel}>{meta.label}</Text>
-                            <Badge label="Consulta" variant="info" style={undefined} />
+                            <Badge label="Consulta" variant="blue" style={undefined} />
                           </Row>
                           <Text style={styles.linkTime}>
                             {formatMoment(new Date(ca.moment))}

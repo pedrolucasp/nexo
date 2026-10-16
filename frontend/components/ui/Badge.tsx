@@ -1,6 +1,8 @@
 import {
   StyleSheet,
-  View
+  View,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
 import { Text } from '@/components/ui/Text';
 
@@ -14,11 +16,20 @@ export const badgeVariants = {
   gray:   { bg: "#f1f5f9", text: "#475569", dot: "#94a3b8" },
   orange: { bg: "#ffedd5", text: "#9a3412", dot: "#f97316" },
   pink:   { bg: "#fce7f3", text: "#9d174d", dot: "#ec4899" },
+  indigo: { bg: "#e0e7ff", text: "#3730a3", dot: "#6366f1" },
+};
+
+export type BadgeVariant = keyof typeof badgeVariants;
+
+type BadgeProps = {
+  label: string;
+  variant?: BadgeVariant;
+  style?: StyleProp<ViewStyle>;
 };
 
 // TODO: Add a subtle variant and allow to drop the dot as well
 // TODO: Experiment with a less round-ish version?
-export const Badge = ({ label, variant = "green", style }) => {
+export const Badge = ({ label, variant = "green", style }: BadgeProps) => {
   const palette = badgeVariants[variant] ?? badgeVariants.green;
 
   const styles = StyleSheet.create({
