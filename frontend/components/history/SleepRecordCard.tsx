@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { Card } from '@/components/ui/Cards'
 import { Badge } from '@/components/ui/Badge'
 import type { SleepRecord } from '@/lib/api'
+import type { HistoryCard } from '@/lib/history/types'
 import { Spacing } from '@/constants/theme';
 import { router } from 'expo-router'
 
