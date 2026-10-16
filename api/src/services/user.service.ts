@@ -7,13 +7,18 @@ import {
   UpdateUserInput
 } from "@app/schemas";
 
+import { CURRENT_TERMS_VERSION } from '@app/lib/constants';
+
 export const createUser = async(input: CreateUserInput): Promise<User> => {
-  const { password, ...data } = input;
+  const { password, acceptedTerms, ...data } = input;
   const encryptedPassword = bcrypt.hashSync(password, 10);
 
   return await prisma.user.create({
     data: {
-      ...data, encryptedPassword
+      ...data,
+      encryptedPassword,
+      termsAcceptedAt: acceptedTerms ? new Date() : undefined,
+      termsVersion: acceptedTerms ? CURRENT_TERMS_VERSION : undefined,
     }
   })
 };

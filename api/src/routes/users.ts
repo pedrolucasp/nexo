@@ -8,6 +8,7 @@ const router = Router();
 router.post('/', UsersController.create);
 router.get('/me', requireAuth, UsersController.me);
 router.patch('/me', requireAuth, UsersController.updatePreferences);
+router.post('/me/onboarding/complete', requireAuth, UsersController.completeOnboarding);
 router.put('/:id', requireAuth, UsersController.update);
 router.post('/me/avatar', requireAuth, multer.single('avatar'), UsersController.updateAvatar);
 router.delete('/me/avatar', requireAuth, UsersController.removeAvatar);
