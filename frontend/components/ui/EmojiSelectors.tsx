@@ -15,11 +15,11 @@ type IconSource = string | ImageSourcePropType; // either string or a svg
 
 // Specialized variant with labels below
 interface MoodSelectorProps {
-  items: T<{
+  items: {
     id: string;
     icon: IconSource;
     label: string;
-  }>;
+  }[];
   value?: string;
   onSelect: (id: string) => void;
   disabled?: boolean;
@@ -34,7 +34,6 @@ export const MoodSelector: React.FC<MoodSelectorProps> = ({
   style,
 }) => {
   const accentBlueColor = useThemeColor({}, "accentBlue");
-  const tintColor = useThemeColor({}, "tint");
   const surfaceColor = useThemeColor({}, "surface");
   const dividerColor = useThemeColor({}, "divider");
   const textSecondaryColor = useThemeColor({}, "textSecondary");
