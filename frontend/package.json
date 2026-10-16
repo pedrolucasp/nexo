@@ -8,6 +8,7 @@
     "android": "expo run:android",
     "android:reverse": "sh scripts/adb-reverse.sh",
     "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
     "ios": "expo run:ios",
     "test:e2e": "sh scripts/e2e.sh test",
     "test:e2e:env": "sh scripts/e2e.sh print-env"
