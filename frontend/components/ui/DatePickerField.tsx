@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { Text } from "@/components/ui/Text";
 import DateTimePicker, {
@@ -24,12 +24,10 @@ export const DatePickerField: React.FC<DatePickerProps> = ({
   minimumDate,
   maximumDate,
 }) => {
-  const [date, setDate] = useState(initialDate);
+  const [pickedDate, setPickedDate] = useState<Date | null>(null);
   const [show, setShow] = useState(false);
 
-  useEffect(() => {
-    setDate(initialDate);
-  }, [initialDate]);
+  const date = pickedDate ?? initialDate;
 
   const openPicker = () => setShow(true);
 
@@ -37,7 +35,7 @@ export const DatePickerField: React.FC<DatePickerProps> = ({
     setShow(false);
 
     if (selectedDate) {
-      setDate(selectedDate);
+      setPickedDate(selectedDate);
       if (onChange) onChange(selectedDate);
     }
   };
