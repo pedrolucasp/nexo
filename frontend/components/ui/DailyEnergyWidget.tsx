@@ -1,95 +1,50 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Text } from "@/components/ui/Text";
-import { Card } from "@/components/ui/Cards";
+import { InsightMetricCard } from "@/components/insights/InsightMetricCard";
 import { useInsight } from "@/hooks/useInsights.queries";
-import { Ionicons } from "@expo/vector-icons";
-import { Typography, Spacing, Colors, BorderRadius } from "@/constants/theme";
+import { Colors } from "@/constants/theme";
+
+const ENERGY_SCALE_MAX = 10;
 
 export const DailyEnergyWidget = () => {
   const { data: insight, isLoading } = useInsight("DAILY_ENERGY");
 
   const metadata = insight?.metadata;
-
-  const avgEnergy = metadata?.avgEnergy ?? 0;
-  const peak = metadata?.peak ?? 0;
-
-  const energyWidth = peak > 0 ? (avgEnergy / peak) * 100 : 0;
-  const energySummary = () => {
-    if (avgEnergy < 3) return "Energia baixa";
-    if (avgEnergy < 5) return "Media baixa";
-    if (avgEnergy < 7.5) return "Média Alta";
-    return "Energia alta";
-  };
+  const avgEnergy = metadata?.avgEnergy;
+  const diffEnergy = metadata?.diffEnergy ?? null;
 
   return (
-    <Card style={styles.container}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          flexGrow: 0,
-          paddingVertical: 10,
-        }}
-      >
-        <Ionicons name="flash" size={20} color="#64748B" />
-
-        <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-          Energia
-        </Text>
-      </View>
-
-      <View style={{ flex: 1 }}>
-        {isLoading ? (
-          <View style={styles.empty}>
-            <ActivityIndicator size="small" style={{ paddingBottom: 50 }} />
-          </View>
-        ) : insight ? (
-          <>
-            <Text style={{ ...Typography.headlineMd, marginBottom: 10 }}>
-              {energySummary()}
-            </Text>
-
-            <View style={styles.lineTrack}>
-              <View style={[styles.lineFill, { width: `${energyWidth}%` }]} />
-            </View>
-          </>
-        ) : (
-          <>
-            <Text style={styles.empty}>
-              Não há dados disponíveis para o dia de hoje
-            </Text>
-          </>
-        )}
-      </View>
-    </Card>
+    <InsightMetricCard
+      icon="flash"
+      title="Energia"
+      isLoading={isLoading}
+      emptyMessage="Não há dados disponíveis para o dia de hoje"
+      value={avgEnergy != null ? formatEnergy(avgEnergy) : undefined}
+      windowLabel={metadata?.windowLabel}
+      barRatio={
+        avgEnergy != null
+          ? Math.max(0, Math.min(1, avgEnergy / ENERGY_SCALE_MAX))
+          : undefined
+      }
+      comparison={formatEnergyDiff(diffEnergy)}
+      comparisonColor={energyDiffColor(diffEnergy)}
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: Spacing.cardGap,
-  },
-  empty: {
-    ...Typography.labelSm,
-    opacity: 0.5,
-  },
-  lineTrack: {
-    height: 6,
-    backgroundColor: Colors.light.divider,
-    borderRadius: BorderRadius.full,
-    marginBottom: 4,
-    overflow: "hidden",
-  },
-  lineFill: {
-    height: "100%",
-    backgroundColor: Colors.light.tint,
-    borderRadius: BorderRadius.full,
-  },
-  indicatorGreen: {
-    color: Colors.light.tint,
-    fontSize: 11,
-    fontWeight: 600,
-    lineHeight: 16.5,
-  },
-});
+function formatEnergy(value: number): string {
+  return value.toFixed(1).replace(".", ",");
+}
+
+// Positive means more energy than yesterday; nothing to compare reads null
+function formatEnergyDiff(diff: number | null): string | null {
+  if (diff == null) return null;
+
+  const sign = diff > 0 ? "+" : diff < 0 ? "-" : "";
+
+  return `${sign}${Math.abs(diff).toFixed(1).replace(".", ",")} que ontem`;
+}
+
+function energyDiffColor(diff: number | null): string {
+  if (diff == null || diff === 0) return Colors.light.textSecondary;
+
+  return diff > 0 ? Colors.light.tint : Colors.light.danger;
+}
