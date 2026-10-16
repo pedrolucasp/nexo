@@ -154,7 +154,7 @@ export const Typography = {
     fontFamily: "Inter",
     fontSize: 11,
     lineHeight: 13.8,
-    fontStyle: "italic",
+    fontStyle: "italic" as const,
   },
 };
 
