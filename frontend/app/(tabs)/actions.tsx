@@ -1,11 +1,10 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { ThemedView } from "@/components/misc/themed-view";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useAuth } from "@/context/AuthContext";
 import { Section, SectionHeader } from "@/components/ui/Sections";
-import { Card, SubtleInfoCard } from "@/components/ui/Cards";
-import { Grid, Col, Row, Between } from "@/components/ui/LayoutHelpers";
+import { Card } from "@/components/ui/Cards";
+import { Grid } from "@/components/ui/LayoutHelpers";
 import { Button } from "@/components/ui/Button";
 import {
   Shadows,

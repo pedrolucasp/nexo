@@ -7,12 +7,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Text } from '@/components/ui/Text';
-import { router, useLocalSearchParams, Link } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { Card } from "@/components/ui/Cards";
-import { Section } from '@/components/ui/Sections';
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from "@/constants/theme";

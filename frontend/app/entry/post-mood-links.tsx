@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Button } from '@/components/ui/Button';
-import { Section, SectionHeader } from '@/components/ui/Sections';
 import { Spacing, Typography, Colors, BorderRadius } from '@/constants/theme';
 import { useTriggers, useLinkMoodToTrigger } from '@/hooks';
 import { getTriggerCategory } from '@/constants/trigger-categories';

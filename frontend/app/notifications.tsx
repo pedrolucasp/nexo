@@ -1,10 +1,7 @@
 import {
-  View,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
-  Alert,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
 
@@ -14,7 +11,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useThemeColor } from "@/hooks/use-theme-color";
 import { Button } from "@/components/ui/Button";
 import { Colors, Spacing } from "@/constants/theme";
 import { Card } from "@/components/ui/Cards";

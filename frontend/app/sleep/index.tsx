@@ -4,8 +4,7 @@ import {
   ScrollView
 } from 'react-native';
 
-import { Card } from '@/components/ui/Cards';
-import { Spacing, Typography, Colors } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 
 export default function SleepHub() {
 

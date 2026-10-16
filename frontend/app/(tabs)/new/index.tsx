@@ -1,28 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { ThemedView } from "@/components/misc/themed-view";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { useAuth } from "@/context/AuthContext";
-import { Grid, Col, Row, Between } from "@/components/ui/LayoutHelpers";
+import { Col, Between } from "@/components/ui/LayoutHelpers";
 import { Card } from "@/components/ui/Cards";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { MoodSelector } from "@/components/ui/EmojiSelectors";
 import {
   Typography,
-  Spacing,
   Shadows,
   Colors,
   BorderRadius,
 } from "@/constants/theme";
-import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { MoodDefinition, MOODS } from "@/constants/moods";
+import { MOODS } from "@/constants/moods";
 
-import { useThemeColor, useMoodEntries } from "@/hooks";
+import { useMoodEntries } from "@/hooks";
 
 import MoodEntryLog from "@/components/ui/MoodEntryLog";
 import { DailyEnergyWidget } from "@/components/ui/DailyEnergyWidget";

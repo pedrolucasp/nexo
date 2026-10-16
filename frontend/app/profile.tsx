@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,8 +7,7 @@ import {
 } from 'react-native';
 
 import { Text } from '@/components/ui/Text';
-import { ThemedView } from '@/components/ui/themed-view'
-import { Link, useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';

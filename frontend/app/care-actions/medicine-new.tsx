@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/Cards";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
-import { Spacing, Typography, Colors, BorderRadius, Shadows } from "@/constants/theme";
+import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { useCreateMedicineRegimen } from "@/hooks";
 import { MedicinePeriodicity } from "@/lib/api";

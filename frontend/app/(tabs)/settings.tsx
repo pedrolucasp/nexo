@@ -1,16 +1,14 @@
 import {
   TouchableOpacity,
   StyleSheet,
-  SectionList,
   View,
   Switch,
-  Pressable,
 } from "react-native";
 import { Text } from '@/components/ui/Text';
 import { useState } from "react";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Cards";
-import ScreenLayout from "@/components/ui/ScreenLayout";
+import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { BorderRadius, Colors, Spacing, Typography } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { useAuth } from "@/context/AuthContext";

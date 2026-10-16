@@ -13,7 +13,6 @@ import { Theme } from "@/constants/theme";
 import {
   MOOD_COMPONENTS,
   getMoodComponent,
-  intensityLabel,
 } from "@/constants/mood-components";
 
 import { useMoodEntryStore } from "@/stores/moodEntry";
