@@ -5,10 +5,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Card } from "@/components/ui/Cards";
 import { useInsight } from "@/hooks/useInsights.queries";
 import { useThemeColor } from "@/hooks/use-theme-color";
-import { Spacing, Typography, BorderRadius } from "@/constants/theme";
+import { Typography } from "@/constants/theme";
 
 export const MoodTrendWidget: React.FC = () => {
-  const { data: insight, isLoading } = useInsight("MOOD_TREND", 0);
+  const { data: insight, isLoading } = useInsight("MOOD_TREND");
 
   const successColor = useThemeColor({}, "success");
   const errorColor = useThemeColor({}, "danger");
