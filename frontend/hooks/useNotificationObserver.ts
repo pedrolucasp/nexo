@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as Notifications from "expo-notifications";
-import { useRouter, useRootNavigationState } from "expo-router";
+import { useRouter, useRootNavigationState, type Href } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -39,7 +39,10 @@ export function useNotificationObserver() {
       lastHandledId.current = id;
 
       // XXX: Looks so dumb, actually
-      const { screen, ...params } = (data ?? {}) as Record<string, any>;
+      const { screen, ...params } = (data ?? {}) as {
+        screen?: string;
+        [key: string]: string | undefined;
+      };
 
       if (!screen) return;
 
@@ -47,14 +50,14 @@ export function useNotificationObserver() {
 
       if (coldLaunch) {
         router.replace({
-          pathname: screen as any,
+          pathname: screen,
           params: payload,
-        });
+        } as Href);
       } else {
         router.push({
-          pathname: screen as any,
+          pathname: screen,
           params: payload,
-        });
+        } as Href);
       }
     }
 

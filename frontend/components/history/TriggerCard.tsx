@@ -36,7 +36,7 @@ export function TriggerHistoryCard({ card }: Props) {
           ) : null}
           <Badge
             label={meta.label}
-            variant={meta.variant as any}
+            variant={meta.variant}
             style={styles.badge}
           />
         </View>

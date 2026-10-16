@@ -18,7 +18,7 @@ export function MedicineHistoryCard({ card }: Props) {
   return (
     <Card
       style={styles.card}
-      onPress={() => (router.push as any)(`/care-actions/${card.raw.id}`)}
+      onPress={() => router.push(`/care-actions/${card.raw.id}`)}
     >
       <View style={styles.row}>
         <View style={[styles.iconWrap, styles.iconBg]}>

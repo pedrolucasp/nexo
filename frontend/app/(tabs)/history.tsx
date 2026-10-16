@@ -17,19 +17,19 @@ import { EmptyState } from "@/components/ui/EmptyState";
 function HistoryCardRenderer({ card }: { card: HistoryCard }) {
   switch (card.category) {
     case "mood":
-      return <MoodHistoryCard card={card as any} />;
+      return <MoodHistoryCard card={card} />;
     case "sleep":
-      return <SleepRecordCard card={card as any} />;
+      return <SleepRecordCard card={card} />;
     case "trigger":
-      return <TriggerHistoryCard card={card as any} />;
+      return <TriggerHistoryCard card={card} />;
     case "care_action":
       switch (card.subtype) {
         case "medicine":
-          return <MedicineHistoryCard card={card as any} />;
+          return <MedicineHistoryCard card={card} />;
         case "appointment":
-          return <AppointmentHistoryCard card={card as any} />;
+          return <AppointmentHistoryCard card={card} />;
         case "activity":
-          return <ActivityHistoryCard card={card as any} />;
+          return <ActivityHistoryCard card={card} />;
         default:
           return null;
       }

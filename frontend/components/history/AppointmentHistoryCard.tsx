@@ -19,7 +19,7 @@ export function AppointmentHistoryCard({ card }: Props) {
   return (
     <Card
       style={styles.card}
-      onPress={() => (router.push as any)(`/care-actions/${card.raw.id}`)}
+      onPress={() => router.push(`/care-actions/${card.raw.id}`)}
     >
       <View style={styles.row}>
         <View style={[styles.iconWrap, styles.iconBg]}>
@@ -38,7 +38,7 @@ export function AppointmentHistoryCard({ card }: Props) {
           {card.badge ? (
             <Badge
               label={card.badge.label}
-              variant={card.badge.variant as any}
+              variant={card.badge.variant}
               style={styles.badge}
             />
           ) : null}

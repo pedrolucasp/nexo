@@ -1,7 +1,8 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import type { CareAction } from "@/lib/api/types";
 
 export type CareActionMeta = {
-  icon: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
   color: string;
   iconBackground: string;
   label: string;

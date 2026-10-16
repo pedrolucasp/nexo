@@ -62,7 +62,7 @@ const PERIODICITY_LABELS: Record<string, string> = {
 
 // header meta
 type HeaderMeta = {
-  icon: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
   color: string;
   iconBg: string;
   title: string;
@@ -106,7 +106,7 @@ function resolveHeader(ca: CareAction): HeaderMeta {
 // DetailRow
 // TODO: Might as well generalize this into a component
 type DetailRowProps = {
-  icon: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
   label: string;
   value: string;
 };
@@ -115,7 +115,7 @@ function DetailRow({ icon, label, value }: DetailRowProps) {
   return (
     <Row style={styles.detailRow}>
       <View style={styles.detailIconWrap}>
-        <MaterialIcons name={icon as any} size={18} color="#6366F1" />
+        <MaterialIcons name={icon} size={18} color="#6366F1" />
       </View>
       <Col gap={1}>
         <Text style={styles.detailLabel}>{label}</Text>
@@ -207,7 +207,7 @@ export default function CareActionDetailScreen() {
           <Row style={{ alignItems: "center" }}>
             <View style={[styles.iconWrap, { backgroundColor: header.iconBg }]}>
               <MaterialIcons
-                name={header.icon as any}
+                name={header.icon}
                 size={22}
                 color={header.color}
               />
@@ -317,7 +317,7 @@ export default function CareActionDetailScreen() {
                             ]}
                           >
                             <MaterialIcons
-                              name={meta.icon as any}
+                              name={meta.icon}
                               size={20}
                               color={meta.color}
                             />

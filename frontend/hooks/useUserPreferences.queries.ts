@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { apiClient, UserPreferencesPayload } from "@/lib/api";
+import { apiClient, User, UserPreferencesPayload } from "@/lib/api";
 
-export const usePatchUserMe = (onSuccess?: (user: any) => void) => {
+export const usePatchUserMe = (onSuccess?: (user: User) => void) => {
   return useMutation({
     mutationFn: (payload: UserPreferencesPayload) => apiClient.patchUserMe(payload),
     onSuccess: (data) => {

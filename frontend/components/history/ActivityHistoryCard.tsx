@@ -20,11 +20,11 @@ export function ActivityHistoryCard({ card }: Props) {
   return (
     <Card
       style={styles.card}
-      onPress={() => (router.push as any)(`/care-actions/${card.raw.id}`)}
+      onPress={() => router.push(`/care-actions/${card.raw.id}`)}
     >
       <View style={styles.row}>
         <View style={[styles.iconWrap, { backgroundColor: meta.iconBackground }]}>
-          <MaterialIcons name={meta.icon as any} size={22} color={meta.color} />
+          <MaterialIcons name={meta.icon} size={22} color={meta.color} />
         </View>
         <View style={styles.body}>
           <View style={styles.titleRow}>

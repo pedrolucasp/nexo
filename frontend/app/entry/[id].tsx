@@ -224,7 +224,7 @@ export default function MoodDetailScreen() {
                           style={[
                             styles.impactFill,
                             {
-                              width: `${(link.perceivedImpact / 5) * 100}%` as any,
+                              width: `${(link.perceivedImpact / 5) * 100}%`,
                               backgroundColor: impactColor(link.perceivedImpact),
                             },
                           ]}

@@ -36,7 +36,7 @@ export function CategoryChips<T extends string = string>({
             activeOpacity={0.7}
             style={[
               styles.chip,
-              { width: `${100 / columns - 2}%` as any },
+              { width: `${100 / columns - 2}%` },
               isActive && styles.chipActive,
             ]}
           >

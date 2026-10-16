@@ -27,7 +27,7 @@ interface AuthContextType {
   requestActivateCode: () => Promise<void>;
 }
 
-export function sanitizeUser(data: any): User {
+export function sanitizeUser(data: User): User {
   return {
     id: data.id,
     email: data.email,
