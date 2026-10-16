@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,13 +8,10 @@ import {
 } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 import { Card, SubtleInfoCard } from "@/components/ui/Cards";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
+import { Col, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Colors, Spacing } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
