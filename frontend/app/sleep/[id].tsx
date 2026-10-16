@@ -136,7 +136,7 @@ export default function SleepDetailScreen() {
           <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
           <Button
             variant="outline"
-            isLoading={false}
+            loading={false}
             disabled={!canDelete}
             onPress={() => router.push(`/sleep/edit/${sleepRecord.id}`)}
             title="Editar Registro"
@@ -144,7 +144,7 @@ export default function SleepDetailScreen() {
 
           <Button
             variant="danger"
-            isLoading={deleteSleepRecord.isPending}
+            loading={deleteSleepRecord.isPending}
             disabled={!canDelete || deleteSleepRecord.isPending}
             onPress={handleDelete}
             title={deleteButtonMsg()}

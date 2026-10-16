@@ -120,7 +120,7 @@ export default function EditSleepRecord() {
           <Button
             title="Salvar Alterações"
             onPress={save}
-            isLoading={updateSleepRecord.isPending}
+            loading={updateSleepRecord.isPending}
             disabled={updateSleepRecord.isPending}
           />
         </View>

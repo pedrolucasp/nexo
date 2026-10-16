@@ -273,14 +273,14 @@ export default function TriggerDetailsScreen() {
           <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
           <Button
             variant="outline"
-            isLoading={false}
+            loading={false}
             disabled={!canDelete}
             onPress={() => router.push(`/triggers/edit/${trigger.id}`)}
             title="Editar Registro"
           />
           <Button
             variant="danger"
-            isLoading={deleteTrigger.isPending}
+            loading={deleteTrigger.isPending}
             disabled={!canDelete || deleteTrigger.isPending}
             onPress={handleDelete}
             title={deleteButtonMsg()}

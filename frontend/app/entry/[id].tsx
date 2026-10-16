@@ -288,7 +288,7 @@ export default function MoodDetailScreen() {
           <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
           <Button
             variant="danger"
-            isLoading={deleteMoodEntry.isPending}
+            loading={deleteMoodEntry.isPending}
             disabled={!canDelete || deleteMoodEntry.isPending}
             onPress={handleDelete}
             title={deleteButtonMsg()}

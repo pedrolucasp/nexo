@@ -122,7 +122,7 @@ export default function EditTrigger() {
           <Button
             title="Salvar Alterações"
             onPress={save}
-            isLoading={updateTrigger.isPending}
+            loading={updateTrigger.isPending}
             disabled={updateTrigger.isPending}
           />
         </View>
