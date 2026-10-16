@@ -38,7 +38,7 @@ export const Card: React.FC<CardProps> = ({
       borderRadius: BorderRadius.lg,
       borderWidth: 1,
       borderColor: cardBorderColor,
-      padding: Spacing.internalPadding,
+      padding: Spacing.containerPadding,
       marginBottom: Spacing.cardGap,
       ...(isHighlighted && {
         backgroundColor: accentBlueColor,
@@ -85,7 +85,7 @@ export const SubtleInfoCard: React.FC<SubtleInfoCardProps> = ({
       marginBottom: Spacing.cardGap,
       flex: 1,
       flexDirection: 'row',
-      alignItems: 'top'
+      alignItems: 'flex-start'
     },
     text: {
       fontSize: 12,

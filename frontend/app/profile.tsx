@@ -206,11 +206,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    justifyContent: 'start',
+    justifyContent: 'flex-start',
     minHeight: '100%',
   },
   header: {
-    alignItems: 'left',
+    alignItems: 'flex-start',
     marginBottom: 40,
   },
   title: {
