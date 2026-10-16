@@ -15,7 +15,6 @@ export class ApiError extends Error {
 import {
   User,
   AuthResponse,
-  VerifyTokenResponse,
   SignUpPayload,
   ResetPasswordRequestResponse,
   ResetPasswordResponse,
@@ -204,16 +203,6 @@ class ApiClient {
     });
   }
 
-  async verifyToken(): Promise<VerifyTokenResponse> {
-    try {
-      return await this.request("/auth/verify");
-    } catch (error) {
-      // Token is invalid or expired
-      await this.removeToken();
-      throw error;
-    }
-  }
-
   async logout(): Promise<void> {
     await this.removeToken();
   }
@@ -221,6 +210,10 @@ class ApiClient {
   // User-related
   async getMe(): Promise<{ user: User }> {
     return this.request('/users/me');
+  }
+
+  async completeOnboarding(): Promise<{ user: User }> {
+    return this.request('/users/me/onboarding/complete', { method: 'POST' });
   }
 
   async updateUser(user: UserUpdatePayload): Promise<{ user: User }> {

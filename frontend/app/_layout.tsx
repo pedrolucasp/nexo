@@ -12,7 +12,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: "index",
 };
 
 const AppBootstrap = () => {
@@ -37,7 +37,18 @@ export default function RootLayout() {
               options={{
                 headerShown: false,
                 presentation: "modal",
+                gestureEnabled: false,
               }}
+            />
+
+            <Stack.Screen
+              name="onboarding"
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+
+            <Stack.Screen
+              name="terms"
+              options={{ title: "Termos e Condições" }}
             />
 
             <Stack.Screen

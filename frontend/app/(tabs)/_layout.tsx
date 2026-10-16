@@ -6,11 +6,13 @@ import { HapticTab } from "@/components/misc/haptic-tab";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors } from "@/constants/theme";
 import { useAuth } from "@/context/AuthContext";
+import { routeForStatus } from "@/context/authRouting";
 
 export default function TabLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { status, user } = useAuth();
+  const href = routeForStatus(status, user);
 
-  if (isLoading) {
+  if (!href) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" />
@@ -18,8 +20,9 @@ export default function TabLayout() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <Redirect href="/auth/login" />;
+  // `active` with onboarding seen is the only state that may render the tabs.
+  if (status !== "active" || !user?.onboardingSeenAt) {
+    return <Redirect href={href} />;
   }
 
   return (

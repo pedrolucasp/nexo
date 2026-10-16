@@ -7,7 +7,7 @@ import { Text } from "@/components/ui/Text";
 
 import { useState, useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import { useAuth } from "@/context/AuthContext";
+import { registerForPushNotifications } from "@/hooks/useRegisterPushToken";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,9 +28,7 @@ type ReceivedNotification = {
 };
 
 export default function NotificationsPage() {
-  const { user } = useAuth();
   const params = useLocalSearchParams<NotificationParams>();
-  const expoPushToken = user?.pushToken;
   const [liveNotification, setLiveNotification] = useState<ReceivedNotification | null>(null);
 
   useEffect(() => {
@@ -46,6 +44,8 @@ export default function NotificationsPage() {
   const displayed = liveNotification ?? (params.title || params.body ? { title: params.title, body: params.body } : null);
 
   async function sendPushNotification() {
+    const expoPushToken = await registerForPushNotifications();
+
     if (expoPushToken) {
       const message = {
         to: expoPushToken,

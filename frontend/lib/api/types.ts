@@ -7,9 +7,9 @@ export interface User {
   avatarKey?: string;
   avatarURL?: string;
   active: boolean;
-  pushToken?: string;
   notificationsEnabled?: boolean;
   dailyReminderTime?: string;
+  onboardingSeenAt?: Date | null;
 }
 
 export interface AvatarResponse {
@@ -31,27 +31,20 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface VerifyTokenResponse {
-  valid: boolean;
-  userId?: number;
-  email?: string;
-  user: Pick<User, "firstName" | "lastName">;
-}
-
 export interface SignUpPayload {
   firstName: string;
   lastName?: string;
   email: string;
   password: string;
+  acceptedTerms: boolean;
 }
 
 export interface ResetPasswordRequestResponse {
-  message: string;
-  token?: string;
+  success: boolean;
 }
 
 export interface ResetPasswordResponse {
-  message: string;
+  success: boolean;
 }
 
 export interface ActivateResponse {
@@ -62,6 +55,7 @@ export interface ActivateResponse {
 export interface UserUpdatePayload extends Partial<User> {
   id: number;
   password?: string;
+  pushToken?: string;
 }
 
 export interface UserUpdateResponse {

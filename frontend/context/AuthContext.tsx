@@ -1,45 +1,40 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { apiClient, User } from "@/lib/api";
 import { queryClient, storage } from "@/lib/queryClient";
+import { AuthStatus, deriveStatus } from "@/context/authRouting";
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
+interface SignUpInput {
+  firstName: string;
+  lastName?: string;
+  email: string;
+  password: string;
+  acceptedTerms: boolean;
+}
+
 interface AuthContextType {
   user: User | null;
+  status: AuthStatus;
   isLoading: boolean;
-  isAuthenticated: boolean;
   updateAuthUser: (user: User) => void;
   login: (email: string, password: string) => Promise<{ user: User } | null>;
-  signup: (userData: {
-    firstName: string;
-    lastName?: string;
-    email: string;
-    password: string;
-  }) => Promise<void>;
+  signup: (userData: SignUpInput) => Promise<void>;
   logout: () => Promise<void>;
-  forgotPassword: (
-    email: string,
-  ) => Promise<{ message: string; token?: string }>;
+  forgotPassword: (email: string) => Promise<{ success: boolean }>;
   resetPassword: (token: string, password: string) => Promise<void>;
   activate: (code: string) => Promise<void>;
   requestActivateCode: () => Promise<void>;
-}
-
-export function sanitizeUser(data: User): User {
-  return {
-    id: data.id,
-    email: data.email,
-    firstName: data.firstName,
-    lastName: data.lastName,
-    updatedAt: data.updatedAt,
-    avatarKey: data.avatarKey,
-    avatarURL: data.avatarURL,
-    active: data.active,
-    notificationsEnabled: data.notificationsEnabled,
-    dailyReminderTime: data.dailyReminderTime,
-  };
+  completeOnboarding: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -56,23 +51,26 @@ export function useAuth() {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isAuthenticated = !!user;
+  const status = deriveStatus(isLoading, user);
 
-  useEffect(() => {
-    checkAuthState();
+  const logout = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await apiClient.logout();
+
+      setUser(null);
+      // Clear both the in-memory cache and the persisted MMKV cache
+      queryClient.clear();
+      storage.clearAll();
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  useEffect(() => {
-    apiClient.registerUnauthorizedHandler(() => {
-      logout();
-    });
-  }, []);
-
-  const checkAuthState = async () => {
+  const checkAuthState = useCallback(async () => {
     const doAuthCheck = async () => {
       const { token } = await apiClient.getStoredAuthData();
       if (token) {
-        await apiClient.verifyToken();
         const { user } = await apiClient.getMe();
         setUser(user);
       }
@@ -90,12 +88,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const login = async (
-    email: string,
-    password: string,
-  ): Promise<{ user: User } | null> => {
+  useEffect(() => {
+    checkAuthState();
+  }, [checkAuthState]);
+
+  useEffect(() => {
+    apiClient.registerUnauthorizedHandler(logout);
+  }, [logout]);
+
+  const login = useCallback(async (email: string, password: string) => {
     const response = await apiClient.login(email, password);
 
     if (response.user) {
@@ -103,58 +106,49 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     return response;
-  };
+  }, []);
 
-  const signup = async (userData: {
-    firstName: string;
-    lastName?: string;
-    email: string;
-    password: string;
-  }) => {
+  const signup = useCallback(async (userData: SignUpInput) => {
     const response = await apiClient.signup(userData);
-    setUser(response.user);
-  };
 
-  const logout = async () => {
-    setIsLoading(true);
-    try {
-      await apiClient.logout();
-
-      setUser(null);
-      // Clear both the in-memory cache and the persisted MMKV cache
-      queryClient.clear();
-      storage.clearAll();
-    } finally {
-      setIsLoading(false);
+    if (response.user) {
+      setUser(response.user);
     }
-  };
+  }, []);
 
-  const forgotPassword = async (email: string) => {
-    return apiClient.forgotPassword(email);
-  };
+  const forgotPassword = useCallback(
+    (email: string) => apiClient.forgotPassword(email),
+    [],
+  );
 
-  const resetPassword = async (token: string, password: string) => {
+  const resetPassword = useCallback(async (token: string, password: string) => {
     await apiClient.resetPassword(token, password);
-  };
+  }, []);
 
-  const activate = async (code: string) => {
+  const activate = useCallback(async (code: string) => {
     const response = await apiClient.activate(code);
     setUser(response.user);
-  };
+  }, []);
 
-  const requestActivateCode = async () => {
-    await apiClient.requestActivateCode();
-  };
+  const requestActivateCode = useCallback(
+    () => apiClient.requestActivateCode(),
+    [],
+  );
 
-  const updateAuthUser = (user: User) => {
+  const completeOnboarding = useCallback(async () => {
+    const { user } = await apiClient.completeOnboarding();
     setUser(user);
-  };
+  }, []);
+
+  const updateAuthUser = useCallback((user: User) => {
+    setUser(user);
+  }, []);
 
   const value = useMemo<AuthContextType>(
     () => ({
       user,
+      status,
       isLoading,
-      isAuthenticated,
       login,
       signup,
       logout,
@@ -163,9 +157,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       updateAuthUser,
       activate,
       requestActivateCode,
+      completeOnboarding,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, isLoading, isAuthenticated],
+    [
+      user,
+      status,
+      isLoading,
+      login,
+      signup,
+      logout,
+      forgotPassword,
+      resetPassword,
+      updateAuthUser,
+      activate,
+      requestActivateCode,
+      completeOnboarding,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
