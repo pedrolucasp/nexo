@@ -61,6 +61,7 @@ export interface ActivateResponse {
 // User
 export interface UserUpdatePayload extends Partial<User> {
   id: number;
+  password?: string;
 }
 
 export interface UserUpdateResponse {
