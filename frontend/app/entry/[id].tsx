@@ -170,15 +170,7 @@ export default function MoodDetailScreen() {
         <Section>
           <SectionHeader title="Além disso, sinto..." variant="subtle" />
           <Col gap={0}>
-            {entry.moodComponents.map((comp, index) => {
-              const def = getMoodComponent(comp.component.toLowerCase());
-              const numericIntensity =
-                comp.intensity === "LIGHT"
-                  ? 2
-                  : comp.intensity === "MODERATE"
-                    ? 5
-                    : 8;
-
+            {entry.moodComponents.map((comp) => {
               return (
                 <MoodComponentCard
                   key={comp.id}

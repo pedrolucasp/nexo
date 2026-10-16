@@ -8,7 +8,7 @@ import { Theme } from '@/constants/theme';
 
 interface MoodComponentCardProps {
   id: string;
-  intensity: number;
+  intensity: number | string;
   style?: ViewStyle;
 }
 
