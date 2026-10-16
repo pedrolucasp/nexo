@@ -1,16 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-} from 'react-native';
-import { Text } from '@/components/ui/Text';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, CodeInput } from '@/components/ui';
 import type { CodeInputHandle } from '@/components/ui/CodeInput';
+import { Text } from '@/components/ui/Text';
+import { AuthScreen } from '@/components/auth/AuthScreen';
 import { Colors } from '@/constants/theme';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -26,10 +21,10 @@ export default function ActivateScreen() {
   const [secondsLeft, setSecondsLeft] = useState(RESEND_COOLDOWN_SECONDS);
   const codeInputRef = useRef<CodeInputHandle>(null);
 
-  const { activate, requestActivateCode } = useAuth();
+  const { activate, requestActivateCode, logout } = useAuth();
   const { showToast } = useToast();
   const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({}, 'background');
+  const tintColor = useThemeColor({}, 'tint');
 
   useEffect(() => {
     if (secondsLeft <= 0) return;
@@ -69,6 +64,14 @@ export default function ActivateScreen() {
     setCodeError(undefined);
   };
 
+  // Abandons this half-created session. Nothing exists on an inactive account
+  // yet, so there is nothing to warn about — it just clears the local session
+  // and drops back to login.
+  const backToLogin = async () => {
+    await logout();
+    router.replace('/auth/login');
+  };
+
   const resendCode = async () => {
     if (secondsLeft > 0) return;
 
@@ -83,88 +86,63 @@ export default function ActivateScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: textColor }]}>Ativar a conta</Text>
-            <Text style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
-              Digite o código de 6 dígitos enviado para seu email
+    <AuthScreen
+      title="Ativar a conta"
+      subtitle="Digite o código de 6 dígitos enviado para seu email"
+      footer={
+        <View style={styles.footer}>
+          <Text style={[styles.footerText, { color: textColor, opacity: 0.7 }]}>
+            Não recebeu?{' '}
+          </Text>
+
+          <Button
+            variant="outline"
+            title={
+              secondsLeft > 0
+                ? `Reenviar em ${secondsLeft}s`
+                : 'Reenviar um novo código'
+            }
+            onPress={resendCode}
+            disabled={secondsLeft > 0}
+          />
+
+          <Pressable
+            onPress={backToLogin}
+            style={styles.backLink}
+            testID="button-back-to-login"
+          >
+            <Text style={[styles.backLinkText, { color: tintColor }]}>
+              Voltar para login
             </Text>
-          </View>
+          </Pressable>
+        </View>
+      }
+    >
+      <View style={styles.form}>
+        <CodeInput
+          ref={codeInputRef}
+          value={code}
+          onChange={handleCodeChange}
+          onComplete={submitCode}
+          length={CODE_LENGTH}
+          error={codeError}
+          editable={!loading}
+          accessibilityLabel="Código de ativação de 6 dígitos"
+          testIdPrefix="activate-code"
+        />
 
-          <View style={styles.form}>
-            <CodeInput
-              ref={codeInputRef}
-              value={code}
-              onChange={handleCodeChange}
-              onComplete={submitCode}
-              length={CODE_LENGTH}
-              error={codeError}
-              editable={!loading}
-              accessibilityLabel="Código de ativação de 6 dígitos"
-              testIdPrefix="activate-code"
-            />
-
-            <Button
-              title="Ativar conta"
-              onPress={() => submitCode(code)}
-              loading={loading}
-              style={styles.activateButton}
-            />
-          </View>
-
-          <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: textColor, opacity: 0.7 }]}>
-              Não recebeu?{' '}
-            </Text>
-
-            <Button
-              variant="outline"
-              title={
-                secondsLeft > 0
-                  ? `Reenviar em ${secondsLeft}s`
-                  : 'Reenviar um novo código'
-              }
-              onPress={resendCode}
-              disabled={secondsLeft > 0}
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        <Button
+          title="Ativar conta"
+          onPress={() => submitCode(code)}
+          loading={loading}
+          style={styles.activateButton}
+        />
+      </View>
+    </AuthScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'center',
-    minHeight: '100%',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
   form: {
     marginBottom: 32,
   },
@@ -172,7 +150,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   footer: {
-    marginTop: 20,
     borderTopColor: Colors.light.accentBlue,
     borderTopWidth: 1,
     paddingTop: 20,
@@ -180,5 +157,13 @@ const styles = StyleSheet.create({
   footerText: {
     textAlign: 'center',
     marginBottom: 10,
+  },
+  backLink: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  backLinkText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

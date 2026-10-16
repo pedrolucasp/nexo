@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-} from 'react-native';
-import { Text } from '@/components/ui/Text';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Link, router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button, Input } from '@/components/ui';
+import { Text } from '@/components/ui/Text';
+import { AuthScreen } from '@/components/auth/AuthScreen';
 import { useAuth } from '@/context/AuthContext';
 import { ApiError } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
@@ -21,18 +17,19 @@ export default function SignupScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [errors, setErrors] = useState<{
     firstName?: string;
     email?: string;
     password?: string;
     confirmPassword?: string;
+    acceptedTerms?: string;
   }>({});
 
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const { showToast } = useToast();
   const textColor = useThemeColor({}, 'text');
-  const backgroundColor = useThemeColor({}, 'background');
   const tintColor = useThemeColor({}, 'tint');
 
   const validateForm = () => {
@@ -60,6 +57,10 @@ export default function SignupScreen() {
       newErrors.confirmPassword = 'As senhas não coincidem';
     }
 
+    if (!acceptedTerms) {
+      newErrors.acceptedTerms = 'Você precisa aceitar os termos para continuar';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -69,7 +70,7 @@ export default function SignupScreen() {
 
     setLoading(true);
     try {
-      await signup({ firstName, lastName, email, password });
+      await signup({ firstName, lastName, email, password, acceptedTerms });
       router.replace('/');
     } catch (error) {
       if (error instanceof ApiError && error.fields) {
@@ -83,123 +84,134 @@ export default function SignupScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor }]}>
-      <KeyboardAvoidingView
-        behavior='height'
-        style={styles.keyboardView}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: textColor }]}>Criar conta</Text>
-            <Text style={[styles.subtitle, { color: textColor, opacity: 0.7 }]}>
-              Cadastre-se para começar a monitorar o seu humor.
+    <AuthScreen
+      title="Criar conta"
+      subtitle="Cadastre-se para começar a monitorar o seu humor."
+      footer={
+        <View style={styles.footer}>
+          <Text style={[styles.footerText, { color: textColor, opacity: 0.7 }]}>
+            Já tem uma conta?{' '}
+          </Text>
+          <Link href="/auth/login" asChild style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
+            <Text style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
+              Faça login
             </Text>
-          </View>
+          </Link>
+        </View>
+      }
+    >
+      <View style={styles.form}>
+        <Input
+          label="Nome"
+          value={firstName}
+          onChangeText={setFirstName}
+          placeholder="Digite seu nome"
+          error={errors.firstName}
+        />
 
-          <View style={styles.form}>
-            <Input
-              label="Nome"
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="Digite seu nome"
-              error={errors.firstName}
+        <Input
+          label="Sobrenome (opcional)"
+          value={lastName}
+          onChangeText={setLastName}
+          placeholder="Digite seu sobrenome"
+        />
+
+        <Input
+          label="Email"
+          type="email"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Qual seu email?"
+          error={errors.email}
+          autoCapitalize="none"
+        />
+
+        <Input
+          label="Senha"
+          type="password"
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Deve ter no min. 6 caracteres"
+          error={errors.password}
+          showPasswordToggle
+        />
+
+        <Input
+          label="Confirme a senha"
+          type="password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholder="Confirme sua senha"
+          error={errors.confirmPassword}
+          showPasswordToggle
+        />
+
+        <View style={styles.termsRow}>
+          <Pressable
+            onPress={() => setAcceptedTerms((value) => !value)}
+            hitSlop={8}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: acceptedTerms }}
+            testID="checkbox-terms"
+          >
+            <Ionicons
+              name={acceptedTerms ? 'checkbox' : 'square-outline'}
+              size={22}
+              color={acceptedTerms ? tintColor : textColor}
             />
+          </Pressable>
 
-            <Input
-              label="Sobrenome (opcional)"
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Digite seu sobrenome"
-            />
+          <Text style={[styles.termsText, { color: textColor }]}>
+            Li e aceito os{' '}
+          </Text>
 
-            <Input
-              label="Email"
-              type="email"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Qual seu email?"
-              error={errors.email}
-              autoCapitalize="none"
-            />
-
-            <Input
-              label="Senha"
-              type="password"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Deve ter no min. 6 caracteres"
-              error={errors.password}
-              showPasswordToggle
-            />
-
-            <Input
-              label="Confirme a senha"
-              type="password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="Confirme sua senha"
-              error={errors.confirmPassword}
-              showPasswordToggle
-            />
-
-            <Button
-              title="Criar conta"
-              onPress={handleSignup}
-              loading={loading}
-              style={styles.signupButton}
-            />
-          </View>
-
-          <View style={styles.footer}>
-            <Text style={[styles.footerText, { color: textColor, opacity: 0.7 }]}>
-              Já tem uma conta?{' '}
+          <Link href="/terms" asChild style={StyleSheet.flatten([styles.termsLink, { color: tintColor }])}>
+            <Text style={StyleSheet.flatten([styles.termsLink, { color: tintColor }])}>
+              Termos e Condições
             </Text>
-            <Link href="/auth/login" asChild style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
-              <Text style={StyleSheet.flatten([styles.link, { color: tintColor }])}>
-                Faça login
-              </Text>
-            </Link>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </Link>
+        </View>
+
+        {errors.acceptedTerms && (
+          <Text style={[styles.termsError, { color: '#ef4444' }]}>
+            {errors.acceptedTerms}
+          </Text>
+        )}
+
+        <Button
+          title="Criar conta"
+          onPress={handleSignup}
+          loading={loading}
+          style={styles.signupButton}
+        />
+      </View>
+    </AuthScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'center',
-    minHeight: '100%',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
   form: {
     marginBottom: 32,
   },
   signupButton: {
     marginTop: 8,
+  },
+  termsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },
+  termsText: {
+    fontSize: 14,
+  },
+  termsLink: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  termsError: {
+    fontSize: 12,
+    marginBottom: 8,
   },
   link: {
     textAlign: 'center',
@@ -210,8 +222,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
-    paddingBottom: 20,
   },
   footerText: {
     fontSize: 14,
