@@ -1,10 +1,10 @@
-import { Redirect } from "expo-router";
+import { Redirect, type Href } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
   const { isAuthenticated, isLoading, user } = useAuth();
-  let url = "/auth/login";
+  let url: Href = "/auth/login";
 
   if (isLoading) {
     return (
