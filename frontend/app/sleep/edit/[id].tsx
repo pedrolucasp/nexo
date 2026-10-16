@@ -3,9 +3,10 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { router, useLocalSearchParams, Stack } from "expo-router";
 
 import { Card } from "@/components/ui/Cards";
@@ -17,24 +18,33 @@ import { DatePickerField } from "@/components/ui/DatePickerField";
 import { ScaleSlider } from "@/components/ui/ScaleSlider";
 import { useSleepRecord, useUpdateSleepRecord } from "@/hooks";
 import { parseDateOnly } from "@/lib/utils/time";
-import { ActivityIndicator, View as ActivityView } from "react-native";
+import type { SleepRecord } from "@/lib/api";
 
 export default function EditSleepRecord() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: sleepRecord, isLoading } = useSleepRecord(id);
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
+    );
+  }
+
+  if (!sleepRecord) {
+    return null;
+  }
+
+  return <EditSleepForm id={id} sleepRecord={sleepRecord} />;
+}
+
+function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepRecord }) {
   const updateSleepRecord = useUpdateSleepRecord();
 
-  const [date, setDate] = useState(new Date());
-  const [annotations, setAnnotations] = useState("");
-  const [average, setAverage] = useState(7.5);
-
-  useEffect(() => {
-    if (sleepRecord) {
-      setDate(parseDateOnly(sleepRecord.date));
-      setAnnotations(sleepRecord.annotations || "");
-      setAverage(sleepRecord.average);
-    }
-  }, [sleepRecord]);
+  const [date, setDate] = useState(parseDateOnly(sleepRecord.date));
+  const [annotations, setAnnotations] = useState(sleepRecord.annotations || "");
+  const [average, setAverage] = useState(sleepRecord.average);
 
   const formatValue = (value: number): string => {
     return String(value).replaceAll(".", ",");
@@ -50,14 +60,6 @@ export default function EditSleepRecord() {
     await updateSleepRecord.mutateAsync({ id: String(id), payload: data });
     router.back();
   };
-
-  if (isLoading) {
-    return (
-      <ActivityView style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.light.tint} />
-      </ActivityView>
-    );
-  }
 
   return (
     <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>

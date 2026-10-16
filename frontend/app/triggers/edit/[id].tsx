@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { router, useLocalSearchParams, Stack } from "expo-router";
 
 import { Card } from "@/components/ui/Cards";
@@ -20,6 +20,7 @@ import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
 import { TriggerCategory } from "@/constants/triggers";
 import { TRIGGER_CATEGORY_DEFINITIONS } from "@/constants/trigger-categories";
 import { TimePicker } from "@/components/ui/TimePicker";
+import type { Trigger } from "@/lib/api";
 
 const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
   TRIGGER_CATEGORY_DEFINITIONS.map((d) => ({
@@ -31,19 +32,28 @@ const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
 export default function EditTrigger() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: trigger, isLoading } = useTrigger(id);
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
+    );
+  }
+
+  if (!trigger) {
+    return null;
+  }
+
+  return <EditTriggerForm id={id} trigger={trigger} />;
+}
+
+function EditTriggerForm({ id, trigger }: { id: string; trigger: Trigger }) {
   const updateTrigger = useUpdateTrigger();
 
-  const [moment, setMoment] = useState(new Date());
-  const [comment, setComment] = useState("");
-  const [category, setCategory] = useState("WORK");
-
-  useEffect(() => {
-    if (trigger) {
-      setMoment(new Date(trigger.moment));
-      setComment(trigger.comment || "");
-      setCategory(trigger.category);
-    }
-  }, [trigger]);
+  const [moment, setMoment] = useState(new Date(trigger.moment));
+  const [comment, setComment] = useState(trigger.comment || "");
+  const [category, setCategory] = useState(trigger.category);
 
   const save = async () => {
     const data = {
@@ -55,14 +65,6 @@ export default function EditTrigger() {
     await updateTrigger.mutateAsync({ id: String(id), payload: data });
     router.back();
   };
-
-  if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.light.tint} />
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>

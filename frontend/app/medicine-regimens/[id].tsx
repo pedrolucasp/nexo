@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Cards";
 import { Input } from "@/components/ui/Input";
@@ -16,7 +16,7 @@ import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { useMedicineRegimen, useUpdateMedicineRegimen } from "@/hooks";
-import { MedicinePeriodicity } from "@/lib/api";
+import type { MedicinePeriodicity, MedicineRegimen } from "@/lib/api";
 
 const PERIODICITY_OPTIONS: { label: string; value: MedicinePeriodicity }[] = [
   { label: "Uma vez", value: "ONCE" },
@@ -50,24 +50,31 @@ function timesToDates(times: string[]): Date[] {
 export default function MedicineRegimenEdit() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading } = useMedicineRegimen(id);
+
+  if (isLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator color={Colors.light.tint} />
+      </View>
+    );
+  }
+
+  if (!data?.regimen) {
+    return null;
+  }
+
+  return <MedicineRegimenForm id={id} regimen={data.regimen} />;
+}
+
+function MedicineRegimenForm({ id, regimen }: { id: string; regimen: MedicineRegimen }) {
   const updateRegimen = useUpdateMedicineRegimen();
 
-  const [name, setName] = useState("");
-  const [dosage, setDosage] = useState("");
-  const [periodicity, setPeriodicity] = useState<MedicinePeriodicity>("DAILY");
-  const [scheduledTimes, setScheduledTimes] = useState<Date[]>([]);
-  const [initialized, setInitialized] = useState(false);
-
-  useEffect(() => {
-    if (data?.regimen && !initialized) {
-      const r = data.regimen;
-      setName(r.name);
-      setDosage(r.dosage);
-      setPeriodicity(r.periodicity as MedicinePeriodicity);
-      setScheduledTimes(timesToDates(r.scheduledAt));
-      setInitialized(true);
-    }
-  }, [data, initialized]);
+  const [name, setName] = useState(regimen.name);
+  const [dosage, setDosage] = useState(regimen.dosage);
+  const [periodicity, setPeriodicity] = useState<MedicinePeriodicity>(regimen.periodicity);
+  const [scheduledTimes, setScheduledTimes] = useState<Date[]>(
+    timesToDates(regimen.scheduledAt),
+  );
 
   const handleSave = async () => {
     const count = getTimePickerCount(periodicity);
@@ -82,14 +89,6 @@ export default function MedicineRegimenEdit() {
     });
     router.back();
   };
-
-  if (isLoading || !initialized) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator color={Colors.light.tint} />
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
