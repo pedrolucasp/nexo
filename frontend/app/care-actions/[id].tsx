@@ -288,7 +288,7 @@ export default function CareActionDetailScreen() {
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
-                "{careAction.appointment.note.trim()}"
+                &quot;{careAction.appointment.note.trim()}&quot;
               </Text>
             </Card>
           </Section>

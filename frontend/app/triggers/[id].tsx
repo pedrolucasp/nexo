@@ -262,7 +262,7 @@ export default function TriggerDetailsScreen() {
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
-                "{trigger.comment?.trim()}"
+                &quot;{trigger.comment?.trim()}&quot;
               </Text>
             </Card>
           </Section>

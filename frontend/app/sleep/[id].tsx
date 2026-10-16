@@ -125,7 +125,7 @@ export default function SleepDetailScreen() {
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
-                "{sleepRecord.annotations?.trim()}"
+                &quot;{sleepRecord.annotations?.trim()}&quot;
               </Text>
             </Card>
           </Section>

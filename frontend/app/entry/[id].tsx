@@ -277,7 +277,7 @@ export default function MoodDetailScreen() {
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
-                "{entry.annotation?.trim()}"
+                &quot;{entry.annotation?.trim()}&quot;
               </Text>
             </Card>
           </Section>
