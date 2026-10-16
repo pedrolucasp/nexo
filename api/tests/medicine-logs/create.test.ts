@@ -46,8 +46,8 @@ describe('Medicine logs (via POST /care-actions)', () => {
     })
 
     expect(log).not.toBeNull()
-    expect(log!.regimen.name).toBe('Sertralina')
-    expect(log!.regimen.dosage).toBe('50mg')
+    expect(log!.regimen!.name).toBe('Sertralina')
+    expect(log!.regimen!.dosage).toBe('50mg')
   })
 
   it('creates a medicine log and a new regimen when sending inline medicine', async () => {
