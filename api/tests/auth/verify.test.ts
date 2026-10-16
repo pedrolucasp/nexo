@@ -6,6 +6,7 @@ import {
   cleanupTestDb,
   createTestUser,
   generateTestToken,
+  expectPublicUser,
 } from '../test-helper'
 
 const app = createApp()
@@ -32,7 +33,7 @@ describe('GET /auth/verify', () => {
     expect(res.body.userId).toBe(user.id)
     expect(res.body.email).toBe('verify@example.com')
     expect(res.body.user.firstName).toBe('Pedro')
-    expect(res.body.user.encryptedPassword).toBeUndefined()
+    expectPublicUser(res.body.user)
   })
 
   it('returns 401 without an authorization header', async () => {

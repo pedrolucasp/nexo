@@ -7,6 +7,7 @@ import {
   cleanupTestDb,
   createTestUser,
   generateTestToken,
+  expectPublicUser,
 } from '../test-helper'
 
 import { recordedJobs, resetQueueMocks } from '../mocks/queue'
@@ -34,6 +35,7 @@ describe('PATCH /users/me', () => {
     expect(res.status).toBe(200)
     expect(res.body.user.notificationsEnabled).toBe(true)
     expect(res.body.user.dailyReminderTime).toBe('08:30')
+    expectPublicUser(res.body.user)
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
     expect(dbUser!.dailyReminderTime).toBe('08:30')

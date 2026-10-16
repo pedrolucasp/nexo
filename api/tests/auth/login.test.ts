@@ -1,7 +1,7 @@
 import { describe, it, expect, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
 import { createApp } from '@app/createApp'
-import { buildPrisma, cleanupTestDb, createTestUser } from '../test-helper'
+import { buildPrisma, cleanupTestDb, createTestUser, expectPublicUser } from '../test-helper'
 import { recordedJobs, resetQueueMocks } from '../mocks/queue'
 
 const app = createApp()
@@ -25,6 +25,7 @@ describe('POST /auth/login', () => {
     expect(res.status).toBe(200)
     expect(res.body.token).toBeTruthy()
     expect(res.body.user.email).toBe('login@example.com')
+    expectPublicUser(res.body.user)
   })
 
   it('returns 401 for wrong password', async () => {

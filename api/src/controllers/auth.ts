@@ -25,6 +25,7 @@ import {
   ActivateUserSchema,
 } from "@app/schemas";
 import { formatValidationError } from "@app/lib/errors/validationError";
+import { publicUser } from "@app/lib/serializers/user";
 
 import { getQueue, MailJobName } from "@app/lib/queue";
 
@@ -54,7 +55,7 @@ export const AuthController = {
 
       return res.json({
         token,
-        user,
+        user: publicUser(user),
       });
     } catch (err: any) {
       if (err.message === "Invalid credentials") {
@@ -122,16 +123,7 @@ export const AuthController = {
         valid: true,
         userId: payload.userId,
         email: payload.email,
-        user: {
-          firstName: user.firstName,
-          email: user.email,
-          lastName: user.lastName,
-          updatedAt: user.updatedAt,
-          active: user.active,
-          avatarKey: user.avatarKey,
-          avatarURL: user.avatarURL,
-          pushToken: user.pushToken,
-        },
+        user: publicUser(user),
       });
     } catch (err: any) {
       if (
@@ -163,7 +155,7 @@ export const AuthController = {
       const result = await activateUser(user);
 
       return res.status(200).json({
-        user: result,
+        user: publicUser(result),
       });
     } catch (err: any) {
       next(err);
@@ -193,7 +185,7 @@ export const AuthController = {
       });
 
       res.json({
-        user,
+        user: publicUser(user),
       });
     } catch (err: any) {
       next(err);

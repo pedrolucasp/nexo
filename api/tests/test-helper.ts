@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
+import { expect } from 'vitest'
 
 export function buildPrisma(): PrismaClient {
   const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
@@ -38,4 +39,23 @@ export async function createTestUser(
       ...(notificationsEnabled !== undefined && { notificationsEnabled }),
     },
   })
+}
+
+// Fields that must never leave the API. Asserting absence at every
+// user-returning endpoint is the regression net for the raw-row leak: a failure
+// means an endpoint started handing back a Prisma row again.
+const SECRET_FIELDS = [
+  'encryptedPassword',
+  'passwordResetToken',
+  'passwordResetExpires',
+  'activationCode',
+  'activationCodeExpiresAt',
+  'pushToken',
+] as const
+
+export function expectPublicUser(user: Record<string, unknown> | undefined) {
+  expect(user).toBeDefined()
+  for (const field of SECRET_FIELDS) {
+    expect(user).not.toHaveProperty(field)
+  }
 }

@@ -6,6 +6,7 @@ import {
   cleanupTestDb,
   createTestUser,
   generateTestToken,
+  expectPublicUser,
 } from '../test-helper'
 
 const app = createApp()
@@ -39,7 +40,7 @@ describe('POST /auth/activate', () => {
 
     expect(res.status).toBe(200)
     expect(res.body.user.active).toBe(true)
-    expect(res.body.user.activationCode).toBeNull()
+    expectPublicUser(res.body.user)
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
     expect(dbUser!.active).toBe(true)
@@ -154,6 +155,7 @@ describe('POST /auth/resend_code', () => {
       .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
+    expectPublicUser(res.body.user)
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
     expect(dbUser!.activationCode).toMatch(/^\d{6}$/)

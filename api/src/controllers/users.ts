@@ -29,25 +29,14 @@ import {
 } from '@app/middleware/auth';
 
 import { prisma } from '@app/lib/prisma';
+import { publicUser, publicUserSelect } from '@app/lib/serializers/user';
 import s3 from '@app/lib/s3';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { User } from '@prisma/client';
 
 // XXX: I've regreted already
 interface SingleFileRequest extends AuthenticatedRequest {
   file?: any;
 }
-
-const withoutSecrets = (user: User) => {
-  const {
-    encryptedPassword,
-    passwordResetToken,
-    passwordResetExpires,
-    ...safe
-  } = user;
-
-  return safe;
-};
 
 export const UsersController = {
   create: async (req: Request, res: Response, next: NextFunction) => {
@@ -70,7 +59,8 @@ export const UsersController = {
       });
 
       res.status(201).json({
-        token: jwtToken
+        token: jwtToken,
+        user: publicUser(user),
       });
     } catch (err) {
       next(err);
@@ -103,7 +93,7 @@ export const UsersController = {
       const updated = await updateUser({ ...parsed.data, id: targetId });
 
       return res.status(200).json({
-        user: withoutSecrets(updated)
+        user: publicUser(updated)
       });
     } catch (err) {
       next(err);
@@ -140,7 +130,7 @@ export const UsersController = {
         key: req.file.key,
         filename: req.file.originalname,
         size: req.file.size,
-        user: user
+        user: publicUser(user)
       });
     } catch (err) {
       next(err);
@@ -161,7 +151,20 @@ export const UsersController = {
 
       await syncDailyReminderJob(user);
 
-      return res.status(200).json({ user });
+      return res.status(200).json({ user: publicUser(user) });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  completeOnboarding: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const user = await prisma.user.update({
+        where: { id: req.userId },
+        data: { onboardingSeenAt: new Date() },
+      });
+
+      return res.status(200).json({ user: publicUser(user) });
     } catch (err) {
       next(err);
     }
@@ -171,19 +174,7 @@ export const UsersController = {
     try {
       const user = await prisma.user.findUnique({
         where: { id: req.userId! },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          updatedAt: true,
-          avatarKey: true,
-          avatarURL: true,
-          active: true,
-          pushToken: true,
-          notificationsEnabled: true,
-          dailyReminderTime: true,
-        },
+        select: publicUserSelect,
       });
 
       if (!user) return res.status(404).json({ error: "User not found" });
@@ -198,7 +189,7 @@ export const UsersController = {
     const currentUser = await findUserById(Number(req.userId));
 
     if (currentUser && currentUser?.avatarKey == null) {
-      return res.json({ user: currentUser })
+      return res.json({ user: publicUser(currentUser) })
     }
 
     await s3.send(
@@ -217,7 +208,7 @@ export const UsersController = {
     });
 
     return res.json({
-      user
+      user: publicUser(user)
     })
   }
 }

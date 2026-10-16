@@ -8,6 +8,7 @@ import {
   cleanupTestDb,
   createTestUser,
   generateTestToken,
+  expectPublicUser,
 } from '../test-helper'
 
 import { resetAvatarMock, setUploadedFile } from '../mocks/avatar'
@@ -48,6 +49,7 @@ describe('POST /users/me/avatar', () => {
     expect(res.body.key).toBe('avatars/new.png')
     expect(res.body.user.avatarURL).toBe(uploadedFile.location)
     expect(res.body.user.avatarKey).toBe('avatars/new.png')
+    expectPublicUser(res.body.user)
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
 
@@ -116,6 +118,7 @@ describe('DELETE /users/me/avatar', () => {
     expect(res.status).toBe(200)
     expect(res.body.user.avatarKey).toBeNull()
     expect(res.body.user.avatarURL).toBeNull()
+    expectPublicUser(res.body.user)
     expect(mockedSend).toHaveBeenCalledOnce()
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })

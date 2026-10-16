@@ -1,7 +1,7 @@
 import { describe, it, expect, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
 import { createApp } from '@app/createApp'
-import { buildPrisma, cleanupTestDb, createTestUser, generateTestToken } from '../test-helper'
+import { buildPrisma, cleanupTestDb, createTestUser, generateTestToken, expectPublicUser } from '../test-helper'
 
 const app = createApp()
 const db = buildPrisma()
@@ -21,7 +21,7 @@ describe('GET /users/me', () => {
     expect(res.status).toBe(200)
     expect(res.body.user.email).toBe('me@example.com')
     expect(res.body.user.firstName).toBe('Pedro')
-    expect(res.body.user.encryptedPassword).toBeUndefined()
+    expectPublicUser(res.body.user)
   })
 
   it('returns 401 without token', async () => {

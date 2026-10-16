@@ -6,6 +6,7 @@ import {
   cleanupTestDb,
   createTestUser,
   generateTestToken,
+  expectPublicUser,
 } from '../test-helper'
 
 const app = createApp()
@@ -37,8 +38,7 @@ describe('PUT /users/:id', () => {
     expect(res.status).toBe(200)
     expect(res.body.user.firstName).toBe('New')
     expect(res.body.user.lastName).toBe('Name')
-    expect(res.body.user.encryptedPassword).toBeUndefined()
-    expect(res.body.user.passwordResetToken).toBeUndefined()
+    expectPublicUser(res.body.user)
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
     expect(dbUser!.firstName).toBe('New')
