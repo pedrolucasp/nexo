@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
@@ -43,7 +43,6 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
   style,
 }) => {
   const textColor = useThemeColor({}, 'text');
-  const secondaryColor = useThemeColor({}, 'textSecondary');
   const tintColor = useThemeColor({}, 'tint');
   const trackingColor = useThemeColor({}, 'sliderTracking');
   const sliderLabelsColor = useThemeColor({}, 'sliderLabels');
@@ -75,7 +74,7 @@ export const ScaleSlider: React.FC<ScaleSliderProps> = ({
           isRich ? styles.valueRich : styles.valueCompact,
           { color: textColor },
         ]}>
-          {(onValueFormat ? onValueFormat(valueDisplay) : valueDisplay)}
+          {(onValueFormat ? onValueFormat(value) : valueDisplay)}
         </Text>
       </View>
 
