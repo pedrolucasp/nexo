@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Image,
@@ -32,7 +32,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({
   const [preview, setPreview] = useState<string | null>(currentAvatar);
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
 
   const handleImagePick = async (useCamera: boolean = false): Promise<void> => {
     try {

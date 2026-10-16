@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Animated,
-  Easing
+  Easing,
+  Image,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { Link, router } from "expo-router";
-import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useThemeColor } from "@/hooks/use-theme-color";
@@ -34,7 +34,7 @@ export default function LoginScreen() {
   const backgroundColor = useThemeColor({}, "background");
   const tintColor = useThemeColor({}, "tint");
 
-  const spinValue = useRef(new Animated.Value(0)).current;
+  const [spinValue] = useState(() => new Animated.Value(0));
   useEffect(() => {
     const animation = Animated.loop(
       Animated.timing(spinValue, {

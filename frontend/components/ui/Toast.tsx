@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native';
 import { Text } from '@/components/ui/Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -19,8 +19,8 @@ const VARIANT_COLORS: Record<ToastVariant, string> = {
 
 export function Toast({ message, variant, visible }: ToastProps) {
   const insets = useSafeAreaInsets();
-  const translateY = useRef(new Animated.Value(-120)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const [translateY] = useState(() => new Animated.Value(-120));
+  const [opacity] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     if (visible) {
@@ -51,7 +51,7 @@ export function Toast({ message, variant, visible }: ToastProps) {
         }),
       ]).start();
     }
-  }, [visible]);
+  }, [visible, translateY, opacity]);
 
   return (
     <Animated.View
