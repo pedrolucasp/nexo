@@ -34,14 +34,8 @@ type ReceivedNotification = {
 export default function NotificationsPage() {
   const { user } = useAuth();
   const params = useLocalSearchParams<NotificationParams>();
-  const [expoPushToken, setExpoPushToken] = useState(user?.pushToken);
+  const expoPushToken = user?.pushToken;
   const [liveNotification, setLiveNotification] = useState<ReceivedNotification | null>(null);
-
-  useEffect(() => {
-    if (user) {
-      setExpoPushToken(user.pushToken);
-    }
-  }, [user]);
 
   useEffect(() => {
     const sub = Notifications.addNotificationReceivedListener((n) => {
