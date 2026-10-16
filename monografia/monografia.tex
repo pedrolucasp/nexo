@@ -64,12 +64,12 @@
 \instituicaomembroiii{UFCR}
 
 % Palavras-chave do trabalho desenvolvido.
-\keyword{TypeScript}
-\keyword{Transtorno Afetivo Bipolar}
-\keyword{Monitoramento de humor}
-\keyword{PostgreSQL}
 \keyword{Ecological Momentary Assessment}
+\keyword{Transtorno Bipolar}
+\keyword{Monitoramento de humor}
 \keyword{React Native}
+\keyword{TypeScript}
+\keyword{PostgreSQL}
 
 % XXX: Fix longtables not having a prefix. Fucking POS template; shoulda stick
 % to rawdogging ABNT2 or just use the IFRJ one which is actually complete
@@ -125,42 +125,48 @@
 \end{epigrafe}
 
 % Resumo em língua vernácula (a que você está escrevendo o documento)
-% TODO: Rework this a bit more
-% TODO: 150 words min, not more than one page, obviously, always saying that it
-% concluded the proposed objectives
 \begin{abstract}
 \noindent
-Esse projeto aborda o desenvolvimento de um aplicativo de monitoramento e
-controle para pessoas com transtorno de afetivo bipolar (TAB), bebendo de
-inspiração de fundamentos da \textit{Ecological Momentary Assessment} para
-abordagem. A proposta então é uma aplicação cujo usuário pode utilizar para
-monitorar o registro diário tanto de mudanças no humor quanto também no
-controle e registro de ações que possam auxiliar ou mitigar alguma questão
-psicológica, anotar a qualidade e média de sono e gatilhos, com o objetivo de
-facilitar a identificação da fase cíclica da TAB. O trabalho abrange desde a
-construção da pesquisa inicial, o desenvolvimento da aplicação e testes. O
-sistema é inteiramente desenvolvido na linguagem de programação TypeScript,
-tanto com o backend/API e a aplicação, desenvolvida usando React Native. Também
-é utilizado como parte de infraestrutura, \textit{Docker containers} para
-garantir que a implantação seja reproduzível.
+Este trabalho apresenta o desenvolvimento do Nexo, uma aplicação móvel de
+código aberto voltada ao monitoramento do humor de pessoas com Transtorno
+Bipolar, fundamentada nos princípios da \textit{Ecological Momentary
+Assessment} (EMA). O objetivo foi conceber uma ferramenta que integrasse, em
+uma única plataforma, o registro de humor, a qualidade do sono, gatilhos e
+ações de cuidado, de modo a auxiliar o usuário na identificação de padrões
+afetivos ao longo do tempo. A pesquisa caracteriza-se como aplicada, de
+natureza exploratória, e combinou levantamento bibliográfico, aplicação de
+questionário com potenciais usuários e análise de aplicativos similares,
+empregando o modelo incremental e princípios ágeis com \textit{Kanban} no
+desenvolvimento. Como resultado, obteve-se um protótipo funcional composto por
+uma API REST e um aplicativo móvel, ambos em TypeScript, com processamento de
+indicadores em segundo plano, implantação automatizada e testes automatizados
+da API.
+Conclui-se que os objetivos propostos foram alcançados, evidenciando a
+viabilidade de uma solução de autorregistro alinhada à privacidade e à
+autonomia do usuário sobre seus dados.
 \end{abstract}
 
 % Resumo em língua estrangeira
 \begin{englishabstract}%
-  {TypeScript, Bipolar Affective Disorder, Mood Tracker, React Native,
-  Ecological Momentary Assessment, PostgreSQL}
+  {Ecological Momentary Assessment, Bipolar Disorder, Mood Tracker, React
+  Native, TypeScript, PostgreSQL}
 
   \noindent
-  This work addresses the development of a mood tracking mobile application
-  aimed at people with Bipolar Affective Disorder (BAP), emboding elements from
-  the Ecological Momentary Assessment as a baseline. The proposal is a daily
-  mood tracker, which also has features for tracking sleep quality, care
-  actions to handle any psychological issue, triggers, which all can aid in
-  identifying hypomanic or manic cycles. The work itself goes all the way from
-  the initial research up to the development of the app, layout, and tests. The
-  system itself is written in TypeScript, from the backend/API to the mobile
-  application. Also, as part of the infrastructure, it uses Docker containers
-  to guarantee that the deployment is reproducible.
+  This work presents the development of Nexo, an open-source mobile application
+  for mood monitoring aimed at people with Bipolar Disorder, grounded in the
+  principles of the Ecological Momentary Assessment (EMA). The goal was to
+  design a tool that integrated, within a single platform, the recording of
+  mood, sleep quality, triggers, and care actions, in order to help users
+  identify affective patterns over time. The research is applied and
+  exploratory in nature, combining a literature review, a questionnaire applied
+  to potential users, and an analysis of similar applications, while adopting
+  an incremental development model and agile principles with Kanban. As a
+  result, a functional prototype was produced, composed of a REST API and a
+  mobile application, both written in TypeScript, with background processing of
+  indicators, automated deployment, and automated tests for the API. It is
+  concluded that the proposed objectives were achieved, demonstrating the
+  feasibility of a self-tracking solution aligned with user privacy and
+  autonomy over their data.
 \end{englishabstract}
 
 %Lista de Figuras
