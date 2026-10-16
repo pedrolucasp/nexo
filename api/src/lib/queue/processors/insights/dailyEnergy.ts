@@ -2,25 +2,36 @@ import { prisma } from "@app/lib/prisma";
 import { InsightType, InsightPeriod } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
 import { avg } from "@app/utils/calc";
-import { appDayWindow } from "@app/lib/queue/processors/insights/utils";
+import {
+  appDayWindow,
+  previousAppDay,
+  DAY_WINDOW_LABEL,
+} from "@app/lib/queue/processors/insights/utils";
 
 export async function processDailyEnergy({
   userId,
   periodStart,
 }: InsightPeriodPayload): Promise<void> {
   const { start, end } = appDayWindow(new Date(periodStart));
+  const yesterdayStart = previousAppDay(start);
 
-  const moods = await prisma.mood.findMany({
-    where: { userId, moment: { gte: start, lt: end } },
-    orderBy: { moment: "asc" },
-    select: {
-      energyLevel: true,
-      stressLevel: true,
-      anxietyLevel: true,
-      selectedMood: true,
-      moment: true,
-    },
-  });
+  const [moods, yesterdayMoods] = await Promise.all([
+    prisma.mood.findMany({
+      where: { userId, moment: { gte: start, lt: end } },
+      orderBy: { moment: "asc" },
+      select: {
+        energyLevel: true,
+        stressLevel: true,
+        anxietyLevel: true,
+        selectedMood: true,
+        moment: true,
+      },
+    }),
+    prisma.mood.findMany({
+      where: { userId, moment: { gte: yesterdayStart, lt: start } },
+      select: { energyLevel: true },
+    }),
+  ]);
 
   if (moods.length === 0) return;
 
@@ -48,6 +59,31 @@ export async function processDailyEnergy({
       ? parseFloat((((eveningAvg - morningAvg) / morningAvg) * 100).toFixed(1))
       : null;
 
+  const yesterdayAvg =
+    yesterdayMoods.length > 0
+      ? parseFloat(avg(yesterdayMoods.map((m) => m.energyLevel)).toFixed(2))
+      : null;
+
+  // Positive means more energy than yesterday; null when there is nothing to
+  // compare against
+  const diffEnergy =
+    yesterdayAvg !== null
+      ? parseFloat((avgEnergy - yesterdayAvg).toFixed(2))
+      : null;
+
+  const metadata = {
+    avgEnergy,
+    avgStress,
+    avgAnxiety,
+    peak,
+    trough,
+    dayTrend,
+    entryCount: moods.length,
+    yesterdayAvg,
+    diffEnergy,
+    windowLabel: DAY_WINDOW_LABEL,
+  };
+
   await prisma.insight.upsert({
     where: {
       userId_type_periodStart: {
@@ -58,15 +94,7 @@ export async function processDailyEnergy({
     },
     update: {
       body: buildBody(avgEnergy, dayTrend),
-      metadata: {
-        avgEnergy,
-        avgStress,
-        avgAnxiety,
-        peak,
-        trough,
-        dayTrend,
-        entryCount: moods.length,
-      },
+      metadata,
       generatedAt: new Date(),
     },
     create: {
@@ -75,15 +103,7 @@ export async function processDailyEnergy({
       period: InsightPeriod.DAILY,
       title: "Energia do Dia",
       body: buildBody(avgEnergy, dayTrend),
-      metadata: {
-        avgEnergy,
-        avgStress,
-        avgAnxiety,
-        peak,
-        trough,
-        dayTrend,
-        entryCount: moods.length,
-      },
+      metadata,
       periodStart: start,
       periodEnd: end,
     },

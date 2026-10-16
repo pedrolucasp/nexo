@@ -3,14 +3,18 @@ import { InsightType, InsightPeriod } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
 import { logger } from "@app/lib/logger";
 import { formatHours, formatDiff } from "@app/utils/calc";
-import { appDayWindow } from "@app/lib/queue/processors/insights/utils";
+import {
+  appDayWindow,
+  previousAppDay,
+  DAY_WINDOW_LABEL,
+} from "@app/lib/queue/processors/insights/utils";
 
 export async function processDailySleep({
   userId,
   periodStart,
 }: InsightPeriodPayload): Promise<void> {
   const { start: today, end: tomorrow } = appDayWindow(new Date(periodStart));
-  const { start: yesterday } = appDayWindow(new Date(today.getTime() - 1));
+  const yesterday = previousAppDay(today);
 
   const [todayRecords, yesterdayRecords] = await Promise.all([
     prisma.sleepRecord.findMany({
@@ -61,6 +65,16 @@ export async function processDailySleep({
       ? `incluindo ${sessionCount - 1} cochilo${sessionCount > 2 ? "s" : ""}`
       : "";
 
+  const metadata = {
+    totalHours: totalToday,
+    diffMinutes,
+    diffStr,
+    sessionCount,
+    napStr,
+    hadNaps: sessionCount > 1,
+    windowLabel: DAY_WINDOW_LABEL,
+  };
+
   await prisma.insight.upsert({
     where: {
       userId_type_periodStart: {
@@ -71,14 +85,7 @@ export async function processDailySleep({
     },
     update: {
       body: buildBody(totalToday),
-      metadata: {
-        totalHours: totalToday,
-        diffMinutes,
-        diffStr,
-        sessionCount,
-        napStr,
-        hadNaps: sessionCount > 1,
-      },
+      metadata,
       generatedAt: new Date(),
     },
     create: {
@@ -87,14 +94,7 @@ export async function processDailySleep({
       period: InsightPeriod.DAILY,
       title: "Sono",
       body: buildBody(totalToday),
-      metadata: {
-        totalHours: totalToday,
-        diffMinutes,
-        sessionCount,
-        diffStr,
-        napStr,
-        hadNaps: sessionCount > 1,
-      },
+      metadata,
       periodStart: today,
       periodEnd: tomorrow,
     },

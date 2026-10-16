@@ -1,5 +1,5 @@
 import { tz } from "@date-fns/tz";
-import { addDays, startOfDay } from "date-fns";
+import { addDays, startOfDay, subDays } from "date-fns";
 
 export function rollingPeriod(days = 7) {
   const periodEnd = new Date();
@@ -14,9 +14,20 @@ export function rollingPeriod(days = 7) {
 
 const APP_TIMEZONE = tz("America/Sao_Paulo");
 
+// pt-BR label for the app-timezone day window, kept beside the window helpers
+// so the wording and the window it names live in one place
+export const DAY_WINDOW_LABEL = "hoje";
+
 // Start of the day containing `date`, in the app's timezone
 export function startOfAppDay(date: Date = new Date()): Date {
   return startOfDay(date, { in: APP_TIMEZONE });
+}
+
+// Start of the app-timezone day immediately before the one containing `date`
+export function previousAppDay(date: Date = new Date()): Date {
+  return startOfDay(subDays(date, 1, { in: APP_TIMEZONE }), {
+    in: APP_TIMEZONE,
+  });
 }
 
 // The app-timezone day containing `date`, as a half-open [start, end) window
