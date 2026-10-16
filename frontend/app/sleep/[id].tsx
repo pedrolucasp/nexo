@@ -192,10 +192,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.light.text,
   },
-  averageLabelSuffix: {
+  suffixLabel: {
     height: '100%',
     fontSize: 17,
     fontWeight: "700",
+    color: Colors.light.textSecondary,
+  },
+  dateLabel: {
+    fontSize: 13,
     color: Colors.light.textSecondary,
   },
   centered: {
@@ -288,5 +292,8 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     fontStyle: "italic",
     padding: 4,
+  },
+  deleteInfo: {
+    marginTop: 4,
   },
 });

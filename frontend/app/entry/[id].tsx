@@ -408,6 +408,9 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     padding: 4,
   },
+  deleteInfo: {
+    marginTop: 4,
+  },
   // Linked trigger cards
   linkCard: {
     padding: Spacing.cardGap,
