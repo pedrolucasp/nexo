@@ -227,7 +227,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface MoodEntryResponse {
-  moodEntry: MoodEntry;
+  mood: MoodEntry;
 }
 
 export interface SleepRecordResponse {

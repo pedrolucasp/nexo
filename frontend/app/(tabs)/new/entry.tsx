@@ -65,7 +65,7 @@ export default function NewMoodEntry() {
     };
 
     const result = await createMoodEntry.mutateAsync(data);
-    const moodId = (result as any).mood?.id ?? (result as any).moodEntry?.id;
+    const moodId = result.mood.id;
 
     const careActionId = useCareActionLinkStore.getState().linkMood();
     if (careActionId && moodId) {
