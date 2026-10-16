@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ViewStyle } from 'react-native';
+import { View, ViewStyle, type StyleProp } from 'react-native';
 import { Spacing } from '@/constants/theme';
 
 interface FlexLayoutProps {
@@ -62,12 +62,12 @@ export const Grid: React.FC<FlexLayoutProps & { columns?: number }> = ({
     ]}
   >
     {React.Children.map(children, (child) =>
-      React.cloneElement(child as React.ReactElement, {
+      React.cloneElement(child as React.ReactElement<{ style?: StyleProp<ViewStyle> }>, {
         style: [
           {
             width: `${100 / columns - (gap * (columns - 1)) / columns}%`,
           },
-          (child as React.ReactElement).props.style,
+          (child as React.ReactElement<{ style?: StyleProp<ViewStyle> }>).props.style,
         ],
       })
     )}
