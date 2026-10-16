@@ -302,7 +302,7 @@ export default function TriggerDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.light.background,
   },
   content: {
     padding: Spacing.containerPadding,
@@ -340,12 +340,12 @@ const styles = StyleSheet.create({
   backButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: Theme.colors.tint,
+    backgroundColor: Theme.colors.light.tint,
     borderRadius: Theme.borderRadius.md,
   },
   backButtonText: {
     fontWeight: "700",
-    color: Theme.colors.text,
+    color: Theme.colors.light.text,
   },
 
   // Pending link banner

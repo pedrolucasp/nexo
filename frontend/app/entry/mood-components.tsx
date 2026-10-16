@@ -39,7 +39,7 @@ export default function MoodComponentsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={8}>
-          <Ionicons name="close" size={24} color={Theme.colors.text} />
+          <Ionicons name="close" size={24} color={Theme.colors.light.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Adicionar estados</Text>
         <Pressable onPress={handleDone} hitSlop={8} testID="header-done">

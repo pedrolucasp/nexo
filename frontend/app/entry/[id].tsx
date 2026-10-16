@@ -73,7 +73,7 @@ export default function MoodDetailScreen() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Theme.colors.tint} />
+        <ActivityIndicator size="large" color={Theme.colors.light.tint} />
       </View>
     );
   }
@@ -310,7 +310,7 @@ export default function MoodDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: Theme.colors.light.background,
   },
   content: {
     padding: Spacing.containerPadding,
@@ -330,12 +330,12 @@ const styles = StyleSheet.create({
   backButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: Theme.colors.tint,
+    backgroundColor: Theme.colors.light.tint,
     borderRadius: Theme.borderRadius.md,
   },
   backButtonText: {
     fontWeight: "700",
-    color: Theme.colors.text,
+    color: Theme.colors.light.text,
   },
 
   // Header
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   componentIntensityGreen: {
     fontSize: 13,
     fontWeight: "700",
-    color: Theme.colors.tint,
+    color: Theme.colors.light.tint,
   },
   progressTrack: {
     height: 6,
