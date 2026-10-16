@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,14 +8,12 @@ import {
 } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 import { Card, SubtleInfoCard } from "@/components/ui/Cards";
 import { NoLinkMessage } from "@/components/misc/NoLinkMessage";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
+import { Col, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Typography, Colors, Spacing } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -50,8 +48,8 @@ export default function TriggerDetailsScreen() {
 
   useEffect(() => {
     const updateTimer = () => {
-      const createdAt = new Date(trigger?.createdAt);
-      if (!createdAt) return;
+      if (!trigger?.createdAt) return;
+      const createdAt = new Date(trigger.createdAt);
 
       const msSinceCreation = Date.now() - createdAt.getTime();
       const deletionWindowMs = 5 * 60 * 1000;
@@ -174,7 +172,7 @@ export default function TriggerDetailsScreen() {
           <SectionHeader title="Vínculo" variant="subtle" />
           {!!hasAnyLinks ? (
             <Col gap={8}>
-              {trigger.moodLinks.map((link) => {
+              {(trigger.moodLinks ?? []).map((link) => {
                 const moodDef = getMood(link.mood.selectedMood.toLowerCase());
                 return (
                   <Pressable
