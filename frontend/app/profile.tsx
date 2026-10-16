@@ -83,18 +83,18 @@ export default function Profile() {
         firstName,
         lastName,
         email,
-        password
+        ...(password ? { password } : {}),
       });
 
       updateAuthUser(response.user);
 
       router.replace('/(tabs)/insights');
-    } catch (error: any) {
+    } catch (error) {
       console.error("[PROFILE]", error)
       if (error instanceof ApiError && error.fields) {
         setErrors(translateFields(error.fields));
       } else {
-        showToast(translateError(error.message) || 'Falha ao atualizar o perfil', 'error');
+        showToast(translateError(error) || 'Falha ao atualizar o perfil', 'error');
       }
     }
   }

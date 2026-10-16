@@ -23,19 +23,21 @@ const PATTERN_MAP: Array<[RegExp, string | ((m: RegExpMatchArray) => string)]> =
   [/^HTTP \d+$/, () => 'Algo deu errado. Tente novamente.'],
 ];
 
-export function translateError(message: string): string {
-  if (MESSAGE_MAP[message]) return MESSAGE_MAP[message];
+export function translateError(message: unknown): string {
+  const text = message instanceof Error ? message.message : String(message);
 
-  console.log("Erro foi: ", message)
+  if (MESSAGE_MAP[text]) return MESSAGE_MAP[text];
+
+  console.log("Erro foi: ", text)
 
   for (const [pattern, replacement] of PATTERN_MAP) {
-    const match = message.match(pattern);
+    const match = text.match(pattern);
     if (match) {
       return typeof replacement === 'function' ? replacement(match) : replacement;
     }
   }
 
-  return message;
+  return text;
 }
 
 export function translateFields(

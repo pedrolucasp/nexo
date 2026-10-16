@@ -71,11 +71,11 @@ export default function SignupScreen() {
     try {
       await signup({ firstName, lastName, email, password });
       router.replace('/');
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof ApiError && error.fields) {
         setErrors(translateFields(error.fields));
       } else {
-        showToast(translateError(error.message) || 'Falha no cadastro. Tente novamente.', 'error');
+        showToast(translateError(error) || 'Falha no cadastro. Tente novamente.', 'error');
       }
     } finally {
       setLoading(false);

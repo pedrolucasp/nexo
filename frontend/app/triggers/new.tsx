@@ -66,9 +66,9 @@ export default function NewTrigger() {
       } else {
         router.replace("/(tabs)/actions");
       }
-    } catch (error: any) {
+    } catch (error) {
       showToast(
-        error instanceof ApiError ? translateError(error.message) : 'Falha ao salvar o gatilho',
+        error instanceof ApiError ? translateError(error) : 'Falha ao salvar o gatilho',
         'error',
       );
     }

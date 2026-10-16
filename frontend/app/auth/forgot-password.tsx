@@ -51,8 +51,8 @@ export default function ForgotPasswordScreen() {
       if (data.token) {
         setResetToken(data.token);
       }
-    } catch (error: any) {
-      showToast(translateError(error.message) || 'Falha ao enviar link de recuperação', 'error');
+    } catch (error) {
+      showToast(translateError(error) || 'Falha ao enviar link de recuperação', 'error');
     } finally {
       setLoading(false);
     }

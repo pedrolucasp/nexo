@@ -98,12 +98,12 @@ export default function LoginScreen() {
       }
 
       router.replace("/");
-    } catch (error: any) {
+    } catch (error) {
       console.log("LOGIN error: ", error);
       if (error instanceof ApiError && error.fields) {
         setErrors(translateFields(error.fields));
       } else {
-        showToast(translateError(error.message) || 'Falha ao fazer login', 'error');
+        showToast(translateError(error) || 'Falha ao fazer login', 'error');
       }
     } finally {
       setLoading(false);

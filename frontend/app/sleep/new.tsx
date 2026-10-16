@@ -36,9 +36,9 @@ export default function NewSleepRecord() {
       const data = { date, annotations, average };
       await createSleepRecord.mutateAsync(data);
       router.replace("/");
-    } catch (error: any) {
+    } catch (error) {
       showToast(
-        error instanceof ApiError ? translateError(error.message) : 'Falha ao salvar o registro de sono',
+        error instanceof ApiError ? translateError(error) : 'Falha ao salvar o registro de sono',
         'error',
       );
     }

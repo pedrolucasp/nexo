@@ -52,10 +52,10 @@ export default function ActivateScreen() {
       await activate(value);
       showToast('Conta ativada com sucesso!', 'success');
       router.replace('/');
-    } catch (error: any) {
+    } catch (error) {
       setCode('');
       setCodeError(
-        translateError(error.message) ||
+        translateError(error) ||
           'Código incorreto. Verifique o código e tente novamente.',
       );
       codeInputRef.current?.focus();

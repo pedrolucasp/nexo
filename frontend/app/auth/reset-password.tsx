@@ -62,8 +62,8 @@ export default function ResetPasswordScreen() {
       await resetPassword(token, password);
       showToast('Senha recuperada com sucesso!', 'success');
       router.replace('/auth/login');
-    } catch (error: any) {
-      showToast(translateError(error.message) || 'Falha em recuperar a conta', 'error');
+    } catch (error) {
+      showToast(translateError(error) || 'Falha em recuperar a conta', 'error');
     } finally {
       setLoading(false);
     }
