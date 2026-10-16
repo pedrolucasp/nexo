@@ -28,19 +28,18 @@ export const getMoodComponent = (id: string) =>
 
 // Intensity label buckets
 export const intensityLabel = (value: number | string): string => {
-  if (typeof value == "number") {
-    if (value == 1) return "Suave";
+  if (typeof value === "number") {
+    if (value <= 1) return "Suave";
     if (value <= 2) return "Moderada";
-    if (value <= 3) return "Intensa";
-  } else {
-    if (value === "LIGHT") return "Suave";
-    if (value === "MODERATE") return "Moderada";
-    if (value === "HIGH") return "Intensa";
+    return "Intensa";
   }
+  if (value === "LIGHT") return "Suave";
+  if (value === "MODERATE") return "Moderada";
+  return "Intensa";
 };
 
 export const intensityToValue = (value: number): string => {
-  if (value == 1) return "LIGHT";
+  if (value <= 1) return "LIGHT";
   if (value <= 2) return "MODERATE";
-  if (value <= 3) return "HIGH";
+  return "HIGH";
 };
