@@ -1,7 +1,10 @@
 import { describe, it, expect, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
+import { format } from 'date-fns'
+import { tz } from '@date-fns/tz'
 import { createApp } from '@app/createApp'
 import { InsightPeriod, InsightType } from '@prisma/client'
+import { appDayWindow } from '@app/lib/queue/processors/insights/utils'
 import {
   buildPrisma,
   cleanupTestDb,
@@ -11,9 +14,15 @@ import {
 
 const app = createApp()
 const db = buildPrisma()
+const SP = tz('America/Sao_Paulo')
 
 afterAll(() => db.$disconnect())
 beforeEach(() => cleanupTestDb(db))
+
+// The YYYY-MM-DD key the read endpoint expects for the app day containing date
+function appDayKey(date: Date) {
+  return format(date, 'yyyy-MM-dd', { in: SP })
+}
 
 let seedCounter = 0
 // The schema is unique on (userId, type, periodStart), so give every seeded
@@ -162,5 +171,134 @@ describe('GET /insights', () => {
   it('returns 401 without a token', async () => {
     const res = await request(app).get('/insights')
     expect(res.status).toBe(401)
+  })
+
+  it('resolves an unqualified daily request to today', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const { start: today } = appDayWindow()
+    const { start: yesterday } = appDayWindow(new Date(today.getTime() - 1))
+
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_ENERGY,
+      period: InsightPeriod.DAILY,
+      periodStart: yesterday,
+      title: 'energy-yesterday',
+    })
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_ENERGY,
+      period: InsightPeriod.DAILY,
+      periodStart: today,
+      title: 'energy-today',
+    })
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_SLEEP,
+      period: InsightPeriod.DAILY,
+      periodStart: yesterday,
+      title: 'sleep-yesterday',
+    })
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_SLEEP,
+      period: InsightPeriod.DAILY,
+      periodStart: today,
+      title: 'sleep-today',
+    })
+
+    const energy = await request(app)
+      .get('/insights?type=DAILY_ENERGY')
+      .set('Authorization', `Bearer ${token}`)
+    const sleep = await request(app)
+      .get('/insights?type=DAILY_SLEEP')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(energy.status).toBe(200)
+    expect(energy.body.insights.map((i: any) => i.title)).toEqual([
+      'energy-today',
+    ])
+    expect(sleep.status).toBe(200)
+    expect(sleep.body.insights.map((i: any) => i.title)).toEqual(['sleep-today'])
+  })
+
+  it('filters the insight to an explicit day', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const { start: today } = appDayWindow()
+    const { start: yesterday } = appDayWindow(new Date(today.getTime() - 1))
+
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_ENERGY,
+      period: InsightPeriod.DAILY,
+      periodStart: yesterday,
+      title: 'energy-yesterday',
+    })
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_ENERGY,
+      period: InsightPeriod.DAILY,
+      periodStart: today,
+      title: 'energy-today',
+    })
+
+    const res = await request(app)
+      .get(`/insights?type=DAILY_ENERGY&day=${appDayKey(yesterday)}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.insights.map((i: any) => i.title)).toEqual([
+      'energy-yesterday',
+    ])
+  })
+
+  it('returns an empty list for a day with no generated insight', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const { start: today } = appDayWindow()
+    const { start: yesterday } = appDayWindow(new Date(today.getTime() - 1))
+
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_ENERGY,
+      period: InsightPeriod.DAILY,
+      periodStart: today,
+      title: 'energy-today',
+    })
+
+    const res = await request(app)
+      .get(`/insights?type=DAILY_ENERGY&day=${appDayKey(yesterday)}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.insights).toEqual([])
+  })
+
+  it('returns an empty list when today has no daily insight', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const { start: today } = appDayWindow()
+    const { start: yesterday } = appDayWindow(new Date(today.getTime() - 1))
+
+    await seedInsight(user.id, {
+      type: InsightType.DAILY_ENERGY,
+      period: InsightPeriod.DAILY,
+      periodStart: yesterday,
+      title: 'energy-yesterday',
+    })
+
+    const res = await request(app)
+      .get('/insights?type=DAILY_ENERGY')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(res.body.insights).toEqual([])
+  })
+
+  it('returns 400 for a malformed day', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const res = await request(app)
+      .get('/insights?day=2026-13-40')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(400)
+    expect(res.body.fields).toBeTruthy()
   })
 })

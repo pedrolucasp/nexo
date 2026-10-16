@@ -1,5 +1,5 @@
 import { tz } from "@date-fns/tz";
-import { addDays, startOfDay, subDays } from "date-fns";
+import { addDays, parse, startOfDay, subDays } from "date-fns";
 
 export function rollingPeriod(days = 7) {
   const periodEnd = new Date();
@@ -28,6 +28,11 @@ export function previousAppDay(date: Date = new Date()): Date {
   return startOfDay(subDays(date, 1, { in: APP_TIMEZONE }), {
     in: APP_TIMEZONE,
   });
+}
+
+// Start of the app-timezone day named by a YYYY-MM-DD string
+export function parseAppDay(day: string): Date {
+  return parse(day, "yyyy-MM-dd", new Date(), { in: APP_TIMEZONE });
 }
 
 // The app-timezone day containing `date`, as a half-open [start, end) window
