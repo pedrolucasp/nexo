@@ -4,11 +4,12 @@ import {
   StyleSheet,
   Pressable,
   ViewStyle,
+  TextStyle,
 } from 'react-native';
 import { Text } from '@/components/ui/Text'
 import { Row, Between } from '@/components/ui/LayoutHelpers';
 
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import { Colors, Typography, Spacing } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface SectionProps {
@@ -61,7 +62,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
     }
   };
 
-  const getFont = () => {
+  const getFont = (): TextStyle => {
     switch (variant) {
       case 'subtle':
         return {
@@ -81,7 +82,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 
   const styles = StyleSheet.create({
     headerContainer: {
-      marginBottom: variant == 'subtle' ? 10 : (Spacing.cardGap * 2),
+      marginBottom: variant === 'subtle' ? 10 : (Spacing.cardGap * 2),
     },
     title: {
       color: getTextColor(),
