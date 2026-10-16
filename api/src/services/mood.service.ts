@@ -1,6 +1,9 @@
 import { prisma } from "@app/lib/prisma";
 import { Mood } from "@prisma/client";
-import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
+import {
+  rollingPeriod,
+  appDayPeriod,
+} from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
 
@@ -118,13 +121,13 @@ export const enqueueOnDemandInsights = async (
   userId: number,
 ): Promise<void> => {
   const queue = getQueue("insights");
-  const period = rollingPeriod(7);
-  const payload = { userId, ...period };
+  const week = { userId, ...rollingPeriod(7) };
+  const day = { userId, ...appDayPeriod() };
 
   await queue.addBulk([
     {
       name: InsightJobName.MoodTrend,
-      data: payload,
+      data: week,
       opts: {
         jobId: `mood-trend-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
@@ -133,7 +136,7 @@ export const enqueueOnDemandInsights = async (
     },
     {
       name: InsightJobName.EnergySleep,
-      data: payload,
+      data: week,
       opts: {
         jobId: `energy-sleep-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,
@@ -142,7 +145,7 @@ export const enqueueOnDemandInsights = async (
     },
     {
       name: InsightJobName.DailyEnergy,
-      data: payload,
+      data: day,
       opts: {
         jobId: `daily-energy-${userId}-${new Date().toDateString()}`,
         removeOnComplete: true,

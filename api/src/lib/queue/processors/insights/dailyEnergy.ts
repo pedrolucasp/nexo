@@ -2,17 +2,16 @@ import { prisma } from "@app/lib/prisma";
 import { InsightType, InsightPeriod } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
 import { avg } from "@app/utils/calc";
+import { appDayWindow } from "@app/lib/queue/processors/insights/utils";
 
 export async function processDailyEnergy({
   userId,
   periodStart,
-  periodEnd,
 }: InsightPeriodPayload): Promise<void> {
-  const start = new Date(periodStart);
-  const end = new Date(periodEnd);
+  const { start, end } = appDayWindow(new Date(periodStart));
 
   const moods = await prisma.mood.findMany({
-    where: { userId, moment: { gte: start, lte: end } },
+    where: { userId, moment: { gte: start, lt: end } },
     orderBy: { moment: "asc" },
     select: {
       energyLevel: true,
