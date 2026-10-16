@@ -33,11 +33,16 @@ export const DailySleepWidget = () => {
   );
 };
 
+// A single record is capped at 15h, but a day sums them, so guard the display
+const MAX_SLEEP_HOURS = 24;
+
 function formatHours(hours: number): string {
-  const h = Math.floor(hours);
-  const m = Math.round((hours - h) * 60);
+  if (hours >= MAX_SLEEP_HOURS) return `${MAX_SLEEP_HOURS}h+`;
 
-  if (m === 0) return `${h}h`;
+  const minutes = Math.round(hours * 60);
+  const h = Math.floor(minutes / 60);
 
-  return `${h}h ${m}min`;
+  if (minutes % 60 === 0) return `${h}h`;
+
+  return `${h}h ${minutes % 60}min`;
 }

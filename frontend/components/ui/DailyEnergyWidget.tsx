@@ -18,6 +18,7 @@ export const DailyEnergyWidget = () => {
       isLoading={isLoading}
       emptyMessage="Não há dados disponíveis para o dia de hoje"
       value={avgEnergy != null ? formatEnergy(avgEnergy) : undefined}
+      band={avgEnergy != null ? energyBand(avgEnergy) : undefined}
       windowLabel={metadata?.windowLabel}
       barRatio={
         avgEnergy != null
@@ -32,6 +33,14 @@ export const DailyEnergyWidget = () => {
 
 function formatEnergy(value: number): string {
   return value.toFixed(1).replace(".", ",");
+}
+
+// Same low/high read as the mood history badge: alta from 7 up, baixa below 4
+function energyBand(value: number): string {
+  if (value < 4) return "Baixa";
+  if (value < 7) return "Média";
+
+  return "Alta";
 }
 
 // Positive means more energy than yesterday; nothing to compare reads null

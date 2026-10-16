@@ -15,6 +15,8 @@ interface InsightMetricCardProps {
   isLoading?: boolean;
   emptyMessage?: string;
   value?: string;
+  // Plain-language read of the number, e.g. "Baixa"
+  band?: string;
   windowLabel?: string;
   detail?: string;
   barRatio?: number;
@@ -23,7 +25,7 @@ interface InsightMetricCardProps {
 }
 
 // One card for the daily insight pair: a tinted icon beside the title, a hero
-// number with its window, an optional bounded bar, and the comparison line
+// number with its band and window, an optional bounded bar, and the comparison
 export const InsightMetricCard: React.FC<InsightMetricCardProps> = ({
   icon,
   title,
@@ -32,6 +34,7 @@ export const InsightMetricCard: React.FC<InsightMetricCardProps> = ({
   isLoading = false,
   emptyMessage,
   value,
+  band,
   windowLabel,
   detail,
   barRatio,
@@ -53,10 +56,9 @@ export const InsightMetricCard: React.FC<InsightMetricCardProps> = ({
         <Text style={styles.empty}>{emptyMessage}</Text>
       ) : (
         <>
-          <View style={styles.heroRow}>
-            <Text style={styles.value}>{value}</Text>
-            {windowLabel && <Text style={styles.window}>{windowLabel}</Text>}
-          </View>
+          <Text style={styles.value}>{value}</Text>
+
+          {band && <Text style={styles.band}>{band}</Text>}
 
           {barRatio != null && (
             <View style={styles.track}>
@@ -71,6 +73,8 @@ export const InsightMetricCard: React.FC<InsightMetricCardProps> = ({
               />
             </View>
           )}
+
+          {windowLabel && <Text style={styles.window}>{windowLabel}</Text>}
 
           {detail && <Text style={styles.detail}>{detail}</Text>}
 
@@ -88,6 +92,7 @@ export const InsightMetricCard: React.FC<InsightMetricCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "space-between",
   },
   header: {
     flexDirection: "row",
@@ -107,18 +112,18 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
   },
   body: {
-    marginTop: 10,
-    gap: 6,
-  },
-  heroRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    gap: 6,
+    marginTop: Spacing.cardGap,
+    gap: Spacing.inlineGapSm,
   },
   value: {
     ...Typography.headlineXg,
     fontSize: 28,
     lineHeight: 32,
+    color: Colors.light.text,
+  },
+  band: {
+    ...Typography.bodyMd,
+    fontWeight: "700",
     color: Colors.light.text,
   },
   window: {
