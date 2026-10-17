@@ -7,11 +7,9 @@ import { Text } from "@/components/ui/Text";
 
 import { useState, useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import { registerForPushNotifications } from "@/hooks/useRegisterPushToken";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/ui/Button";
 import { Colors, Spacing } from "@/constants/theme";
 import { Card } from "@/components/ui/Cards";
 import { Section, SectionHeader } from "@/components/ui/Sections";
@@ -43,30 +41,6 @@ export default function NotificationsPage() {
 
   const displayed = liveNotification ?? (params.title || params.body ? { title: params.title, body: params.body } : null);
 
-  async function sendPushNotification() {
-    const expoPushToken = await registerForPushNotifications();
-
-    if (expoPushToken) {
-      const message = {
-        to: expoPushToken,
-        sound: "default",
-        title: "Oi meu querido",
-        body: "Vamo escutar um The Doors",
-        data: { screen: "notifications" },
-      };
-
-      await fetch("https://exp.host/--/api/v2/push/send", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Accept-encoding": "gzip, deflate",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(message),
-      });
-    }
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style={"dark"} />
@@ -89,8 +63,6 @@ export default function NotificationsPage() {
               </Card>
             )}
           </Section>
-
-          <Button title="Quer ver uma coisa?" onPress={sendPushNotification} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

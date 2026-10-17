@@ -1,15 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '@app/middleware/auth';
-import { User } from '@prisma/client';
 import {
   createMood,
   getMoodsByUserId,
   getMoodById,
   destroyMoodById
 } from '@app/services/mood.service';
-
-import { findUsersElligibleForPush } from '@app/services/user.service';
-import { sendPushNotification } from '@app/lib/sendPushNotification';
 
 import {
   CreateMoodSchema
@@ -71,31 +67,6 @@ export const MoodsController = {
       const result = await destroyMoodById(req.userId!, Number(req.params.id!));
 
       return res.status(200).json({})
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  sendNotification: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const users = await findUsersElligibleForPush();
-
-      if (users) {
-        await Promise.all(
-          users
-            .filter((user: User) => user.pushToken)
-            .map((user: User) =>
-              sendPushNotification({
-                token: user.pushToken!,
-                title: 'Como você está?',
-                body: 'Adicione mais registros de humor.',
-                data: { screen: 'notifications' },
-              })
-            )
-        );
-      }
-
-      return res.status(200).json(users)
     } catch (err) {
       next(err);
     }
