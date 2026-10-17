@@ -45,6 +45,11 @@ export {
 } from "@app/schemas/insight.schema";
 
 export {
+  NotificationsQuerySchema,
+  type NotificationsQueryInput,
+} from "@app/schemas/notification.schema";
+
+export {
   LinkMoodSchema,
   type LinkMoodInput,
 } from "@app/schemas/triggerMoodLink.schema";

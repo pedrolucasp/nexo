@@ -5,6 +5,10 @@ import { prisma } from "@app/lib/prisma";
 import { APP_TIMEZONE } from "@app/lib/appTime";
 import { logger } from "@app/lib/logger";
 import { sendPushNotification } from "@app/lib/sendPushNotification";
+import {
+  publicNotificationSelect,
+  PublicNotification,
+} from "@app/lib/serializers/notification";
 
 export type CreateNotificationInput = {
   userId: number;
@@ -108,4 +112,38 @@ export const createNotification = async (
     where: { id: notification.id },
     data: { pushedAt: new Date() },
   });
+};
+
+const DEFAULT_NOTIFICATIONS_LIMIT = 30;
+
+export type NotificationsPage = {
+  notifications: PublicNotification[];
+  nextCursor: number | null;
+};
+
+// Ids are monotonic, so ordering by id is newest-first and gives the cursor a
+// stable, unique key. One extra row is fetched to know whether more remain
+export const getNotificationsByUserId = async (
+  userId: number,
+  params?: { limit?: number; cursor?: number }
+): Promise<NotificationsPage> => {
+  const limit = params?.limit ?? DEFAULT_NOTIFICATIONS_LIMIT;
+
+  const rows = await prisma.notification.findMany({
+    where: {
+      userId,
+      ...(params?.cursor !== undefined && { id: { lt: params.cursor } }),
+    },
+    orderBy: { id: "desc" },
+    take: limit + 1,
+    select: publicNotificationSelect,
+  });
+
+  const hasMore = rows.length > limit;
+  const notifications = hasMore ? rows.slice(0, limit) : rows;
+
+  return {
+    notifications,
+    nextCursor: hasMore ? notifications[notifications.length - 1].id : null,
+  };
 };
