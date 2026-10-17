@@ -48,6 +48,10 @@ export const profileTable: CsvTable<User> = {
       value: (user) => booleanLabel(user.notificationsEnabled),
     },
     { header: "Lembrete diário", value: (user) => user.dailyReminderTime },
+    {
+      header: "Resumo semanal",
+      value: (user) => booleanLabel(user.weeklyResumeEnabled),
+    },
     { header: "Criado em", value: (user) => user.createdAt },
     { header: "Atualizado em", value: (user) => user.updatedAt },
   ],

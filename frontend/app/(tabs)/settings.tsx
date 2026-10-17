@@ -23,7 +23,6 @@ import { apiClient } from "@/lib/api";
 
 export default function Settings() {
   const { user, logout, updateAuthUser } = useAuth();
-  const [allowWeeklyInsights, setAllowWeeklyInsights] = useState(false);
   const [logoutVisible, setLogoutVisible] = useState(false);
   const [exportVisible, setExportVisible] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -31,6 +30,7 @@ export default function Settings() {
 
   const notificationsEnabled = user?.notificationsEnabled ?? true;
   const dailyReminderTime = user?.dailyReminderTime ?? "20:00";
+  const weeklyResumeEnabled = user?.weeklyResumeEnabled ?? false;
 
   const patchUserMe = usePatchUserMe((updatedUser) => {
     updateAuthUser(updatedUser);
@@ -38,6 +38,10 @@ export default function Settings() {
 
   const handleNotificationToggle = (value: boolean) => {
     patchUserMe.mutate({ notificationsEnabled: value });
+  };
+
+  const handleWeeklyResumeToggle = (value: boolean) => {
+    patchUserMe.mutate({ weeklyResumeEnabled: value });
   };
 
   const handleTimeChange = (date: Date) => {
@@ -204,18 +208,22 @@ export default function Settings() {
                 flex: 1,
               }}
             >
-              <Text style={styles.rowLabel}>Indicadores semanais</Text>
-              <Text style={styles.rowSubtitle}>Relatórios de progressos</Text>
+              <Text style={styles.rowLabel}>Resumo semanal</Text>
+              <Text style={styles.rowSubtitle}>
+                Mostra um resumo no topo da Jornada, a partir dos seus dados.
+                Desativar não afeta os indicadores semanais.
+              </Text>
             </View>
 
             <Switch
-              onValueChange={setAllowWeeklyInsights}
-              value={allowWeeklyInsights}
+              onValueChange={handleWeeklyResumeToggle}
+              value={weeklyResumeEnabled}
               thumbColor={Colors.light.tint}
               trackColor={{
                 false: Colors.light.disabled,
                 true: Colors.light.gray,
               }}
+              disabled={patchUserMe.isPending}
             />
           </View>
         </Card>

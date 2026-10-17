@@ -20,6 +20,7 @@ const row = {
   pushToken: 'device-token',
   notificationsEnabled: true,
   dailyReminderTime: '08:30',
+  weeklyResumeEnabled: false,
   onboardingSeenAt: null,
   termsAcceptedAt: new Date(),
   termsVersion: '1',
@@ -32,6 +33,7 @@ describe('publicUser', () => {
       email: 'pedro@example.com',
       firstName: 'Pedro',
       active: true,
+      weeklyResumeEnabled: false,
       onboardingSeenAt: null,
     })
   })

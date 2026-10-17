@@ -9,6 +9,7 @@ export interface User {
   active: boolean;
   notificationsEnabled?: boolean;
   dailyReminderTime?: string;
+  weeklyResumeEnabled?: boolean;
   onboardingSeenAt?: Date | null;
 }
 
@@ -65,6 +66,7 @@ export interface UserUpdateResponse {
 export interface UserPreferencesPayload {
   notificationsEnabled?: boolean;
   dailyReminderTime?: string | null;
+  weeklyResumeEnabled?: boolean;
 }
 
 export interface ExportDataResponse {

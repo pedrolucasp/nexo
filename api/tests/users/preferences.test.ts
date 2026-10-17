@@ -49,6 +49,35 @@ describe('PATCH /users/me', () => {
     )
   })
 
+  it('updates the weekly resume preference', async () => {
+    const user = await createTestUser(db, { email: 'prefs@example.com' })
+    const token = generateTestToken(user.id, user.email)
+
+    const res = await request(app)
+      .patch('/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ user: { weeklyResumeEnabled: true } })
+
+    expect(res.status).toBe(200)
+    expect(res.body.user.weeklyResumeEnabled).toBe(true)
+    expectPublicUser(res.body.user)
+
+    const dbUser = await db.user.findUnique({ where: { id: user.id } })
+    expect(dbUser!.weeklyResumeEnabled).toBe(true)
+  })
+
+  it('returns 400 for a non-boolean weeklyResumeEnabled', async () => {
+    const user = await createTestUser(db, { email: 'prefs@example.com' })
+    const token = generateTestToken(user.id, user.email)
+
+    const res = await request(app)
+      .patch('/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ user: { weeklyResumeEnabled: 'yes' } })
+
+    expect(res.status).toBe(400)
+  })
+
   it('accepts a null reminder time and schedules nothing', async () => {
     const user = await createTestUser(db, { email: 'prefs@example.com' })
     const token = generateTestToken(user.id, user.email)

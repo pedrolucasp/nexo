@@ -12,6 +12,7 @@ export const publicUserSelect = {
   active: true,
   notificationsEnabled: true,
   dailyReminderTime: true,
+  weeklyResumeEnabled: true,
   onboardingSeenAt: true,
 } satisfies Prisma.UserSelect;
 
@@ -28,5 +29,6 @@ export const publicUser = (user: User) => ({
   active: user.active,
   notificationsEnabled: user.notificationsEnabled,
   dailyReminderTime: user.dailyReminderTime,
+  weeklyResumeEnabled: user.weeklyResumeEnabled,
   onboardingSeenAt: user.onboardingSeenAt,
 });

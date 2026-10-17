@@ -15,13 +15,15 @@ export default function Insights() {
       userAvatar={user?.avatarURL}
       showNotificationBadge={true}
     >
-      <WeeklyResume
-        avgMood="Neutro"
-        stats={[
-          { label: "Média de Sono", value: "7.2h" },
-          { label: "Humor Estável", value: "92%" },
-        ]}
-      />
+      {user?.weeklyResumeEnabled && (
+        <WeeklyResume
+          avgMood="Neutro"
+          stats={[
+            { label: "Média de Sono", value: "7.2h" },
+            { label: "Humor Estável", value: "92%" },
+          ]}
+        />
+      )}
 
       <Section>
         <SectionHeader title="Indicadores" subtitle="Baseado nos últimos 7 dias" />

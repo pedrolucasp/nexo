@@ -21,6 +21,7 @@ describe('GET /users/me', () => {
     expect(res.status).toBe(200)
     expect(res.body.user.email).toBe('me@example.com')
     expect(res.body.user.firstName).toBe('Pedro')
+    expect(res.body.user.weeklyResumeEnabled).toBe(false)
     expectPublicUser(res.body.user)
   })
 
