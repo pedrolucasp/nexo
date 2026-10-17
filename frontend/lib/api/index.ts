@@ -41,6 +41,10 @@ export type {
   TodayMedicineEntry,
   UserPreferencesPayload,
   ExportDataResponse,
+  // Notifications
+  Notification,
+  NotificationKind,
+  NotificationsPage,
   UpdateTriggerPayload,
   // Trigger-Mood linking
   TriggerMoodLink,

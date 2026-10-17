@@ -52,6 +52,7 @@ import {
   AvatarResponse,
   RemoveAvatarResponse,
   ExportDataResponse,
+  NotificationsPage,
 } from "@/lib/api/types";
 
 // Development builds already talk to Metro, so the API is on the same host.
@@ -428,6 +429,19 @@ class ApiClient {
 
   async exportData(): Promise<ExportDataResponse> {
     return this.request('/exports', { method: 'POST' });
+  }
+
+  // Notifications
+  async getNotifications(params?: {
+    limit?: number;
+    cursor?: number;
+  }): Promise<NotificationsPage> {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.cursor) query.set('cursor', String(params.cursor));
+
+    const qs = query.toString();
+    return this.request(`/notifications${qs ? `?${qs}` : ''}`);
   }
 
   // Care Actions

@@ -73,6 +73,29 @@ export interface ExportDataResponse {
   message: string;
 }
 
+// Notifications
+export type NotificationKind =
+  | "DAILY_REMINDER"
+  | "MEDICINE_REMINDER"
+  | "INSIGHT_ALERT";
+
+export interface Notification {
+  id: number;
+  kind: NotificationKind;
+  title: string;
+  body: string;
+  scheduledFor: string;
+  expiresAt: string | null;
+  regimenId: number | null;
+  createdAt: string;
+}
+
+// The inbox pages with a cursor id rather than a page number
+export interface NotificationsPage {
+  notifications: Notification[];
+  nextCursor: number | null;
+}
+
 // Mood entries
 export interface MoodComponentPayload {
   component: string;

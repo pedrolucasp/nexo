@@ -48,6 +48,11 @@ export {
 export { usePatchUserMe } from "@/hooks/useUserPreferences.queries";
 
 export {
+  notificationKeys,
+  useNotificationsInfinite,
+} from "@/hooks/useNotifications.queries";
+
+export {
   careActionKeys,
   useCareActions,
   useCareAction,

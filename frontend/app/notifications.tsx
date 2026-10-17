@@ -1,71 +1,55 @@
-import {
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-} from "react-native";
-import { Text } from "@/components/ui/Text";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 
-import { useState, useEffect } from "react";
-import * as Notifications from "expo-notifications";
-import { useLocalSearchParams } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { SectionHeader } from "@/components/ui/Sections";
+import { NotificationRow } from "@/components/notifications/NotificationRow";
+import { useNotificationsInfinite } from "@/hooks";
 import { Colors, Spacing } from "@/constants/theme";
-import { Card } from "@/components/ui/Cards";
-import { Section, SectionHeader } from "@/components/ui/Sections";
 
-type NotificationParams = {
-  title?: string;
-  body?: string;
-  notificationId?: string;
-};
+export default function NotificationsInbox() {
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useNotificationsInfinite();
 
-type ReceivedNotification = {
-  title?: string;
-  body?: string;
-};
-
-export default function NotificationsPage() {
-  const params = useLocalSearchParams<NotificationParams>();
-  const [liveNotification, setLiveNotification] = useState<ReceivedNotification | null>(null);
-
-  useEffect(() => {
-    const sub = Notifications.addNotificationReceivedListener((n) => {
-      setLiveNotification({
-        title: n.request.content.title ?? undefined,
-        body: n.request.content.body ?? undefined,
-      });
-    });
-    return () => sub.remove();
-  }, []);
-
-  const displayed = liveNotification ?? (params.title || params.body ? { title: params.title, body: params.body } : null);
+  const notifications = data?.pages.flatMap((page) => page.notifications) ?? [];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style={"dark"} />
-      <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          <Section>
-            <SectionHeader title="Recebidas" />
-
-            {displayed ? (
-              <Card style={{ padding: Spacing.cardGap }}>
-                <Text>Title: {displayed.title}</Text>
-                <Text>Body: {displayed.body}</Text>
-              </Card>
-            ) : (
-              <Card style={{ padding: Spacing.cardGap }}>
-                <Text>Nenhuma notificação recebida.</Text>
-              </Card>
-            )}
-          </Section>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <FlatList
+        testID="notifications-list"
+        data={notifications}
+        keyExtractor={(notification) => String(notification.id)}
+        renderItem={({ item }) => <NotificationRow notification={item} />}
+        ListHeaderComponent={
+          notifications.length > 0 ? <SectionHeader title="Recentes" /> : null
+        }
+        contentContainerStyle={styles.content}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+        ListEmptyComponent={
+          isLoading ? (
+            <ActivityIndicator style={styles.footer} color={Colors.light.tint} />
+          ) : (
+            <EmptyState
+              title="Nenhuma notificação"
+              subtitle="Avisaremos você quando algo chegar."
+              icon="notifications-off-outline"
+            />
+          )
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator style={styles.footer} color={Colors.light.tint} />
+          ) : null
+        }
+      />
+    </View>
   );
 }
 
@@ -74,17 +58,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light.background,
   },
-  keyboardView: {
-    flex: 1,
+  content: {
+    paddingHorizontal: Spacing.containerPadding,
+    paddingVertical: Spacing.sectionGap,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    justifyContent: "flex-start",
-    minHeight: "100%",
-  },
-  header: {
-    alignItems: "flex-start",
-    marginBottom: 40,
+  footer: {
+    paddingVertical: Spacing.cardGap,
   },
 });
