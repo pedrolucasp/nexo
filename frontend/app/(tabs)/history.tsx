@@ -47,7 +47,6 @@ export default function History() {
     <ScreenLayout
       userName={user?.firstName}
       userAvatar={user?.avatarURL}
-      showNotificationBadge={true}
     >
       <ScrollView testID="history-list">
         <FilterPills active={activeFilter} onChange={setActiveFilter} />

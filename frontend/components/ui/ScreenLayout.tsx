@@ -19,7 +19,6 @@ interface ScreenLayoutProps {
   userName?: string;
   userAvatar?: string;
   onNotificationPress?: () => void;
-  showNotificationBadge?: boolean;
   scrollEnabled?: boolean;
 }
 
@@ -28,7 +27,6 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   userName = "Usuário",
   userAvatar,
   onNotificationPress,
-  showNotificationBadge = false,
   scrollEnabled = true,
 }) => {
   const router = useRouter();
@@ -37,7 +35,6 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   const surfaceColor = useThemeColor({}, "surface") as string;
   const dividerColor = useThemeColor({}, "divider") as string;
   const accentBlue = useThemeColor({}, "accentBlue") as string;
-  const tintColor = useThemeColor({}, "tint") as string;
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -64,9 +61,6 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
             hitSlop={8}
           >
             <IconSymbol size={24} name="notifications" color={textColor} />
-            {showNotificationBadge && (
-              <View style={[styles.notificationBadge, { backgroundColor: tintColor }]} />
-            )}
           </Pressable>
         </View>
 
@@ -118,14 +112,6 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     justifyContent: "center",
     alignItems: "center",
-  },
-  notificationBadge: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
   },
   scrollContent: {
     paddingHorizontal: Spacing.containerPadding,

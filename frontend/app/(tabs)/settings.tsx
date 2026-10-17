@@ -101,7 +101,6 @@ export default function Settings() {
     <ScreenLayout
       userName={user?.firstName}
       userAvatar={user?.avatarURL}
-      showNotificationBadge={true}
     >
       <Section>
         <SectionHeader title="Perfil" />

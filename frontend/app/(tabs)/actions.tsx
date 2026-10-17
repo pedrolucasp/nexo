@@ -31,7 +31,6 @@ export default function Actions() {
     <ScreenLayout
       userName={user?.firstName}
       userAvatar={user?.avatarURL}
-      showNotificationBadge={true}
     >
       <Section>
         <SectionHeader

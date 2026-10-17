@@ -40,7 +40,6 @@ export default function New() {
     <ScreenLayout
       userName={user?.firstName}
       userAvatar={user?.avatarURL}
-      showNotificationBadge={true}
     >
       <Section>
         <SectionHeader

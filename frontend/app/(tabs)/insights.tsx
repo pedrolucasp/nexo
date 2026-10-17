@@ -13,7 +13,6 @@ export default function Insights() {
     <ScreenLayout
       userName={user?.firstName}
       userAvatar={user?.avatarURL}
-      showNotificationBadge={true}
     >
       {user?.weeklyResumeEnabled && (
         <WeeklyResume
