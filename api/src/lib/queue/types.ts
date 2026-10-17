@@ -63,6 +63,7 @@ export enum DailyReminderJobName {
 
 export type DailyReminderPayload = {
   userId: number;
+  scheduledTime: string;
 };
 
 // Export queue

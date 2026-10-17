@@ -44,7 +44,7 @@ describe('PATCH /users/me', () => {
       expect.objectContaining({
         queue: 'daily-reminders',
         name: DailyReminderJobName.Send,
-        data: { userId: user.id },
+        data: { userId: user.id, scheduledTime: '08:30' },
       })
     )
   })

@@ -20,18 +20,42 @@ beforeEach(async () => {
 })
 
 describe('medicineReminderProcessor', () => {
-  it('sends a push notification to a user with a push token', async () => {
-    const user = await createTestUser(db, { pushToken: 'ExponentPushToken[abc123]' })
+  it('stores a medicine notification for the dose time and pushes it', async () => {
+    const user = await createTestUser(db, {
+      pushToken: 'ExponentPushToken[abc123]',
+    })
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00'],
+        userId: user.id,
+      },
+    })
 
     await medicineReminderProcessor({
       data: {
         userId: user.id,
-        regimenId: 1,
+        regimenId: regimen.id,
         medicineName: 'Sertralina',
         dosage: '50mg',
         scheduledTime: '08:00',
       },
     } as any)
+
+    const row = await db.notification.findFirst()
+    expect(row).toMatchObject({
+      userId: user.id,
+      kind: 'MEDICINE_REMINDER',
+      title: 'Hora de tomar Sertralina',
+      body: '50mg',
+      regimenId: regimen.id,
+    })
+    // 08:00 in São Paulo (UTC-3)
+    expect(row?.scheduledFor.getUTCHours()).toBe(11)
+    expect(row?.scheduledFor.getUTCMinutes()).toBe(0)
+    expect(row?.pushedAt).not.toBeNull()
 
     expect(mockedSend).toHaveBeenCalledOnce()
     expect(mockedSend).toHaveBeenCalledWith(
@@ -39,50 +63,80 @@ describe('medicineReminderProcessor', () => {
         token: 'ExponentPushToken[abc123]',
         title: 'Hora de tomar Sertralina',
         body: '50mg',
-        data: expect.objectContaining({ screen: 'medicine-regimens' }),
+        data: expect.objectContaining({
+          screen: 'medicine-regimens',
+          regimenId: regimen.id,
+        }),
       })
     )
   })
 
-  it('skips when the user has no push token', async () => {
+  it('stores the notification without pushing when the user has no token', async () => {
     const user = await createTestUser(db) // no pushToken
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        name: 'Ritalina',
+        dosage: '10mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['12:00'],
+        userId: user.id,
+      },
+    })
 
     await medicineReminderProcessor({
       data: {
         userId: user.id,
-        regimenId: 1,
+        regimenId: regimen.id,
         medicineName: 'Ritalina',
         dosage: '10mg',
-        scheduledTime: '12:00'
+        scheduledTime: '12:00',
       },
     } as any)
 
     expect(mockedSend).not.toHaveBeenCalled()
+    const row = await db.notification.findFirst()
+    expect(row?.kind).toBe('MEDICINE_REMINDER')
+    expect(row?.pushedAt).toBeNull()
   })
 
-  it('skips when the user does not exist', async () => {
+  it('stores nothing when the user does not exist', async () => {
     await medicineReminderProcessor({
       data: {
         userId: 999999,
         regimenId: 1,
         medicineName: 'X',
         dosage: 'Y',
-        scheduledTime: '08:00'
+        scheduledTime: '08:00',
       },
     } as any)
 
     expect(mockedSend).not.toHaveBeenCalled()
+    expect(await db.notification.count()).toBe(0)
   })
 })
 
 describe('dailyReminderProcessor', () => {
-  it('sends a notification when user allows it and token is present', async () => {
+  it('stores a daily notification for the reminder time and pushes it', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[daily123]',
       notificationsEnabled: true,
     })
 
-    await dailyReminderProcessor({ data: { userId: user.id } } as any)
+    await dailyReminderProcessor({
+      data: { userId: user.id, scheduledTime: '20:00' },
+    } as any)
+
+    const row = await db.notification.findFirst()
+    expect(row).toMatchObject({
+      userId: user.id,
+      kind: 'DAILY_REMINDER',
+      title: 'Como você está?',
+      body: 'Registre seu humor para acompanhar sua saúde.',
+    })
+    // 20:00 in São Paulo (UTC-3)
+    expect(row?.scheduledFor.getUTCHours()).toBe(23)
+    expect(row?.scheduledFor.getUTCMinutes()).toBe(0)
+    expect(row?.pushedAt).not.toBeNull()
 
     expect(mockedSend).toHaveBeenCalledOnce()
     expect(mockedSend).toHaveBeenCalledWith(
@@ -94,28 +148,28 @@ describe('dailyReminderProcessor', () => {
     )
   })
 
-  it('skips when notifications are disabled', async () => {
+  it('stores the notification without pushing when notifications are disabled', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[disabled]',
       notificationsEnabled: false,
     })
 
-    await dailyReminderProcessor({ data: { userId: user.id } } as any)
+    await dailyReminderProcessor({
+      data: { userId: user.id, scheduledTime: '20:00' },
+    } as any)
 
     expect(mockedSend).not.toHaveBeenCalled()
+    const row = await db.notification.findFirst()
+    expect(row?.kind).toBe('DAILY_REMINDER')
+    expect(row?.pushedAt).toBeNull()
   })
 
-  it('skips when the user has no push token', async () => {
-    const user = await createTestUser(db, { notificationsEnabled: true })
-
-    await dailyReminderProcessor({ data: { userId: user.id } } as any)
-
-    expect(mockedSend).not.toHaveBeenCalled()
-  })
-
-  it('skips when the user does not exist', async () => {
-    await dailyReminderProcessor({ data: { userId: 999999 } } as any)
+  it('stores nothing when the user does not exist', async () => {
+    await dailyReminderProcessor({
+      data: { userId: 999999, scheduledTime: '20:00' },
+    } as any)
 
     expect(mockedSend).not.toHaveBeenCalled()
+    expect(await db.notification.count()).toBe(0)
   })
 })

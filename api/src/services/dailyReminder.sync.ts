@@ -38,7 +38,7 @@ export async function syncDailyReminderJob(user: User): Promise<void> {
 
   await queue.add(
     DailyReminderJobName.Send,
-    { userId: user.id },
+    { userId: user.id, scheduledTime: user.dailyReminderTime },
     {
       repeat: { pattern: cron, tz: "America/Sao_Paulo" },
       jobId: `daily-reminder-user-${user.id}`,
