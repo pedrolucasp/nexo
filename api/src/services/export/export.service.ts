@@ -10,6 +10,7 @@ import {
   medicineRegimenTable,
   moodComponentTable,
   moodTable,
+  notificationTable,
   profileTable,
   sleepRecordTable,
   triggerMoodLinkTable,
@@ -32,6 +33,7 @@ export async function buildExportArchive(userId: number): Promise<ExportArchive>
     activities,
     medicineRegimens,
     insights,
+    notifications,
   } = await gatherExportData(userId);
   const generatedAt = new Date();
 
@@ -48,6 +50,7 @@ export async function buildExportArchive(userId: number): Promise<ExportArchive>
     serializeCsv(activityTable, activities),
     serializeCsv(medicineRegimenTable, medicineRegimens),
     serializeCsv(insightTable, insights),
+    serializeCsv(notificationTable, notifications),
   ];
   const manifest = buildManifest(files, generatedAt);
 

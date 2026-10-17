@@ -7,6 +7,7 @@ import {
   MedicineRegimen,
   Mood,
   MoodComponent,
+  Notification,
   SleepRecord,
   Trigger,
   TriggerMoodLink,
@@ -23,6 +24,7 @@ import {
   intensityLabel,
   medicinePeriodicityLabel,
   moodComponentLabel,
+  notificationKindLabel,
   triggerTypeLabel,
 } from "@app/services/export/label.map";
 import { CsvTable } from "@app/services/export/types";
@@ -206,5 +208,25 @@ export const insightTable: CsvTable<Insight> = {
     { header: "Início do período", value: (insight) => insight.periodStart },
     { header: "Fim do período", value: (insight) => insight.periodEnd },
     { header: "Gerado em", value: (insight) => insight.generatedAt },
+  ],
+};
+
+export const notificationTable: CsvTable<Notification> = {
+  filename: "notifications.csv",
+  columns: [
+    { header: "id", value: (notification) => notification.id },
+    {
+      header: "Tipo",
+      value: (notification) => notificationKindLabel[notification.kind],
+    },
+    { header: "Título", value: (notification) => notification.title },
+    { header: "Corpo", value: (notification) => notification.body },
+    {
+      header: "Agendada para",
+      value: (notification) => notification.scheduledFor,
+    },
+    { header: "Expira em", value: (notification) => notification.expiresAt },
+    { header: "Enviada em", value: (notification) => notification.pushedAt },
+    { header: "regimen_id", value: (notification) => notification.regimenId },
   ],
 };

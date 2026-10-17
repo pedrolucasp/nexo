@@ -8,6 +8,7 @@ import {
   IntensityLevel,
   MedicinePeriodicity,
   MoodComponentOption,
+  NotificationKind,
   TriggerType,
 } from "@prisma/client";
 
@@ -104,4 +105,10 @@ export const insightPeriodLabel: Record<InsightPeriod, string> = {
   DAILY: "Diário",
   WEEKLY: "Semanal",
   MONTHLY: "Mensal",
+};
+
+export const notificationKindLabel: Record<NotificationKind, string> = {
+  DAILY_REMINDER: "Lembrete diário",
+  MEDICINE_REMINDER: "Lembrete de medicação",
+  INSIGHT_ALERT: "Alerta de indicador",
 };

@@ -72,6 +72,7 @@ describe('exportProcessor', () => {
       'medicine_regimens.csv',
       'mood_components.csv',
       'moods.csv',
+      'notifications.csv',
       'profile.csv',
       'sleep_records.csv',
       'trigger_mood_links.csv',
@@ -487,6 +488,83 @@ describe('exportProcessor', () => {
 
     const manifest = await zip.file('leia-me.md')!.async('string')
     expect(manifest).toContain('`insights.csv` — 2 registros')
+  })
+
+  it('exports notifications with pt-BR labels and the relation column', async () => {
+    const user = await createTestUser(db, { email: 'notifications@example.com' })
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00'],
+        active: true,
+      },
+    })
+    await db.notification.create({
+      data: {
+        userId: user.id,
+        kind: 'MEDICINE_REMINDER',
+        title: 'Hora de tomar Sertralina',
+        body: '50mg',
+        scheduledFor: new Date('2026-03-05T08:00:00.000Z'),
+        expiresAt: new Date('2026-03-06T02:59:59.999Z'),
+        pushedAt: new Date('2026-03-05T08:00:01.000Z'),
+        regimenId: regimen.id,
+      },
+    })
+    await db.notification.create({
+      data: {
+        userId: user.id,
+        kind: 'DAILY_REMINDER',
+        title: 'Como você está?',
+        body: 'Registre seu humor para acompanhar sua saúde.',
+        scheduledFor: new Date('2026-03-04T22:00:00.000Z'),
+        expiresAt: new Date('2026-03-05T02:59:59.999Z'),
+      },
+    })
+    await db.notification.create({
+      data: {
+        userId: user.id,
+        kind: 'INSIGHT_ALERT',
+        title: 'Trabalho aparece muito',
+        body: 'Trabalho tem aparecido bastante nos seus gatilhos.',
+        scheduledFor: new Date('2026-03-06T12:00:00.000Z'),
+      },
+    })
+
+    await exportProcessor(buildJob({ userId: user.id }))
+
+    const { attachment } = await attachmentFromLastEmail()
+    const zip = await JSZip.loadAsync(attachment.content)
+
+    const csv = await zip.file('notifications.csv')!.async('string')
+    const lines = csvLines(csv)
+    expect(lines[0]).toContain('Tipo')
+    expect(lines[0]).toContain('Título')
+    expect(lines[0]).toContain('Corpo')
+    expect(lines[0]).toContain('Agendada para')
+    expect(lines[0]).toContain('Expira em')
+    expect(lines[0]).toContain('Enviada em')
+    expect(lines[0]).toContain('regimen_id')
+
+    // Every row ships, the expired reminder included
+    expect(lines).toHaveLength(4)
+    expect(csv).toContain('"Lembrete de medicação"')
+    expect(csv).toContain('"Lembrete diário"')
+    expect(csv).toContain('"Alerta de indicador"')
+    expect(csv).toContain('"Hora de tomar Sertralina"')
+
+    const header = lines[0].split(',').map((field) => field.replace(/"/g, ''))
+    const regimenIndex = header.indexOf('regimen_id')
+    const medicineRow = lines
+      .slice(1)
+      .find((row) => row.includes('"Lembrete de medicação"'))!
+    expect(Number(medicineRow.split(',')[regimenIndex])).toBe(regimen.id)
+
+    const manifest = await zip.file('leia-me.md')!.async('string')
+    expect(manifest).toContain('`notifications.csv` — 3 registros')
   })
 
   it('preserves commas, quotes and newlines inside a field', async () => {

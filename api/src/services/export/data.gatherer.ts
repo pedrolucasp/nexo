@@ -7,6 +7,7 @@ import {
   MedicineRegimen,
   Mood,
   MoodComponent,
+  Notification,
   SleepRecord,
   Trigger,
   TriggerMoodLink,
@@ -29,6 +30,7 @@ export type ExportData = {
   activities: Activity[];
   medicineRegimens: MedicineRegimen[];
   insights: Insight[];
+  notifications: Notification[];
 };
 
 export async function gatherExportData(userId: number): Promise<ExportData> {
@@ -46,6 +48,7 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
     careActions,
     medicineRegimens,
     insights,
+    notifications,
   ] = await Promise.all([
     prisma.mood.findMany({
       where: { userId },
@@ -77,6 +80,10 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
       where: { userId },
       orderBy: { generatedAt: "asc" },
     }),
+    prisma.notification.findMany({
+      where: { userId },
+      orderBy: { scheduledFor: "asc" },
+    }),
   ]);
 
   return {
@@ -98,5 +105,6 @@ export async function gatherExportData(userId: number): Promise<ExportData> {
     ),
     medicineRegimens,
     insights,
+    notifications,
   };
 }
