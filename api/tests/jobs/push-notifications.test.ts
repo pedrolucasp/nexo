@@ -66,6 +66,7 @@ describe('medicineReminderProcessor', () => {
         data: expect.objectContaining({
           screen: 'medicine-regimens',
           regimenId: regimen.id,
+          notificationId: row!.id,
         }),
       })
     )
@@ -143,7 +144,10 @@ describe('dailyReminderProcessor', () => {
       expect.objectContaining({
         token: 'ExponentPushToken[daily123]',
         title: 'Como você está?',
-        data: expect.objectContaining({ screen: 'moods' }),
+        data: expect.objectContaining({
+          screen: 'moods',
+          notificationId: row!.id,
+        }),
       })
     )
   })

@@ -83,6 +83,7 @@ export const createNotification = async (
   }
 
   const data = {
+    notificationId: notification.id,
     ...(rule.screen ? { screen: rule.screen } : {}),
     ...(regimenId !== null ? { regimenId } : {}),
   };
