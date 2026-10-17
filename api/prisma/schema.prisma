@@ -39,6 +39,7 @@ model User {
   insights         Insight[]
   medicineRegimens MedicineRegimen[]
   careActions      CareAction[]
+  notifications    Notification[]
 
   @@map("users")
 }
@@ -113,8 +114,9 @@ model MedicineRegimen {
   active      Boolean             @default(true)
   userId      Int                 @map("user_id")
 
-  user         User          @relation(fields: [userId], references: [id])
-  medicineLogs MedicineLog[]
+  user          User          @relation(fields: [userId], references: [id])
+  medicineLogs  MedicineLog[]
+  notifications Notification[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -212,6 +214,32 @@ model Insight {
 
   @@unique([userId, type, periodStart])
   @@map("insights")
+}
+
+model Notification {
+  id           Int              @id @default(autoincrement())
+  kind         NotificationKind
+  title        String
+  body         String           @db.Text
+  scheduledFor DateTime         @map("scheduled_for")
+  expiresAt    DateTime?        @map("expires_at")
+  pushedAt     DateTime?        @map("pushed_at")
+
+  regimenId Int? @map("regimen_id")
+  userId    Int  @map("user_id")
+
+  regimen MedicineRegimen? @relation(fields: [regimenId], references: [id])
+  user    User             @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}
+
+enum NotificationKind {
+  DAILY_REMINDER
+  MEDICINE_REMINDER
+  INSIGHT_ALERT
 }
 
 enum InsightType {
