@@ -28,16 +28,27 @@ export default function Settings() {
   const [exporting, setExporting] = useState(false);
   const { showToast } = useToast();
 
-  const notificationsEnabled = user?.notificationsEnabled ?? true;
-  const dailyReminderTime = user?.dailyReminderTime ?? "20:00";
+  const pushEnabled = user?.pushEnabled ?? true;
+  const dailyReminderTime = user?.dailyReminderTime ?? null;
+  const reminderEnabled = dailyReminderTime !== null;
   const weeklyResumeEnabled = user?.weeklyResumeEnabled ?? false;
+  const [lastReminderTime, setLastReminderTime] = useState("20:00");
+  const reminderTime = dailyReminderTime ?? lastReminderTime;
 
   const patchUserMe = usePatchUserMe((updatedUser) => {
     updateAuthUser(updatedUser);
   });
 
-  const handleNotificationToggle = (value: boolean) => {
-    patchUserMe.mutate({ notificationsEnabled: value });
+  const handlePushToggle = (value: boolean) => {
+    patchUserMe.mutate({ pushEnabled: value });
+  };
+
+  const handleReminderToggle = (value: boolean) => {
+    if (dailyReminderTime) {
+      setLastReminderTime(dailyReminderTime);
+    }
+
+    patchUserMe.mutate({ dailyReminderTime: value ? reminderTime : null });
   };
 
   const handleWeeklyResumeToggle = (value: boolean) => {
@@ -46,6 +57,7 @@ export default function Settings() {
 
   const handleTimeChange = (date: Date) => {
     const time = `${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+    setLastReminderTime(time);
     patchUserMe.mutate({ dailyReminderTime: time });
   };
 
@@ -151,28 +163,77 @@ export default function Settings() {
                 flex: 1,
               }}
             >
-              <Text style={styles.rowLabel}>Lembrete diário de humor</Text>
+              <Text style={styles.rowLabel}>Notificações por push</Text>
               <Text style={styles.rowSubtitle}>
-                {notificationsEnabled ? `Diário às ${dailyReminderTime}` : "Desativado"}
+                Os lembretes continuam no app mesmo com o push desativado.
               </Text>
             </View>
 
             <Switch
-              onValueChange={handleNotificationToggle}
+              onValueChange={handlePushToggle}
               thumbColor={Colors.light.tint}
               trackColor={{
                 false: Colors.light.disabled,
                 true: Colors.light.gray,
               }}
-              value={notificationsEnabled}
+              value={pushEnabled}
               disabled={patchUserMe.isPending}
             />
           </View>
 
-          {notificationsEnabled && (
+          <View style={styles.divider} />
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View
+              style={[
+                styles.cardIcon,
+                { backgroundColor: Colors.light.accentIndigo, marginBottom: 5 },
+              ]}
+            >
+              <Ionicons
+                name="alarm-outline"
+                size={20}
+                color={Colors.light.black}
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                marginLeft: 12,
+                flex: 1,
+              }}
+            >
+              <Text style={styles.rowLabel}>Lembrete diário de humor</Text>
+              <Text style={styles.rowSubtitle}>
+                {reminderEnabled ? `Diário às ${reminderTime}` : "Desativado"}
+              </Text>
+            </View>
+
+            <Switch
+              onValueChange={handleReminderToggle}
+              thumbColor={Colors.light.tint}
+              trackColor={{
+                false: Colors.light.disabled,
+                true: Colors.light.gray,
+              }}
+              value={reminderEnabled}
+              disabled={patchUserMe.isPending}
+            />
+          </View>
+
+          {reminderEnabled && (
             <TimePicker
               value={(() => {
-                const [h, m] = dailyReminderTime.split(":").map(Number);
+                const [h, m] = reminderTime.split(":").map(Number);
                 const d = new Date();
                 d.setHours(h, m, 0, 0);
                 return d;

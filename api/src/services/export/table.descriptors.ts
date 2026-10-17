@@ -44,8 +44,8 @@ export const profileTable: CsvTable<User> = {
     { header: "Email", value: (user) => user.email },
     { header: "Ativo", value: (user) => booleanLabel(user.active) },
     {
-      header: "Notificações",
-      value: (user) => booleanLabel(user.notificationsEnabled),
+      header: "Notificações por push",
+      value: (user) => booleanLabel(user.pushEnabled),
     },
     { header: "Lembrete diário", value: (user) => user.dailyReminderTime },
     {

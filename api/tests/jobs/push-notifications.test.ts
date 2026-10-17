@@ -119,7 +119,7 @@ describe('dailyReminderProcessor', () => {
   it('stores a daily notification for the reminder time and pushes it', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[daily123]',
-      notificationsEnabled: true,
+      pushEnabled: true,
     })
 
     await dailyReminderProcessor({
@@ -151,7 +151,7 @@ describe('dailyReminderProcessor', () => {
   it('stores the notification without pushing when notifications are disabled', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[disabled]',
-      notificationsEnabled: false,
+      pushEnabled: false,
     })
 
     await dailyReminderProcessor({

@@ -46,7 +46,7 @@ export const createNotification = async (
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { pushToken: true, notificationsEnabled: true },
+    select: { pushToken: true, pushEnabled: true },
   });
 
   if (!user) {
@@ -69,7 +69,7 @@ export const createNotification = async (
     },
   });
 
-  if (!user.notificationsEnabled || !user.pushToken) {
+  if (!user.pushEnabled || !user.pushToken) {
     logger.info(
       { notificationId: notification.id, userId, kind },
       "[notification] stored without push"

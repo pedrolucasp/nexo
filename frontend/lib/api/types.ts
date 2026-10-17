@@ -7,7 +7,7 @@ export interface User {
   avatarKey?: string;
   avatarURL?: string;
   active: boolean;
-  notificationsEnabled?: boolean;
+  pushEnabled?: boolean;
   dailyReminderTime?: string;
   weeklyResumeEnabled?: boolean;
   onboardingSeenAt?: Date | null;
@@ -64,7 +64,7 @@ export interface UserUpdateResponse {
 }
 
 export interface UserPreferencesPayload {
-  notificationsEnabled?: boolean;
+  pushEnabled?: boolean;
   dailyReminderTime?: string | null;
   weeklyResumeEnabled?: boolean;
 }

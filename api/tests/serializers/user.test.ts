@@ -18,7 +18,7 @@ const row = {
   activationCodeExpiresAt: new Date(),
   active: true,
   pushToken: 'device-token',
-  notificationsEnabled: true,
+  pushEnabled: true,
   dailyReminderTime: '08:30',
   weeklyResumeEnabled: false,
   onboardingSeenAt: null,

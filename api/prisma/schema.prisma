@@ -25,7 +25,7 @@ model User {
   active                  Boolean   @default(false) @map("active")
 
   pushToken            String?  @map("push_token")
-  notificationsEnabled Boolean  @default(true) @map("notifications_enabled")
+  pushEnabled          Boolean  @default(true) @map("push_enabled")
   dailyReminderTime    String?  @map("daily_reminder_time")
   weeklyResumeEnabled  Boolean  @default(false) @map("weekly_resume_enabled")
 

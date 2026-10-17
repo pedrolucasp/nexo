@@ -19,7 +19,7 @@ export type CreateUserInput = z.infer<typeof CreateUserSchema>;
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
 export const UpdateUserPreferencesSchema = z.object({
-  notificationsEnabled: z.boolean().optional(),
+  pushEnabled: z.boolean().optional(),
   dailyReminderTime: z.string().regex(/^\d{2}:\d{2}$/).nullable().optional(),
   weeklyResumeEnabled: z.boolean().optional(),
 });

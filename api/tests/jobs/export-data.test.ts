@@ -85,19 +85,20 @@ describe('exportProcessor', () => {
     expect(lines).toHaveLength(2)
     expect(lines[0]).toContain('Nome')
     expect(lines[0]).toContain('Email')
+    expect(lines[0]).toContain('Notificações por push')
 
     const [row] = lines.slice(1)
     expect(row).toContain('"Ana"')
     expect(row).toContain('"Silva"')
     expect(row).toContain('"export@example.com"')
-    expect(row).toContain('"Sim"') // notifications default to enabled
+    expect(row).toContain('"Sim"') // push defaults to enabled
     expect(row).toContain('"Não"') // freshly created users are inactive
 
-    // Secrets must never travel in the export
+    // Secrets must never travel in the export. The push token is caught by the
+    // `token` check below; "push" alone is now a legitimate column word.
     const lower = csv.toLowerCase()
     expect(lower).not.toContain('senha')
     expect(lower).not.toContain('token')
-    expect(lower).not.toContain('push')
     expect(lower).not.toContain('avatar')
 
     const manifest = await zip.file('leia-me.md')!.async('string')

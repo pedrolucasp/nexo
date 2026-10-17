@@ -30,15 +30,38 @@ describe('PATCH /users/me', () => {
     const res = await request(app)
       .patch('/users/me')
       .set('Authorization', `Bearer ${token}`)
-      .send({ user: { notificationsEnabled: true, dailyReminderTime: '08:30' } })
+      .send({ user: { pushEnabled: true, dailyReminderTime: '08:30' } })
 
     expect(res.status).toBe(200)
-    expect(res.body.user.notificationsEnabled).toBe(true)
+    expect(res.body.user.pushEnabled).toBe(true)
     expect(res.body.user.dailyReminderTime).toBe('08:30')
     expectPublicUser(res.body.user)
 
     const dbUser = await db.user.findUnique({ where: { id: user.id } })
     expect(dbUser!.dailyReminderTime).toBe('08:30')
+
+    expect(recordedJobs).toContainEqual(
+      expect.objectContaining({
+        queue: 'daily-reminders',
+        name: DailyReminderJobName.Send,
+        data: { userId: user.id, scheduledTime: '08:30' },
+      })
+    )
+  })
+
+  it('schedules the daily reminder even when push is disabled', async () => {
+    const user = await createTestUser(db, {
+      email: 'nopush@example.com',
+      pushEnabled: false,
+    })
+    const token = generateTestToken(user.id, user.email)
+
+    const res = await request(app)
+      .patch('/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ user: { dailyReminderTime: '08:30' } })
+
+    expect(res.status).toBe(200)
 
     expect(recordedJobs).toContainEqual(
       expect.objectContaining({
@@ -105,14 +128,14 @@ describe('PATCH /users/me', () => {
     expect(res.body.fields).toBeTruthy()
   })
 
-  it('returns 400 for a non-boolean notificationsEnabled', async () => {
+  it('returns 400 for a non-boolean pushEnabled', async () => {
     const user = await createTestUser(db, { email: 'prefs@example.com' })
     const token = generateTestToken(user.id, user.email)
 
     const res = await request(app)
       .patch('/users/me')
       .set('Authorization', `Bearer ${token}`)
-      .send({ user: { notificationsEnabled: 'yes' } })
+      .send({ user: { pushEnabled: 'yes' } })
 
     expect(res.status).toBe(400)
   })
@@ -120,7 +143,7 @@ describe('PATCH /users/me', () => {
   it('returns 401 without a token', async () => {
     const res = await request(app)
       .patch('/users/me')
-      .send({ user: { notificationsEnabled: false } })
+      .send({ user: { pushEnabled: false } })
 
     expect(res.status).toBe(401)
   })

@@ -25,10 +25,10 @@ export async function createTestUser(
     lastName?: string
     password?: string
     pushToken?: string
-    notificationsEnabled?: boolean
+    pushEnabled?: boolean
   } = {}
 ) {
-  const { password, pushToken, notificationsEnabled, ...rest } = overrides
+  const { password, pushToken, pushEnabled, ...rest } = overrides
   return prisma.user.create({
     data: {
       email: rest.email ?? 'test@example.com',
@@ -36,7 +36,7 @@ export async function createTestUser(
       lastName: rest.lastName ?? 'User',
       encryptedPassword: await bcrypt.hash(password ?? 'password123', 10),
       ...(pushToken !== undefined && { pushToken }),
-      ...(notificationsEnabled !== undefined && { notificationsEnabled }),
+      ...(pushEnabled !== undefined && { pushEnabled }),
     },
   })
 }

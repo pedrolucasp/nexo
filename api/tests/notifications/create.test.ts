@@ -67,7 +67,7 @@ describe('createNotification', () => {
   it('records when a push was dispatched', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[abc123]',
-      notificationsEnabled: true,
+      pushEnabled: true,
     })
 
     await createNotification(dailyInput(user.id))
@@ -80,7 +80,7 @@ describe('createNotification', () => {
   it('stores the notification but does not push when notifications are disabled', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[disabled]',
-      notificationsEnabled: false,
+      pushEnabled: false,
     })
 
     await createNotification(dailyInput(user.id))
@@ -92,7 +92,7 @@ describe('createNotification', () => {
   })
 
   it('stores the notification but does not push without a push token', async () => {
-    const user = await createTestUser(db, { notificationsEnabled: true })
+    const user = await createTestUser(db, { pushEnabled: true })
 
     await createNotification(dailyInput(user.id))
 
@@ -105,7 +105,7 @@ describe('createNotification', () => {
   it('keeps an unpushed record when the push fails', async () => {
     const user = await createTestUser(db, {
       pushToken: 'ExponentPushToken[boom]',
-      notificationsEnabled: true,
+      pushEnabled: true,
     })
     mockedSend.mockRejectedValueOnce(new Error('Expo push API returned 500'))
 

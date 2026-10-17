@@ -21,13 +21,9 @@ export async function syncDailyReminderJob(user: User): Promise<void> {
     }
   }
 
-  if (!user.notificationsEnabled || !user.dailyReminderTime) {
+  if (!user.dailyReminderTime) {
     logger.info(
-      {
-        userId: user.id,
-        enabled: user.notificationsEnabled,
-        time: user.dailyReminderTime,
-      },
+      { userId: user.id, time: user.dailyReminderTime },
       "[daily-sync] user skipped",
     );
 
