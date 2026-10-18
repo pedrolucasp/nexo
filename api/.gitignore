@@ -4,3 +4,4 @@ node_modules
 .env.production
 src/generated/prisma
 orbit.db
+coverage
