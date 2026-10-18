@@ -1,5 +1,33 @@
 import { vi } from 'vitest'
 
+// The database project truncates and repopulates a real database on every run.
+// The container's ambient DATABASE_URL points at orbit_dev, so a vitest
+// invocation that skips the npm scripts' dotenv wrapper would silently wipe the
+// development database. Only a database named like the test one is safe to run
+// against, so anything not ending in `_test` is refused.
+const TEST_DATABASE_SUFFIX = '_test'
+
+const databaseNameOf = (url: string | undefined): string => {
+  if (!url) return '(unset)'
+
+  try {
+    return new URL(url).pathname.replace(/^\//, '') || '(none)'
+  } catch {
+    return '(unparseable)'
+  }
+}
+
+const database = databaseNameOf(process.env.DATABASE_URL)
+
+if (!database.endsWith(TEST_DATABASE_SUFFIX)) {
+  throw new Error(
+    `Refusing to run against "${database}": the database project only runs ` +
+      `against a database ending in "${TEST_DATABASE_SUFFIX}" (e.g. ` +
+      'orbit_test). Use `npm test` or `npm run test:coverage`, which load ' +
+      '.env.test.',
+  )
+}
+
 // Mock the barrel export used by controllers and most services. `getQueue`
 // returns a stable per-name mock so specs can assert on scheduled jobs via
 // `recordedJobs` from ./mocks/queue
