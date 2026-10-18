@@ -19,6 +19,10 @@ describe('formatHours', () => {
   it('renders the remaining minutes', () => {
     expect(formatHours(7.5)).toBe('7h 30min')
   })
+
+  it('carries a rounding of sixty minutes into the next hour', () => {
+    expect(formatHours(7.999)).toBe('8h')
+  })
 })
 
 describe('formatDiff', () => {
