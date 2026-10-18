@@ -5,6 +5,7 @@ import { CreateTriggerInput, UpdateTriggerInput } from '@app/schemas';
 import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
+import { paginate } from '@app/utils/calc';
 
 export const createTrigger = async (
   userId: number, input: CreateTriggerInput
@@ -30,9 +31,7 @@ export const getTriggersByUserId = async (
     to?: string;
   }
 ): Promise<{ entries: Trigger[]; total: number; page: number; nextPage: number | null }> => {
-  const page  = params?.page  ?? 1;
   const limit = params?.limit ?? 20;
-  const skip  = (page - 1) * limit;
 
   const where = {
     userId,
@@ -44,23 +43,21 @@ export const getTriggersByUserId = async (
     } : {}),
   };
 
-  const [entries, total] = await Promise.all([
-    prisma.trigger.findMany({
-      where,
-      orderBy: { moment: 'desc' },
-      take: limit,
-      skip,
-    }),
-    prisma.trigger.count({ where }),
-  ]);
+  const total = await prisma.trigger.count({ where });
+  const { page, skip, nextPage } = paginate(params?.page ?? 1, limit, total);
 
-  const totalPages = Math.ceil(total / limit);
+  const entries = await prisma.trigger.findMany({
+    where,
+    orderBy: { moment: 'desc' },
+    take: limit,
+    skip,
+  });
 
   return {
     entries,
     total,
     page,
-    nextPage: page < totalPages ? page + 1 : null,
+    nextPage,
   };
 };
 

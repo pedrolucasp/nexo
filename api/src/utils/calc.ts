@@ -28,3 +28,18 @@ export const formatDiff = (minutes: number): string => {
 
   return `${sign}${h}h ${m}min`;
 }
+
+export const paginate = (
+  page: number,
+  limit: number,
+  total: number,
+): { page: number; skip: number; nextPage: number | null } => {
+  const skip = (page - 1) * limit;
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    page,
+    skip,
+    nextPage: page < totalPages ? page + 1 : null,
+  };
+}

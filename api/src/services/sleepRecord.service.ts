@@ -8,6 +8,7 @@ import {
 } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
+import { paginate } from '@app/utils/calc';
 
 export const createSleepRecord = async (
   userId: number, input: CreateSleepRecordInput
@@ -33,9 +34,7 @@ export const getSleepRecordsByUserId = async (
     to?: string;
   }
 ): Promise<{ entries: SleepRecord[]; total: number; page: number; nextPage: number | null }> => {
-  const page  = params?.page  ?? 1;
   const limit = params?.limit ?? 20;
-  const skip  = (page - 1) * limit;
 
   const where = {
     userId,
@@ -47,23 +46,21 @@ export const getSleepRecordsByUserId = async (
     } : {}),
   };
 
-  const [entries, total] = await Promise.all([
-    prisma.sleepRecord.findMany({
-      where,
-      orderBy: { date: 'desc' },
-      take: limit,
-      skip,
-    }),
-    prisma.sleepRecord.count({ where }),
-  ]);
+  const total = await prisma.sleepRecord.count({ where });
+  const { page, skip, nextPage } = paginate(params?.page ?? 1, limit, total);
 
-  const totalPages = Math.ceil(total / limit);
+  const entries = await prisma.sleepRecord.findMany({
+    where,
+    orderBy: { date: 'desc' },
+    take: limit,
+    skip,
+  });
 
   return {
     entries,
     total,
     page,
-    nextPage: page < totalPages ? page + 1 : null,
+    nextPage,
   };
 };
 

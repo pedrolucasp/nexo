@@ -6,6 +6,7 @@ import {
 } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
+import { paginate } from "@app/utils/calc";
 
 import { CreateMoodInput } from "@app/schemas";
 
@@ -45,9 +46,7 @@ export const getMoodsByUserId = async (
   page: number;
   nextPage: number | null;
 }> => {
-  const page = params?.page ?? 1;
   const limit = params?.limit ?? 20;
-  const skip = (page - 1) * limit;
 
   const where = {
     userId,
@@ -61,24 +60,22 @@ export const getMoodsByUserId = async (
       : {}),
   };
 
-  const [entries, total] = await Promise.all([
-    prisma.mood.findMany({
-      where,
-      include: { moodComponents: true },
-      orderBy: { moment: "desc" },
-      take: limit,
-      skip,
-    }),
-    prisma.mood.count({ where }),
-  ]);
+  const total = await prisma.mood.count({ where });
+  const { page, skip, nextPage } = paginate(params?.page ?? 1, limit, total);
 
-  const totalPages = Math.ceil(total / limit);
+  const entries = await prisma.mood.findMany({
+    where,
+    include: { moodComponents: true },
+    orderBy: { moment: "desc" },
+    take: limit,
+    skip,
+  });
 
   return {
     entries,
     total,
     page,
-    nextPage: page < totalPages ? page + 1 : null,
+    nextPage,
   };
 };
 

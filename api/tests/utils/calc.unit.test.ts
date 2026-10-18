@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { avg, formatHours, formatDiff } from '@app/utils/calc'
+import { avg, formatHours, formatDiff, paginate } from '@app/utils/calc'
 
 describe('avg', () => {
   it('averages a list of numbers', () => {
@@ -48,5 +48,31 @@ describe('formatDiff', () => {
 
   it('renders a negative sub-hour difference in minutes only', () => {
     expect(formatDiff(-30)).toBe('-30min')
+  })
+})
+
+describe('paginate', () => {
+  it('points the first page at the next one', () => {
+    expect(paginate(1, 10, 25)).toEqual({ page: 1, skip: 0, nextPage: 2 })
+  })
+
+  it('points a middle page at the next one', () => {
+    expect(paginate(2, 10, 25)).toEqual({ page: 2, skip: 10, nextPage: 3 })
+  })
+
+  it('closes the chain on the last page', () => {
+    expect(paginate(3, 10, 25)).toEqual({ page: 3, skip: 20, nextPage: null })
+  })
+
+  it('has no next page past the end', () => {
+    expect(paginate(4, 10, 25)).toEqual({ page: 4, skip: 30, nextPage: null })
+  })
+
+  it('treats an exact division as the last page', () => {
+    expect(paginate(2, 10, 20)).toEqual({ page: 2, skip: 10, nextPage: null })
+  })
+
+  it('has no next page for an empty result set', () => {
+    expect(paginate(1, 10, 0)).toEqual({ page: 1, skip: 0, nextPage: null })
   })
 })

@@ -1,4 +1,5 @@
 import { prisma } from '@app/lib/prisma';
+import { paginate } from '@app/utils/calc';
 import { CareAction, CareActionType } from '@prisma/client';
 import { CreateCareActionInput, PatchCareActionInput } from '@app/schemas';
 import { syncMedicineReminderJobs } from '@app/services/medicineReminder.sync';
@@ -19,9 +20,7 @@ export const getCareActionsByUserId = async (
     limit?: number;
   },
 ) => {
-  const page = params?.page ?? 1;
   const limit = params?.limit ?? 20;
-  const skip = (page - 1) * limit;
 
   const where = {
     userId,
@@ -36,25 +35,22 @@ export const getCareActionsByUserId = async (
       : {}),
   };
 
-  const [entries, total] = await Promise.all([
-    prisma.careAction.findMany({
-      where,
-      include: careActionIncludes,
-      orderBy: { moment: 'desc' },
-      take: limit,
-      skip,
-    }),
+  const total = await prisma.careAction.count({ where });
+  const { page, skip, nextPage } = paginate(params?.page ?? 1, limit, total);
 
-    prisma.careAction.count({ where }),
-  ]);
-
-  const totalPages = Math.ceil(total / limit);
+  const entries = await prisma.careAction.findMany({
+    where,
+    include: careActionIncludes,
+    orderBy: { moment: 'desc' },
+    take: limit,
+    skip,
+  });
 
   return {
     entries,
     total,
     page,
-    nextPage: page < totalPages ? page + 1 : null,
+    nextPage,
   };
 };
 
