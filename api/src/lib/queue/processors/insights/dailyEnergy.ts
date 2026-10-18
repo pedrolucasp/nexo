@@ -8,33 +8,29 @@ import {
   DAY_WINDOW_LABEL,
 } from "@app/lib/queue/processors/insights/utils";
 
-export async function processDailyEnergy({
-  userId,
-  periodStart,
-}: InsightPeriodPayload): Promise<void> {
-  const { start, end } = appDayWindow(new Date(periodStart));
-  const yesterdayStart = previousAppDay(start);
+type EnergyEntry = {
+  energyLevel: number;
+  stressLevel: number;
+  anxietyLevel: number;
+};
 
-  const [moods, yesterdayMoods] = await Promise.all([
-    prisma.mood.findMany({
-      where: { userId, moment: { gte: start, lt: end } },
-      orderBy: { moment: "asc" },
-      select: {
-        energyLevel: true,
-        stressLevel: true,
-        anxietyLevel: true,
-        selectedMood: true,
-        moment: true,
-      },
-    }),
-    prisma.mood.findMany({
-      where: { userId, moment: { gte: yesterdayStart, lt: start } },
-      select: { energyLevel: true },
-    }),
-  ]);
+export type DailyEnergyMetadata = {
+  avgEnergy: number;
+  avgStress: number;
+  avgAnxiety: number;
+  peak: number;
+  trough: number;
+  dayTrend: number | null;
+  entryCount: number;
+  yesterdayAvg: number | null;
+  diffEnergy: number | null;
+  windowLabel: string;
+};
 
-  if (moods.length === 0) return;
-
+export function computeDailyEnergy(
+  moods: EnergyEntry[],
+  yesterdayMoods: { energyLevel: number }[],
+): { metadata: DailyEnergyMetadata; dayTrend: number | null } {
   const avgEnergy = parseFloat(avg(moods.map((m) => m.energyLevel)).toFixed(2));
   const avgStress = parseFloat(avg(moods.map((m) => m.stressLevel)).toFixed(2));
   const avgAnxiety = parseFloat(
@@ -71,7 +67,7 @@ export async function processDailyEnergy({
       ? parseFloat((avgEnergy - yesterdayAvg).toFixed(2))
       : null;
 
-  const metadata = {
+  const metadata: DailyEnergyMetadata = {
     avgEnergy,
     avgStress,
     avgAnxiety,
@@ -84,6 +80,51 @@ export async function processDailyEnergy({
     windowLabel: DAY_WINDOW_LABEL,
   };
 
+  return { metadata, dayTrend };
+}
+
+export function dailyEnergyBody(
+  avgEnergy: number,
+  dayTrend: number | null,
+): string {
+  const level = avgEnergy >= 7 ? "alta" : avgEnergy >= 4 ? "moderada" : "baixa";
+  if (dayTrend === null) return `Energia ${level} hoje.`;
+  if (dayTrend > 10)
+    return `Energia ${level} hoje, com melhora ao longo do dia.`;
+  if (dayTrend < -10)
+    return `Energia ${level} hoje, com queda ao longo do dia.`;
+  return `Energia ${level} e estável ao longo do dia.`;
+}
+
+export async function processDailyEnergy({
+  userId,
+  periodStart,
+}: InsightPeriodPayload): Promise<void> {
+  const { start, end } = appDayWindow(new Date(periodStart));
+  const yesterdayStart = previousAppDay(start);
+
+  const [moods, yesterdayMoods] = await Promise.all([
+    prisma.mood.findMany({
+      where: { userId, moment: { gte: start, lt: end } },
+      orderBy: { moment: "asc" },
+      select: {
+        energyLevel: true,
+        stressLevel: true,
+        anxietyLevel: true,
+        selectedMood: true,
+        moment: true,
+      },
+    }),
+    prisma.mood.findMany({
+      where: { userId, moment: { gte: yesterdayStart, lt: start } },
+      select: { energyLevel: true },
+    }),
+  ]);
+
+  if (moods.length === 0) return;
+
+  const { metadata, dayTrend } = computeDailyEnergy(moods, yesterdayMoods);
+
   await prisma.insight.upsert({
     where: {
       userId_type_periodStart: {
@@ -93,7 +134,7 @@ export async function processDailyEnergy({
       },
     },
     update: {
-      body: buildBody(avgEnergy, dayTrend),
+      body: dailyEnergyBody(metadata.avgEnergy, dayTrend),
       metadata,
       generatedAt: new Date(),
     },
@@ -102,20 +143,10 @@ export async function processDailyEnergy({
       type: InsightType.DAILY_ENERGY,
       period: InsightPeriod.DAILY,
       title: "Energia do Dia",
-      body: buildBody(avgEnergy, dayTrend),
+      body: dailyEnergyBody(metadata.avgEnergy, dayTrend),
       metadata,
       periodStart: start,
       periodEnd: end,
     },
   });
-}
-
-function buildBody(avgEnergy: number, dayTrend: number | null): string {
-  const level = avgEnergy >= 7 ? "alta" : avgEnergy >= 4 ? "moderada" : "baixa";
-  if (dayTrend === null) return `Energia ${level} hoje.`;
-  if (dayTrend > 10)
-    return `Energia ${level} hoje, com melhora ao longo do dia.`;
-  if (dayTrend < -10)
-    return `Energia ${level} hoje, com queda ao longo do dia.`;
-  return `Energia ${level} e estável ao longo do dia.`;
 }

@@ -9,6 +9,66 @@ import {
   DAY_WINDOW_LABEL,
 } from "@app/lib/queue/processors/insights/utils";
 
+type SleepRecordEntry = { average: number };
+
+export type DailySleepMetadata = {
+  totalHours: number;
+  diffMinutes: number | null;
+  diffStr: string;
+  sessionCount: number;
+  napStr: string;
+  hadNaps: boolean;
+  windowLabel: string;
+};
+
+export function computeDailySleep(
+  todayRecords: SleepRecordEntry[],
+  yesterdayRecords: SleepRecordEntry[],
+): { metadata: DailySleepMetadata } {
+  // average is stored in hours
+  // sum across all records for the day
+  const totalToday = todayRecords.reduce((sum, r) => sum + r.average, 0);
+  const totalYesterday =
+    yesterdayRecords.length > 0
+      ? yesterdayRecords.reduce((sum, r) => sum + r.average, 0)
+      : null;
+
+  const diffMinutes =
+    totalYesterday !== null
+      ? Math.round((totalToday - totalYesterday) * 60)
+      : null;
+
+  const sessionCount = todayRecords.length; // 1 = normal night, 2+ = nap(s)
+
+  const diffStr =
+    diffMinutes !== null && Math.abs(diffMinutes) >= 5
+      ? `${formatDiff(diffMinutes)} que ontem`
+      : "";
+
+  const napStr =
+    sessionCount > 1
+      ? `incluindo ${sessionCount - 1} cochilo${sessionCount > 2 ? "s" : ""}`
+      : "";
+
+  const metadata: DailySleepMetadata = {
+    totalHours: totalToday,
+    diffMinutes,
+    diffStr,
+    sessionCount,
+    napStr,
+    hadNaps: sessionCount > 1,
+    windowLabel: DAY_WINDOW_LABEL,
+  };
+
+  return { metadata };
+}
+
+export function dailySleepBody(total: number): string {
+  const totalStr = formatHours(total);
+
+  return `${totalStr} de sono hoje`;
+}
+
 export async function processDailySleep({
   userId,
   periodStart,
@@ -34,46 +94,7 @@ export async function processDailySleep({
 
   if (todayRecords.length === 0) return;
 
-  // average is stored in hours
-  // sum across all records for the day
-  const totalToday = todayRecords.reduce(
-    (sum: number, r: { average: number }) => sum + r.average,
-    0,
-  );
-  const totalYesterday =
-    yesterdayRecords.length > 0
-      ? yesterdayRecords.reduce(
-          (sum: number, r: { average: number }) => sum + r.average,
-          0,
-        )
-      : null;
-
-  const diffMinutes =
-    totalYesterday !== null
-      ? Math.round((totalToday - totalYesterday) * 60)
-      : null;
-
-  const sessionCount = todayRecords.length; // 1 = normal night, 2+ = nap(s)
-
-  const diffStr =
-    diffMinutes !== null && Math.abs(diffMinutes) >= 5
-      ? `${formatDiff(diffMinutes)} que ontem`
-      : "";
-
-  const napStr =
-    sessionCount > 1
-      ? `incluindo ${sessionCount - 1} cochilo${sessionCount > 2 ? "s" : ""}`
-      : "";
-
-  const metadata = {
-    totalHours: totalToday,
-    diffMinutes,
-    diffStr,
-    sessionCount,
-    napStr,
-    hadNaps: sessionCount > 1,
-    windowLabel: DAY_WINDOW_LABEL,
-  };
+  const { metadata } = computeDailySleep(todayRecords, yesterdayRecords);
 
   await prisma.insight.upsert({
     where: {
@@ -84,7 +105,7 @@ export async function processDailySleep({
       },
     },
     update: {
-      body: buildBody(totalToday),
+      body: dailySleepBody(metadata.totalHours),
       metadata,
       generatedAt: new Date(),
     },
@@ -93,16 +114,10 @@ export async function processDailySleep({
       type: InsightType.DAILY_SLEEP,
       period: InsightPeriod.DAILY,
       title: "Sono",
-      body: buildBody(totalToday),
+      body: dailySleepBody(metadata.totalHours),
       metadata,
       periodStart: today,
       periodEnd: tomorrow,
     },
   });
-}
-
-function buildBody(total: number): string {
-  const totalStr = formatHours(total);
-
-  return `${totalStr} de sono hoje`;
 }
