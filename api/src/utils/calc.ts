@@ -43,3 +43,8 @@ export const paginate = (
     nextPage: page < totalPages ? page + 1 : null,
   };
 }
+
+export const timeToCron = (time: string): string => {
+  const [hour, minute] = time.split(":").map(Number);
+  return `${minute} ${hour} * * *`;
+}

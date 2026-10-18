@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { avg, formatHours, formatDiff, paginate } from '@app/utils/calc'
+import { avg, formatHours, formatDiff, paginate, timeToCron } from '@app/utils/calc'
 
 describe('avg', () => {
   it('averages a list of numbers', () => {
@@ -74,5 +74,23 @@ describe('paginate', () => {
 
   it('has no next page for an empty result set', () => {
     expect(paginate(1, 10, 0)).toEqual({ page: 1, skip: 0, nextPage: null })
+  })
+})
+
+describe('timeToCron', () => {
+  it('puts the minute before the hour', () => {
+    expect(timeToCron('23:59')).toBe('59 23 * * *')
+  })
+
+  it('drops the leading zero from the hour', () => {
+    expect(timeToCron('07:05')).toBe('5 7 * * *')
+  })
+
+  it('maps midnight to zero hour and minute', () => {
+    expect(timeToCron('00:00')).toBe('0 0 * * *')
+  })
+
+  it('maps midday to the twelfth hour', () => {
+    expect(timeToCron('12:00')).toBe('0 12 * * *')
   })
 })

@@ -2,11 +2,7 @@ import { MedicineRegimen } from "@prisma/client";
 import { getQueue } from "@app/lib/queue/QueueRegistry";
 import { MedicineReminderJobName } from "@app/lib/queue/types";
 import { logger } from "@app/lib/logger";
-
-function timeToCron(time: string): string {
-  const [hour, minute] = time.split(":").map(Number);
-  return `${minute} ${hour} * * *`;
-}
+import { timeToCron } from "@app/utils/calc";
 
 export async function syncMedicineReminderJobs(
   regimen: MedicineRegimen

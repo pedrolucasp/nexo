@@ -2,12 +2,7 @@ import { User } from "@prisma/client";
 import { getQueue } from "@app/lib/queue/QueueRegistry";
 import { DailyReminderJobName } from "@app/lib/queue/types";
 import { logger } from "@app/lib/logger";
-
-// XXX: Might be moved to the utilities?
-function timeToCron(time: string): string {
-  const [hour, minute] = time.split(":").map(Number);
-  return `${minute} ${hour} * * *`;
-}
+import { timeToCron } from "@app/utils/calc";
 
 export async function syncDailyReminderJob(user: User): Promise<void> {
   logger.info({ userId: user.id }, "[daily-sync] syncing user");
