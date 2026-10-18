@@ -2,9 +2,10 @@ import { prisma } from "@app/lib/prisma";
 import { InsightType, InsightPeriod } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
 
-// Pearson correlation coefficient, returns value in [-1, 1]
-// TODO: Document this more and write to thesis
-function pearson(xs: number[], ys: number[]): number {
+// Pearson correlation coefficient for two paired samples, in [-1, 1]. Returns
+// 0 when there are fewer than two samples or either axis has no variance, so
+// an absent signal reads as no correlation rather than a divide by zero.
+export function pearson(xs: number[], ys: number[]): number {
   const n = xs.length;
   if (n < 2) return 0;
 
@@ -17,6 +18,18 @@ function pearson(xs: number[], ys: number[]): number {
 
   if (denX === 0 || denY === 0) return 0;
   return num / (denX * denY);
+}
+
+export function energySleepBody(score: number, sampleSize: number): string {
+  const base = sampleSize < 5 ? " (dados limitados, continue registrando)" : "";
+
+  if (score > 0.6)
+    return `Seu sono tem forte impacto positivo na sua energia no dia seguinte.${base}`;
+  if (score > 0.3)
+    return `Seu sono tem impacto moderado na sua energia no dia seguinte.${base}`;
+  if (score < -0.3)
+    return `Curiosamente, mais sono está associado a menos energia — vale investigar.${base}`;
+  return `Não encontramos uma relação clara entre seu sono e energia ainda.${base}`;
 }
 
 export async function processEnergySleep({
@@ -70,7 +83,7 @@ export async function processEnergySleep({
       },
     },
     update: {
-      body: buildBody(score, pairs.length),
+      body: energySleepBody(score, pairs.length),
       metadata: { correlationScore: score, sampleSize: pairs.length },
       generatedAt: new Date(),
     },
@@ -79,22 +92,10 @@ export async function processEnergySleep({
       type: InsightType.ENERGY_SLEEP_CORRELATION,
       period: InsightPeriod.WEEKLY,
       title: "Sono e Energia",
-      body: buildBody(score, pairs.length),
+      body: energySleepBody(score, pairs.length),
       metadata: { correlationScore: score, sampleSize: pairs.length },
       periodStart: start,
       periodEnd: end,
     },
   });
-}
-
-function buildBody(score: number, sampleSize: number): string {
-  const base = sampleSize < 5 ? " (dados limitados, continue registrando)" : "";
-
-  if (score > 0.6)
-    return `Seu sono tem forte impacto positivo na sua energia no dia seguinte.${base}`;
-  if (score > 0.3)
-    return `Seu sono tem impacto moderado na sua energia no dia seguinte.${base}`;
-  if (score < -0.3)
-    return `Curiosamente, mais sono está associado a menos energia — vale investigar.${base}`;
-  return `Não encontramos uma relação clara entre seu sono e energia ainda.${base}`;
 }

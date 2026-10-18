@@ -1,6 +1,7 @@
 import { prisma } from "@app/lib/prisma";
 import { InsightType, InsightPeriod, BaseMoodOption } from "@prisma/client";
 import { InsightPeriodPayload } from "@app/lib/queue/types";
+import { avg } from "@app/utils/calc";
 
 const MOOD_SCORE: Record<BaseMoodOption, number> = {
   GREAT: 5,
@@ -10,25 +11,17 @@ const MOOD_SCORE: Record<BaseMoodOption, number> = {
   ANGRY: 1,
 };
 
-const avg = (values: number[]) =>
-  values.reduce((a, b) => a + b, 0) / values.length;
+type MoodTrendEntry = { selectedMood: BaseMoodOption; energyLevel: number };
 
-export async function processMoodTrend({
-  userId,
-  periodStart,
-  periodEnd,
-}: InsightPeriodPayload): Promise<void> {
-  const start = new Date(periodStart);
-  const end = new Date(periodEnd);
+export type MoodTrend = {
+  delta: number;
+  avgFirst: number;
+  avgSecond: number;
+  dominantMood: BaseMoodOption;
+  avgEnergy: number;
+};
 
-  const moods = await prisma.mood.findMany({
-    where: { userId, moment: { gte: start, lte: end } },
-    orderBy: { moment: "asc" },
-    select: { selectedMood: true, energyLevel: true, moment: true },
-  });
-
-  if (moods.length < 3) return;
-
+export function computeMoodTrend(moods: MoodTrendEntry[]): MoodTrend {
   const scores = moods.map((m) => MOOD_SCORE[m.selectedMood]);
   const mid = Math.floor(scores.length / 2);
   const avgFirst = avg(scores.slice(0, mid));
@@ -46,6 +39,35 @@ export async function processMoodTrend({
 
   const avgEnergy = avg(moods.map((m) => m.energyLevel));
 
+  return { delta, avgFirst, avgSecond, dominantMood, avgEnergy };
+}
+
+export function moodTrendBody(delta: number): string {
+  if (delta > 10)
+    return `Seu humor melhorou ${delta}% em relação ao início do período.`;
+  if (delta < -10)
+    return `Seu humor caiu ${Math.abs(delta)}% em relação ao início do período.`;
+  return "Seu humor se manteve estável durante o período.";
+}
+
+export async function processMoodTrend({
+  userId,
+  periodStart,
+  periodEnd,
+}: InsightPeriodPayload): Promise<void> {
+  const start = new Date(periodStart);
+  const end = new Date(periodEnd);
+
+  const moods = await prisma.mood.findMany({
+    where: { userId, moment: { gte: start, lte: end } },
+    orderBy: { moment: "asc" },
+    select: { selectedMood: true, energyLevel: true, moment: true },
+  });
+
+  if (moods.length < 3) return;
+
+  const trend = computeMoodTrend(moods);
+
   await prisma.insight.upsert({
     where: {
       userId_type_periodStart: {
@@ -55,8 +77,8 @@ export async function processMoodTrend({
       },
     },
     update: {
-      body: buildBody(delta),
-      metadata: { delta, avgFirst, avgSecond, dominantMood, avgEnergy },
+      body: moodTrendBody(trend.delta),
+      metadata: trend,
       generatedAt: new Date(),
     },
     create: {
@@ -64,18 +86,10 @@ export async function processMoodTrend({
       type: InsightType.MOOD_TREND,
       period: InsightPeriod.WEEKLY,
       title: "Tendência de Humor",
-      body: buildBody(delta),
-      metadata: { delta, avgFirst, avgSecond, dominantMood, avgEnergy },
+      body: moodTrendBody(trend.delta),
+      metadata: trend,
       periodStart: start,
       periodEnd: end,
     },
   });
-}
-
-function buildBody(delta: number): string {
-  if (delta > 10)
-    return `Seu humor melhorou ${delta}% em relação ao início do período.`;
-  if (delta < -10)
-    return `Seu humor caiu ${Math.abs(delta)}% em relação ao início do período.`;
-  return "Seu humor se manteve estável durante o período.";
 }
