@@ -28,8 +28,6 @@ export function translateError(message: unknown): string {
 
   if (MESSAGE_MAP[text]) return MESSAGE_MAP[text];
 
-  console.log("Erro foi: ", text)
-
   for (const [pattern, replacement] of PATTERN_MAP) {
     const match = text.match(pattern);
     if (match) {
