@@ -30,9 +30,6 @@ export function SleepRecordCard({ card }: Props) {
   const badge    = sleepBadge(card.raw.average)
   const duration = formatDuration(card.raw.average)
 
-  const time     = new Date(card.timestamp)
-    .toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-
   return (
     <Card style={styles.card} onPress={() => router.push(`/sleep/${card.raw.id}`)}>
       <View style={styles.row}>
@@ -42,7 +39,6 @@ export function SleepRecordCard({ card }: Props) {
         <View style={styles.body}>
           <View style={styles.titleRow}>
             <Text style={styles.title}>Sono</Text>
-            <Text style={styles.time}>{time}</Text>
           </View>
           <View style={styles.durationRow}>
             <Text style={styles.duration}>{duration}</Text>
@@ -88,10 +84,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: '600'
-  },
-  time: {
-    fontSize: 13,
-    opacity: 0.45
   },
   durationRow: {
     flexDirection: 'row',

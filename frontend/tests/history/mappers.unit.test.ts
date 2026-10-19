@@ -13,6 +13,7 @@ import type {
   Trigger,
 } from "@/lib/api";
 import type { MoodComponent } from "@/lib/api/types";
+import { parseDateOnly } from "@/lib/utils/time";
 
 const FIXED = new Date(2025, 0, 15, 10, 0, 0);
 
@@ -152,13 +153,14 @@ describe("mapSleepToHistoryCard", () => {
       id: 4,
       average: 7.5,
       annotations: "Dormi bem",
-      createdAt: new Date(2025, 0, 15, 8, 0, 0),
+      date: new Date(Date.UTC(2025, 0, 15)),
+      createdAt: new Date(2025, 0, 20, 8, 0, 0),
     });
 
     expect(mapSleepToHistoryCard(record)).toStrictEqual({
       id: "sleep-4",
       category: "sleep",
-      timestamp: record.createdAt.toISOString(),
+      timestamp: parseDateOnly(record.date).toISOString(),
       title: "Sono",
       summary: "7h 30min · Dormi bem",
       badge: { label: "Excelente", variant: "green" },
@@ -166,13 +168,29 @@ describe("mapSleepToHistoryCard", () => {
     });
   });
 
-  it("keeps a string timestamp as-is", () => {
-    const timestamp = "2025-01-15T13:00:00.000Z";
-    const card = mapSleepToHistoryCard(
-      sleep({ createdAt: timestamp as unknown as Date }),
-    );
+  it("anchors on the picked day, not the creation instant", () => {
+    const record = sleep({
+      date: new Date(Date.UTC(2025, 0, 10)),
+      createdAt: new Date(2025, 0, 15, 8, 0, 0),
+    });
 
-    expect(card.timestamp).toBe(timestamp);
+    const card = mapSleepToHistoryCard(record);
+
+    expect(new Date(card.timestamp).toLocaleDateString("pt-BR")).toBe(
+      "10/01/2025",
+    );
+  });
+
+  it("reads the date-only string the API sends", () => {
+    const record = sleep({
+      date: "2025-01-10T00:00:00.000Z" as unknown as Date,
+    });
+
+    const card = mapSleepToHistoryCard(record);
+
+    expect(new Date(card.timestamp).toLocaleDateString("pt-BR")).toBe(
+      "10/01/2025",
+    );
   });
 
   it("omits the separator when there is no annotation", () => {

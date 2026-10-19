@@ -1,6 +1,7 @@
 import type { HistoryCard } from "@/lib/history/types";
 import type { MoodEntry, SleepRecord, Trigger, CareAction } from "@/lib/api";
 import { getMood } from "@/constants/moods";
+import { parseDateOnly } from "@/lib/utils/time";
 
 
 export function mapMoodToHistoryCard(mood: MoodEntry): HistoryCard {
@@ -41,14 +42,11 @@ export function mapSleepToHistoryCard(record: SleepRecord): HistoryCard {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   const duration = `${hours}h ${minutes.toString().padStart(2, "0")}min`;
-  const timestamp = typeof record.createdAt === 'string'
-    ? record.createdAt
-    : record.createdAt.toISOString();
 
   return {
     id: `sleep-${record.id}`,
     category: "sleep",
-    timestamp,
+    timestamp: parseDateOnly(record.date).toISOString(),
     title: "Sono",
     summary: [duration, record.annotations].filter(Boolean).join(" · "),
     badge: sleepQualityBadge(record.average),
