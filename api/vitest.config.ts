@@ -47,6 +47,10 @@ export default defineConfig({
           exclude: ['**/node_modules/**', 'tests/**/*.unit.test.ts'],
           setupFiles: ['./tests/setup.ts'],
           testTimeout: 15_000,
+          // Every request is logged by pino-http and most services log at info,
+          // which buries the run output. Errors stay visible; override per-run
+          // with LOG_LEVEL=debug (or any level) to see everything.
+          env: { LOG_LEVEL: process.env.LOG_LEVEL || 'error' },
           typecheck: {
             tsconfig: './tsconfig.test.json',
           },
