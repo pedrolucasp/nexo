@@ -37,8 +37,9 @@ function sleepQualityBadge(hours: number): HistoryCard["badge"] {
 }
 
 export function mapSleepToHistoryCard(record: SleepRecord): HistoryCard {
-  const hours = Math.floor(record.average);
-  const minutes = Math.round((record.average - hours) * 60);
+  const totalMinutes = Math.round(record.average * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
   const duration = `${hours}h ${minutes.toString().padStart(2, "0")}min`;
   const timestamp = typeof record.createdAt === 'string'
     ? record.createdAt

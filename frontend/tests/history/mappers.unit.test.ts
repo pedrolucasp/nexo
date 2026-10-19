@@ -205,6 +205,15 @@ describe("mapSleepToHistoryCard", () => {
       "6h 01min",
     );
   });
+
+  it("carries rounded minutes into the hour", () => {
+    expect(mapSleepToHistoryCard(sleep({ average: 7.999 })).summary).toBe(
+      "8h 00min",
+    );
+    expect(mapSleepToHistoryCard(sleep({ average: 5.999 })).summary).toBe(
+      "6h 00min",
+    );
+  });
 });
 
 describe("mapTriggerToHistoryCard", () => {
