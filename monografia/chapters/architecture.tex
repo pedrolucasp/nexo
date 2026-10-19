@@ -1,4 +1,4 @@
-\chapter{Arquitetura e Elementos do Sistema}
+\chapter{Arquitetura e Funcionamento do Sistema}
 
 Como delineado as tecnologias no capítulo anterior, aqui se apresenta a
 arquitetura, demonstrando como todas as tecnologias apresentadas acima se
@@ -15,8 +15,9 @@ conectam e conversam entre si.
 
 Este capítulo detalha o funcionamento de algumas funcionalidades
 desenvolvidas durante o projeto. Apenas algumas funcionalidades mais
-chaves são abordadas neste capítulo, como o registro de humor, vinculo
-de um gatilho, indicadores, e o registro de atividades.
+chaves são abordadas neste capítulo, como o registro de humor, o vínculo
+de um gatilho, os indicadores, o registro de atividades e, por fim, a
+exportação de dados e a geração de relatórios.
 
 \section{Processo de Login}
 
@@ -337,5 +338,76 @@ um registro de sono, sinaliza se a duração foi insuficiente; para um
 registro de humor, destaca a dimensão mais relevante daquele registro
 (como ``Ansiedade alta'' na figura \ref{fig:screenshot-history}); para um
 gatilho, indica sua categoria, e assim por diante.
+
+\section{Exportação de Dados e Relatórios}\label{sec:export-report}
+
+Além das telas de consulta e análise, o Nexo oferece duas formas de
+levar os dados para fora do aplicativo: a exportação integral dos
+registros, em formato aberto, e a geração de um relatório resumido em
+PDF. Ambas materializam o princípio de soberania dos dados discutido nos
+capítulos anteriores --- princípio reforçado pelo questionário, em que a
+maioria dos respondentes atribuiu nota máxima à importância de ter
+controle total sobre as próprias informações. A diferença entre as duas
+reside no propósito: a exportação devolve a totalidade dos dados em um
+formato legível e processável, enquanto o relatório condensa um período
+específico em um documento pronto para ser guardado ou compartilhado com
+um profissional de saúde.
+
+A exportação é acionada na tela de configurações, na opção ``Exportar
+Meus Dados''. Antes de disparar o processo, o aplicativo pede uma
+confirmação e informa que o arquivo será enviado para o e-mail cadastrado
+--- um lembrete explícito de que aquela operação retira dados do
+dispositivo e os entrega por um canal externo.
+
+% TODO: adicionar screenshot da tela de exportação (modal de confirmação)
+
+Do ponto de vista técnico, a solicitação enfileira um \textit{job}
+assíncrono na mesma infraestrutura de filas descrita na
+seção~\ref{sec:insights}. O \textit{worker} percorre todas as entidades
+associadas ao usuário --- perfil, humores e seus componentes, sono,
+gatilhos e seus vínculos, ações de cuidado, medicamentos, consultas,
+atividades e os indicadores já calculados --- e serializa cada uma em um
+arquivo CSV próprio, com os rótulos traduzidos e os valores enumerados
+convertidos para texto legível. Os arquivos são compactados em um único
+\textit{zip}, acompanhados de um manifesto com a data de geração, e o
+pacote é anexado a um e-mail enviado ao usuário; em caso de falha, um
+e-mail de erro é disparado em seu lugar. O resultado é uma exportação
+completa e portátil: nenhum campo é omitido ou agregado, de modo que o
+usuário pode reimportar os dados em outra ferramenta ou auditá-los
+diretamente --- alinhado à exigência de portabilidade levantada nos
+requisitos não funcionais.
+
+O relatório, por sua vez, é gerado sob demanda a partir da tela
+``Relatório'', acessível também pelas configurações. O usuário escolhe um
+período --- por meio de atalhos de 7, 30 ou 90 dias, ou um intervalo
+personalizado limitado a 90 dias --- e aciona ``Gerar relatório''.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de geração de relatório}
+\label{fig:screenshot-report}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-report-initial.png}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+O servidor reúne os registros de humor do período e os renderiza em um
+PDF intitulado ``Relatório de Humor e Bem-Estar'', produzido com
+\textit{@react-pdf/renderer} e devolvido ao aplicativo, que o oferece
+pela folha de compartilhamento nativa do sistema --- permitindo salvá-lo
+ou enviá-lo a um terapeuta. O documento é dividido em duas páginas: a
+primeira traz uma visão geral (total de \textit{check-ins}, humor
+predominante e dias rastreados), a distribuição percentual de cada humor
+e um mapa de calor diário; a segunda lista os sentimentos e emoções mais
+frequentes, com a intensidade média, e o registro detalhado dos
+\textit{check-ins}, com os níveis de ansiedade, estresse e energia.
+
+Cabe registrar, contudo, que o relatório desta versão cobre apenas os
+dados de humor. A intenção original era incorporar também o sono, as
+atividades e os padrões de gatilho --- inclusive a correlação entre sono
+e energia já calculada nos indicadores ---, mas essa ampliação foi
+adiada para uma versão futura. Como consequência, o relatório atual
+complementa, mas não substitui, a exportação integral: para uma visão
+completa de todos os tipos de dado, o usuário ainda recorre ao
+\textit{zip} de CSV.
 
 \FloatBarrier
