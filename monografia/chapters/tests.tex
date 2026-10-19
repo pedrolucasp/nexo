@@ -1,6 +1,365 @@
-\chapter{Testes}
+\chapter{Testes}\label{cap:testes}
 
-Nesse capítulo, abordaremos os testes realizados que ajudam a comprovar e
-mapear de forma a garantir consistência e confiabilidade do aplicativo.
+Delineadas as tecnologias e a arquitetura nos capítulos anteriores, este
+capítulo se debruça como o comportamento do sistema é verificado: quais tipos
+de teste existem, onde são aplicados, o que cada um é capaz --- e incapaz ---
+de detectar, e por que o esforço de verificação foi distribuído da forma como
+foi. O objetivo não é prescrever uma estratégia ideal, mas registrar com
+honestidade o estado da prática no projeto e as suas lacunas, apresentadas de
+forma explícita na Seção~\ref{sec:test-lacunas}.
 
-\lipsum[1-2]
+Os dados quantitativos citados ao longo do capítulo, como o número de arquivos
+de teste, referem-se ao estado do repositório em meados de outubro de 2026.
+
+\section{Fundamentos de Teste de Software}\label{sec:tests-basic}
+
+Teste de software é, em sua formulação clássica, a execução de um programa com
+a intenção de revelar defeitos \cite{Myers:2012}. Uma consequência é que um
+conjunto de testes que passa demonstra que os casos exercitados se comportam
+como esperado, mas não necessariamente que o sistema esteja livre de defeitos.
+Essa limitação é relevante para a leitura deste capítulo.
+
+A literatura costuma organizar a atividade de teste em níveis, que se
+distinguem pelo tamanho da parte do sistema sob verificação: o teste de unidade
+exercita a menor parte testável do programa de forma isolada; o teste de
+integração verifica a interação entre partes já testadas; e o teste de sistema
+avalia o sistema completo em condições próximas às de uso. Os nomes e as
+fronteiras entre os níveis variam entre autores; por isso,
+o Quadro~\ref{tab:tests-vocab} fixa o vocabulário usado neste trabalho
+e o relaciona aos termos usuais.
+
+\begin{table}[H]
+\centering
+\caption{Vocabulário de testes adotado neste trabalho}
+\label{tab:tests-vocab}
+\small
+\begin{tabular}{|p{2.8cm}|p{6.6cm}|p{4.2cm}|}
+\hline
+\textbf{Termo} &
+\textbf{O que exercita} &
+\textbf{Nível usual na literatura} \\
+
+\hline
+
+Teste unitário &
+Uma única função ou módulo, sem HTTP e sem banco de dados. &
+Teste de unidade. \\
+
+\hline
+
+Teste de integração &
+A aplicação HTTP real (rotas, validação, autenticação, controladores
+e serviços) sobre um banco de dados real; apenas o que sai do processo
+é simulado &
+Teste de integração, em nível de API. \\
+
+\hline
+
+Teste de \textit{job} &
+Um processador de tarefa em segundo plano, chamado diretamente com uma carga
+fabricada, sobre o banco real. &
+Teste de integração de componente assíncrono \\
+
+\hline
+
+Teste \textit{end-to-end} (E2E) &
+O aplicativo empacotado, em um dispositivo, ao longo de uma jornada real de
+usuário. &
+Teste de sistema. \\
+
+\hline
+\end{tabular}
+\source{Elaborado pelo autor (2026)}
+\end{table}
+
+Outro conceito necessário é o de dublê de teste (\textit{test double}): termo
+genérico para qualquer objeto que substitui uma dependência real durante
+o teste. A taxonomia de \citet{Meszaros:2007} distingue, entre outros,
+\textit{stubs}, \textit{spies}, \textit{mocks} e \textit{fakes}. Neste
+trabalho, o termo \textit{mock} é empregado no sentido amplo adotado pelas
+ferramentas de teste do ecossistema JavaScript --- a substituição de um módulo
+por um substituto controlado ---, e não no sentido restrito da taxonomia.
+
+E então, uma heurística recorrente para distribuir o esforço entre os níveis
+é a chamada pirâmide de testes: muitos testes rápidos e isolados na base, menos
+testes de integração no meio e poucos testes de interface no topo
+\cite{Vocke:2012}. A distribuição observada no Nexo se afasta desse formato:
+alguns testes unitários, maioria de testes de integração e um topo fino,
+predominantemente manual.
+
+\section{Estratégia de Verificação}\label{sec:tests-strategies}
+
+O código-fonte do Nexo é mantido em um único repositório que abriga dois
+projetos independentes: a API e o aplicativo móvel, ambos descritos nos
+capítulos anteriores.
+
+O esforço de teste entre os dois projetos é deliberadamente assimétrico. A API
+possui uma suíte automatizada e é protegida por um portão de integração
+contínua; o aplicativo móvel é verificado majoritariamente de forma manual, com
+uma pequena suíte \textit{end-to-end} e testes unitários por cima. Essa
+assimetria decorre das prioridades do projeto, e não de um descuido, e se
+justifica por, ao menos, dois motivos. O primeiro é que, por limitações de
+força de trabalho, manter uma suíte automatizada completa nas duas esferas
+excederia a capacidade disponível, sendo preferível concentrar o esforço onde
+o retorno é maior. O segundo é que a API é o componente que concentra
+a validação, a autenticação, as regras de negócio e a persistência --- isto é,
+a garantia sobre a integridade dos dados registrados pelo usuário.
+
+A Tabela ~\ref{tab:test-tooling} resume as ferramentas envolvidas e o ponto em
+que cada uma atua.
+
+\begin{table}[H]
+\centering
+\caption{Ferramentas de verificação}
+\label{tab:test-tooling}
+\small
+\begin{tabular}{|p{4.4cm}|p{4.0cm}|p{5.0cm}|}
+\hline
+\textbf{Finalidade} &
+\textbf{Ferramenta} &
+\textbf{Onde atua} \\
+
+\hline
+
+Execução de testes e asserções da API &
+Vitest &
+API \\
+
+\hline
+
+Requisições HTTP nos testes &
+Supertest &
+Dentro dos arquivos do Vitest \\
+
+\hline
+
+Cobertura de código da API &
+Vitest (\textit{coverage}) &
+API, sem limiar mínimo \\
+
+\hline
+
+Banco de dados de teste &
+PostgreSQL &
+\textit{Container} local durante desenvolvimento; serviço efêmero no CI \\
+
+\hline
+
+Testes \textit{end-to-end} móveis &
+Maestro &
+Dispositivo Android físico, via \textit{adb} \\
+
+\hline
+
+\textit{Lint} do aplicativo &
+ESLint (\texttt{expo lint}) &
+Manual, fora do CI \\
+
+\hline
+
+Integração contínua &
+GitHub Actions &
+API \\
+
+\hline
+\end{tabular}
+\source{Elaborado pelo autor (2026)}
+\end{table}
+
+\section{Suíte de Testes da API}\label{sec:test-api}
+
+A suíte automatizada do Nexo concentra-se na API e cobre três frentes
+distintas: os testes unitários, os testes de integração das rotas HTTP e os
+testes dos processadores de tarefas em segundo plano. No momento da redação
+deste capítulo, o diretório \texttt{api/tests} reunia 48 arquivos, dos quais 17
+são unitários, 26 exercitam as rotas e cinco cobrem os \textit{jobs}.
+A execução e as asserções ficam a cargo do Vitest, enquanto as requisições HTTP
+são realizadas pelo Supertest, que permite exercitar a aplicação Express
+diretamente, sem abrir uma porta de rede, porém através de sua pilha HTTP real.
+
+\subsection{Organização e ferramentas}\label{sec:test-api-org}
+
+A configuração do Vitest (\texttt{api/vitest.config.ts}) permite dividir
+a suíte em dois ``projetos'', cada um com condições especiais. O projeto
+\texttt{unit} seleciona os arquivos nomeados com o sufixo
+\texttt{.unit.test.ts} e não carrega configuração global alguma, de modo que
+esses testes dependem apenas das funções que exercitam. Já o projeto
+\texttt{db} seleciona os demais arquivos --- os testes de integração e de
+\textit{job} ---, aplica um arquivo de configuração global e fixa um limite de
+tempo por teste, além de que os testes desse projeto truncam e repovoam o banco
+de dados.
+
+A cobertura de código é apenas mensurada, não imposta. O relatório, produzido
+pela ferramenta de cobertura do Vitest por meio do comando \texttt{npm run
+test:coverage}, não possui limiar mínimo nem bloqueia a integração contínua.
+
+Existe ainda uma verificação estática de tipos (\texttt{npm run typecheck})
+executada no fluxo de CI em caráter consultivo: uma falha é registrada, mas não
+interrompe o processo de \textit{deploy}.
+
+\subsection{Execução e banco de dados de teste}\label{sec:test-api-db}
+
+Os testes que dependem do banco são executados contra uma instância real do
+PostgreSQL --- e não contra um substituto em memória ---, em uma base dedicada
+com o mesmo nome do projeto, adicionando o suffixo \texttt{\_test}, criada por
+um pequeno script e materializada com \texttt{prisma db push}. O isolamento
+entre os casos é obtido por truncamento: antes de cada teste, uma rotina
+executa \texttt{TRUNCATE users CASCADE}, removendo a tabela de usuários e, por
+meio das chaves estrangeiras em cascata, todas as tabelas dependentes. Não há
+\textit{rollback} transacional nem banco efêmero por execução.
+
+O carregamento de dados é feito por funções auxiliares escritas à mão, e não
+por uma biblioteca de fábricas. Para tal, um módulo compartilhado
+(\texttt{api/tests/test-helper.ts}) oferece as primitivas centrais --- criação
+do cliente Prisma, limpeza da base, criação de usuário de teste e geração de
+token ---, enquanto cada arquivo define os \textit{seeders} específicos dos
+registros de que necessita.
+
+A regra que orienta o uso de dublês na API pode ser resumida assim: simula-se
+apenas o que deixa o processo; a aplicação e o banco de dados permanecem reais.
+A camada de filas (BullMQ) é substituída, globalmente, por um substituto que
+registra os \textit{jobs} enfileirados, permitindo que um teste afirme tanto
+a resposta HTTP quanto o trabalho em segundo plano que deveria ter sido
+agendado. De modo semelhante, o envio de arquivos e o cliente de armazenamento
+de objetos são substituídos por implementações controladas, e o disparo de
+e-mail e de notificações \textit{push} é simulado pontualmente, nos arquivos
+que os exercitam.
+
+Duas fronteiras, porém, permanecem deliberadamente reais. O acesso ao banco de
+dados, via Prisma, nunca é simulado; tampouco a autenticação. Os testes geram
+tokens JWT válidos, assinados com o segredo de teste, e os enviam no cabeçalho
+de autorização, de modo que o \textit{middleware} de autenticação real seja
+executado. Essa escolha reduz o risco de que um teste passe contra um
+substituto que se comporte de maneira distinta em produção.
+
+\subsection{Tipos de testes}\label{sec:test-api-tipos}
+
+\subsubsection{Testes unitários}
+
+Os testes unitários exercitam uma única função ou módulo, sem HTTP e sem banco
+de dados. Eles concentram-se na lógica pura do sistema, em grande parte
+extraída deliberadamente de seus envoltórios de persistência para se tornar
+testável: os agregadores dos indicadores, os construtores dos relatórios e
+auxiliares compartilhados, como a paginação e a conversão de agendamento.
+Também cobrem o gerador de código de ativação, a validade de tokens, os
+serializadores e as regras de validação. Por serem rápidos e determinísticos,
+constituem o instrumento natural para fixar casos-limite --- fronteiras de
+janelas de tempo, margens de classificação e aritmética de paginação ---, e
+servem como documentação executável dessas regras.
+
+A limitação desse nível é estrutural: ele só alcança a lógica que foi isolada
+em uma costura testável. A maior parte do comportamento do sistema permanece
+fora de seu alcance sem o banco e a camada HTTP, e o nível pouco contribui,
+isoladamente, para a confiança geral na aplicação.
+
+\subsubsection{Testes de integração}
+
+Os testes de integração formam a maior parte da suíte. Cada um constrói a
+aplicação real, conecta um cliente Prisma real e a exercita por meio do
+Supertest, afirmando tanto a resposta HTTP quanto o estado persistido no banco.
+Eles percorrem o caminho completo de uma requisição --- roteamento, validação,
+autenticação, controladores, serviços e persistência --- e, por operarem sobre
+um PostgreSQL real, não sofrem o descolamento que afeta os substitutos: um
+teste não pode passar contra um falso que se comporte de modo diferente da
+produção. Afirmar simultaneamente a resposta e as linhas persistidas verifica o
+efeito da operação, e não apenas o seu valor de retorno.
+
+Em contrapartida, esses testes exigem infraestrutura em execução, são mais
+lentos e, por compartilharem a mesma base, são forçados a rodar em série.
+O isolamento por truncamento é suficiente, porém menos rigoroso do que um
+\textit{rollback} transacional, pois um teste que falha no meio pode deixar
+resíduos. Os dados de teste, ademais, são escritos à mão em cada arquivo, o que
+gera duplicação e o risco de que os \textit{seeders} divirjam entre si ao longo
+do tempo.
+
+\subsubsection{Testes de \textit{tarefas assíncronas}}
+
+Os testes de tarefas assíncronas, ou de \textit{jobs}, importam um processador
+do BullMQ e o chamam diretamente, com uma carga fabricada, contra o banco real.
+Eles cobrem o código que executa fora do ciclo requisição--resposta --- os
+\textit{workers} que geram exportações, enviam mensagens e recalculam
+indicadores ---, chegando, no caso da exportação, a descompactar o anexo
+produzido e inspecionar seu conteúdo.
+
+Como o processador é invocado diretamente, a maquinaria da fila em si ---
+agendamento, repetição, tentativas e ordenação --- permanece fora do alcance
+desses testes. A carga também é fabricada à mão e, por isso, pode divergir
+daquela que o enfileirador realmente envia, sem que nada verifique uma contra
+a outra.
+
+\section{Verificação do Aplicativo Móvel}\label{sec:test-mobile}
+
+Diferentemente da API, o aplicativo móvel não possui uma estrutura automatizada
+de testes em nível de unidade ou de componente. A verificação cotidiana do
+aplicativo é manual, em um dispositivo físico, contra a pilha local em
+execução. Essa escolha é contextual: o aplicativo roda como um \textit{build}
+de desenvolvimento do Expo, ou seja, carrega dependências de código nativo do
+Android.
+
+A verificação manual captura o que os testes automatizados raramente alcançam
+--- problemas visuais, de leiaute e de desempenho no dispositivo ---, mas não
+é repetível, não protege contra regressões e permanece invisível à integração
+contínua: uma tela quebrada pode ser incorporada ao código sem que nada falhe.
+
+\subsection{Suíte \textit{end-to-end} (Maestro)}\label{sec:test-mobile-e2e}
+
+Sobre a verificação manual há uma suíte \textit{end-to-end} opcional, baseada
+no Maestro, uma ferramenta declarativa de automação de interface para
+dispositivos móveis. A suíte cobre uma única jornada central --- login,
+registro de humor e saída --- por meio de três fluxos descritos em YAML,
+marcados como \texttt{smoke} e executados por um pequeno \textit{harness}
+(\texttt{frontend/scripts/e2e.sh}), exposto como \texttt{npm run test:e2e}. Os
+fluxos são dirigidos por identificadores de teste (\texttt{testID}) inseridos
+no código do aplicativo, e não pelo texto visível, o que os torna mais robustos
+a mudanças de interface.
+
+A execução depende de um dispositivo Android físico conectado por \texttt{adb},
+de um \textit{build} de desenvolvimento, da API em funcionamento com um usuário
+de teste previamente semeado e do Metro servindo o aplicativo; não há caminho
+sem cabeça nem integração ao CI, de modo que a suíte é executada manualmente e,
+por consequência, com pouca frequência. Cada fluxo limpa o estado do aplicativo
+e recarrega o \textit{bundle}, o que torna a execução lenta, e a cobertura
+permanece fina: um único caminho feliz, sem casos de erro. A suíte não está,
+ademais, integralmente verde no momento da redação: os fluxos de login e de
+saída passam, mas o fluxo de registro de humor falha ao adicionar um componente
+de humor, porque a tela correspondente é abandonada pelo aplicativo pouco
+depois de ser aberta --- causa ainda não identificada.
+
+\section{Integração Contínua}\label{sec:test-ci}
+
+A integração contínua do Nexo, entendida como a prática de integrar e verificar
+automaticamente as mudanças de código \cite{Humble_Farley_2011}, é executada
+exclusivamente no GitHub Actions e testa somente a API, em linha com
+a estratégia assimétrica já descrita. O fluxo de implantação
+(\texttt{.github/workflows/deploy.yml}) só é executado quando algo acontecem
+mudanças no código da \texttt{api}: sua etapa de teste sobe um serviço efêmero
+de PostgreSQL, instala as dependências, prepara a base de teste, executa
+a verificação de tipos em caráter consultivo e roda a suíte com o Vitest.
+A construção da imagem e a implantação em produção são condicionadas ao sucesso
+dessa etapa, de modo que uma suíte reprovada impede a publicação de uma nova
+versão da API, como demonstrado no Capítulo~\ref{sec:deploy-and-ci}.
+
+O aplicativo móvel, por sua vez, permanece inteiramente fora da integração
+contínua: embora disponha de comandos de \textit{lint} (\texttt{expo lint})
+e de verificação de tipos (\texttt{tsc --noEmit}), ambos são executados apenas
+manualmente, e a suíte \textit{end-to-end} não é disparada por nenhum fluxo.
+
+\section{Cobertura e Lacunas}\label{sec:test-lacunas}
+
+Em síntese, a verificação automatizada do Nexo cobre a superfície HTTP
+e a persistência da API, a sua lógica pura e os seus trabalhadores em segundo
+plano; a verificação do aplicativo móvel restringe-se a uma jornada manual de
+fumaça, limitada à plataforma para a qual o produto é de fato distribuído.
+Ficam fora de qualquer cobertura automatizada a lógica do \textit{frontend}
+abaixo do nível \textit{end-to-end}, a maquinaria da fila em si (agendamento,
+repetições e ordenação) e os caminhos de erro do aplicativo.
+
+A cobertura de código é medida, mas não imposta: o relatório orienta o trabalho
+sem jamais reprovar uma \textit{build} ou \textit{deploy}. Persistem, ainda,
+dois riscos de descolamento conhecidos --- os dados de teste escritos à mão em
+cada arquivo e a cópia espelhada dos tipos da API mantida no \textit{frontend}
+podem divergir da fonte de verdade sem que nenhum teste acuse. Essas lacunas
+são assumidas de forma explícita e refletem uma escolha de priorização, e não
+uma garantia de ausência de defeitos. Como a própria definição de teste
+antecipava, uma suíte ``verde'' demonstra apenas que os casos exercitados se
+comportam como esperado.
