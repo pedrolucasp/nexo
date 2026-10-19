@@ -7,12 +7,18 @@ export function mergeAndSort(cards: HistoryCard[][]): HistoryCard[] {
   .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 }
 
-export function groupByDate(cards: HistoryCard[]): Record<string, HistoryCard[]> {
+export function groupByDate(
+  cards: HistoryCard[],
+  now: Date = new Date(),
+): Record<string, HistoryCard[]> {
   return cards.reduce<Record<string, HistoryCard[]>>((acc, card) => {
-    const key = new Date(card.timestamp).toLocaleDateString('pt-BR', {
+    const date = new Date(card.timestamp);
+    const includeYear = date.getFullYear() !== now.getFullYear();
+    const key = date.toLocaleDateString('pt-BR', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
+      ...(includeYear ? { year: 'numeric' } : {}),
     });
 
     (acc[key] ??= []).push(card)

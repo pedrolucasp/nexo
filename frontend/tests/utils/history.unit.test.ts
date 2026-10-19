@@ -41,7 +41,10 @@ describe("groupByDate", () => {
     const evening = card("s1", "sleep", new Date(2025, 0, 15, 20, 0));
     const previous = card("t1", "trigger", new Date(2025, 0, 14, 12, 0));
 
-    const grouped = groupByDate([morning, evening, previous]);
+    const grouped = groupByDate(
+      [morning, evening, previous],
+      new Date(2025, 5, 1),
+    );
 
     expect(Object.keys(grouped)).toEqual([
       "quarta-feira, 15 de janeiro",
@@ -53,6 +56,18 @@ describe("groupByDate", () => {
     ]);
     expect(grouped["terça-feira, 14 de janeiro"].map((c) => c.id)).toEqual([
       "t1",
+    ]);
+  });
+
+  it("adds the year only for cards outside the current year", () => {
+    const thisYear = card("this", "mood", new Date(2026, 0, 15, 9, 0));
+    const lastYear = card("last", "mood", new Date(2025, 0, 15, 9, 0));
+
+    const grouped = groupByDate([thisYear, lastYear], new Date(2026, 5, 1));
+
+    expect(Object.keys(grouped)).toEqual([
+      "quinta-feira, 15 de janeiro",
+      "quarta-feira, 15 de janeiro de 2025",
     ]);
   });
 
