@@ -1,7 +1,73 @@
-\chapter{Conclusão}
+\chapter{Considerações Finais}
 
-\lipsum[1-2]
+Este trabalho partiu de uma lacuna identificada na interseção entre o
+autorregistro de humor e o cotidiano de pessoas com Transtorno Afetivo Bipolar:
+embora o \textit{Ecological Momentary Assessment} ofereça um caminho
+consolidado para reduzir os vieses de memória e aproximar o registro do momento
+em que a experiência ocorre, os aplicativos disponíveis frequentemente
+fragmentam sono, humor, gatilhos e ações de cuidado em telas isoladas,
+restringem a exportação dos dados e operam como soluções fechadas, com pouca
+transparência sobre o uso das informações sensíveis que coletam.
 
-\section{Melhorias futuras}
+Para responder a essa lacuna, foi desenvolvido o Nexo, uma aplicação móvel de
+código aberto que integra esses registros em uma única linha do tempo e produz
+indicadores destinados a auxiliar o usuário na percepção de padrões ao longo do
+tempo. O sistema é composto por uma API REST e por um aplicativo móvel, ambos
+escritos em TypeScript, com processamento de indicadores em segundo plano,
+implantação automatizada e uma suíte de testes concentrada na API, conforme
+descrito ao longo dos capítulos anteriores.
 
-\lipsum[1-2]
+A pesquisa aplicada de natureza exploratória orientou as decisões de projeto. O
+questionário aplicado a 48 potenciais usuários, apresentado no
+Capítulo~\ref{chapter:methodologies}, e a análise de aplicativos similares
+forneceram os insumos que sustentaram a definição dos requisitos, da identidade
+visual e da organização do sistema, bem como a adoção do modelo incremental com
+princípios ágeis e \textit{Kanban} no desenvolvimento.
+
+Diante disso, conclui-se que os objetivos propostos foram alcançados: o
+protótipo funcional entregue demonstra a viabilidade de uma solução de
+autorregistro alinhada aos princípios de privacidade, transparência e autonomia
+do usuário sobre os próprios dados.
+
+O trabalho, contudo, apresenta limitações que devem ser explicitadas. A
+verificação do aplicativo móvel permanece majoritariamente manual e com uma
+suíte \textit{end-to-end} fina, de modo que regressões na interface podem ser
+incorporadas ao código sem que nenhum teste acuse, como discutido no
+Capítulo~\ref{cap:testes}. A amostra do questionário é, por conveniência, e não
+pode ser generalizada; além disso, o protótipo ainda não foi submetido a uma
+avaliação com usuários reais, o que deixa em aberto a confirmação de que as
+escolhas de interface e de tom atendem, de fato, ao público-alvo. Por fim,
+algumas decisões sensíveis --- como o rótulo de estabilidade apresentado nos
+indicadores --- permanecem deliberadamente estáticas, aguardando embasamento
+específico antes de se tornarem funcionais.
+
+Os resultados obtidos abrem caminhos de continuidade que, na leitura deste
+trabalho, merecem prioridade. O primeiro é a reaplicação da pesquisa junto a
+usuários potenciais: repetir o questionário descrito no
+Capítulo~\ref{chapter:methodologies} --- ou uma versão adaptada dele --- em uma
+nova amostra, desta vez acompanhada de um teste do protótipo funcional,
+permitiria comparar as expectativas registradas em 2025 com a percepção
+concreta do aplicativo, avaliando usabilidade, tom de comunicação e interesse
+pelas funcionalidades, e capturando ajustes antes de uma eventual implantação
+mais ampla.
+
+Uma segunda frente é a criptografia no lado do cliente para anotações e
+registros de humor, de modo que o conteúdo sensível seja cifrado antes de
+deixar o dispositivo e permaneça inacessível mesmo ao operador do servidor.
+Essa medida responde diretamente à preocupação com privacidade registrada no
+questionário, em que a maioria dos respondentes atribuiu nota máxima à
+importância do controle sobre os próprios dados, e reforça o cenário de
+auto-hospedagem descrito no Capítulo~\ref{sec:deploy-and-ci}.
+
+A terceira frente é ampliar a testabilidade do aplicativo móvel, hoje
+verificado de forma predominantemente manual (Seção~\ref{sec:test-mobile}).
+Extrair a lógica de apresentação e de agregação em camadas testáveis, adotar
+testes de componente e integrar \textit{lint}, verificação de tipos e a suíte
+\textit{end-to-end} ao fluxo de integração contínua reduziria o risco de
+regressões invisíveis e aproximaria o nível de confiança do \textit{frontend}
+àquele já alcançado pela API.
+
+Além dessas, as lacunas apontadas na Seção~\ref{sec:test-gaps} --- como a
+maquinaria da fila fora do alcance dos testes e a duplicação manual dos dados
+de teste --- sugerem ajustes de menor porte, porém de impacto relevante na
+manutenibilidade do projeto a médio prazo.
