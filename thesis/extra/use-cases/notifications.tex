@@ -1,0 +1,92 @@
+% UC10 --- Visualizar Notificações
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC10 --- Visualizar Notificações \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite ao usuário consultar os lembretes recebidos pelo sistema, como
+lembretes diários de registro de humor, lembretes de medicamento e alertas de
+indicadores. \\
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+O usuário visualiza as notificações e pode ser direcionado à tela
+correspondente. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Acessa a tela de notificações. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta as notificações do usuário, das mais recentes para as
+mais antigas. \\
+\cline{1-2}
+
+3. Toca em uma notificação. & \\
+\cline{1-2}
+
+&
+4. O sistema encaminha para a tela correspondente à notificação. \\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições\\e validações}}
+&
+Somente as notificações do usuário autenticado são exibidas. \\
+\cline{2-2}
+
+&
+Notificações fora do período de validade são exibidas como expiradas. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 --- Notificação recebida via push}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Toca na notificação recebida no dispositivo. & \\
+\cline{1-2}
+
+&
+2. O sistema abre a tela de origem da notificação. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 --- Nenhuma notificação}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Acessa a tela de notificações. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que não há notificações. \\
+\hline
+
+\end{longtable}

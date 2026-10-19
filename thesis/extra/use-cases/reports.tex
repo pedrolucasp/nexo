@@ -1,0 +1,108 @@
+% UC11 --- Gerar Relatório
+
+\begin{longtable}{| p{.40\textwidth} | p{.50\textwidth} |}
+\hline
+
+\textbf{Nome do Caso de Uso} &
+UC11 --- Gerar Relatório \\
+\hline
+
+\textbf{Ator Principal} &
+Usuário \\
+\hline
+
+\textbf{Atores Secundários} &
+--- \\
+\hline
+
+\textbf{Resumo} &
+Permite ao usuário gerar um documento em PDF consolidando os registros de
+humor de um período escolhido, para compartilhar com um terapeuta ou guardar
+para acompanhamento próprio. \\
+\hline
+
+\textbf{Pré-condições} &
+Usuário autenticado. \\
+\hline
+
+\textbf{Pós-condições} &
+O usuário obtém um PDF com os registros de humor do período. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Principal}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Acessa a tela de relatório. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta os períodos disponíveis (7, 30 e 90 dias, além do
+período personalizado). \\
+\cline{1-2}
+
+3. Seleciona um período. & \\
+\cline{1-2}
+
+4. Toca em ``Gerar relatório''. & \\
+\cline{1-2}
+
+&
+5. O sistema gera o PDF com os registros de humor do período. \\
+\cline{1-2}
+
+&
+6. O sistema abre o compartilhamento do documento. \\
+\hline
+
+\multirow{2}{.40\textwidth}{\textbf{Restrições\\e validações}}
+&
+O período deve ter início anterior ao fim. \\
+\cline{2-2}
+
+&
+O intervalo não pode exceder 90 dias. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário Alternativo A1 --- Período personalizado}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Seleciona ``Personalizado''. & \\
+\cline{1-2}
+
+&
+2. O sistema apresenta os campos de data inicial e final. \\
+\cline{1-2}
+
+3. Informa as datas desejadas. & \\
+\cline{1-2}
+
+4. Toca em ``Gerar relatório''. & \\
+\cline{1-2}
+
+&
+5. O sistema gera o PDF com os registros do período informado. \\
+\hline
+
+\multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 --- Falha na geração}}\\
+\hline
+
+\textbf{Ações do Ator} &
+\textbf{Resposta do Sistema} \\
+\hline
+
+1. Toca em ``Gerar relatório''. & \\
+\cline{1-2}
+
+&
+2. O sistema informa que não foi possível gerar o relatório. \\
+\hline
+
+\end{longtable}

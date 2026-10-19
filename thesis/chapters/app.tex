@@ -359,11 +359,12 @@ estresse, ansiedade e quais componentes do humor o usuário identifica com mais
 presença. A manutenção do humor no sistema contempla tanto a criação quanto a
 edição e a exclusão desses registros.
 
-O caso de uso ``Registrar Intervenção'' contempla o cadastro de estratégias,
-práticas ou sugestões que o usuário utiliza ou deseja utilizar para lidar com
-oscilações emocionais. As ações de cuidados, podem incluir desde ações
-práticas, como caminhar, até técnicas cognitivas ou expressivas, como
-atividades criativas, medicamentos utilizados ou atendimentos com profissionais
+O caso de uso ``Manter ação de cuidado'' contempla o cadastro e a manutenção de
+estratégias, práticas ou sugestões que o usuário utiliza ou deseja utilizar
+para lidar com oscilações emocionais. As ações de cuidado podem incluir desde
+ações práticas, como caminhar, até técnicas cognitivas ou expressivas, como
+atividades criativas, medicamentos e tomadas de medicamento, além de
+atendimentos com profissionais
 da área. Essa funcionalidade contribui para que o sistema sirva como uma
 central e colabora para construir um registro mais criterioso, visto que o
 usuário reconstrói o que aconteceu naquele determinado ponto no tempo.
@@ -383,13 +384,24 @@ breve. Esse elemento corrobora com a construção de indicadores, tanto da médi
 de sono, quanto também de estimular uma correlação entre sono e os níveis de
 energia informado em cada humor.
 
-Por fim, o caso de uso ``Vincular humor a um gatilho'' permite ao usuário
+O caso de uso ``Vincular humor a um gatilho'' permite ao usuário
 estabelecer vínculos entre os gatilhos identificados e os registros de humor,
 formando um mapeamento de ação e reação, ou causa e reação. Essa associação
 pode servir tanto para consulta futura quanto para, em um futuro, gerar
 indicadores. Ao conectar eventos e suas respostas, a funcionalidade fortalece o
 papel do sistema como uma ferramenta alinhada com o EMA, gerando assim uma
 narrativa emocional diária.
+
+O caso de uso ``Visualizar Notificações'' permite ao usuário consultar os
+lembretes recebidos, como lembretes diários de registro de humor, lembretes de
+medicamento e alertas de indicadores. Ao tocar em uma notificação, o usuário é
+direcionado à tela correspondente.
+
+Por fim, o caso de uso ``Gerar relatório'' permite ao usuário gerar um
+documento em PDF consolidando os registros de humor do período escolhido, com a
+distribuição dos humores, os componentes de humor mais frequentes e os níveis
+de ansiedade, estresse e energia, para compartilhar com um terapeuta ou
+acompanhar a própria evolução.
 
 \subsection{Diagrama de Classes}
 
@@ -409,7 +421,7 @@ Figura~\ref{fig:classes}, pode-se observar os elementos descritos acima:
 \centering
 \caption{Diagrama de Classes}
 \label{fig:classes}
-\includegraphics[width=0.9\linewidth]{classes-v2.png}
+\includegraphics[width=0.9\linewidth]{classes.png}
 \source{Elaborado pelo autor (2026)}
 \end{figure}
 
@@ -419,30 +431,25 @@ desejado, considerando que é o único ator. Existe também a separação entre 
 entidades como Gatilho, Humor, muito embora exista uma relação de associação
 entre elas, através da classe denominada ``VinculoGatilhoHumor'', visto que ela
 seria representada por uma tabela auxiliar ligando as duas, aliadas do atributo
-de estimativa de impacto.
+de impacto percebido.
 
-Necessário destacar aqui que a classe ``AcaoCuidado'' é uma classe abstrata,
-representando uma generalização. Essa classe serve como um guarda-chuva para
-representar diversos tipos de ações que o usuário pode realizar. O papel dela
-aqui se torna guardar elementos em comum entre esses tipos de ações, seus
-respectivos vínculos com gatilhos ou humores. A partir dela então, traça-se
-outras sub-classes que contem um melhor contexto sobre a atividade em si, por
-exemplo, na classe ``Consulta'' guarda-se dados como a duração da consulta, que
-tipo de consulta, e potenciais anotações ou comentários em cima da mesma.
-Entretanto, uma classe ``RegistroMedicamento'' não precisa guardar mais do que
-a relação com qual medicamento e quando ele foi de fato tomado.
+Necessário destacar aqui que a classe ``AcaoCuidado'' representa uma
+generalização. Essa classe serve como um guarda-chuva para representar
+diversos tipos de ações que o usuário pode realizar. O papel dela aqui se
+torna guardar elementos em comum entre esses tipos de ações, seus respectivos
+vínculos com gatilhos ou humores. A partir dela então, traçam-se três
+subclasses que contêm um melhor contexto
+sobre a atividade em si: na ``Consulta'' guarda-se dados como a duração e o tipo
+da consulta, além de potenciais anotações; na ``Atividade'', o tipo e a duração
+da atividade; e na ``RegistroMedicamento'', a relação com o medicamento e quando
+ele foi de fato tomado. O medicamento em si é representado pela classe
+``RegimeMedicamentoso'', que guarda nome, dosagem, periodicidade e horários. Por
+fim, a classe ``Notificações'' representa os lembretes enviados ao usuário,
+diários, de medicamento ou de indicadores, vinculando-se a ele e, quando
+aplicável, a um regime medicamentoso.
 
 Por fim, existe diversos tipos de enumeradores que delimitam exatamente quais
 tipos de valores podem ser escolhidos. Esses enumeradores servem também como um
 mecanismo de validação, sendo movidos tanto para o próprio banco de dados e
 posteriormente sendo implementados como forma de controle em outros pontos como
 na API.
-
-Ressalta-se, contudo, que o diagrama não contempla, padrões arquiteturais
-complementares, como \textit{Service Layer}, \textit{Repository} e \textit{Data
-Access Object (DAO)}, os quais são incorporados na etapa de implementação para
-garantir uma separação adequada de responsabilidades e facilitar a manutenção e
-escalabilidade do código, conforme as propostas de \citet{Fowler_2013} e
-\citet{Gamma:2011}. Esses elementos são importantes, considerando os princípios
-de legibilidade, simplicidade e responsabilidades, muitos organizados por
-\citet{Martin_2012}, asseguram que o código produzido seja limpo e sustentável.
