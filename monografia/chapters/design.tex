@@ -27,8 +27,15 @@ conteúdo.
 
 \section{Identidade visual}
 
-% TODO: Flesh a intro here
-\lipsum[1-2]
+Identidade visual, neste trabalho, designa o conjunto de decisões gráficas que
+conferem ao aplicativo uma aparência reconhecível e consistente: o nome e o
+logotipo, a hierarquia visual, a paleta de cores e a tipografia. Esses
+elementos constituem a primeira camada de comunicação entre o sistema e o
+usuário e materializam as preferências identificadas na etapa de pesquisa ---
+em especial a opção por uma linguagem sóbria e acolhedora. Como apontam os
+princípios universais de design, a consistência e o reconhecimento desses
+elementos reduzem a carga de interpretação e tornam a interface mais previsível
+\cite{Lidwell_2011}. As subseções seguintes percorrem cada uma dessas decisões.
 
 \subsection{Nome e Logotipo}
 
@@ -169,8 +176,37 @@ contemporâneos de design de interfaces.
 
 \section{Estrutura}
 
-% TODO: Flesh a intro here as well
-\lipsum[1-2]
+Por estrutura entende-se a organização das telas e da navegação do aplicativo:
+o que cada tela contém, em que ordem os elementos se apresentam e como o
+usuário se desloca entre elas. No Nexo, essa organização repousa sobre dois
+alicerces: uma navegação por abas que divide o sistema em cinco áreas ---
+Histórico, Jornada, Novo, Ações de Cuidado e Configurações --- e a composição
+das telas por cartões reutilizáveis, descritos na seção anterior. Esta seção
+apresenta como essa estrutura foi planejada e mapeada antes da aplicação da
+identidade visual definitiva.
+
+\subsection{Organização da navegação}
+
+A navegação do Nexo é organizada em cinco áreas, acessíveis por uma barra de
+abas inferior: ``Histórico'', ``Jornada'', ``Novo'', ``Ações de Cuidado'' e
+``Configurações''. A divisão separa as superfícies de consulta --- Histórico e
+Jornada, que apresentam registros e indicadores já consolidados --- do ponto de
+entrada rápido para o registro de humor, a aba Novo. As ações de cuidado, por
+reunirem modalidades distintas (medicamentos, consultas e atividades), são
+agrupadas em um único hub, evitando que cada tipo ocupe uma entrada própria na
+navegação.
+
+\subsection{Consolidação de registros no Histórico}
+
+Uma decisão estrutural relevante foi consolidar os registros em uma única linha
+do tempo. Em vez de listas separadas para humor, sono, gatilhos e ações de
+cuidado, a tela de Histórico combina os quatro tipos em uma sequência
+cronológica única, agrupada por dia, por meio de um componente de mapeamento
+que normaliza cada recurso em um formato comum, descrito no Capítulo
+\ref{sec:history-analysis}. A motivação decorre da própria metodologia EMA:
+aproximar visualmente eventos relacionados --- como um gatilho registrado
+minutos antes de um humor --- permite reconstruir uma narrativa do dia em vez
+de fragmentar o contexto em telas distintas.
 
 \subsection{Wireframes}
 
