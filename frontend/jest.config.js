@@ -28,6 +28,7 @@ module.exports = {
     'stores/**/*.{ts,tsx}',
     'constants/**/*.{ts,tsx}',
     'components/**/*.{ts,tsx}',
+    'context/**/*.{ts,tsx}',
   ],
   coverageReporters: ['text', 'html'],
 };
