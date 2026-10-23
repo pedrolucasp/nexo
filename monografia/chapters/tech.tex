@@ -159,7 +159,10 @@ alta velocidade, empregado tanto para cache quanto como \textit{broker} de
 mensagens para o sistema de filas, cujo suas filas são gerenciadas com a
 biblioteca BullMQ para lidar com os \textit{background jobs} enviados. Os
 mesmos são responsáveis por processar os indicadores semanais e diários
-descritos nos capítulos anteriores.
+descritos nos capítulos anteriores. Além disso, o Nexo mantém uma pilha de
+observabilidade dedicada à coleta e à consulta dos \textit{logs} de seus
+contêineres, descrita a seguir, que complementa a persistência dos dados de
+domínio.
 
 \subsection{PostgreSQL}
 
@@ -185,6 +188,132 @@ de forma versionada e sincronizada com o código da aplicação, reduzindo a
 chance de divergência entre a estrutura do banco e as entidades manipuladas
 pelo back-end, além de prover checagem de tipos em tempo de compilação para
 as consultas realizadas.
+
+\subsection{VictoriaLogs e Vector}
+
+Observabilidade, no contexto de sistemas distribuídos, designa a capacidade de
+compreender o estado interno de uma aplicação a partir dos sinais que ela emite
+--- em especial \textit{logs}, métricas e rastros ---, o que permite investigar
+problemas sem conhecer previamente sua causa \citep{opentelemetry:2026}. Entre
+esses sinais, os \textit{logs} são o mais direto: registros datados de eventos
+emitidos pelos serviços. No Nexo, eles cobrem tanto as requisições HTTP
+recebidas pela API quanto as tarefas processadas pelos \textit{workers} de
+segundo plano. A pilha descrita a seguir é dedicada a coletá-los, armazená-los
+e torná-los consultáveis.
+
+VictoriaLogs é um sistema de armazenamento e consulta de \textit{logs}
+desenvolvido pela VictoriaMetrics, projetado para operar como um único binário,
+sem dependências externas, e com consumo reduzido de memória e de disco
+\citep{victorialogs:2026}. Vector é um agente de coleta e roteamento de
+observabilidade, também distribuído como um único binário, capaz de ler
+\textit{logs} de diversas fontes --- arquivos, soquetes ou a API do Docker ---,
+transformá-los por meio de uma linguagem própria de remapeamento e enviá-los a
+diferentes destinos \citep{vector:2026}.
+
+A motivação para adotar essa combinação, em vez de uma pilha bastante difundida
+como Elasticsearch, Logstash e Kibana (ELK) \citep{elastic:2026}, é
+proporcional ao porte do projeto: o ELK exige múltiplos serviços, e o
+Elasticsearch é executado sobre a máquina virtual Java; segundo a documentação
+do VictoriaLogs, soluções como ele demandam consideravelmente mais memória e
+disco que o VictoriaLogs \citep{victorialogs:2026}. Em um servidor único que
+também hospeda a API, o PostgreSQL e o Valkey, esse custo seria
+desproporcional. VictoriaLogs e Vector cumprem o mesmo papel com dois
+contêineres menores/mais leves.
+
+No Nexo, o fluxo de \textit{logs} começa na própria API, que utiliza a
+biblioteca Pino para emitir um objeto JSON por linha, em vez de texto livre
+\citep{pino:2026}. Como o \textit{logger} só aplica formatação legível quando a
+saída é um terminal interativo, no contêiner --- onde a saída é um
+\textit{pipe} --- os registros permanecem em JSON de linha única. O
+\textit{middleware} \texttt{pino-http} associa a cada requisição um
+identificador (\texttt{X-Request-Id}), convenção difundida para correlacionar
+os registros de uma mesma requisição \citep{heroku:2026}, reaproveitando o
+cabeçalho homônimo quando enviado pelo cliente ou gerando um UUID.
+
+O Vector lê essas linhas por meio da API do Docker, cujo \textit{socket} é
+montado no contêiner como volume somente leitura, e aplica uma transformação de
+remapeamento que tenta interpretar cada mensagem como JSON; quando a
+interpretação é bem-sucedida, os campos do objeto são elevados ao nível
+superior do evento, o que torna consultáveis atributos como o nível do
+\textit{log}, a mensagem e o identificador do usuário. O resultado é enviado em
+lote ao \textit{endpoint} de ingestão compatível com a API do Elasticsearch do
+VictoriaLogs, conforme o Código~\ref{lst:vector-pipeline}.
+
+\begin{lstlisting}[caption={Configuração do \textit{pipeline} de \textit{logs} no \texttt{vector.yaml}}, label={lst:vector-pipeline}]
+sources:
+  docker:
+    type: docker_logs
+
+transforms:
+  parse_json_message:
+    type: remap
+    inputs: [docker]
+    source: |
+      parsed, err = parse_json(.message)
+      if err == null && is_object(parsed) {
+        . = merge(., parsed) ?? .
+      }
+
+sinks:
+  victorialogs:
+    type: elasticsearch
+    inputs: [parse_json_message]
+    endpoints: ["http://victorialogs:9428/logs/insert/elasticsearch/"]
+    mode: bulk
+    api_version: v8
+    compression: gzip
+    request:
+      headers:
+        VL-Stream-Fields: label.com.docker.compose.service
+        VL-Time-Field: timestamp
+        VL-Msg-Field: msg,message,_msg
+\end{lstlisting}
+
+\sourcecode{Elaborado pelo autor (2026)}
+
+O contêiner do VictoriaLogs é configurado com um período de retenção de 14
+dias e um teto de 2\,GiB de uso de disco; ambos são limites deliberados para
+que o armazenamento de \textit{logs} não comprometa o disco da máquina de
+produção, descartando os registros mais antigos quando qualquer um deles é
+atingido. O serviço escuta apenas na interface de \textit{loopback}
+(\texttt{127.0.0.1:9428}), e não em todas as interfaces, de modo que a
+interface de consulta não é exposta diretamente à internet. O acesso externo
+se dá pelo Nginx, que publica o caminho \texttt{/logs/} sob autenticação
+básica HTTP, com credenciais definidas no \textit{vault} criptografado do
+Ansible; a diretiva \texttt{-http.pathPrefix=/logs} no VictoriaLogs garante
+que os caminhos gerados pela interface correspondam ao prefixo publicado
+pelo \textit{proxy}, conforme ilustrado na
+Figura~\ref{fig:screenshot-victorialogs}.
+
+\begin{figure}[H]
+\centering
+\caption{Interface de consulta do VictoriaLogs com os \textit{logs} da API}
+\label{fig:screenshot-victorialogs}
+\includegraphics[width=\linewidth]{screenshot-victorialogs.png}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+Na captura, a consulta está restrita ao fluxo de \textit{logs} da API, por
+meio do filtro \texttt{label.com.docker.compose.service="api"}. À esquerda,
+o painel de \textit{stream fields} lista os fluxos disponíveis e o volume de
+registros de cada um; na parte superior, um histograma mostra a distribuição
+desses registros em intervalos de 30 minutos ao longo do período
+selecionado; e, na parte inferior, a tabela exibe as entradas
+correspondentes, com data, nível e mensagem, incluindo desde a sequência de
+inicialização da API e de seus \textit{workers} até o envio de notificações.
+Consultas como essa permitem, por exemplo, correlacionar as linhas de uma
+mesma requisição a partir do seu \texttt{X-Request-Id}.
+
+Como o Vector não substitui o \textit{driver} de \textit{logs} do Docker, o
+\textit{driver} \texttt{json-file} permanece ativo, porém limitado por
+rotação (10\,MB por arquivo, 3 arquivos por contêiner), de modo que
+\texttt{docker compose logs} continue funcionando sem que o disco do servidor
+cresça indefinidamente. As versões das imagens, a retenção e os limites de
+disco são declarados como variáveis no inventário do Ansible e renderizados
+no arquivo de ambiente, e o arquivo de configuração do Vector é copiado para
+o diretório da aplicação pela \textit{role} \texttt{app}, o que mantém a
+pilha de observabilidade reproduzível pelo mesmo processo de provisionamento
+descrito na Seção~\ref{sec:deploy-and-ci}.
 
 \section{Implantação e Desenvolvimento Contínuo} \label{sec:deploy-and-ci}
 
