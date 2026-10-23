@@ -54,7 +54,7 @@ sono e energia, e notar quais situações tendem a se repetir.
 nexo/
 ├── api         # servidor Express + Prisma
 ├── frontend    # app React Native (Expo)
-├── monografia  # a tese, em LaTeX
+├── thesis      # a tese, em LaTeX
 ├── docs        # decisões (ADRs) e notas de trabalho
 ├── ansible     # provisionamento do servidor
 └── docker-compose.yml
@@ -70,7 +70,7 @@ nexo/
 - **Infra** — Docker Compose no dia a dia e Ansible para o servidor;
   GitHub Actions cuida do deploy da API e da publicação da tese.
 
-![Arquitetura e elementos do sistema](monografia/images/arch-v2.png)
+![Arquitetura e elementos do sistema](thesis/images/arch-v2.png)
 
 ## Como rodar localmente
 
@@ -114,7 +114,7 @@ cd frontend && npm run test:e2e
 
 ## Monografia
 
-A tese que acompanha o projeto vive em `monografia/`, escrita em LaTeX.
+A tese que acompanha o projeto vive em `thesis/`, escrita em LaTeX.
 A edição costuma ser feita no Vim com o **vimtex**, que cuida de
 compilar enquanto se escreve.
 

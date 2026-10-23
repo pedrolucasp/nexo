@@ -25,8 +25,9 @@ server {
     add_header X-Clacks-Overhead "GNU Terry Pratchett";
     add_header Permissions-Policy interest-cohort=();
 
+    # Public URL stays /monografia; the artifact was renamed with the source dir
     location = /monografia {
-        alias {{ nginx_static_root }}/monografia.pdf;
+        alias {{ nginx_static_root }}/thesis.pdf;
         add_header Content-Type application/pdf;
         add_header Content-Disposition "inline";
     }

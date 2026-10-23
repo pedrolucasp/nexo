@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'monografia/**'
+      - 'thesis/**'
       - '.github/workflows/thesis.yml'
  
 jobs:
@@ -20,8 +20,8 @@ jobs:
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: monografia.tex
-          working_directory: monografia
+          root_file: thesis.tex
+          working_directory: thesis
  
       - name: Upload final PDF
         uses: appleboy/scp-action@v0.1.7
@@ -29,6 +29,6 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          source: monografia/monografia.pdf
+          source: thesis/thesis.pdf
           target: /srv/static/
           strip_components: 1

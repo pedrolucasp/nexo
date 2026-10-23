@@ -1,4 +1,4 @@
-JOBNAME	= monografia
+JOBNAME	= thesis
 LATEX		= pdflatex
 BIBTEX	 = bibtex
 FLAGS		= -interaction=nonstopmode -halt-on-error
