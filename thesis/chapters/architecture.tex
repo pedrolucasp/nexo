@@ -12,6 +12,32 @@ conectam e conversam entre si.
 \source{Elaborado pelo autor (2026)}
 \end{figure}
 
+Três planos compõem a arquitetura representada na Figura~\ref{fig:arch} ---
+cliente, \textit{back-end} e infraestrutura ---, lidos da esquerda para a
+direita. O aplicativo móvel comunica-se exclusivamente com a API por
+HTTPS/JSON e mantém no dispositivo apenas o estado efêmero da interface e um
+cache local dos dados já consultados; validação, autorização e regras de
+domínio ficam concentradas no servidor. A API é a única porta de entrada para
+os dados: acessa o PostgreSQL por meio do Prisma, grava avatares no
+armazenamento de objetos e delega o trabalho que não precisa bloquear a
+resposta ao usuário a filas no Valkey, consumidas por \textit{workers}
+independentes. São esses \textit{workers} que enviam e-mails e notificações e
+recalculam os indicadores, mantendo a API livre de tarefas de longa duração.
+
+Essa organização tem como principal força a separação de responsabilidades em
+torno de um contrato único: como o cliente só conhece a API, mudanças internas
+no banco, nas filas ou nos serviços externos não o afetam, e a autenticação por
+JWT permite que a API permaneça sem estado, reiniciável sem perda de sessão. O
+desacoplamento por filas também torna o registro de um humor uma operação
+curta, independente do custo de recalcular indicadores ou disparar
+notificações. Em contrapartida, a topologia é deliberadamente monolítica e
+vertical: todos os componentes são implantados em um único servidor por meio do
+Docker Compose, sem replicação horizontal da API ou separação física entre
+banco, fila e \textit{workers}. Isso significa que o trabalho pesado dos
+\textit{workers} compete por CPU e memória com o atendimento das requisições, e
+que a disponibilidade do conjunto equivale à disponibilidade desse único
+\textit{host}. Trata-se de um \textit{trade-off} coerente com o porte do
+projeto, mas que delimita seu principal limite de escalabilidade.
 
 Este capítulo detalha o funcionamento de algumas funcionalidades
 desenvolvidas durante o projeto. Apenas algumas funcionalidades mais

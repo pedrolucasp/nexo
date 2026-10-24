@@ -113,9 +113,16 @@ export type CreateMoodInput = z.infer<typeof CreateMoodSchema>;
 
 \sourcecode{Elaborado pelo autor (2026)}
 
-Aqui, é possível observar alguns elementos, como a extração direta dos
-\textit{enums} mapeados pelo Prisma, citado anteriormente nas linhas 1--5. Em
-seguida, são criados os \textit{schemas} de validação: um valida os componentes
+Aqui, é possível observar alguns elementos. O primeiro é o uso de
+\texttt{z.nativeEnum} para reaproveitar diretamente os \textit{enums}
+declarados no esquema do Prisma (linhas 1--5), em vez de repetir as listas de
+valores no código. Como esses enums são a mesma fonte de verdade que o banco
+impõe, a validação aceita exatamente o conjunto de valores que pode ser
+persistido, e qualquer valor fora dele é rejeitado na borda da API antes de
+chegar à camada de persistência. Esse padrão se repete de forma extensiva nos
+demais esquemas, que reutilizam enumerações de gatilho, tipo de ação de
+cuidado, periodicidade de medicamento e tipo de indicador. Em seguida, são
+criados os \textit{schemas} de validação: um valida os componentes
 de humor de forma aninhada dentro do objeto recebido, e o outro valida os dados
 do próprio registro --- os níveis aceitos de ansiedade, estresse e energia; a
 conversão do campo \texttt{moment} para um objeto de data a partir da entrada
@@ -188,6 +195,47 @@ de forma versionada e sincronizada com o código da aplicação, reduzindo a
 chance de divergência entre a estrutura do banco e as entidades manipuladas
 pelo back-end, além de prover checagem de tipos em tempo de compilação para
 as consultas realizadas.
+
+O Código~\ref{lst:prisma-schema} reproduz um trecho representativo desse
+esquema, o modelo de registro de humor. Além dos campos e de seus tipos, o
+trecho evidencia a convenção de nomenclatura adotada: modelos e campos seguem o
+padrão do TypeScript --- \texttt{PascalCase} para tipos e \texttt{camelCase}
+para propriedades ---, enquanto as tabelas e colunas no PostgreSQL usam
+\texttt{snake\_case}, com nomes de tabela no plural. Os atributos
+\texttt{@map} e \texttt{@@map} fazem essa tradução, de modo que o código da
+aplicação manipula \texttt{selectedMood} ou \texttt{anxietyLevel} sem que os
+nomes físicos das colunas vazem para a API. O trecho também mostra a declaração
+explícita das relações e o uso de enumerações para valores fechados. Esses
+\textit{enums} não se limitam ao código: na migração, o Prisma os materializa
+como tipos enumerados nativos do PostgreSQL, de modo que a restrição aos
+valores previstos é imposta também pelo banco. O esquema declara enumerações
+para humores, componentes e intensidade, categorias de gatilho, tipos de ação
+de cuidado e periodicidade de medicamentos, entre outras. A partir desse único
+arquivo, o Prisma gera o cliente tipado consumido pela API e as migrações SQL
+versionadas no repositório, de modo que alterações no modelo passam por revisão
+e são aplicadas de forma reproduzível em qualquer ambiente.
+
+\begin{lstlisting}[caption={Trecho do esquema Prisma para o registro de humor}, label={lst:prisma-schema}]
+model Mood {
+  id           Int            @id @default(autoincrement())
+  annotation   String?        @db.Text
+  moment       DateTime       @default(now())
+  selectedMood BaseMoodOption @default(GOOD) @map("selected_mood")
+  anxietyLevel Int            @map("anxiety_level")
+  stressLevel  Int            @map("stress_level")
+  energyLevel  Int            @map("energy_level")
+  userId       Int            @map("user_id")
+  user         User           @relation(fields: [userId], references: [id])
+
+  moodComponents MoodComponent[]
+  triggerLinks   TriggerMoodLink[]
+  careActions    CareAction[]
+
+  @@map("moods")
+}
+\end{lstlisting}
+
+\sourcecode{Elaborado pelo autor (2026)}
 
 \subsection{VictoriaLogs e Vector}
 
@@ -392,10 +440,11 @@ nativa do GitHub, que permite a definição de fluxos de trabalho automatizados
 --- disparados por eventos como \textit{push} ou \textit{pull request} ---
 descritos de forma declarativa em arquivos YAML \citep{githubactions:2026}.
 
-No projeto, o fluxo de trabalho de CI/CD é dividido em três etapas
-sequenciais e dependentes entre si. A primeira etapa (\texttt{test}) sobe um
-serviço efêmero de PostgreSQL e executa a suíte de testes automatizados da
-API a cada \textit{push} ou \textit{pull request} que modifique arquivos do
+No projeto, o fluxo de trabalho de CI/CD é dividido em três etapas sequenciais
+e dependentes entre si, como visto na
+Figura~\ref{fig:screenshot-github-actions}. A primeira etapa (\texttt{test})
+sobe um serviço efêmero de PostgreSQL e executa a suíte de testes automatizados
+da API a cada \textit{push} ou \textit{pull request} que modifique arquivos do
 diretório da API.
 
 A segunda etapa (\texttt{build-and-push}), condicionada ao
@@ -411,6 +460,14 @@ realiza a atualização do serviço da API por meio da atualização da tag da
 imagem no arquivo \texttt{.env} e da recriação do contêiner correspondente
 via Docker Compose.
 
+\begin{figure}[H]
+\centering
+\caption{Github Actions rodando os testes e realizando \textit{deploy}}
+\label{fig:screenshot-github-actions}
+\includegraphics[width=\linewidth]{screenshot-github-actions.png}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
 Esse processo elimina a necessidade de intervenção manual para a maior
 parte do ciclo de implantação, restringindo a ação humana direta sobre o
 servidor de produção a situações excepcionais, o que reduz a superfície de
@@ -425,18 +482,116 @@ mais servidores, dispensando a necessidade de um agente instalado na máquina
 gerenciada, uma vez que se comunica com ela via SSH \citep{ansible:2026}.
 
 No escopo deste projeto, o papel do Ansible é ortogonal ao do Docker Compose
-e ao do GitHub Actions: enquanto estes automatizam, respectivamente, a
-orquestração dos serviços da aplicação e o ciclo de integração e entrega
-contínuas, o Ansible é responsável exclusivamente pelo provisionamento
-inicial do servidor de produção, executado uma única vez --- ou sempre que um
-novo servidor precisar ser provisionado. Esse provisionamento consiste em:
-(1) criar o usuário dedicado à aplicação; (2) adicionar a chave pública SSH
-utilizada pelo GitHub Actions para se autenticar no servidor durante a etapa
-de implantação; (3) criar os diretórios da aplicação com as permissões
-adequadas; e (4) instalar o Docker no servidor. A cópia do arquivo de
-variáveis de ambiente de produção (\texttt{.env.production}), por conter
-segredos e credenciais sensíveis, é deliberadamente mantida como uma etapa
-manual, não automatizada, e não é versionada no repositório.
+e ao do GitHub Actions: enquanto estes automatizam, respectivamente,
+a orquestração dos serviços da aplicação e o ciclo de integração e entrega
+contínuas, o Ansible é responsável exclusivamente pelo provisionamento inicial
+do servidor de produção, executado uma única vez --- ou sempre que um novo
+servidor precisar ser provisionado. Esse provisionamento consiste em: (1) criar
+o usuário dedicado à aplicação; (2) adicionar a chave pública SSH utilizada
+pelo GitHub Actions para se autenticar no servidor durante a etapa de
+implantação; (3) criar os diretórios da aplicação com as permissões adequadas;
+e (4) instalar o Docker no servidor. A cópia do arquivo de variáveis de
+ambiente de produção (\texttt{.env.production}), por conter segredos
+e credenciais sensíveis, é deliberadamente mantida como uma etapa manual, não
+automatizada, e não é versionada no repositório. O Ansible, trabalha de forma
+modularizada, portanto permite que possamos organizar as tarefas a serem feitas
+em ``perfis'', da qual podem ter uma serie de tarefas para serem executadas em
+sequencia, \textit{templates}, etc. O Código~\ref{lst:ansible-setup} demonstra
+a lista de tarefas iniciais, em qual máquinas devem rodar, através da diretiva
+\textit{hosts}, o método de troca de permissão (através da diretiva
+\textit{become}) e tarefas posteriores.
+
+\begin{lstlisting}[caption={Provisionamento utilizando um \textit{playbook} de configuração}, label={lst:ansible-setup}]
+- name: Base host setup
+  hosts: vps
+  become: yes
+  become_method: doas
+
+  roles:
+    - bootstrap
+    - docker
+    - appuser
+
+  post_tasks:
+    - name: Confirm deploy user can reach Docker
+      ansible.builtin.command: docker info
+      become_user: "{{ deploy_user }}"
+      changed_when: false
+      register: docker_check
+
+    - name: Show Docker status
+      ansible.builtin.debug:
+        msg: "Docker is reachable by {{ deploy_user }}"
+      when: docker_check.rc == 0
+\end{lstlisting}
+
+\sourcecode{Elaborado pelo autor (2026)}
+
+O Código~\ref{lst:ansible-setup-tasks} mostra o conteúdo de um desses papéis, o
+de Docker. Cada tarefa descreve um estado desejado --- o pacote instalado, o
+diretório existente com determinada permissão, o arquivo de configuração do
+\textit{daemon} com seu conteúdo, o serviço habilitado --- em vez de uma
+sequência de comandos imperativos. É essa forma declarativa que permite ao
+Ansible inspecionar o estado atual e agir apenas sobre o que diverge; a tarefa
+de rotação de \textit{logs}, por exemplo, vale para todos os contêineres, e não
+apenas para aqueles que declaram um bloco de \textit{logging} próprio no arquivo
+de composição.
+
+\begin{lstlisting}[caption={Tarefas de provisionamento utilizando um \textit{playbook}}, label={lst:ansible-setup-tasks}]
+- name: Install Docker and Compose plugin
+  community.general.apk:
+    name:
+      - docker
+      - docker-cli-compose
+    state: present
+
+- name: Ensure /etc/docker exists
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# Bound every container's json-file logs globally, not just the ones that set
+# an explicit logging block in a compose file
+- name: Configure the Docker daemon log rotation
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "log-driver": "json-file",
+        "log-opts": { "max-size": "10m", "max-file": "3" }
+      }
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart docker
+
+- name: Enable Docker service
+  ansible.builtin.service:
+    name: docker
+    enabled: yes
+    state: started
+
+\end{lstlisting}
+
+\sourcecode{Elaborado pelo autor (2026)}
+
+Automatizar esse provisionamento com o Ansible, em vez de repetir os mesmos
+passos manualmente por SSH, não economiza apenas comandos: troca um
+procedimento implícito, que existiria apenas na memória de quem o executa, por
+um artefato versionado e revisável. Por ser idempotente, o \textit{playbook}
+pode ser reexecutado após uma falha parcial ou sobre um servidor já configurado
+sem duplicar usuários, diretórios ou configurações; como consequência, o
+processo se torna auditável e reproduzível por terceiros.
+Em um projeto de código aberto, é isso que permite que outra pessoa reconstrua
+a infraestrutura do zero --- ou a audite antes de confiar nela --- sem acesso
+prévio ao servidor de produção, além de reduzir a chance de erro humano e de
+divergência entre ambientes. A divisão em papéis (\textit{roles}) reforça essa
+propriedade ao separar responsabilidades --- usuário da aplicação, Docker e
+configuração base ---, de modo que cada parte pode ser alterada e testada
+isoladamente.
 
 A separação entre o provisionamento inicial (\textit{Ansible}), a orquestração de
 execução (\textit{Docker Compose}) e a automação do ciclo de
