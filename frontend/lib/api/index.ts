@@ -7,6 +7,7 @@ export type {
   // Mood
   MoodEntry,
   CreateMoodEntryPayload,
+  UpdateMoodEntryPayload,
   MoodComponentPayload,
   // User
   UserUpdateResponse,

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -9,16 +8,16 @@ import {
 import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 
-import { Card, SubtleInfoCard } from "@/components/ui/Cards";
+import { Card } from "@/components/ui/Cards";
 import { NoLinkMessage } from "@/components/misc/NoLinkMessage";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { Col, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Typography, Colors, Spacing } from "@/constants/theme";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { getTriggerCategory } from "@/constants/trigger-categories";
 import { getCareActionMeta } from "@/constants/care-action-categories";
+import { RecordManagement } from "@/components/ui/RecordManagement";
 import {
   useTrigger,
   useDeleteTrigger,
@@ -43,36 +42,6 @@ export default function TriggerDetailsScreen() {
   const patchCareAction = usePatchCareAction();
   const { pendingId, triggerLinked } = useCareActionLinkStore();
   const hasPendingCareAction = !!pendingId && !triggerLinked;
-  const [minutesLeft, setMinutesLeft] = useState(0);
-  const [canDelete, setCanDelete] = useState(false);
-
-  useEffect(() => {
-    const updateTimer = () => {
-      if (!trigger?.createdAt) return;
-      const createdAt = new Date(trigger.createdAt);
-
-      const msSinceCreation = Date.now() - createdAt.getTime();
-      const deletionWindowMs = 5 * 60 * 1000;
-
-      const newCanDelete = msSinceCreation < deletionWindowMs;
-      const newMinutesLeft = Math.max(
-        0,
-        Math.ceil((deletionWindowMs - msSinceCreation) / 60000),
-      );
-
-      setCanDelete(newCanDelete);
-      setMinutesLeft(newMinutesLeft);
-    };
-
-    if (isLoading) return;
-
-    updateTimer(); // Set initial values
-
-    const interval = setInterval(updateTimer, 1000);
-
-    return () => clearInterval(interval);
-  }, [trigger, isLoading]);
-
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -106,14 +75,6 @@ export default function TriggerDetailsScreen() {
       id: String(careActionId),
       data: { triggerId: trigger.id },
     });
-  };
-
-  const deleteButtonMsg = () => {
-    const msg = "Excluir Registro";
-    const timeLeftStr = `(Disp. por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`;
-    const suffix = canDelete ? timeLeftStr : "(Expirado)";
-
-    return `${msg} ${suffix}`;
   };
 
   const hasAnyLinks = (
@@ -266,32 +227,12 @@ export default function TriggerDetailsScreen() {
           </Section>
         )}
 
-        {/* Delete */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
-          <Button
-            variant="outline"
-            loading={false}
-            disabled={!canDelete}
-            onPress={() => router.push(`/triggers/edit/${trigger.id}`)}
-            title="Editar Registro"
-          />
-          <Button
-            variant="danger"
-            loading={deleteTrigger.isPending}
-            disabled={!canDelete || deleteTrigger.isPending}
-            onPress={handleDelete}
-            title={deleteButtonMsg()}
-          />
-
-          <SubtleInfoCard
-            style={styles.deleteInfo}
-            text={`
-              A exclusão de registros é permitida apenas nos primeiros 5 minutos
-              após o envio para garantir a integridade do histórico emocional.
-              `}
-          />
-        </View>
+        <RecordManagement
+          createdAt={trigger.createdAt}
+          onEdit={() => router.push(`/triggers/edit/${trigger.id}`)}
+          onDelete={handleDelete}
+          deleting={deleteTrigger.isPending}
+        />
       </ScrollView>
     </>
   );

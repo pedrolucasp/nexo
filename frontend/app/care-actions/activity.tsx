@@ -17,16 +17,13 @@ import { Spacing, Typography, Colors, Shadows } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useCreateCareAction } from "@/hooks";
 import { ActivityType } from "@/lib/api";
+import { ACTIVITY_TYPE_OPTIONS } from "@/constants/care-action-categories";
 
-const ACTIVITY_TYPES: CategoryOption<ActivityType>[] = [
-  { label: 'Caminhada', value: 'WALK', icon: <Ionicons name="walk-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Yoga', value: 'YOGA', icon: <Ionicons name="body-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Academia', value: 'GYM', icon: <Ionicons name="barbell-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Meditação', value: 'MEDITATION', icon: <Ionicons name="leaf-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Social', value: 'SOCIAL', icon: <Ionicons name="people-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Criativo', value: 'CREATIVE', icon: <Ionicons name="color-palette-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Outro', value: 'OTHER', icon: <Ionicons name="help-outline" size={16} color={Colors.light.tint} /> },
-];
+const ACTIVITY_TYPES: CategoryOption<ActivityType>[] =
+  ACTIVITY_TYPE_OPTIONS.map(({ icon, ...option }) => ({
+    ...option,
+    icon: <Ionicons name={icon} size={16} color={Colors.light.tint} />,
+  }));
 
 export default function ActivityCareAction() {
   const [activityType, setActivityType] = useState<ActivityType>('WALK');

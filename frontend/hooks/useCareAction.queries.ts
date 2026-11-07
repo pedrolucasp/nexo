@@ -64,6 +64,10 @@ export const usePatchCareAction = () => {
     onSuccess: (_result, { id }) => {
       queryClient.invalidateQueries({ queryKey: careActionKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
+
+      // A link change also lands on the mood or trigger that now points back
+      queryClient.invalidateQueries({ queryKey: ["mood-entries"] });
+      queryClient.invalidateQueries({ queryKey: ["triggers"] });
     },
   });
 };

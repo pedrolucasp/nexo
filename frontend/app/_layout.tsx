@@ -82,6 +82,16 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="entry/edit/[id]"
+              options={{ title: "Editar Registro" }}
+            />
+
+            <Stack.Screen
+              name="care-actions/edit/[id]"
+              options={{ title: "Editar Registro" }}
+            />
+
+            <Stack.Screen
               name="triggers/new"
               options={{
                 title: "Registrar Gatilho",

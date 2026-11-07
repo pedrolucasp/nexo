@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -9,8 +8,7 @@ import {
 import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { Card, SubtleInfoCard } from "@/components/ui/Cards";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Cards";
 import { Col, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Badge } from "@/components/ui/Badge";
@@ -26,6 +24,7 @@ import { getTriggerCategory } from "@/constants/trigger-categories";
 import { getMood } from "@/constants/moods";
 import { formatMoment } from "@/lib/utils/time";
 import type { CareAction } from "@/lib/api";
+import { RecordManagement } from "@/components/ui/RecordManagement";
 
 // TODO: Generalize these into a single source of truth, similar to other
 // constants
@@ -135,29 +134,6 @@ export default function CareActionDetailScreen() {
   const { data: trigger } = useTrigger(triggerId);
   const { data: mood } = useMoodEntry(moodId);
 
-  const [minutesLeft, setMinutesLeft] = useState(0);
-  const [canDelete, setCanDelete] = useState(false);
-
-  useEffect(() => {
-    const updateTimer = () => {
-      const createdAt = careAction?.createdAt;
-      if (!createdAt) return;
-
-      const msSinceCreation = Date.now() - new Date(createdAt).getTime();
-      const windowMs = 5 * 60 * 1000;
-
-      setCanDelete(msSinceCreation < windowMs);
-      setMinutesLeft(
-        Math.max(0, Math.ceil((windowMs - msSinceCreation) / 60000)),
-      );
-    };
-
-    if (isLoading) return;
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
-  }, [careAction, isLoading]);
-
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -178,14 +154,6 @@ export default function CareActionDetailScreen() {
   }
 
   const header = resolveHeader(careAction);
-
-  // TODO: Componentize this as well? It's on each of the details screens
-  const deleteButtonMsg = () => {
-    const suffix = canDelete
-      ? `(Disp. por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`
-      : "(Expirado)";
-    return `Excluir Registro ${suffix}`;
-  };
 
   const handleDelete = async () => {
     await deleteCareAction.mutateAsync(String(careAction.id));
@@ -383,24 +351,12 @@ export default function CareActionDetailScreen() {
           </Section>
         )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
-          <Button
-            variant="danger"
-            loading={deleteCareAction.isPending}
-            disabled={!canDelete || deleteCareAction.isPending}
-            onPress={handleDelete}
-            title={deleteButtonMsg()}
-          />
-
-          <SubtleInfoCard
-            style={styles.deleteInfo}
-            text={`
-              A exclusão de registros é permitida apenas nos primeiros 5 minutos
-              após o envio para garantir a integridade do histórico emocional.
-            `}
-          />
-        </View>
+        <RecordManagement
+          createdAt={careAction.createdAt}
+          onEdit={() => router.push(`/care-actions/edit/${careAction.id}`)}
+          onDelete={handleDelete}
+          deleting={deleteCareAction.isPending}
+        />
       </ScrollView>
     </>
   );

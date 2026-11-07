@@ -19,16 +19,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { useCreateCareAction } from "@/hooks";
 import { AppointmentType } from "@/lib/api";
 import { useCareActionLinkStore } from "@/stores";
+import {
+  APPOINTMENT_TYPE_OPTIONS,
+  APPOINTMENT_DURATIONS,
+} from "@/constants/care-action-categories";
 
-const APPOINTMENT_TYPES: CategoryOption<AppointmentType>[] = [
-  { label: 'Analista', value: 'ANALYST', icon: <Ionicons name="person-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Psiquiatra', value: 'PSYCHIATRIST', icon: <Ionicons name="medical-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Clínico', value: 'GP', icon: <Ionicons name="fitness-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Nutricionista', value: 'NUTRITIONIST', icon: <Ionicons name="nutrition-outline" size={16} color={Colors.light.tint} /> },
-  { label: 'Outro', value: 'OTHER', icon: <Ionicons name="help-outline" size={16} color={Colors.light.tint} /> },
-];
-
-const DURATIONS = [30, 45, 50, 60];
+const APPOINTMENT_TYPES: CategoryOption<AppointmentType>[] =
+  APPOINTMENT_TYPE_OPTIONS.map(({ icon, ...option }) => ({
+    ...option,
+    icon: <Ionicons name={icon} size={16} color={Colors.light.tint} />,
+  }));
 
 export default function AppointmentCareAction() {
   const [appointmentType, setAppointmentType] = useState<AppointmentType>('ANALYST');
@@ -74,7 +74,7 @@ export default function AppointmentCareAction() {
           <Section>
             <SectionHeader title="Duração (min)" />
             <View style={styles.durationRow}>
-              {DURATIONS.map((d) => (
+              {APPOINTMENT_DURATIONS.map((d) => (
                 <TouchableOpacity
                   key={d}
                   style={[

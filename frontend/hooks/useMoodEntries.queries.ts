@@ -5,7 +5,7 @@ import {
   useInfiniteQuery,
 } from "@tanstack/react-query";
 
-import { apiClient, MoodEntry, CreateMoodEntryPayload } from "@/lib/api";
+import { apiClient, MoodEntry, CreateMoodEntryPayload, UpdateMoodEntryPayload } from "@/lib/api";
 import { insightKeys } from "./useInsights.queries";
 
 export const moodKeys = {
@@ -98,6 +98,40 @@ export const useCreateMoodEntry = () => {
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
 
       // Invalidate insights, so we can force refresh
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("DAILY_ENERGY"),
+        });
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("MOOD_TREND"),
+        });
+        queryClient.invalidateQueries({
+          queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION"),
+        });
+      }, 2000);
+    },
+  });
+};
+
+// Update a mood entry
+// Components are replaced wholesale on the server, so the detail and every list
+// have to come back from the API rather than being patched in place.
+export const useUpdateMoodEntry = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateMoodEntryPayload }) =>
+      apiClient.updateMoodEntry(id, payload),
+
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: moodKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
+
+      // Trigger detail embeds the full mood in its links, so an edited mood
+      // would otherwise keep its old levels there. The literal prefix is used
+      // instead of triggerKeys to avoid a circular import between the hooks.
+      queryClient.invalidateQueries({ queryKey: ["triggers"] });
+
       setTimeout(() => {
         queryClient.invalidateQueries({
           queryKey: insightKeys.byType("DAILY_ENERGY"),

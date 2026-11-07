@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -9,12 +8,12 @@ import {
 import { Text } from "@/components/ui/Text";
 import { useLocalSearchParams, router, Stack } from "expo-router";
 
-import { Card, SubtleInfoCard } from "@/components/ui/Cards";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Cards";
 import { Col, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Colors, Spacing } from "@/constants/theme";
 import { MaterialIcons } from "@expo/vector-icons";
+import { RecordManagement } from "@/components/ui/RecordManagement";
 import {
   useSleepRecord,
   useDeleteSleepRecord,
@@ -25,36 +24,6 @@ export default function SleepDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: sleepRecord, isLoading, isError } = useSleepRecord(id);
   const deleteSleepRecord = useDeleteSleepRecord();
-  const [minutesLeft, setMinutesLeft] = useState(0);
-  const [canDelete, setCanDelete] = useState(false);
-
-  useEffect(() => {
-    const updateTimer = () => {
-      const createdAt = sleepRecord?.createdAt;
-      if (!createdAt) return;
-
-      const msSinceCreation = Date.now() - new Date(createdAt).getTime();
-      const deletionWindowMs = 5 * 60 * 1000;
-
-      const newCanDelete = msSinceCreation < deletionWindowMs;
-      const newMinutesLeft = Math.max(
-        0,
-        Math.ceil((deletionWindowMs - msSinceCreation) / 60000),
-      );
-
-      setCanDelete(newCanDelete);
-      setMinutesLeft(newMinutesLeft);
-    };
-
-    if (isLoading) return;
-
-    updateTimer(); // Set initial values
-
-    const interval = setInterval(updateTimer, 1000);
-
-    return () => clearInterval(interval);
-  }, [sleepRecord, isLoading]);
-
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -78,14 +47,6 @@ export default function SleepDetailScreen() {
     await deleteSleepRecord.mutateAsync(String(sleepRecord.id));
 
     router.back();
-  };
-
-  const deleteButtonMsg = () => {
-    const msg = "Excluir Registro";
-    const timeLeftStr = `(Disp. por ${minutesLeft < 1 ? "<1" : minutesLeft}:00)`;
-    const suffix = canDelete ? timeLeftStr : "(Expirado)";
-
-    return `${msg} ${suffix}`;
   };
 
   return (
@@ -128,33 +89,12 @@ export default function SleepDetailScreen() {
           </Section>
         )}
 
-        {/* Delete */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
-          <Button
-            variant="outline"
-            loading={false}
-            disabled={!canDelete}
-            onPress={() => router.push(`/sleep/edit/${sleepRecord.id}`)}
-            title="Editar Registro"
-          />
-
-          <Button
-            variant="danger"
-            loading={deleteSleepRecord.isPending}
-            disabled={!canDelete || deleteSleepRecord.isPending}
-            onPress={handleDelete}
-            title={deleteButtonMsg()}
-          />
-
-          <SubtleInfoCard
-            style={styles.deleteInfo}
-            text={`
-              A exclusão de registros é permitida apenas nos primeiros 5 minutos
-              após o envio para garantir a integridade do histórico emocional.
-              `}
-          />
-        </View>
+        <RecordManagement
+          createdAt={sleepRecord.createdAt}
+          onEdit={() => router.push(`/sleep/edit/${sleepRecord.id}`)}
+          onDelete={handleDelete}
+          deleting={deleteSleepRecord.isPending}
+        />
       </ScrollView>
     </>
   );

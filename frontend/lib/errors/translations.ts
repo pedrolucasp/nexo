@@ -9,6 +9,7 @@ const MESSAGE_MAP: Record<string, string> = {
   'Internal server error': 'Erro interno. Tente novamente.',
   'Invalid or expired token': 'Link inválido ou expirado',
   'No token provided': 'Sessão inválida',
+  'Editing window has expired': 'O período para alteração deste registro foi encerrado',
   'periodEnd must be after periodStart and range ≤ 90 days': 'O período deve ter entre 1 e 90 dias',
 };
 

@@ -1,3 +1,9 @@
+export {
+  useEditingWindow,
+  editingWindowAt,
+  EDITING_WINDOW_MS,
+} from "@/hooks/useEditingWindow";
+
 // Legacy shit from react native
 export { useThemeColor } from "@/hooks/use-theme-color";
 
@@ -10,6 +16,7 @@ export {
   useMoodEntriesInfinite,
   useMoodEntry,
   useCreateMoodEntry,
+  useUpdateMoodEntry,
   useDeleteMoodEntry,
 } from "@/hooks/useMoodEntries.queries";
 

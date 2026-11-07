@@ -112,6 +112,9 @@ export interface CreateMoodEntryPayload {
   moodComponents: MoodComponentPayload[];
 }
 
+export interface UpdateMoodEntryPayload
+  extends Partial<CreateMoodEntryPayload> {}
+
 export interface MoodComponent {
   id: number;
   component: string;
@@ -409,8 +412,18 @@ export type CreateCareActionPayload =
 
 export interface CareActionResponse { careAction: CareAction; }
 export interface PatchCareActionPayload {
+  moment?: Date;
   triggerId?: number;
   moodId?: number;
+  appointment?: {
+    type?: AppointmentType;
+    duration?: number;
+    note?: string;
+  };
+  activity?: {
+    type?: ActivityType;
+    duration?: number;
+  };
 }
 export interface MedicineRegimenResponse { regimen: MedicineRegimen; }
 

@@ -20,6 +20,7 @@ import {
   ResetPasswordResponse,
   UserUpdatePayload,
   CreateMoodEntryPayload,
+  UpdateMoodEntryPayload,
   SleepRecordPayload,
   UpdateSleepRecordPayload,
   MoodEntry,
@@ -265,6 +266,16 @@ class ApiClient {
 
   async getMoodEntry(id: string): Promise<MoodEntry> {
     return this.request(`/moods/${id}`);
+  }
+
+  async updateMoodEntry(
+    id: string,
+    mood: UpdateMoodEntryPayload,
+  ): Promise<MoodEntryResponse> {
+    return this.request(`/moods/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ mood }),
+    });
   }
 
   async deleteMoodEntry(id: string): Promise<void> {

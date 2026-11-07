@@ -1,5 +1,5 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import type { CareAction } from "@/lib/api/types";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import type { AppointmentType, ActivityType, CareAction } from "@/lib/api/types";
 
 export type CareActionMeta = {
   icon: keyof typeof MaterialIcons.glyphMap;
@@ -7,6 +7,37 @@ export type CareActionMeta = {
   iconBackground: string;
   label: string;
 };
+
+// Selectable options, shared by the creation screens and the edit screen so
+// the two never drift apart. Icons are Ionicons names, resolved by the screen.
+export const APPOINTMENT_TYPE_OPTIONS: {
+  label: string;
+  value: AppointmentType;
+  icon: keyof typeof Ionicons.glyphMap;
+}[] = [
+  { label: "Analista", value: "ANALYST", icon: "person-outline" },
+  { label: "Psiquiatra", value: "PSYCHIATRIST", icon: "medical-outline" },
+  { label: "Clínico", value: "GP", icon: "fitness-outline" },
+  { label: "Nutricionista", value: "NUTRITIONIST", icon: "nutrition-outline" },
+  { label: "Fisioterapeuta", value: "PHYSIOTHERAPIST", icon: "body-outline" },
+  { label: "Outro", value: "OTHER", icon: "help-outline" },
+];
+
+export const ACTIVITY_TYPE_OPTIONS: {
+  label: string;
+  value: ActivityType;
+  icon: keyof typeof Ionicons.glyphMap;
+}[] = [
+  { label: "Caminhada", value: "WALK", icon: "walk-outline" },
+  { label: "Yoga", value: "YOGA", icon: "body-outline" },
+  { label: "Academia", value: "GYM", icon: "barbell-outline" },
+  { label: "Meditação", value: "MEDITATION", icon: "leaf-outline" },
+  { label: "Social", value: "SOCIAL", icon: "people-outline" },
+  { label: "Criativo", value: "CREATIVE", icon: "color-palette-outline" },
+  { label: "Outro", value: "OTHER", icon: "help-outline" },
+];
+
+export const APPOINTMENT_DURATIONS = [30, 45, 50, 60];
 
 export const ACTIVITY_CATEGORIES: Record<string, CareActionMeta> = {
   WALK:       { icon: "directions-walk",  color: "#059669", iconBackground: "#D1FAE5", label: "Caminhada" },
