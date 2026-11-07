@@ -2,6 +2,7 @@ import { prisma } from '@app/lib/prisma';
 import { Trigger } from '@prisma/client';
 
 import { CreateTriggerInput, UpdateTriggerInput } from '@app/schemas';
+import { assertWithinEditingWindow } from '@app/lib/editingWindow';
 import { rollingPeriod } from "@app/lib/queue/processors/insights/utils";
 import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
@@ -63,7 +64,15 @@ export const getTriggersByUserId = async (
 
 export const destroyTriggerById = async (
   userId: number, id: number
-): Promise<Trigger> => {
+): Promise<Trigger | null> => {
+  const existing = await prisma.trigger.findUnique({
+    where: { userId, id }
+  })
+
+  if (!existing) return null
+
+  assertWithinEditingWindow(existing.createdAt)
+
   const trigger = await prisma.trigger.delete({
     where: {
       id,
@@ -98,7 +107,15 @@ export const getTriggerById = async (userId: number, id: number) => {
 
 export const updateTriggerById = async (
   userId: number, id: number, input: UpdateTriggerInput
-): Promise<Trigger> => {
+): Promise<Trigger | null> => {
+  const existing = await prisma.trigger.findUnique({
+    where: { userId, id }
+  })
+
+  if (!existing) return null
+
+  assertWithinEditingWindow(existing.createdAt)
+
   const trigger = await prisma.trigger.update({
     where: {
       id,

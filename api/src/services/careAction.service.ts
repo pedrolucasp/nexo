@@ -2,6 +2,8 @@ import { prisma } from '@app/lib/prisma';
 import { paginate } from '@app/utils/calc';
 import { CareAction, CareActionType } from '@prisma/client';
 import { CreateCareActionInput, PatchCareActionInput } from '@app/schemas';
+import { assertWithinEditingWindow } from '@app/lib/editingWindow';
+import { InvalidCareActionSubtypeError } from '@app/lib/errors/editingErrors';
 import { syncMedicineReminderJobs } from '@app/services/medicineReminder.sync';
 
 const careActionIncludes = {
@@ -64,20 +66,94 @@ export const getCareActionById = async (userId: number, id: number) => {
 export const destroyCareActionById = async (
   userId: number,
   id: number,
-): Promise<CareAction> => {
+): Promise<CareAction | null> => {
+  const existing = await prisma.careAction.findUnique({ where: { id, userId } });
+
+  if (!existing) return null;
+
+  assertWithinEditingWindow(existing.createdAt);
+
   return prisma.careAction.delete({
     where: { id, userId },
   });
 };
+
+// Link changes are not record edits: the app deliberately offers linking
+// after a care action is created, and the post-appointment flow can run past
+// the window. Only content changes are gated.
+const isContentChange = (data: PatchCareActionInput): boolean =>
+  data.moment !== undefined ||
+  data.appointment !== undefined ||
+  data.activity !== undefined;
 
 export const patchCareActionById = async (
   userId: number,
   id: number,
   data: PatchCareActionInput,
 ) => {
+  const existing = await prisma.careAction.findUnique({
+    where: { id, userId },
+    include: careActionIncludes,
+  });
+
+  if (!existing) return null;
+
+  if (isContentChange(data)) {
+    assertWithinEditingWindow(existing.createdAt);
+  }
+
+  const { appointment, activity, ...fields } = data;
+
+  if (appointment) {
+    if (existing.type !== CareActionType.APPOINTMENT) {
+      throw new InvalidCareActionSubtypeError("appointment");
+    }
+
+    // A care action created without its subtype payload has no row yet, so the
+    // upsert's create branch needs the required columns spelled out.
+    if (!existing.appointment && !appointment.type) {
+      throw new InvalidCareActionSubtypeError("appointment");
+    }
+  }
+
+  if (activity) {
+    if (existing.type !== CareActionType.ACTIVITY) {
+      throw new InvalidCareActionSubtypeError("activity");
+    }
+
+    if (!existing.activity && !activity.type) {
+      throw new InvalidCareActionSubtypeError("activity");
+    }
+  }
+
   return prisma.careAction.update({
     where: { id, userId },
-    data,
+    data: {
+      ...fields,
+      ...(appointment && {
+        appointment: {
+          upsert: {
+            create: {
+              type: appointment.type!,
+              duration: appointment.duration!,
+              note: appointment.note,
+            },
+            update: appointment,
+          },
+        },
+      }),
+      ...(activity && {
+        activity: {
+          upsert: {
+            create: {
+              type: activity.type!,
+              duration: activity.duration,
+            },
+            update: activity,
+          },
+        },
+      }),
+    },
     include: careActionIncludes,
   });
 };

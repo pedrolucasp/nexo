@@ -59,6 +59,9 @@ model Mood {
   triggerLinks   TriggerMoodLink[]
   careActions    CareAction[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@map("moods")
 }
 

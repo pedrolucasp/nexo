@@ -66,7 +66,11 @@ export const CareActionsController = {
 
   destroy: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      await destroyCareActionById(req.userId!, Number(req.params.id));
+      const result = await destroyCareActionById(req.userId!, Number(req.params.id));
+
+      if (!result) {
+        return res.status(404).json({ errors: 'Care action was not found' });
+      }
 
       return res.status(200).json({});
     } catch (err) {

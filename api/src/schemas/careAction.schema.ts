@@ -44,8 +44,26 @@ export const CreateCareActionSchema = z.object({
 export type CreateCareActionInput = z.infer<typeof CreateCareActionSchema>;
 
 export const PatchCareActionSchema = z.object({
+  moment: z.coerce.date().optional(),
   triggerId: z.number().int().positive().optional(),
   moodId: z.number().int().positive().optional(),
+
+  // Subtype content. Type itself is immutable: changing it is really
+  // remove-and-recreate, since a different subtype row is involved.
+  appointment: z
+    .object({
+      type: z.nativeEnum(AppointmentType).optional(),
+      duration: z.number().int().positive().optional(),
+      note: z.string().optional(),
+    })
+    .optional(),
+
+  activity: z
+    .object({
+      type: z.nativeEnum(ActivityType).optional(),
+      duration: z.number().int().positive().optional(),
+    })
+    .optional(),
 }).strict();
 
 export type PatchCareActionInput = z.infer<typeof PatchCareActionSchema>;

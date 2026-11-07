@@ -21,3 +21,7 @@ export const CreateMoodSchema = z.object({
 });
 
 export type CreateMoodInput = z.infer<typeof CreateMoodSchema>;
+
+export const UpdateMoodSchema = CreateMoodSchema.partial();
+
+export type UpdateMoodInput = z.infer<typeof UpdateMoodSchema>;

@@ -8,7 +8,8 @@ import { InsightJobName } from "@app/lib/queue/types";
 import { getQueue } from "@app/lib/queue";
 import { paginate } from "@app/utils/calc";
 
-import { CreateMoodInput } from "@app/schemas";
+import { CreateMoodInput, UpdateMoodInput } from "@app/schemas";
+import { assertWithinEditingWindow } from "@app/lib/editingWindow";
 
 export const createMood = async (
   userId: number,
@@ -105,13 +106,52 @@ export const getMoodById = async (id: number) => {
 export const destroyMoodById = async (
   userId: number,
   id: number,
-): Promise<Mood> => {
+): Promise<Mood | null> => {
+  const mood = await prisma.mood.findUnique({ where: { id, userId } });
+
+  if (!mood) return null;
+
+  assertWithinEditingWindow(mood.createdAt);
+
   return await prisma.mood.delete({
     where: {
       id,
       userId,
     },
   });
+};
+
+export const updateMoodById = async (
+  userId: number,
+  id: number,
+  input: UpdateMoodInput,
+): Promise<Mood | null> => {
+  const existing = await prisma.mood.findUnique({ where: { id, userId } });
+
+  if (!existing) return null;
+
+  assertWithinEditingWindow(existing.createdAt);
+
+  const { moodComponents, ...moodData } = input;
+
+  const mood = await prisma.mood.update({
+    where: { id, userId },
+    data: {
+      ...moodData,
+      // The payload carries no component ids, so the set is replaced whole
+      ...(moodComponents && {
+        moodComponents: {
+          deleteMany: {},
+          create: moodComponents,
+        },
+      }),
+    },
+    include: { moodComponents: true },
+  });
+
+  void enqueueOnDemandInsights(userId);
+
+  return mood;
 };
 
 export const enqueueOnDemandInsights = async (

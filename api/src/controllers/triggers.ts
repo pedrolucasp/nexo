@@ -57,6 +57,10 @@ export const TriggersController = {
     try {
       const result = await destroyTriggerById(req.userId!, Number(req.params.id!));
 
+      if (!result) {
+        return res.status(404).json({ errors: 'Trigger was not found' });
+      }
+
       return res.status(200).json({})
     } catch (err) {
       next(err);
@@ -82,6 +86,10 @@ export const TriggersController = {
       }
 
       const trigger = await updateTriggerById(req.userId!, Number(req.params.id!), parsed.data);
+
+      if (!trigger) {
+        return res.status(404).json({ errors: 'Trigger was not found' });
+      }
 
       return res.status(200).json({ trigger });
     } catch (err) {

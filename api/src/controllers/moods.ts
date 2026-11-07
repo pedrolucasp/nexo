@@ -4,11 +4,13 @@ import {
   createMood,
   getMoodsByUserId,
   getMoodById,
-  destroyMoodById
+  destroyMoodById,
+  updateMoodById
 } from '@app/services/mood.service';
 
 import {
-  CreateMoodSchema
+  CreateMoodSchema,
+  UpdateMoodSchema
 } from '@app/schemas'
 import { formatValidationError } from '@app/lib/errors/validationError'
 
@@ -66,7 +68,35 @@ export const MoodsController = {
     try {
       const result = await destroyMoodById(req.userId!, Number(req.params.id!));
 
+      if (!result) {
+        return res.status(404).json({ errors: "Mood was not found" });
+      }
+
       return res.status(200).json({})
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  update: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    try {
+      const parsed = UpdateMoodSchema.safeParse(req.body.mood);
+
+      if (!parsed.success) {
+        return res.status(400).json(formatValidationError(parsed.error!));
+      }
+
+      const mood = await updateMoodById(
+        req.userId!,
+        Number(req.params.id!),
+        parsed.data,
+      );
+
+      if (!mood) {
+        return res.status(404).json({ errors: "Mood was not found" });
+      }
+
+      return res.status(200).json({ mood });
     } catch (err) {
       next(err);
     }

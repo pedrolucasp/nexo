@@ -2,6 +2,7 @@ import { prisma } from '@app/lib/prisma';
 import { SleepRecord } from '@prisma/client';
 
 import { CreateSleepRecordInput, UpdateSleepRecordInput } from '@app/schemas';
+import { assertWithinEditingWindow } from '@app/lib/editingWindow';
 import {
   rollingPeriod,
   appDayPeriod,
@@ -66,7 +67,15 @@ export const getSleepRecordsByUserId = async (
 
 export const destroySleepRecordById = async (
   userId: number, id: number
-): Promise<SleepRecord> => {
+): Promise<SleepRecord | null> => {
+  const existing = await prisma.sleepRecord.findUnique({
+    where: { userId, id }
+  })
+
+  if (!existing) return null
+
+  assertWithinEditingWindow(existing.createdAt)
+
   return await prisma.sleepRecord.delete({
     where: {
       id,
@@ -83,7 +92,15 @@ export const getSleepRecordById = async (userId: number, id: number): Promise<Sl
 
 export const updateSleepRecordById = async (
   userId: number, id: number, input: UpdateSleepRecordInput
-): Promise<SleepRecord> => {
+): Promise<SleepRecord | null> => {
+  const existing = await prisma.sleepRecord.findUnique({
+    where: { userId, id }
+  })
+
+  if (!existing) return null
+
+  assertWithinEditingWindow(existing.createdAt)
+
   const sleepRecord = await prisma.sleepRecord.update({
     where: {
       id,

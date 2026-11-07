@@ -1,9 +1,13 @@
 export {
   CreateMoodSchema,
   MoodComponentSchema,
+  UpdateMoodSchema,
 } from "@app/schemas/mood.schema";
 
-export type { CreateMoodInput } from "@app/schemas/mood.schema";
+export type {
+  CreateMoodInput,
+  UpdateMoodInput,
+} from "@app/schemas/mood.schema";
 
 export {
   CreateUserSchema,

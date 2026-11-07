@@ -62,6 +62,10 @@ export const SleepRecordsController = {
     try {
       const result = await destroySleepRecordById(req.userId!, Number(req.params.id!));
 
+      if (!result) {
+        return res.status(404).json({ errors: 'Sleep record was not found' });
+      }
+
       return res.status(200).json({})
     } catch (err) {
       next(err);
@@ -77,6 +81,10 @@ export const SleepRecordsController = {
       }
 
       const sleepRecord = await updateSleepRecordById(req.userId!, Number(req.params.id!), parsed.data);
+
+      if (!sleepRecord) {
+        return res.status(404).json({ errors: 'Sleep record was not found' });
+      }
 
       return res.status(200).json({ sleepRecord });
     } catch (err) {
