@@ -153,6 +153,28 @@ describe('PUT /sleep_records/:id', () => {
     expect(res.body.sleepRecord.average).toBe(10)
     expect(res.body.sleepRecord.annotations).toBe('Dreamt with Sade')
   })
+
+  it('refuses to update once the editing window has closed', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const record = await seedSleepRecord(user.id, { average: 5 })
+    await db.sleepRecord.update({
+      where: { id: record.id },
+      data: { createdAt: new Date(Date.now() - 6 * 60 * 1000) },
+    })
+
+    const res = await request(app)
+      .put(`/sleep_records/${record.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ sleepRecord: { average: 10 } })
+
+    expect(res.status).toBe(403)
+
+    const unchanged = await db.sleepRecord.findUnique({
+      where: { id: record.id },
+    })
+    expect(unchanged?.average).toBe(5)
+  })
 })
 
 describe('DELETE /sleep_records/:id', () => {

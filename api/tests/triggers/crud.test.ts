@@ -138,6 +138,26 @@ describe('PUT /triggers/:id', () => {
     expect(res.body.trigger.category).toBe('FAMILY')
     expect(res.body.trigger.comment).toBe('Updated')
   })
+
+  it('refuses to update once the editing window has closed', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const trigger = await seedTrigger(user.id, { category: 'WORK' })
+    await db.trigger.update({
+      where: { id: trigger.id },
+      data: { createdAt: new Date(Date.now() - 6 * 60 * 1000) },
+    })
+
+    const res = await request(app)
+      .put(`/triggers/${trigger.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ trigger: { category: 'FAMILY' } })
+
+    expect(res.status).toBe(403)
+
+    const unchanged = await db.trigger.findUnique({ where: { id: trigger.id } })
+    expect(unchanged?.category).toBe('WORK')
+  })
 })
 
 describe('DELETE /triggers/:id', () => {
@@ -155,6 +175,25 @@ describe('DELETE /triggers/:id', () => {
     const dbRecord = await db.trigger.findUnique({ where: { id: trigger.id } })
 
     expect(dbRecord).toBeNull()
+  })
+
+  it('refuses to delete once the editing window has closed', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const trigger = await seedTrigger(user.id)
+    await db.trigger.update({
+      where: { id: trigger.id },
+      data: { createdAt: new Date(Date.now() - 6 * 60 * 1000) },
+    })
+
+    const res = await request(app)
+      .delete(`/triggers/${trigger.id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(403)
+
+    const dbRecord = await db.trigger.findUnique({ where: { id: trigger.id } })
+    expect(dbRecord).not.toBeNull()
   })
 })
 
