@@ -14,7 +14,7 @@ cujo todo o trâmite não coube no cronograma do projeto. Essa ausência de
 avaliação externa é retomada como limitação na Seção~\ref{sec:test-gaps}.
 
 Os dados quantitativos citados ao longo do capítulo referem-se ao estado do
-repositório em meados de outubro de 2026.
+repositório em início de novembro de 2026.
 
 \section{Vocabulário}\label{sec:test-vocab}
 
@@ -38,7 +38,7 @@ literatura.
 \hline
 
 Teste unitário &
-Uma única função ou módulo, sem HTTP e sem banco de dados. &
+Uma única função ou módulo, sem HTTP, sem banco de dados e sem dispositivo. &
 Teste de unidade. \\
 
 \hline
@@ -71,16 +71,24 @@ Teste de sistema. \\
 \section{Estratégia de Verificação}\label{sec:test-strategy}
 
 O código-fonte do Nexo vive em um único repositório com dois projetos
-independentes: a API e o aplicativo móvel. O esforço de teste entre eles é
-deliberadamente assimétrico. A API possui uma suíte automatizada e é protegida
-por um portão de integração contínua; o aplicativo móvel é verificado
-majoritariamente de forma manual, com uma suíte \textit{end-to-end} fina por
-cima. Essa assimetria não é um descuido, e se justifica por duas prioridades.
-A primeira é a capacidade de trabalho limitada: manter uma suíte automatizada
-completa nas duas esferas excederia o disponível, e concentra-se o esforço onde
-o retorno é maior. A segunda é que a API concentra a validação, a autenticação,
-as regras de negócio e a persistência --- isto é, a garantia sobre a integridade
-dos dados registrados pelo usuário.
+independentes: a API e o aplicativo móvel. O esforço de teste entre eles
+permanece deliberadamente assimétrico, embora essa assimetria tenha se
+estreitado. A API possui uma suíte automatizada completa --- unitária, de
+integração e de tarefas assíncronas --- e é protegida por um portão de
+integração contínua. O aplicativo móvel, por sua vez, passou a contar com três
+camadas de verificação: uma suíte unitária em Jest sobre a lógica pura, a
+verificação manual em dispositivo físico e uma suíte \textit{end-to-end} fina
+por cima. A assimetria persiste porque a camada automatizada do aplicativo
+alcança apenas a lógica pura, e não as telas, e porque permanece fora da
+integração contínua. Ela não é um descuido, e se justifica por duas
+prioridades. A primeira é a capacidade de trabalho limitada: manter uma suíte
+automatizada completa nas duas esferas excederia o disponível, e concentra-se o
+esforço onde o retorno é maior. A segunda é que a API concentra a validação, a
+autenticação, as regras de negócio e a persistência --- isto é, a garantia sobre
+a integridade dos dados registrados pelo usuário. A suíte unitária do aplicativo
+cresceu pelo mesmo movimento já adotado na API: extrair a lógica de apresentação
+e de agregação em costuras testáveis, para que ela deixe de depender da tela e
+do dispositivo para ser exercitada.
 
 A Tabela~\ref{tab:test-tooling} resume as ferramentas envolvidas e o ponto em que
 cada uma atua.
@@ -113,6 +121,18 @@ Dentro dos arquivos do Vitest \\
 Cobertura de código da API &
 Vitest (\textit{coverage}) &
 API, sem limiar mínimo \\
+
+\hline
+
+Execução de testes do aplicativo &
+Jest (\texttt{jest-expo}) &
+Aplicativo, sem dispositivo \\
+
+\hline
+
+Cobertura de código do aplicativo &
+Jest (\textit{coverage}) &
+Aplicativo, sem limiar mínimo \\
 
 \hline
 
@@ -256,26 +276,64 @@ realmente envia, sem que nada verifique uma contra a outra.
 
 \section{Verificação do Aplicativo Móvel}\label{sec:test-mobile}
 
-Em linha com a assimetria descrita na Seção~\ref{sec:test-strategy}, o
-aplicativo móvel passou a contar com testes unitários em estágio inicial, ainda
-em andamento e sem a cobertura da suíte da API. A verificação cotidiana
-permanece predominantemente manual, em um dispositivo físico, contra a pilha
-local em execução --- o aplicativo roda como \textit{build} de desenvolvimento
-do Expo, com dependências nativas do Android. Essa verificação captura o que os
-testes automatizados raramente alcançam --- problemas visuais, de leiaute e de
-desempenho no dispositivo ---, mas não é repetível, não protege contra
-regressões e permanece invisível à integração contínua.
+Em linha com a assimetria descrita na Seção~\ref{sec:test-strategy},
+a verificação do aplicativo móvel organiza-se em três camadas. A primeira é uma
+suíte unitária usando a biblioteca Jest sobre a lógica pura de apresentação
+e de agregação, descrita na Seção~\ref{sec:test-mobile-unit}. A segunda
+é a verificação cotidiana de forma manual, em um dispositivo físico, contra
+a pilha local em execução --- o aplicativo roda como \textit{build} de
+desenvolvimento do Expo, visto que precisa de algumas bibliotecas/dependências
+nativas do Android. A terceira é uma suíte \textit{end-to-end} fina, descrita
+na Seção~\ref{sec:test-mobile-e2e}. A verificação manual continua sendo a que
+captura o que os testes automatizados raramente alcançam --- problemas visuais,
+de leiaute e de desempenho no dispositivo ---, mas não é repetível, não protege
+contra regressões e permanece invisível à integração contínua.
+
+\subsection{Testes unitários (Jest)}\label{sec:test-mobile-unit}
+
+A suíte unitária do aplicativo usa o Jest como executor e asserções, com
+o \textit{preset} \texttt{jest-expo/android} --- o mesmo recorte de plataforma
+do aplicativo. Os arquivos vivem em \texttt{frontend/tests}, espelhando
+a árvore do código-fonte, e carregam o sufixo \texttt{.unit.test.ts}, convenção
+tomada emprestada da API; a configuração só busca por arquivos sob
+\texttt{tests}, de modo que nada no diretório de rotas ou outras telas possa
+ser confundido com um teste. Um único arquivo de configuração global
+(\texttt{tests/setup.ts}) substitui apenas a fronteira nativa do Expo ---
+armazenamento seguro, MMKV, constantes, notificações e detecção de dispositivo
+---, preservando a regra já adotada na API: simula-se somente o que deixa
+o processo. Não há HTTP, banco de dados nem dispositivo envolvidos.
+
+Ao momento da redação, a suíte reunia 14 arquivos e 181 casos de teste, muitos
+deles parametrizados por tabelas, distribuídos por sete áreas, muitos deles
+parametrizados por tabelas. Elas cobrem as constantes utilizadas para textos,
+ícones, cores e retornos de API, regras de roteamento de autenticação, janela
+de edição e algumas APIs de estado efemero da aplicação (Zustand e ReactQuery,
+mencionados nos capítulos anteriores). Grande parte desse código foi extraída
+de telas e componentes justamente para se tornar testável --- o mesmo movimento
+descrito para os agregadores da API.
+
+Por não dependerem de dispositivo nem da pilha em execução, esses testes são
+rápidos e determinísticos. Porém, a limitação é a mesma de qualquer camada
+unitária, agravada por não haver camada intermediária: a suíte alcança apenas
+a lógica pura. Até o momento, não há testes de componente ou de renderização;
+não há exercício de \textit{hooks} que dependam de render. Assim, a integração
+entre telas, formulários e serviços permanece coberta apenas pela suíte
+\textit{end-to-end}. A suíte também não roda na integração contínua,
+e a cobertura é medida sem limiar, como na API. A camada eleva a confiança na
+lógica pura, mas não fecha a lacuna entre o teste unitário
+e o \textit{end-to-end}.
 
 \subsection{Suíte \textit{end-to-end} (Maestro)}\label{sec:test-mobile-e2e}
 
-Sobre a verificação manual há uma suíte \textit{end-to-end} opcional, baseada
-no Maestro, ferramenta declarativa de automação de interface para dispositivos
-móveis. A suíte cobre uma única jornada central --- login, registro de humor e
-saída --- por três fluxos em YAML, marcados como \texttt{smoke} e executados
-por um pequeno \textit{harness} (\texttt{frontend/scripts/e2e.sh}), exposto
-como \texttt{npm run test:e2e}. Os fluxos são dirigidos por identificadores de
-teste (\texttt{testID}) inseridos no código, e não pelo texto visível, o que os
-torna mais robustos a mudanças de interface.
+Além da verificação manual e dos testes unitários, há uma suíte
+\textit{end-to-end} opcional, baseada no Maestro, ferramenta declarativa de
+automação de interface para dispositivos móveis. A suíte cobre uma única
+jornada central --- login, registro de humor e saída --- por três fluxos em
+YAML, marcados como \texttt{smoke} e executados por um pequeno \textit{harness}
+(\texttt{frontend/scripts/e2e.sh}), exposto como \texttt{npm run test:e2e}. Os
+fluxos são dirigidos por identificadores de teste (\texttt{testID}) inseridos
+no código, e não pelo texto visível, o que os torna mais robustos a mudanças de
+interface.
 
 A execução depende de um dispositivo Android físico conectado por \texttt{adb},
 de um \textit{build} de desenvolvimento, da API em funcionamento com um usuário
@@ -299,21 +357,23 @@ prepara a base de teste, executa a verificação de tipos em caráter consultivo
 roda a suíte com o Vitest. A construção da imagem e a implantação em produção
 são condicionadas ao sucesso dessa etapa, de modo que uma suíte reprovada
 impede a publicação, conforme o Capítulo~\ref{sec:deploy-and-ci}. O aplicativo
-móvel permanece fora da integração contínua: \textit{lint} (\texttt{expo lint})
-e verificação de tipos (\texttt{tsc --noEmit}) são executados apenas
-manualmente, e a suíte \textit{end-to-end} não é disparada por fluxo algum.
+móvel permanece fora da integração contínua: \textit{lint} (\texttt{expo lint}),
+verificação de tipos (\texttt{tsc --noEmit}) e a suíte unitária
+(\texttt{npm test}) são executados apenas manualmente, e a suíte
+\textit{end-to-end} não é disparada por fluxo algum.
 
 \section{Cobertura e Lacunas}\label{sec:test-gaps}
 
 Em síntese, a verificação automatizada cobre a superfície HTTP e a persistência
-da API, a sua lógica pura e os seus trabalhadores em segundo plano; a
-verificação do aplicativo móvel restringe-se, por ora, a uma jornada manual de
-fumaça e a testes unitários ainda em consolidação. Permanecem pouco cobertas a
-lógica do \textit{frontend} entre o nível de unidade e o \textit{end-to-end}, a
+da API, a sua lógica pura, os seus trabalhadores em segundo plano e a lógica
+pura do aplicativo móvel; a verificação do aplicativo completa-se com a
+inspeção manual e com uma jornada de fumaça \textit{end-to-end}. Permanecem
+pouco cobertas a lógica do \textit{frontend} entre o nível de unidade e o
+\textit{end-to-end} --- a integração entre telas, formulários e serviços ---, a
 maquinaria da fila em si (agendamento, repetições e ordenação) e os caminhos de
 erro do aplicativo.
 
-Persistem, ainda, três limitações que merecem registro. A primeira é a ausência
+Persistem, ainda, quatro limitações que merecem registro. A primeira é a ausência
 de validação com usuários reais, motivada pelo trâmite de comitê de ética em
 pesquisa descrito na abertura deste capítulo: as especificações automatizadas
 atestam o comportamento programado, mas não a adequação do sistema às
@@ -321,7 +381,11 @@ expectativas do público-alvo. A segunda é a cobertura de código medida, mas n
 imposta, o que orienta o trabalho sem jamais reprovar uma \textit{build} ou
 \textit{deploy}. A terceira são os riscos de descolamento já mencionados: os
 dados de teste escritos à mão em cada arquivo e a cópia espelhada dos tipos da
-API mantida no \textit{frontend} podem divergir da fonte de verdade sem que
-nenhum teste acuse. Essas lacunas são assumidas de forma explícita e refletem
-uma escolha de priorização, não uma garantia de ausência de defeitos, e que
-podem ser corrigidas em incrementos no futuro.
+API mantida no \textit{frontend} --- que os testes unitários exercitam, mas não
+conferem contra a fonte de verdade --- podem divergir sem que nenhum teste
+acuse. A quarta é que a suíte do aplicativo, além de não ter camada de
+componente, roda apenas manualmente e fora da integração contínua, de modo que
+uma regressão pode ser integrada ao código sem que nada reprove. Essas lacunas
+são assumidas de forma explícita e refletem uma escolha de priorização, não uma
+garantia de ausência de defeitos, e que podem ser corrigidas em incrementos no
+futuro.

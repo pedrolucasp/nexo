@@ -14,8 +14,9 @@ código aberto que integra esses registros em uma única linha do tempo e produz
 indicadores destinados a auxiliar o usuário na percepção de padrões ao longo do
 tempo. O sistema é composto por uma API REST e por um aplicativo móvel, ambos
 escritos em TypeScript, com processamento de indicadores em segundo plano,
-implantação automatizada e uma suíte de testes concentrada na API, conforme
-descrito ao longo dos capítulos anteriores.
+implantação automatizada e uma suíte de testes automatizados concentrada na API,
+complementada por testes unitários no aplicativo móvel, conforme descrito ao
+longo dos capítulos anteriores.
 
 A pesquisa aplicada de natureza exploratória orientou as decisões de projeto. O
 questionário aplicado a 48 potenciais usuários, apresentado no
@@ -30,9 +31,10 @@ autorregistro alinhada aos princípios de privacidade, transparência e autonomi
 do usuário sobre os próprios dados.
 
 O trabalho, contudo, apresenta limitações que devem ser explicitadas. A
-verificação do aplicativo móvel permanece majoritariamente manual e com uma
-suíte \textit{end-to-end} fina, de modo que regressões na interface podem ser
-incorporadas ao código sem que nenhum teste acuse, como discutido no
+verificação do aplicativo móvel conta com testes unitários sobre a lógica pura,
+mas ainda carece de testes de componente e de integração e não passa pela
+integração contínua; assim, regressões na interface podem ser incorporadas ao
+código sem que nenhum teste acuse, como discutido no
 Capítulo~\ref{cap:testes}. A amostra do questionário é, por conveniência, e não
 pode ser generalizada; além disso, o protótipo ainda não foi submetido a uma
 avaliação com usuários reais, o que deixa em aberto a confirmação de que as
@@ -59,13 +61,12 @@ questionário, em que a maioria dos respondentes atribuiu nota máxima à
 importância do controle sobre os próprios dados, e reforça o cenário de
 auto-hospedagem descrito no Capítulo~\ref{sec:deploy-and-ci}.
 
-A terceira frente é ampliar a testabilidade do aplicativo móvel, hoje
-verificado de forma predominantemente manual (Seção~\ref{sec:test-mobile}).
-Extrair a lógica de apresentação e de agregação em camadas testáveis, adotar
-testes de componente e integrar \textit{lint}, verificação de tipos e a suíte
-\textit{end-to-end} ao fluxo de integração contínua reduziria o risco de
-regressões invisíveis e aproximaria o nível de confiança do \textit{frontend}
-àquele já alcançado pela API.
+A terceira frente é ampliar a testabilidade do aplicativo móvel, cuja suíte
+unitária ainda alcança apenas a lógica pura (Seção~\ref{sec:test-mobile}).
+Adotar testes de componente e integrar \textit{lint}, verificação de tipos, a
+suíte unitária e a suíte \textit{end-to-end} ao fluxo de integração contínua
+reduziria o risco de regressões invisíveis e aproximaria o nível de confiança do
+\textit{frontend} àquele já alcançado pela API.
 
 Além dessas, as lacunas apontadas na Seção~\ref{sec:test-gaps} --- como a
 maquinaria da fila fora do alcance dos testes e a duplicação manual dos dados
