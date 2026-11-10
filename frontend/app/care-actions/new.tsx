@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
-    marginBottom: 50,
+    marginBottom: Spacing.sectionGap,
   },
   header: {
     gap: 8,

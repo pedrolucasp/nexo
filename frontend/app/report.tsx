@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
   View,
-  TouchableOpacity,
   StyleSheet,
   ScrollView,
 } from 'react-native'
@@ -13,6 +12,7 @@ import * as Sharing from 'expo-sharing'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button } from '@/components/ui/Button'
 import { Section, SectionHeader } from '@/components/ui/Sections'
+import { Chip, ChipRow } from '@/components/ui/Chip'
 import { DatePickerField } from '@/components/ui/DatePickerField'
 import { apiClient, ApiError } from '@/lib/api'
 import { useToast } from '@/context/ToastContext'
@@ -87,25 +87,17 @@ export default function ReportScreen() {
 
         <Section>
           <SectionHeader title="Período" />
-          <View style={styles.chips}>
+          <ChipRow>
             {PRESETS.map((p) => (
-              <TouchableOpacity
+              <Chip
                 key={p.days}
-                style={[styles.chip, preset === p.days && styles.chipActive]}
+                label={p.label}
+                variant="solid"
+                active={preset === p.days}
                 onPress={() => selectPreset(p.days)}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.chipText,
-                    preset === p.days && styles.chipTextActive,
-                  ]}
-                >
-                  {p.label}
-                </Text>
-              </TouchableOpacity>
+              />
             ))}
-          </View>
+          </ChipRow>
         </Section>
 
         {isCustom && (
@@ -170,30 +162,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: Colors.light.textSecondary,
-  },
-  chips: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: Colors.light.borderDashed,
-    backgroundColor: Colors.light.surface,
-  },
-  chipActive: {
-    backgroundColor: Colors.light.tint,
-    borderColor: Colors.light.tint,
-  },
-  chipText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: Colors.light.text,
-  },
-  chipTextActive: {
-    color: Colors.light.background,
   },
 })

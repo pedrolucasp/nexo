@@ -14,13 +14,15 @@ export const APPOINTMENT_TYPE_OPTIONS: {
   label: string;
   value: AppointmentType;
   icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+  iconBackground: string;
 }[] = [
-  { label: "Analista", value: "ANALYST", icon: "person-outline" },
-  { label: "Psiquiatra", value: "PSYCHIATRIST", icon: "medical-outline" },
-  { label: "Clínico", value: "GP", icon: "fitness-outline" },
-  { label: "Nutricionista", value: "NUTRITIONIST", icon: "nutrition-outline" },
-  { label: "Fisioterapeuta", value: "PHYSIOTHERAPIST", icon: "body-outline" },
-  { label: "Outro", value: "OTHER", icon: "help-outline" },
+  { label: "Analista", value: "ANALYST", icon: "person-outline", color: "#6366f1", iconBackground: "#e0e7ff" },
+  { label: "Psiquiatra", value: "PSYCHIATRIST", icon: "medical-outline", color: "#7c3aed", iconBackground: "#ede9fe" },
+  { label: "Clínico", value: "GP", icon: "fitness-outline", color: "#2563eb", iconBackground: "#dbeafe" },
+  { label: "Nutricionista", value: "NUTRITIONIST", icon: "nutrition-outline", color: "#059669", iconBackground: "#d1fae5" },
+  { label: "Fisioterapeuta", value: "PHYSIOTHERAPIST", icon: "body-outline", color: "#d97706", iconBackground: "#fef3c7" },
+  { label: "Outro", value: "OTHER", icon: "help-outline", color: "#6b7280", iconBackground: "#f3f4f6" },
 ];
 
 export const ACTIVITY_TYPE_OPTIONS: {

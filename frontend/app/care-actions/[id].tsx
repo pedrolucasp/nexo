@@ -252,7 +252,7 @@ export default function CareActionDetailScreen() {
         </Card>
 
         {careAction.appointment?.note ? (
-          <Section>
+          <Section style={styles.flushSection}>
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
@@ -263,7 +263,7 @@ export default function CareActionDetailScreen() {
         ) : null}
 
         {hasLink && (
-          <Section>
+          <Section style={styles.flushSection}>
             <SectionHeader title="Vínculo" variant="subtle" />
             <Col gap={8}>
               {trigger && (
@@ -371,6 +371,9 @@ const styles = StyleSheet.create({
     padding: Spacing.containerPadding,
     gap: Spacing.sectionGap,
     paddingBottom: 48,
+  },
+  flushSection: {
+    marginBottom: 0,
   },
   centered: {
     flex: 1,

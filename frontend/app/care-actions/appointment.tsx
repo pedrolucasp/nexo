@@ -27,7 +27,7 @@ import {
 const APPOINTMENT_TYPES: CategoryOption<AppointmentType>[] =
   APPOINTMENT_TYPE_OPTIONS.map(({ icon, ...option }) => ({
     ...option,
-    icon: <Ionicons name={icon} size={16} color={Colors.light.tint} />,
+    icon: <Ionicons name={icon} size={16} color={option.color} />,
   }));
 
 export default function AppointmentCareAction() {
@@ -78,6 +78,7 @@ export default function AppointmentCareAction() {
                 <Chip
                   key={d}
                   label={String(d)}
+                  variant="solid"
                   active={appointmentDuration === d}
                   onPress={() => setAppointmentDuration(d)}
                 />
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
-    marginBottom: 50,
+    marginBottom: Spacing.sectionGap,
   },
   header: {
     gap: 8,

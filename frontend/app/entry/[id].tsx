@@ -91,7 +91,7 @@ export default function MoodDetailScreen() {
         </Card>
 
         {/* Core levels */}
-        <Section>
+        <Section style={styles.flushSection}>
           <SectionHeader title="Níveis emocionais" variant="subtle" />
           {[
             { id: "energy", label: "Energia", value: entry.energyLevel },
@@ -120,7 +120,7 @@ export default function MoodDetailScreen() {
           ))}
         </Section>
 
-        <Section>
+        <Section style={styles.flushSection}>
           <SectionHeader title="Além disso, sinto..." variant="subtle" />
           <Col gap={0}>
             {entry.moodComponents.map((comp) => {
@@ -136,7 +136,7 @@ export default function MoodDetailScreen() {
         </Section>
 
         {/* Linked triggers */}
-        <Section>
+        <Section style={styles.flushSection}>
           <SectionHeader title="Vínculo" variant="subtle" />
           {!!hasAnyLinks ? (
             <Col gap={8}>
@@ -218,7 +218,7 @@ export default function MoodDetailScreen() {
 
         {/* Annotation / notes */}
         {entry.annotation && (
-          <Section>
+          <Section style={styles.flushSection}>
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
@@ -249,6 +249,9 @@ const styles = StyleSheet.create({
     padding: Spacing.containerPadding,
     gap: Spacing.sectionGap,
     paddingBottom: 48,
+  },
+  flushSection: {
+    marginBottom: 0,
   },
   centered: {
     flex: 1,

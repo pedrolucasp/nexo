@@ -26,6 +26,8 @@ const TRIGGER_CATEGORIES: CategoryOption<TriggerCategory>[] =
   TRIGGER_CATEGORY_DEFINITIONS.map((d) => ({
     label: d.label,
     value: d.id,
+    color: d.color,
+    iconBackground: d.iconBackground,
     icon: <MaterialIcons size={16} color={d.color} name={d.icon} />,
   }));
 
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
-    marginBottom: 50,
+    marginBottom: Spacing.sectionGap,
   },
   mainCard: {
     padding: Spacing.cardGap,

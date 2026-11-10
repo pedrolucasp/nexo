@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: Spacing.containerPadding,
-    paddingTop: 48,
-    paddingBottom: 36,
+    paddingTop: Spacing.sectionGap,
+    paddingBottom: Spacing.sectionGap,
   },
   confirmationBlock: {
     alignItems: "center",
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   followUpTitle: {
-    ...Typography.headlineMd,
+    ...Typography.bodyMd,
     fontWeight: "700",
     color: Colors.light.text,
     marginBottom: 2,

@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { router, useLocalSearchParams, Stack } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Cards";
@@ -25,6 +25,8 @@ import {
   APPOINTMENT_TYPE_OPTIONS,
   ACTIVITY_TYPE_OPTIONS,
   APPOINTMENT_DURATIONS,
+  getActivityCategory,
+  getCareActionMeta,
 } from "@/constants/care-action-categories";
 import {
   useCareAction,
@@ -43,14 +45,19 @@ import type {
 const APPOINTMENT_OPTIONS: CategoryOption<AppointmentType>[] =
   APPOINTMENT_TYPE_OPTIONS.map(({ icon, ...option }) => ({
     ...option,
-    icon: <Ionicons name={icon} size={16} color={Colors.light.tint} />,
+    icon: <Ionicons name={icon} size={16} color={option.color} />,
   }));
 
 const ACTIVITY_OPTIONS: CategoryOption<ActivityType>[] =
-  ACTIVITY_TYPE_OPTIONS.map(({ icon, ...option }) => ({
-    ...option,
-    icon: <Ionicons name={icon} size={16} color={Colors.light.tint} />,
-  }));
+  ACTIVITY_TYPE_OPTIONS.map(({ icon, ...option }) => {
+    const meta = getActivityCategory(option.value);
+    return {
+      ...option,
+      color: meta.color,
+      iconBackground: meta.iconBackground,
+      icon: <Ionicons name={icon} size={16} color={meta.color} />,
+    };
+  });
 
 export default function EditCareAction() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -81,6 +88,7 @@ function EditCareActionForm({
   const patchCareAction = usePatchCareAction();
   const { canEdit } = useEditingWindow(careAction.createdAt);
   const { showToast } = useToast();
+  const meta = getCareActionMeta(careAction);
 
   const [appointmentType, setAppointmentType] = useState<AppointmentType>(
     careAction.appointment?.type ?? "ANALYST",
@@ -138,10 +146,28 @@ function EditCareActionForm({
       <ScrollView scrollEventThrottle={16}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Editar Ação de Cuidado</Text>
-            <Text style={styles.headerSubtitle}>
-              Atualize os dados do registro
-            </Text>
+            <View style={styles.innerHeaderWrapper}>
+              <View
+                style={[
+                  styles.headerIcon,
+                  { backgroundColor: meta.iconBackground },
+                ]}
+              >
+                <MaterialIcons
+                  name={meta.icon}
+                  size={20}
+                  color={meta.color}
+                />
+              </View>
+
+              <View style={styles.headerTitleSubtitle}>
+                <Text style={styles.headerTitle}>Editar Ação de Cuidado</Text>
+                <Text style={styles.headerSubtitle}>
+                  Atualize os dados do registro
+                </Text>
+              </View>
+            </View>
+
             <Text style={styles.description}>
               Você pode editar este registro nos primeiros 5 minutos após a
               criação.
@@ -166,6 +192,7 @@ function EditCareActionForm({
                     <Chip
                       key={duration}
                       label={String(duration)}
+                      variant="solid"
                       active={appointmentDuration === duration}
                       onPress={() => setAppointmentDuration(duration)}
                     />
@@ -255,13 +282,27 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
-    marginBottom: 50,
+    marginBottom: Spacing.sectionGap,
   },
   card: {
     padding: Spacing.cardGap,
   },
   header: {
     gap: 8,
+  },
+  innerHeaderWrapper: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  headerIcon: {
+    paddingVertical: 15,
+    paddingHorizontal: 14,
+    width: 48,
+    borderRadius: 12,
+  },
+  headerTitleSubtitle: {
+    marginLeft: 10,
   },
   headerTitle: {
     ...Typography.headlineMd,
@@ -273,7 +314,7 @@ const styles = StyleSheet.create({
   description: {
     ...Typography.bodyMd,
     color: Colors.light.textSecondary,
-    marginTop: 12,
+    marginTop: 20,
   },
   medicineNote: {
     ...Typography.bodyMd,

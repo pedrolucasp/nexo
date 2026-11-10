@@ -8,15 +8,37 @@ interface ChipProps {
   label: string;
   icon?: ReactNode;
   active?: boolean;
+  color?: string;
+  colorBackground?: string;
+  variant?: 'soft' | 'solid';
   onPress: () => void;
 }
 
-export function Chip({ label, icon, active = false, onPress }: ChipProps) {
+export function Chip({
+  label,
+  icon,
+  active = false,
+  color,
+  colorBackground,
+  variant = 'soft',
+  onPress,
+}: ChipProps) {
+  const activeStyle =
+    variant === 'solid'
+      ? {
+          backgroundColor: color ?? Colors.light.tint,
+          borderColor: color ?? Colors.light.tint,
+        }
+      : {
+          backgroundColor: colorBackground ?? Colors.light.activeBackground,
+          borderColor: color ?? Colors.light.tint,
+        };
+
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.7}
-      style={[styles.chip, active && styles.chipActive]}
+      style={[styles.chip, active && activeStyle]}
     >
       {icon && <View style={styles.icon}>{icon}</View>}
       <Text style={[styles.label, active && styles.labelActive]}>
@@ -46,10 +68,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.surface,
     borderWidth: 1.5,
     borderColor: Colors.light.divider,
-  },
-  chipActive: {
-    backgroundColor: Colors.light.activeBackground,
-    borderColor: Colors.light.tint,
   },
   icon: {
     alignItems: 'center',

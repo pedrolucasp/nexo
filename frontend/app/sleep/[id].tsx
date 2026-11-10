@@ -79,7 +79,7 @@ export default function SleepDetailScreen() {
 
         {/* Annotation / notes */}
         {sleepRecord.annotations && (
-          <Section>
+          <Section style={styles.flushSection}>
             <SectionHeader title="Anotações" variant="subtle" />
             <Card style={{ padding: Spacing.cardGap }}>
               <Text style={styles.annotation}>
@@ -109,6 +109,9 @@ const styles = StyleSheet.create({
     padding: Spacing.containerPadding,
     gap: Spacing.sectionGap,
     paddingBottom: 48,
+  },
+  flushSection: {
+    marginBottom: 0,
   },
   iconWrap: {
     width: 40,

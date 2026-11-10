@@ -17,13 +17,18 @@ import { Spacing, Typography, Colors, Shadows } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useCreateCareAction } from "@/hooks";
 import { ActivityType } from "@/lib/api";
-import { ACTIVITY_TYPE_OPTIONS } from "@/constants/care-action-categories";
+import { ACTIVITY_TYPE_OPTIONS, getActivityCategory } from "@/constants/care-action-categories";
 
 const ACTIVITY_TYPES: CategoryOption<ActivityType>[] =
-  ACTIVITY_TYPE_OPTIONS.map(({ icon, ...option }) => ({
-    ...option,
-    icon: <Ionicons name={icon} size={16} color={Colors.light.tint} />,
-  }));
+  ACTIVITY_TYPE_OPTIONS.map(({ icon, ...option }) => {
+    const meta = getActivityCategory(option.value);
+    return {
+      ...option,
+      color: meta.color,
+      iconBackground: meta.iconBackground,
+      icon: <Ionicons name={icon} size={16} color={meta.color} />,
+    };
+  });
 
 export default function ActivityCareAction() {
   const [activityType, setActivityType] = useState<ActivityType>('WALK');
@@ -97,7 +102,7 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
-    marginBottom: 50,
+    marginBottom: Spacing.sectionGap,
   },
   header: {
     gap: 8,

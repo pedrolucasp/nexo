@@ -99,6 +99,7 @@ export default function MedicineNewCareAction() {
                 <Chip
                   key={opt.value}
                   label={opt.label}
+                  variant="solid"
                   active={medicinePeriodicity === opt.value}
                   onPress={() => {
                     setMedicinePeriodicity(opt.value);
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
-    marginBottom: 50,
+    marginBottom: Spacing.sectionGap,
   },
   header: {
     gap: 8,

@@ -4,6 +4,8 @@ export type CategoryOption<T extends string = string> = {
   label: string;
   value: T;
   icon: React.ReactNode;
+  color?: string;
+  iconBackground?: string;
 };
 
 type Props<T extends string = string> = {
@@ -24,6 +26,8 @@ export function CategoryChips<T extends string = string>({
           key={option.value}
           label={option.label}
           icon={option.icon}
+          color={option.color}
+          colorBackground={option.iconBackground}
           active={option.value === active}
           onPress={() => onChange(option.value)}
         />
