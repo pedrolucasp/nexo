@@ -46,6 +46,8 @@ export const Button: React.FC<ButtonProps> = ({
   const secondaryBackgroundColor = useThemeColor({}, 'secondaryBackground');
   const dangerColor = useThemeColor({}, 'danger');
   const whiteColor = useThemeColor({}, 'white');
+  const surfaceColor = useThemeColor({}, 'surface');
+  const dividerColor = useThemeColor({}, 'divider');
   const disabledBackgroundColor = useThemeColor(
     { light: '#e5e5e5', dark: '#404040' },
     'background',
@@ -54,7 +56,12 @@ export const Button: React.FC<ButtonProps> = ({
   const borderDashedColor = useThemeColor({}, 'borderDashed');
 
   const getBackgroundColor = () => {
-    if (disabled) return disabledBackgroundColor;
+    if (disabled) {
+      if (variant === 'outline') return surfaceColor;
+      if (variant === 'ghost' || variant === 'dashed') return 'transparent';
+      return disabledBackgroundColor;
+    }
+
     switch (variant) {
       case 'primary':
         return primaryColor;
@@ -63,6 +70,7 @@ export const Button: React.FC<ButtonProps> = ({
       case 'danger':
         return dangerColor;
       case 'outline':
+        return surfaceColor;
       case 'ghost':
       case 'dashed':
         return 'transparent';
@@ -72,7 +80,12 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const getTextColor = () => {
-    if (disabled) return textColor;
+    if (disabled) {
+      if (variant === 'outline' || variant === 'ghost' || variant === 'dashed') {
+        return textSecondaryColor;
+      }
+      return textColor;
+    }
 
     switch (variant) {
       case 'primary':
@@ -104,7 +117,7 @@ export const Button: React.FC<ButtonProps> = ({
       } else if (variant === 'dashed') {
         return borderDashedColor;
       } else {
-        return primaryColor;
+        return dividerColor;
       }
     }
 
@@ -171,6 +184,7 @@ export const Button: React.FC<ButtonProps> = ({
       ]}
       disabled={disabled || loading}
       onPress={onPress}
+      activeOpacity={0.7}
       {...props}
     >
       {loading ? (
