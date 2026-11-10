@@ -1,7 +1,8 @@
 import { tz } from "@date-fns/tz";
 import { set } from "date-fns";
 
-export const APP_TIMEZONE = tz("America/Sao_Paulo");
+export const APP_TIMEZONE_NAME = "America/Sao_Paulo";
+export const APP_TIMEZONE = tz(APP_TIMEZONE_NAME);
 
 // The instant, on the app-timezone day containing `reference`, at "HH:MM"
 export function appTimeToday(time: string, reference: Date = new Date()): Date {

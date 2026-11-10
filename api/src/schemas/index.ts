@@ -54,6 +54,11 @@ export {
 } from "@app/schemas/notification.schema";
 
 export {
+  HistoryQuerySchema,
+  type HistoryQueryInput,
+} from "@app/schemas/history.schema";
+
+export {
   LinkMoodSchema,
   type LinkMoodInput,
 } from "@app/schemas/triggerMoodLink.schema";
