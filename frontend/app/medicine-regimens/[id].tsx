@@ -3,7 +3,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
@@ -13,7 +12,8 @@ import { Card } from "@/components/ui/Cards";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
-import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
+import { Chip, ChipRow } from "@/components/ui/Chip";
+import { Spacing, Typography, Colors } from "@/constants/theme";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { useMedicineRegimen, useUpdateMedicineRegimen } from "@/hooks";
 import type { MedicinePeriodicity, MedicineRegimen } from "@/lib/api";
@@ -123,14 +123,12 @@ function MedicineRegimenForm({ id, regimen }: { id: string; regimen: MedicineReg
 
           <Section>
             <SectionHeader title="Frequência" />
-            <View style={styles.periodicityRow}>
+            <ChipRow>
               {PERIODICITY_OPTIONS.map((opt) => (
-                <TouchableOpacity
+                <Chip
                   key={opt.value}
-                  style={[
-                    styles.periodicityChip,
-                    periodicity === opt.value && styles.periodicityChipActive,
-                  ]}
+                  label={opt.label}
+                  active={periodicity === opt.value}
                   onPress={() => {
                     setPeriodicity(opt.value);
                     const count = getTimePickerCount(opt.value);
@@ -142,19 +140,9 @@ function MedicineRegimenForm({ id, regimen }: { id: string; regimen: MedicineReg
                         : prev.slice(0, count)
                     );
                   }}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      styles.periodicityChipLabel,
-                      periodicity === opt.value && styles.periodicityChipLabelActive,
-                    ]}
-                  >
-                    {opt.label}
-                  </Text>
-                </TouchableOpacity>
+                />
               ))}
-            </View>
+            </ChipRow>
           </Section>
 
           {scheduledTimes.length > 0 && (
@@ -203,31 +191,5 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     ...Typography.bodyMd,
     color: Colors.light.textSecondary,
-  },
-  periodicityRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  periodicityChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: BorderRadius.full,
-    backgroundColor: "#fff",
-    borderWidth: 1.5,
-    borderColor: Colors.light.divider,
-  },
-  periodicityChipActive: {
-    backgroundColor: Colors.light.tint + "1A",
-    borderColor: Colors.light.tint,
-  },
-  periodicityChipLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: Colors.light.text,
-  },
-  periodicityChipLabelActive: {
-    fontWeight: "600",
-    color: Colors.light.text,
   },
 });

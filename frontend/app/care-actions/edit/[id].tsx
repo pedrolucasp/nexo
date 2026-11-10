@@ -5,7 +5,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   ActivityIndicator,
-  TouchableOpacity,
 } from "react-native";
 import { router, useLocalSearchParams, Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,11 +15,11 @@ import { Input, TextArea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
+import { Chip, ChipRow } from "@/components/ui/Chip";
 import {
   Spacing,
   Typography,
   Colors,
-  BorderRadius,
 } from "@/constants/theme";
 import {
   APPOINTMENT_TYPE_OPTIONS,
@@ -162,22 +161,16 @@ function EditCareActionForm({
 
               <Section>
                 <SectionHeader title="Duração (min)" />
-                <View style={styles.durationRow}>
+                <ChipRow>
                   {APPOINTMENT_DURATIONS.map((duration) => (
-                    <TouchableOpacity
+                    <Chip
                       key={duration}
-                      style={[
-                        styles.durationChip,
-                        appointmentDuration === duration &&
-                          styles.durationChipActive,
-                      ]}
+                      label={String(duration)}
+                      active={appointmentDuration === duration}
                       onPress={() => setAppointmentDuration(duration)}
-                      activeOpacity={0.7}
-                    >
-                      <Text style={styles.durationLabel}>{duration}</Text>
-                    </TouchableOpacity>
+                    />
                   ))}
-                </View>
+                </ChipRow>
               </Section>
 
               <Section>
@@ -285,29 +278,5 @@ const styles = StyleSheet.create({
   medicineNote: {
     ...Typography.bodyMd,
     color: Colors.light.textSecondary,
-  },
-  durationRow: {
-    flexDirection: "row",
-    gap: 10,
-    flexWrap: "wrap",
-  },
-  durationChip: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: BorderRadius.full,
-    backgroundColor: "#fff",
-    borderWidth: 1.5,
-    borderColor: Colors.light.divider,
-    minWidth: 64,
-    alignItems: "center",
-  },
-  durationChipActive: {
-    backgroundColor: Colors.light.tint + "1A",
-    borderColor: Colors.light.tint,
-  },
-  durationLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.light.text,
   },
 });

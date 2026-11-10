@@ -3,7 +3,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableOpacity,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { useState } from "react";
@@ -14,7 +13,8 @@ import { TextArea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { CategoryChips, CategoryOption } from "@/components/ui/CategoryChips";
-import { Spacing, Typography, Colors, BorderRadius, Shadows } from "@/constants/theme";
+import { Chip, ChipRow } from "@/components/ui/Chip";
+import { Spacing, Typography, Colors, Shadows } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useCreateCareAction } from "@/hooks";
 import { AppointmentType } from "@/lib/api";
@@ -73,28 +73,16 @@ export default function AppointmentCareAction() {
 
           <Section>
             <SectionHeader title="Duração (min)" />
-            <View style={styles.durationRow}>
+            <ChipRow>
               {APPOINTMENT_DURATIONS.map((d) => (
-                <TouchableOpacity
+                <Chip
                   key={d}
-                  style={[
-                    styles.durationChip,
-                    appointmentDuration === d && styles.durationChipActive,
-                  ]}
+                  label={String(d)}
+                  active={appointmentDuration === d}
                   onPress={() => setAppointmentDuration(d)}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      styles.durationLabel,
-                      appointmentDuration === d && styles.durationLabelActive,
-                    ]}
-                  >
-                    {d}
-                  </Text>
-                </TouchableOpacity>
+                />
               ))}
-            </View>
+            </ChipRow>
           </Section>
 
           <Section>
@@ -142,32 +130,5 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     ...Typography.bodyMd,
     color: Colors.light.textSecondary,
-  },
-  durationRow: {
-    flexDirection: 'row',
-    gap: 10,
-    flexWrap: 'wrap',
-  },
-  durationChip: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: BorderRadius.full,
-    backgroundColor: '#fff',
-    borderWidth: 1.5,
-    borderColor: Colors.light.divider,
-    minWidth: 64,
-    alignItems: 'center',
-  },
-  durationChipActive: {
-    backgroundColor: Colors.light.tint + '1A',
-    borderColor: Colors.light.tint,
-  },
-  durationLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.light.text,
-  },
-  durationLabelActive: {
-    color: Colors.light.text,
   },
 });
