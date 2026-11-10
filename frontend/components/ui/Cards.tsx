@@ -77,6 +77,7 @@ export const SubtleInfoCard: React.FC<SubtleInfoCardProps> = ({
   style
 }) => {
   const accentBlueColor = useThemeColor({}, 'accentBlue');
+  const iconColor = useThemeColor({}, 'textSecondary');
 
   const styles = StyleSheet.create({
     card: {
@@ -88,17 +89,26 @@ export const SubtleInfoCard: React.FC<SubtleInfoCardProps> = ({
       flexDirection: 'row',
       alignItems: 'flex-start'
     },
+    icon: {
+      flexShrink: 0,
+    },
     text: {
+      flex: 1,
       fontSize: 12,
       lineHeight: 18,
       color: Colors.light.textSecondary,
-      marginLeft: 10
+      marginLeft: Spacing.inlineGapSm,
     },
   });
 
   return (
     <View style={[styles.card, style]}>
-      <Ionicons name="information-circle-outline" size={20} color="gray" />
+      <Ionicons
+        name="information-circle-outline"
+        size={20}
+        color={iconColor}
+        style={styles.icon}
+      />
 
       <Text style={styles.text}>
         {text.replace(/\s+/g, ' ').trim()}
