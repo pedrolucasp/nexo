@@ -12,7 +12,7 @@ describe("editingWindowAt", () => {
 
     expect(result.canEdit).toBe(true);
     expect(result.minutesLeft).toBe(5);
-    expect(result.buttonSuffix).toBe("(Disp. por 5:00)");
+    expect(result.countdown).toBe("5:00");
   });
 
   it("counts the remaining minutes down", () => {
@@ -20,6 +20,14 @@ describe("editingWindowAt", () => {
 
     expect(result.canEdit).toBe(true);
     expect(result.minutesLeft).toBe(2);
+    expect(result.countdown).toBe("2:00");
+  });
+
+  it("shows the remaining seconds between minute marks", () => {
+    const result = editingWindowAt(createdAt, at(90 * 1000));
+
+    expect(result.canEdit).toBe(true);
+    expect(result.countdown).toBe("3:30");
   });
 
   it("treats the exact boundary as expired", () => {
@@ -27,7 +35,7 @@ describe("editingWindowAt", () => {
 
     expect(result.canEdit).toBe(false);
     expect(result.minutesLeft).toBe(0);
-    expect(result.buttonSuffix).toBe("(Expirado)");
+    expect(result.countdown).toBe("");
   });
 
   it("closes the window once the clock passes it", () => {
@@ -44,6 +52,6 @@ describe("editingWindowAt", () => {
     const result = editingWindowAt(undefined, at());
 
     expect(result.canEdit).toBe(false);
-    expect(result.buttonSuffix).toBe("(Expirado)");
+    expect(result.countdown).toBe("");
   });
 });

@@ -21,17 +21,25 @@ export function RecordManagement({
   onDelete,
   deleting = false,
 }: RecordManagementProps) {
-  const { canEdit, buttonSuffix } = useEditingWindow(createdAt);
+  const { canEdit, countdown } = useEditingWindow(createdAt);
 
   return (
     <View style={styles.section}>
       <Text style={styles.sectionLabel}>GESTÃO DO REGISTRO</Text>
 
+      <View style={styles.divider} />
+
+      <Text style={styles.window}>
+        {canEdit
+          ? `Edição e exclusão disponíveis por mais ${countdown}`
+          : "Prazo de edição encerrado"}
+      </Text>
+
       <Button
         variant="outline"
         disabled={!canEdit}
         onPress={onEdit}
-        title={`Editar Registro ${buttonSuffix}`}
+        title="Editar Registro"
       />
 
       <Button
@@ -39,7 +47,7 @@ export function RecordManagement({
         loading={deleting}
         disabled={!canEdit || deleting}
         onPress={onDelete}
-        title={`Excluir Registro ${buttonSuffix}`}
+        title="Excluir Registro"
       />
 
       <SubtleInfoCard
@@ -64,6 +72,15 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     color: Colors.light.textSecondary,
     textTransform: "uppercase",
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: Colors.light.divider,
+  },
+  window: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: Colors.light.textSecondary,
   },
   info: {
     marginTop: 4,

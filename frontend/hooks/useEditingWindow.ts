@@ -5,7 +5,14 @@ export const EDITING_WINDOW_MS = 5 * 60 * 1000;
 export interface EditingWindow {
   canEdit: boolean;
   minutesLeft: number;
-  buttonSuffix: string;
+  countdown: string;
+}
+
+function formatCountdown(msLeft: number): string {
+  const totalSeconds = Math.ceil(msLeft / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 // Pure so the boundary rules can be pinned down without a renderer.
@@ -14,20 +21,18 @@ export function editingWindowAt(
   now: number,
 ): EditingWindow {
   if (!createdAt) {
-    return { canEdit: false, minutesLeft: 0, buttonSuffix: "(Expirado)" };
+    return { canEdit: false, minutesLeft: 0, countdown: "" };
   }
 
-  const msSinceCreation = now - new Date(createdAt).getTime();
-  const canEdit = msSinceCreation < EDITING_WINDOW_MS;
-  const minutesLeft = Math.max(
-    0,
-    Math.ceil((EDITING_WINDOW_MS - msSinceCreation) / 60000),
-  );
+  const msLeft = EDITING_WINDOW_MS - (now - new Date(createdAt).getTime());
+  const canEdit = msLeft > 0;
+  const minutesLeft = Math.max(0, Math.ceil(msLeft / 60000));
 
-  const timeLeft = minutesLeft < 1 ? "<1" : minutesLeft;
-  const buttonSuffix = canEdit ? `(Disp. por ${timeLeft}:00)` : "(Expirado)";
-
-  return { canEdit, minutesLeft, buttonSuffix };
+  return {
+    canEdit,
+    minutesLeft,
+    countdown: canEdit ? formatCountdown(msLeft) : "",
+  };
 }
 
 // Records may be edited or removed only shortly after they are created. The
