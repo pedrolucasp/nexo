@@ -363,6 +363,22 @@ export interface TriggerMoodLinkWithTrigger extends TriggerMoodLink {
   trigger: Trigger;
 }
 
+// History
+export type HistoryKind = "mood" | "sleep" | "trigger" | "care_action";
+
+// Mirrors the API's HistoryItem: an existing entity tagged with its kind and
+// the instant the merged list sorts and groups by
+export type HistoryItem =
+  | (MoodEntry & { kind: "mood"; sortAt: Date })
+  | (SleepRecord & { kind: "sleep"; sortAt: Date })
+  | (Trigger & { kind: "trigger"; sortAt: Date })
+  | (CareAction & { kind: "care_action"; sortAt: Date });
+
+export interface HistoryPage {
+  items: HistoryItem[];
+  nextCursor: string | null;
+}
+
 // Payloads
 export interface CreateMedicineRegimenPayload {
   name: string;

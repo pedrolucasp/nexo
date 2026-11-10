@@ -46,6 +46,10 @@ export type {
   Notification,
   NotificationKind,
   NotificationsPage,
+  // History
+  HistoryKind,
+  HistoryItem,
+  HistoryPage,
   UpdateTriggerPayload,
   // Trigger-Mood linking
   TriggerMoodLink,

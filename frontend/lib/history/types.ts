@@ -1,7 +1,13 @@
-import type { MoodEntry, SleepRecord, Trigger, CareAction } from "@/lib/api";
+import type {
+  HistoryKind,
+  MoodEntry,
+  SleepRecord,
+  Trigger,
+  CareAction,
+} from "@/lib/api";
 import type { BadgeVariant } from "@/components/ui/Badge";
 
-export type HistoryCategory = "mood" | "sleep" | "trigger" | "care_action";
+export type HistoryCategory = HistoryKind;
 
 export type CareActionSubtype = "medicine" | "appointment" | "activity";
 

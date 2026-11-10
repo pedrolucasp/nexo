@@ -1,4 +1,5 @@
 import { careActionKeys } from "@/hooks/useCareAction.queries";
+import { historyKeys } from "@/hooks/useHistory.queries";
 import { insightKeys } from "@/hooks/useInsights.queries";
 import { medicineRegimenKeys } from "@/hooks/useMedicineRegimen.queries";
 import { medicineTodayKeys } from "@/hooks/useMedicineToday.queries";
@@ -65,6 +66,25 @@ describe("notificationKeys", () => {
       "notifications",
       "list",
       "infinite",
+    ]);
+  });
+});
+
+describe("historyKeys", () => {
+  it("opens one cursor stream per filter", () => {
+    expect(historyKeys.all()).toStrictEqual(["history"]);
+    expect(historyKeys.lists()).toStrictEqual(["history", "list"]);
+    expect(historyKeys.infinite()).toStrictEqual([
+      "history",
+      "list",
+      "infinite",
+      undefined,
+    ]);
+    expect(historyKeys.infinite("mood")).toStrictEqual([
+      "history",
+      "list",
+      "infinite",
+      "mood",
     ]);
   });
 });

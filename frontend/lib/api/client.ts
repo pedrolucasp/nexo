@@ -54,6 +54,8 @@ import {
   RemoveAvatarResponse,
   ExportDataResponse,
   NotificationsPage,
+  HistoryKind,
+  HistoryPage,
 } from "@/lib/api/types";
 
 // Development builds already talk to Metro, so the API is on the same host.
@@ -453,6 +455,21 @@ class ApiClient {
 
     const qs = query.toString();
     return this.request(`/notifications${qs ? `?${qs}` : ''}`);
+  }
+
+  // History
+  async getHistory(params?: {
+    limit?: number;
+    cursor?: string;
+    type?: HistoryKind;
+  }): Promise<HistoryPage> {
+    const query = new URLSearchParams();
+    if (params?.limit) query.set('limit', String(params.limit));
+    if (params?.cursor) query.set('cursor', params.cursor);
+    if (params?.type) query.set('type', params.type);
+
+    const qs = query.toString();
+    return this.request(`/history${qs ? `?${qs}` : ''}`);
   }
 
   // Care Actions

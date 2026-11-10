@@ -2,7 +2,6 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
-  useInfiniteQuery,
 } from "@tanstack/react-query";
 
 import { apiClient, MoodEntry, CreateMoodEntryPayload, UpdateMoodEntryPayload } from "@/lib/api";
@@ -29,17 +28,6 @@ export const useMoodEntries = (filters?: MoodEntryFilters) => {
   return useQuery({
     queryKey: moodKeys.list(filters),
     queryFn: () => apiClient.getMoodEntries(filters),
-  });
-};
-
-// Infinite scroll version
-export const useMoodEntriesInfinite = (limit = 20) => {
-  return useInfiniteQuery({
-    queryKey: [...moodKeys.lists(), "infinite"],
-    queryFn: ({ pageParam = 1 }) =>
-      apiClient.getMoodEntries({ page: pageParam, limit }),
-    getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
-    initialPageParam: 1,
   });
 };
 

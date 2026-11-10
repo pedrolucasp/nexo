@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { ScreenLayout } from "@/components/ui/ScreenLayout";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { FilterPills } from "@/components/ui/FilterPills";
 import { useAuth } from "@/context/AuthContext";
-import { useHistoryFeed } from "@/hooks/useHistoryFeed";
+import { useHistory } from "@/hooks";
 import type { HistoryCard, HistoryCategory } from "@/lib/history/types";
+import type { HistoryItem } from "@/lib/api";
+import {
+  mapMoodToHistoryCard,
+  mapSleepToHistoryCard,
+  mapTriggerToHistoryCard,
+  mapCareActionToHistoryCard,
+} from "@/lib/history/mappers";
+import { groupByDate } from "@/lib/utils/history";
 import { MoodHistoryCard } from "@/components/history/MoodHistoryCard";
 import { SleepRecordCard } from "@/components/history/SleepRecordCard";
 import { TriggerHistoryCard } from "@/components/history/TriggerCard";
@@ -36,12 +44,33 @@ function HistoryCardRenderer({ card }: { card: HistoryCard }) {
   }
 }
 
+function toHistoryCard(item: HistoryItem): HistoryCard {
+  switch (item.kind) {
+    case "mood":
+      return mapMoodToHistoryCard(item);
+    case "sleep":
+      return mapSleepToHistoryCard(item);
+    case "trigger":
+      return mapTriggerToHistoryCard(item);
+    case "care_action":
+      return mapCareActionToHistoryCard(item);
+  }
+}
+
 export default function History() {
   const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState<HistoryCategory | "all">(
     "all",
   );
-  const grouped = useHistoryFeed(activeFilter);
+  const { data } = useHistory(activeFilter === "all" ? undefined : activeFilter);
+
+  const grouped = useMemo(
+    () =>
+      groupByDate(
+        (data?.pages ?? []).flatMap((page) => page.items).map(toHistoryCard),
+      ),
+    [data],
+  );
 
   return (
     <ScreenLayout

@@ -13,7 +13,6 @@ export { useColorScheme } from "@/hooks/use-color-scheme";
 export {
   moodKeys,
   useMoodEntries,
-  useMoodEntriesInfinite,
   useMoodEntry,
   useCreateMoodEntry,
   useUpdateMoodEntry,
@@ -58,6 +57,8 @@ export {
   notificationKeys,
   useNotificationsInfinite,
 } from "@/hooks/useNotifications.queries";
+
+export { historyKeys, useHistory } from "@/hooks/useHistory.queries";
 
 export {
   careActionKeys,
