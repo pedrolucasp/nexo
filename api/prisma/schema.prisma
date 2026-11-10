@@ -62,6 +62,7 @@ model Mood {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([userId, moment])
   @@map("moods")
 }
 
@@ -91,6 +92,7 @@ model Trigger {
   moodLinks   TriggerMoodLink[]
   careActions CareAction[]
 
+  @@index([userId, moment])
   @@map("triggers")
 }
 
@@ -147,6 +149,7 @@ model CareAction {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([userId, moment])
   @@map("care_actions")
 }
 
@@ -198,6 +201,7 @@ model SleepRecord {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([userId, date])
   @@map("sleep_records")
 }
 
