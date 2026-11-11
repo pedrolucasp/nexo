@@ -4,7 +4,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-import { apiClient, MoodEntry, CreateMoodEntryPayload, UpdateMoodEntryPayload } from "@/lib/api";
+import { apiClient, CreateMoodEntryPayload, UpdateMoodEntryPayload } from "@/lib/api";
+import {
+  insertHistoryItemInCache,
+  invalidateHistory,
+  moodHistoryItem,
+  removeHistoryItemInCache,
+} from "@/lib/history/cache";
 import { insightKeys } from "./useInsights.queries";
 
 export const moodKeys = {
@@ -43,7 +49,6 @@ export const useMoodEntry = (id: string) => {
 // MUTATIONS
 
 // Create a new mood entry
-// Optimistically adds to cache, rolls back on failure
 export const useCreateMoodEntry = () => {
   const queryClient = useQueryClient();
 
@@ -51,38 +56,9 @@ export const useCreateMoodEntry = () => {
     mutationFn: (payload: CreateMoodEntryPayload) =>
       apiClient.createMoodEntry(payload),
 
-    // Optimistic update so that the UI reflects the new entry immediately
-    onMutate: async (payload) => {
-      // Cancel any in-flight refetches so they don't overwrite our optimistic update
-      await queryClient.cancelQueries({ queryKey: moodKeys.lists() });
+    onSuccess: ({ mood }) => {
+      insertHistoryItemInCache(queryClient, moodHistoryItem(mood));
 
-      // Snapshot current cache so we can roll back
-      const previous = queryClient.getQueryData(moodKeys.list());
-
-      // Inject a temporary optimistic record
-      // TODO: might as well create a shared attrs that we're keeping it
-      queryClient.setQueryData(moodKeys.list(), (old: MoodEntry[] = []) => [
-        {
-          ...payload,
-          id: `temp-${Date.now()}`,
-          createdAt: new Date().toISOString(),
-          _optimistic: true,
-        },
-        ...old,
-      ]);
-
-      return { previous };
-    },
-
-    // On error, roll back to the snapshot
-    onError: (_err, _payload, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(moodKeys.list(), context.previous);
-      }
-    },
-
-    // On success, replace optimistic record with real one from server
-    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
 
       // Invalidate insights, so we can force refresh
@@ -114,6 +90,7 @@ export const useUpdateMoodEntry = () => {
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: moodKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
+      invalidateHistory(queryClient);
 
       // Trigger detail embeds the full mood in its links, so an edited mood
       // would otherwise keep its old levels there. The literal prefix is used
@@ -135,31 +112,15 @@ export const useUpdateMoodEntry = () => {
   });
 };
 
-// Delete a mood entry with optimistic removal
+// Delete a mood entry
 export const useDeleteMoodEntry = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) => apiClient.deleteMoodEntry(id),
 
-    onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: moodKeys.lists() });
-      const previous = queryClient.getQueryData(moodKeys.list());
-
-      queryClient.setQueryData(moodKeys.list(), (old: MoodEntry[] = []) =>
-        old.filter((e) => e.id !== Number(id)),
-      );
-
-      return { previous };
-    },
-
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(moodKeys.list(), context.previous);
-      }
-    },
-
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
+      removeHistoryItemInCache(queryClient, "mood", Number(id));
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("MOOD_TREND") });

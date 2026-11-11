@@ -7,6 +7,12 @@ import {
   CreateCareActionPayload,
   PatchCareActionPayload,
 } from "@/lib/api";
+import {
+  careActionHistoryItem,
+  insertHistoryItemInCache,
+  invalidateHistory,
+  removeHistoryItemInCache,
+} from "@/lib/history/cache";
 import { medicineTodayKeys } from "@/hooks/useMedicineToday.queries";
 import { medicineRegimenKeys } from "@/hooks/useMedicineRegimen.queries";
 
@@ -46,7 +52,9 @@ export const useCreateCareAction = () => {
     mutationFn: (payload: CreateCareActionPayload) =>
       apiClient.createCareAction(payload),
 
-    onSuccess: () => {
+    onSuccess: ({ careAction }) => {
+      insertHistoryItemInCache(queryClient, careActionHistoryItem(careAction));
+
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
       queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
       queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.lists() });
@@ -64,6 +72,7 @@ export const usePatchCareAction = () => {
     onSuccess: (_result, { id }) => {
       queryClient.invalidateQueries({ queryKey: careActionKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
+      invalidateHistory(queryClient);
 
       // A link change also lands on the mood or trigger that now points back
       queryClient.invalidateQueries({ queryKey: ["mood-entries"] });
@@ -97,7 +106,8 @@ export const useDeleteCareAction = () => {
       }
     },
 
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
+      removeHistoryItemInCache(queryClient, "care_action", Number(id));
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
     },
   });

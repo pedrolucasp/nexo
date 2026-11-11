@@ -1,6 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiClient, SleepRecord, SleepRecordPayload, UpdateSleepRecordPayload } from "@/lib/api";
+import {
+  insertHistoryItemInCache,
+  invalidateHistory,
+  removeHistoryItemInCache,
+  sleepHistoryItem,
+} from "@/lib/history/cache";
 import { insightKeys } from "./useInsights.queries";
 
 export const sleepRecordKeys = {
@@ -40,35 +46,9 @@ export const useCreateSleepRecord = () => {
     mutationFn: (payload: SleepRecordPayload) =>
       apiClient.createSleepRecord(payload),
 
-    onMutate: async (payload) => {
-      await queryClient.cancelQueries({ queryKey: sleepRecordKeys.lists() });
+    onSuccess: ({ sleepRecord }) => {
+      insertHistoryItemInCache(queryClient, sleepHistoryItem(sleepRecord));
 
-      const previous = queryClient.getQueryData(sleepRecordKeys.list());
-
-      // TODO: might as well create a shared attrs that we're keeping it
-      queryClient.setQueryData(
-        sleepRecordKeys.list(),
-        (old: SleepRecord[] = []) => [
-          {
-            ...payload,
-            id: `temp-${Date.now()}`,
-            createdAt: new Date().toISOString(),
-            _optimistic: true,
-          },
-          ...old,
-        ],
-      );
-
-      return { previous };
-    },
-
-    onError: (_err, _payload, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(sleepRecordKeys.list(), context.previous);
-      }
-    },
-
-    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
 
       // Invalidate insights, so we can force refresh
@@ -117,6 +97,7 @@ export const useUpdateSleepRecord = () => {
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
+      invalidateHistory(queryClient);
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("DAILY_SLEEP") });
@@ -125,32 +106,15 @@ export const useUpdateSleepRecord = () => {
   });
 };
 
-// Delete a sleep record with optimistic removal
+// Delete a sleep record
 export const useDeleteSleepRecord = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) => apiClient.deleteSleepRecord(id),
 
-    onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: sleepRecordKeys.lists() });
-      const previous = queryClient.getQueryData(sleepRecordKeys.list());
-
-      queryClient.setQueryData(
-        sleepRecordKeys.list(),
-        (old: SleepRecord[] = []) => old.filter((e) => e.id !== Number(id)),
-      );
-
-      return { previous };
-    },
-
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(sleepRecordKeys.list(), context.previous);
-      }
-    },
-
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
+      removeHistoryItemInCache(queryClient, "sleep", Number(id));
       queryClient.invalidateQueries({ queryKey: sleepRecordKeys.lists() });
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });
