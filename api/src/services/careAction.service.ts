@@ -4,6 +4,7 @@ import { CareAction, CareActionType } from '@prisma/client';
 import { CreateCareActionInput, PatchCareActionInput } from '@app/schemas';
 import { assertWithinEditingWindow } from '@app/lib/editingWindow';
 import { InvalidCareActionSubtypeError } from '@app/lib/errors/editingErrors';
+import { MedicineRegimenNotFoundError } from '@app/lib/errors/medicineErrors';
 import { syncMedicineReminderJobs } from '@app/services/medicineReminder.sync';
 
 const careActionIncludes = {
@@ -165,6 +166,13 @@ export const createCareAction = async (
   if (input.type === CareActionType.MEDICINE) {
     if (input.regimenId) {
       const regimenId = input.regimenId;
+
+      const regimen = await prisma.medicineRegimen.findUnique({
+        where: { id: regimenId, userId },
+        select: { id: true },
+      });
+
+      if (!regimen) throw new MedicineRegimenNotFoundError();
 
       const [careAction] = await prisma.$transaction([
         prisma.careAction.create({

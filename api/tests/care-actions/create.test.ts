@@ -114,6 +114,36 @@ describe('POST /care-actions', () => {
     expect(regimenCount).toBe(1)
   })
 
+  it('rejects a regimen belonging to another user', async () => {
+    const user = await createTestUser(db)
+    const other = await createTestUser(db, { email: 'other@example.com' })
+    const token = generateTestToken(user.id, user.email)
+
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: other.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: [],
+      },
+    })
+
+    const res = await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: {
+          type: 'MEDICINE',
+          moment,
+          regimenId: regimen.id,
+        },
+      })
+
+    expect(res.status).toBe(404)
+    expect(await db.careAction.count({ where: { userId: user.id } })).toBe(0)
+  })
+
   it('returns 401 without a token', async () => {
     const res = await request(app)
       .post('/care-actions')
