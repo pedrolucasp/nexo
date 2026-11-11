@@ -1,4 +1,12 @@
-import { View, Switch, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Switch,
+  TouchableOpacity,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import { useState } from "react";
 import { Text } from "@/components/ui/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -28,6 +36,7 @@ function scheduleSummary(regimen: MedicineRegimen): string {
 export function MedicineRegimenList() {
   const { data, isLoading } = useMedicineRegimens();
   const toggleRegimen = useToggleMedicineRegimen();
+  const [showInactive, setShowInactive] = useState(false);
 
   if (isLoading) {
     return (
@@ -38,6 +47,43 @@ export function MedicineRegimenList() {
   }
 
   const regimens = data?.regimens ?? [];
+  const inUse = regimens.filter((regimen) => regimen.active);
+  const inactive = regimens.filter((regimen) => !regimen.active);
+
+  const renderRow = (regimen: MedicineRegimen) => (
+    <View key={regimen.id} style={styles.row}>
+      <TouchableOpacity
+        style={styles.rowMain}
+        activeOpacity={0.7}
+        onPress={() => router.push(`/medicine-regimens/${regimen.id}`)}
+        accessibilityRole="button"
+        accessibilityLabel={`Editar ${regimen.name}`}
+      >
+        <View style={styles.iconWrap}>
+          <Ionicons name="bandage-outline" size={18} color={Colors.light.tint} />
+        </View>
+        <View style={styles.info}>
+          <Text style={styles.name}>{regimen.name}</Text>
+          <Text style={styles.meta}>
+            {regimen.dosage} · {scheduleSummary(regimen)}
+          </Text>
+        </View>
+      </TouchableOpacity>
+
+      <View style={styles.switchWrap}>
+        <Text style={styles.switchLabel}>Em uso</Text>
+        <Switch
+          value={regimen.active}
+          onValueChange={(val) =>
+            toggleRegimen.mutate({ id: String(regimen.id), active: val })
+          }
+          trackColor={{ true: Colors.light.tint, false: Colors.light.divider }}
+          thumbColor={Colors.light.surface}
+          accessibilityLabel={`${regimen.name} em uso`}
+        />
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -46,58 +92,58 @@ export function MedicineRegimenList() {
           <Text style={styles.emptyText}>Nenhum medicamento cadastrado</Text>
         </View>
       ) : (
-        regimens.map((regimen) => (
-          <TouchableOpacity
-            key={regimen.id}
-            style={styles.row}
-            activeOpacity={0.7}
-            onPress={() => router.push(`/medicine-regimens/${regimen.id}`)}
-          >
-            <View style={styles.iconWrap}>
-              <Ionicons name="bandage-outline" size={18} color={Colors.light.tint} />
-            </View>
-            <View style={styles.info}>
-              <Text style={styles.name}>{regimen.name}</Text>
-              <Text style={styles.meta}>
-                {regimen.dosage} · {scheduleSummary(regimen)}
-              </Text>
-            </View>
-            <Switch
-              value={regimen.active}
-              onValueChange={(val) =>
-                toggleRegimen.mutate({ id: String(regimen.id), active: val })
-              }
-              trackColor={{ true: Colors.light.tint, false: Colors.light.divider }}
-              thumbColor="#fff"
-            />
-          </TouchableOpacity>
-        ))
+        inUse.map(renderRow)
       )}
 
-
       <Button
-        title="Cadastrar outro medicamento"
+        title="Novo medicamento"
         variant="dashed"
-        onPress={() => router.push('/care-actions/medicine-new')}
+        onPress={() => router.push("/medicine-regimens/new")}
       />
+
+      {inactive.length > 0 && (
+        <View style={styles.inactiveGroup}>
+          <Pressable
+            style={styles.inactiveHeader}
+            onPress={() => setShowInactive((value) => !value)}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Desligados"
+          >
+            <Ionicons
+              name={showInactive ? "chevron-down" : "chevron-forward"}
+              size={16}
+              color={Colors.light.textSecondary}
+            />
+            <Text style={styles.inactiveTitle}>Desligados</Text>
+          </Pressable>
+
+          {showInactive && inactive.map(renderRow)}
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { gap: 1 },
+  container: { gap: Spacing.cardGap },
   center: { padding: Spacing.cardGap, alignItems: "center" },
   empty: { padding: Spacing.cardGap },
   emptyText: { ...Typography.bodyMd, color: Colors.light.textSecondary },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.surface,
     padding: Spacing.cardGap,
     gap: 12,
     ...Shadows.sm,
     borderRadius: BorderRadius.lg,
-    marginBottom: 5
+  },
+  rowMain: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   iconWrap: {
     width: 32,
@@ -110,12 +156,26 @@ const styles = StyleSheet.create({
   info: { flex: 1 },
   name: { ...Typography.bodyMd, fontWeight: "600" },
   meta: { ...Typography.labelSm, color: Colors.light.textSecondary },
-  addButton: {
+  switchWrap: {
+    alignItems: "center",
+    gap: Spacing.inlineGapSm,
+  },
+  switchLabel: {
+    ...Typography.labelSm,
+    color: Colors.light.textSecondary,
+  },
+  inactiveGroup: { gap: Spacing.cardGap },
+  inactiveHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingVertical: Spacing.cardGap,
-    paddingHorizontal: 4,
+    gap: Spacing.inlineGapSm,
+    paddingVertical: Spacing.inlineGapSm,
   },
-  addText: { ...Typography.bodyMd, color: Colors.light.tint, fontWeight: "600" },
+  inactiveTitle: {
+    ...Typography.labelSm,
+    fontWeight: "600",
+    color: Colors.light.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
 });

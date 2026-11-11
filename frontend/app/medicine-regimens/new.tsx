@@ -15,8 +15,8 @@ import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Chip, ChipRow } from "@/components/ui/Chip";
 import { Spacing, Typography, Colors } from "@/constants/theme";
 import { TimePicker } from "@/components/ui/TimePicker";
-import { useCreateMedicineRegimen } from "@/hooks";
-import { MedicinePeriodicity } from "@/lib/api";
+import { useCreateMedicineRegimen, useCreateCareAction } from "@/hooks";
+import { CreateMedicineRegimenPayload, MedicinePeriodicity } from "@/lib/api";
 
 const PERIODICITY_OPTIONS: { label: string; value: MedicinePeriodicity }[] = [
   { label: 'Uma vez', value: 'ONCE' },
@@ -38,13 +38,16 @@ function getTimePickerCount(p: MedicinePeriodicity): number {
   }
 }
 
-export default function MedicineNewCareAction() {
+export default function MedicineNewRegimen() {
   const [medicineName, setMedicineName] = useState('');
   const [medicineDosage, setMedicineDosage] = useState('');
   const [medicinePeriodicity, setMedicinePeriodicity] = useState<MedicinePeriodicity>('ONCE');
   const [scheduledTimes, setScheduledTimes] = useState<Date[]>([]);
 
   const createRegimen = useCreateMedicineRegimen();
+  const createCareAction = useCreateCareAction();
+
+  const isSaving = createRegimen.isPending || createCareAction.isPending;
 
   const handleSave = async () => {
     const count = getTimePickerCount(medicinePeriodicity);
@@ -52,13 +55,26 @@ export default function MedicineNewCareAction() {
       d => `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`
     );
 
-    await createRegimen.mutateAsync({
+    const medication: CreateMedicineRegimenPayload = {
       name: medicineName,
       dosage: medicineDosage,
       periodicity: medicinePeriodicity,
       scheduledAt,
-    });
-    router.replace('/(tabs)/actions');
+    };
+
+    if (medicinePeriodicity === 'ONCE') {
+      // A one-off dose is taken the moment it is saved, so the regimen and its
+      // log are created together
+      await createCareAction.mutateAsync({
+        type: 'MEDICINE',
+        moment: new Date(),
+        medicine: medication,
+      });
+    } else {
+      await createRegimen.mutateAsync(medication);
+    }
+
+    router.back();
   };
 
   return (
@@ -134,7 +150,7 @@ export default function MedicineNewCareAction() {
           <Button
             title="Salvar"
             onPress={handleSave}
-            loading={createRegimen.isPending}
+            loading={isSaving}
             disabled={!medicineName || !medicineDosage}
           />
         </View>

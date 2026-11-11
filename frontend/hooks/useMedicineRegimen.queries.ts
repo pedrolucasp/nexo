@@ -39,6 +39,7 @@ export const useCreateMedicineRegimen = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
     },
   });
 };

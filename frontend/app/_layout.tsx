@@ -118,10 +118,6 @@ export default function RootLayout() {
               options={{ title: "Medicamentos de hoje" }}
             />
             <Stack.Screen
-              name="care-actions/medicine-new"
-              options={{ title: "Novo Medicamento" }}
-            />
-            <Stack.Screen
               name="care-actions/appointment"
               options={{ title: "Consulta" }}
             />
@@ -132,7 +128,12 @@ export default function RootLayout() {
 
             <Stack.Screen
               name="medicine-regimens/index"
-              options={{ title: "Gerenciar Medicamentos" }}
+              options={{ title: "Meus medicamentos" }}
+            />
+
+            <Stack.Screen
+              name="medicine-regimens/new"
+              options={{ title: "Novo Medicamento" }}
             />
 
             <Stack.Screen

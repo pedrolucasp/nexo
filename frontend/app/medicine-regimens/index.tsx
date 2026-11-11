@@ -1,7 +1,6 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Spacing } from "@/constants/theme";
-import { TodayMedicines } from "@/components/medicine/TodayMedicines";
 import { MedicineRegimenList } from "@/components/medicine/MedicineRegimenList";
 
 export default function MedicineRegimens() {
@@ -11,14 +10,9 @@ export default function MedicineRegimens() {
       scrollEventThrottle={16}
     >
       <Section>
-        <SectionHeader title="Hoje" />
-        <TodayMedicines />
-      </Section>
-
-      <Section>
         <SectionHeader
-          title="Seus medicamentos"
-          subtitle="Gerencie seus medicamentos e horários"
+          title="Meus medicamentos"
+          subtitle="Horários, dosagem e o que está em uso"
         />
         <MedicineRegimenList />
       </Section>

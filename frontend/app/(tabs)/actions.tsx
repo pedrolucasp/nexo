@@ -51,10 +51,10 @@ export default function Actions() {
           <Ionicons name="bandage-outline" size={20} color="#13EC5B" />
         </View>
 
-        <Text style={styles.cardTitleHeadline}>Gerenciar Medicamentos</Text>
+        <Text style={styles.cardTitleHeadline}>Meus medicamentos</Text>
 
         <Text style={styles.cardDescriptionHeadline}>
-          Organize seus medicamentos, horários e doses
+          Ver, editar e cadastrar
         </Text>
       </Card>
 
