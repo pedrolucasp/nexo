@@ -4,7 +4,7 @@ import { useLocalSearchParams, router, Stack } from "expo-router";
 
 import { Card } from "@/components/ui/Cards";
 import { NoLinkMessage } from "@/components/misc/NoLinkMessage";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 import { Col, Between, Row } from "@/components/ui/LayoutHelpers";
 import { Section, SectionHeader } from "@/components/ui/Sections";
 import { Theme, Colors, Spacing } from "@/constants/theme";
@@ -16,6 +16,16 @@ import { MoodComponentCard } from "@/components/ui/MoodComponentCard";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { getTriggerCategory } from "@/constants/trigger-categories";
 import { getCareActionMeta } from "@/constants/care-action-categories";
+import type { CareActionType } from "@/lib/api";
+
+const CARE_ACTION_BADGE: Record<
+  CareActionType,
+  { label: string; variant: BadgeVariant }
+> = {
+  MEDICINE: { label: "Medicamento", variant: "purple" },
+  APPOINTMENT: { label: "Consulta", variant: "blue" },
+  ACTIVITY: { label: "Atividade", variant: "green" },
+};
 
 const impactColor = (n: number) => {
   if (n <= 1) return '#86efac';
@@ -182,6 +192,7 @@ export default function MoodDetailScreen() {
 
               {(entry.careActions ?? []).map((ca) => {
                 const meta = getCareActionMeta(ca);
+                const badge = CARE_ACTION_BADGE[ca.type];
 
                 return (
                   <Pressable
@@ -197,7 +208,7 @@ export default function MoodDetailScreen() {
                         <Col gap={3} style={{ flex: 1 }}>
                           <Row style={{ alignItems: 'center', gap: 6 }}>
                             <Text style={styles.linkLabel}>{meta.label}</Text>
-                            <Badge label="Consulta" variant="blue" style={undefined} />
+                            <Badge label={badge.label} variant={badge.variant} />
                           </Row>
                           <Text style={styles.linkTime}>
                             {formatMoment(new Date(ca.moment))}
