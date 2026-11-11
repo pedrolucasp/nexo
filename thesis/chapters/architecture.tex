@@ -219,14 +219,13 @@ uma estimativa subjetiva, sem pretensão de precisão.
 \source{Elaborado pelo autor (2026)}
 \end{figure}
 
-Por fim, vale mencionar que, após esse processo, é enfileirado
-internamente um \textit{background job} que recalcula, sob demanda, o
-indicador de energia daquele dia, apresentado na figura
-\ref{fig:screenshot-consulta-registros}. Diferentemente deste, os
-indicadores semanais --- como a correlação entre sono e energia,
-descrita na seção \ref{sec:insights} --- não são recalculados a cada
-registro individual, sendo processados apenas pelo job semanal
-agendado (seção \ref{sec:insights}).
+Por fim, vale mencionar que, após esse processo, a API enfileira sob
+demanda os indicadores que dependem do humor recém-registrado: a
+tendência de humor, a correlação entre sono e energia e o indicador
+diário de energia, este último apresentado na figura
+\ref{fig:screenshot-consulta-registros}. O padrão de gatilhos não
+depende desse registro e permanece apenas no \textit{job} semanal de
+\textit{fan-out} (seção \ref{sec:insights}).
 
 \section{Indicadores}\label{sec:insights}
 
@@ -237,11 +236,14 @@ são artefatos pré-computados: um \textit{worker} assíncrono (\textit{BullMQ})
 percorre semanalmente todos os usuários ativos e enfileira, para cada
 um, um conjunto de \textit{jobs} --- um por tipo de indicador --- que
 processam a janela dos últimos sete dias e persistem o resultado em uma
-tabela dedicada. Vale notar que nem todos os indicadores seguem esse
-fluxo agendado: os indicadores diários (energia e sono) são recalculados
-sob demanda, no momento em que o usuário registra um novo humor ou
-sessão de sono, enquanto os indicadores semanais dependem
-exclusivamente do \textit{job} de \textit{fan-out} de segunda-feira.
+tabela dedicada. O \textit{fan-out} semanal garante que todos os
+usuários ativos tenham os indicadores semanais recalculados. Além
+dele, o registro ou a edição de um humor enfileira sob demanda a
+tendência de humor, a correlação entre sono e energia e o indicador
+diário de energia; o registro ou a edição de uma sessão de sono
+enfileira a correlação e o indicador diário de sono. O padrão de
+gatilhos, que não depende desses registros, permanece apenas no fluxo
+semanal.
 
 O aplicativo móvel apenas consulta esse resultado já
 calculado, o que evita repetir cálculos custosos a cada abertura da tela
@@ -265,9 +267,7 @@ entre sono e energia, e padrão de gatilhos.
     primeira metade dos últimos sete dias com a da segunda metade,
     exibindo as duas médias na escala de 1 (Irritado) a 5 (Ótimo) e a
     diferença entre elas em pontos. Não há classificação automática de
-    melhora, piora ou estabilidade: um ponto equivale a uma opção
-    inteira, e variações abaixo de 0,5 ponto ficam dentro de meio
-    degrau da escala. A leitura do restante fica a cargo do usuário.
+    melhora, piora ou estabilidade.
 
     \item \textbf{Correlação entre sono e energia}: relaciona a duração
     do sono de uma noite com o nível de energia relatado na manhã
@@ -279,6 +279,37 @@ entre sono e energia, e padrão de gatilhos.
     mais frequente na semana e expressa sua predominância como percentual
     do total de registros.
 \end{itemize}
+
+A tendência de humor merece uma explicação à parte, porque o número
+exibido não é uma opção de humor, mas a média de várias opções. Cada
+registro é codificado como 1 (Irritado), 2 (Triste), 3 (Neutro), 4
+(Bem) ou 5 (Ótimo). O indicador divide os últimos sete dias em duas
+metades temporais --- não em duas metades por quantidade de registros
+--- e calcula a média dos códigos de cada metade, arredondada para uma
+casa decimal. O indicador exige pelo menos dois registros em cada
+metade; caso contrário, não é gerado. A janela é móvel: a cada novo
+registro, o par é recalculado sobre os sete dias anteriores.
+
+O resultado é apresentado como um par, por exemplo
+``4,0 $\rightarrow$ 3,2'': a primeira metade teve média 4,0 e a
+segunda, 3,2. Uma média de 4,0 pode vir de registros apenas ``Bem'' ou
+de uma combinação de ``Ótimo'' e ``Neutro''; o número não identifica
+uma opção única. A diferença entre as duas médias é expressa em pontos,
+e não em percentual, porque a escala é ordinal: um ponto corresponde a
+uma opção inteira e meio ponto, a meio degrau. Uma diferença de 0,8
+ponto está, portanto, próxima de uma opção inteira, enquanto diferenças
+abaixo de 0,5 ponto ficam dentro de meio degrau.
+
+O aplicativo não classifica o resultado como melhora, piora ou
+estabilidade; apresenta as duas médias e a diferença, e deixa a
+interpretação para o usuário. A escolha é deliberada: em um aplicativo
+voltado a pessoas com transtorno afetivo bipolar, uma afirmação
+automática de estabilidade pode mascarar o início de um episódio. Por
+fim, a média é um resumo grosseiro: ela não preserva a distribuição dos
+registros. Uma média de 3,2 pode vir de quatro registros ``Neutro'' e
+um ``Bem'', ou de uma combinação que inclua outros humores. O indicador
+serve para acompanhar a direção geral do período, não para reconstruir
+os registros individuais.
 
 É intencional, na figura \ref{fig:screenshot-insights}, que o bloco de
 ``Energia'' apareça vazio: o cálculo da correlação depende da existência
