@@ -397,9 +397,10 @@ export type HistoryCard = {
 A ordenação total é decrescente por \texttt{sortAt}; em caso de empate,
 crescente por \texttt{kind}, em uma ordem fixa; e, por fim, decrescente por
 \texttt{id}. Humor, gatilho e ação de cuidado têm um momento próprio, que
-serve como \texttt{sortAt}; o registro de sono é diário e não possui hora,
-então o servidor o ancora ao meio-dia no fuso
-\texttt{America/Sao\_Paulo}. O cursor é uma codificação \texttt{base64url}
+serve como \texttt{sortAt}; o registro de sono usa o horário aproximado em
+que o usuário acordou, no fuso \texttt{America/Sao\_Paulo}, e recorre ao
+meio-dia apenas quando esse horário não foi informado. O cursor é uma
+codificação \texttt{base64url}
 de \texttt{\{ sortAt, kind, id \}} que o aplicativo não interpreta: apenas
 a devolve na requisição seguinte, e a página começa estritamente depois do
 registro que ela identifica. Trata-se de paginação por chave, e não por
