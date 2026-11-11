@@ -410,10 +410,6 @@ class ApiClient {
     });
   }
 
-  async deleteMedicineRegimen(id: string): Promise<void> {
-    return this.request(`/medicine-regimens/${id}`, { method: 'DELETE' });
-  }
-
   async toggleMedicineRegimen(
     id: string,
     active: boolean,

@@ -93,34 +93,3 @@ export const useToggleMedicineRegimen = () => {
     },
   });
 };
-
-export const useDeleteMedicineRegimen = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => apiClient.deleteMedicineRegimen(id),
-
-    onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: medicineRegimenKeys.lists() });
-      const previous = queryClient.getQueryData(medicineRegimenKeys.list());
-
-      queryClient.setQueryData(
-        medicineRegimenKeys.list(),
-        (old: { regimens: MedicineRegimen[] } | undefined) =>
-          old ? { ...old, regimens: old.regimens.filter((r) => r.id !== Number(id)) } : old,
-      );
-
-      return { previous };
-    },
-
-    onError: (_err, _id, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(medicineRegimenKeys.list(), context.previous);
-      }
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: medicineRegimenKeys.lists() });
-    },
-  });
-};
