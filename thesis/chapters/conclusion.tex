@@ -79,14 +79,14 @@ binário --- em uso ou fora de uso ---, o que se mostrou insuficiente para cobri
 situações corriqueiras do cotidiano do público-alvo: pausar temporariamente um
 medicamento por orientação médica, encerrar um tratamento por tempo determinado
 e descontinuar definitivamente um medicamento são situações distintas que hoje
-não podem ser expressas nem distinguidas pelo sistema. A consequência alcança
-também o histórico, já que o nome e a dosagem exibidos em cada registro de dose
-são lidos do regime no momento da consulta: renomear um medicamento reescreve
-retroativamente o passado, e um regime removido deixaria registros de dose sem
-identificação. Um modelo que separasse o regime de sua vigência ao longo do
-tempo --- preservando, em cada dose, a dosagem prescrita no momento em que ela
-foi registrada --- atenderia a esses casos de uso e tornaria o histórico
-confiável por construção, em vez de depender de o regime nunca ser alterado. A
-mesma revisão permitiria ainda que a periodicidade configurada repercutisse de
-fato na geração dos lembretes, hoje disparados diariamente qualquer que seja a
-frequência escolhida.
+não podem ser expressas nem distinguidas pelo sistema. A consequência
+alcança também o ciclo de vida do regime: como o sistema guarda apenas o
+estado atual, não há como datar quando uma pausa ou um encerramento
+ocorreu. O histórico de doses, por outro lado, já não depende disso: o nome
+e a dosagem são copiados para cada registro de dose no momento em que ela é
+gravada, de modo que editar ou desativar o regime não reescreve
+retroativamente o passado. O que falta é representar a vigência do regime
+ao longo do tempo, para que o próprio período de uso --- e não apenas a
+dose --- seja reconstruível. Representar essa vigência permitiria ainda que a
+periodicidade configurada repercutisse de fato na geração dos lembretes, hoje
+disparados diariamente qualquer que seja a frequência escolhida.
