@@ -438,9 +438,18 @@ suficientes de ambos os tipos. Optou-se por não exibir uma correlação
 calculada com poucos pontos, preferindo comunicar a ausência de dado a
 apresentar um número pouco confiável.
 
-O bloco maior no topo da tela, o ``Resumo Semanal'', condensa os
+\begin{figure}[H]
+\centering
+\caption{Resumo Semanal habilitado}
+\label{fig:screenshot-weekly-resume}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-weekly-resume-enabled.jpg}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+O bloco maior no topo da tela, o ``Resumo Semanal'', reúne os
 indicadores mais centrais --- média de sono do período e um rótulo de
-humor (``Estável'', no exemplo). Esse rótulo, no entanto, é o elemento
+humor (``Estável'', no exemplo da figura
+\ref{fig:screenshot-weekly-resume}). Esse rótulo, no entanto, é o elemento
 mais delicado de toda a funcionalidade. Embora exista uma fórmula capaz
 de produzir uma classificação de estabilidade a partir da variância dos
 registros de humor, atribuir esse tipo de afirmação a um usuário ---
@@ -448,13 +457,15 @@ especialmente em um aplicativo que é utilizado por pessoas com
 Transtorno Afetivo Bipolar, para quem uma leitura equivocada de
 ``estabilidade'' pode mascarar justamente o início de um episódio ---
 exige um embasamento mais cuidadoso do que uma regra estatística
-simples. Por esse motivo, o rótulo apresentado nesta versão do
-aplicativo é estático (não deriva de fato do cálculo de estabilidade) e
-a funcionalidade pode ser inteiramente desabilitada pelo usuário nas
-configurações. A decisão de manter ou não uma afirmação automatizada
-desse tipo, e sob quais critérios, permanece um ponto em aberto que
-mereceria revisão de literatura específica antes de ser tratado como
-funcionalidade definitiva.
+simples. Por esse motivo, o bloco apresentado nesta versão do aplicativo é
+estático: o rótulo de humor, a média de sono e o percentual a ele associado
+são valores fixos, que não derivam dos cálculos descritos acima e servem
+apenas para demonstrar a composição visual do resumo. A funcionalidade pode
+ser inteiramente desabilitada pelo usuário nas configurações, e nesse caso
+o bloco não é renderizado. A decisão de manter ou não uma afirmação
+automatizada desse tipo, e sob quais critérios, permanece um ponto em
+aberto que mereceria revisão de literatura específica antes de ser tratado
+como funcionalidade definitiva.
 
 % TODO: literatura sobre riscos de auto-monitoramento automatizado de humor / mood-tracking apps e TAB
 
@@ -486,8 +497,6 @@ resultados são ordenados em conjunto, de modo que a ordem exibida pertence
 a própria entidade acrescida de \texttt{kind}, que identifica o tipo, e de
 \texttt{sortAt}, o instante usado para ordenar e agrupar, conforme o
 código \ref{lst:history-card}.
-
-\newpage
 
 \begin{lstlisting}[caption={Formatos do histórico no servidor e no cartão da tela}, label={lst:history-card}]
 export type HistoryItem =
