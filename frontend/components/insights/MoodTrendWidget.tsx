@@ -6,6 +6,15 @@ import { useInsight } from "@/hooks/useInsights.queries";
 import { Colors, Spacing, Typography } from "@/constants/theme";
 import { InsightCard } from "./InsightCard";
 
+const formatDecimal = (value: number): string =>
+  value.toFixed(1).replace(".", ",");
+
+const FOOTNOTE =
+  "Primeira e segunda metade dos últimos 7 dias. " +
+  "Escala 1–5: 1 Irritado · 2 Triste · 3 Neutro · 4 Bem · 5 Ótimo. " +
+  "Variações abaixo de 0,5 ponto ficam dentro de meio degrau; " +
+  "1,0 ponto equivale a uma opção inteira.";
+
 export const MoodTrendWidget: React.FC = () => {
   const { data: insight, isLoading } = useInsight("MOOD_TREND");
 
@@ -34,26 +43,20 @@ export const MoodTrendWidget: React.FC = () => {
   }
 
   const metadata = insight.metadata as {
-    delta: number;
-    dominantMood: string;
-    avgEnergy: number;
+    avgFirst: number;
+    avgSecond: number;
   };
 
-  const metric = metadata?.delta ? `${Math.round(metadata.delta)}%` : "N/A";
-
-  const accent = metadata?.delta
-    ? metadata.delta < 0
-      ? "purple"
-      : "green"
-    : "green";
+  const first = formatDecimal(metadata.avgFirst);
+  const second = formatDecimal(metadata.avgSecond);
 
   return (
     <InsightCard
       category="Humor"
       body={insight.body}
-      metric={metric}
-      accent={accent}
-      footnote="Compara a média de humor da primeira e segunda metade da semana (escala 1–5)."
+      metric={`${first} → ${second}`}
+      accent="neutral"
+      footnote={FOOTNOTE}
     />
   );
 };

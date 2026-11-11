@@ -194,6 +194,7 @@ export type InsightPeriod = "DAILY" | "WEEKLY" | "MONTHLY";
 export interface InsightMetadataByType {
   MOOD_TREND: {
     delta: number;
+    deltaPoints: number;
     avgFirst: number;
     avgSecond: number;
     dominantMood: string;
