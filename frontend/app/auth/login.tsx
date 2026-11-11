@@ -113,7 +113,7 @@ export default function LoginScreen() {
             />
           </Animated.View>
         }
-        title="Bem vindo de volta"
+        title="Bem-vindo de volta"
         titleTestID="text-welcome"
         subtitle="Logue na sua conta nexo"
         footer={
