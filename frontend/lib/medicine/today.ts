@@ -45,3 +45,33 @@ export function confirmedIndexes(entry: TodayMedicineEntry): Set<number> {
 
   return confirmed;
 }
+
+export type TodayBucket = "late" | "upcoming" | "taken";
+
+export function hasElapsed(time: string, now: Date): boolean {
+  return minutesOfTime(time) < minutesOfDate(now);
+}
+
+// ONCE is taken the moment it is saved, and a regimen without times has no
+// dose to show under today
+export function dueToday(entry: TodayMedicineEntry): boolean {
+  return (
+    entry.regimen.periodicity !== "ONCE" &&
+    entry.regimen.scheduledAt.length > 0
+  );
+}
+
+export function bucketOf(
+  entry: TodayMedicineEntry,
+  now: Date,
+): TodayBucket {
+  const times = sortedTimes(entry.regimen.scheduledAt);
+  const confirmed = confirmedIndexes(entry);
+  const pending = times.filter((_, index) => !confirmed.has(index));
+
+  if (pending.length === 0) return "taken";
+
+  return pending.some((time) => hasElapsed(time, now))
+    ? "late"
+    : "upcoming";
+}

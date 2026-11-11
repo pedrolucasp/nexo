@@ -1,16 +1,23 @@
-import { confirmedIndexes, sortedTimes } from "@/lib/medicine/today";
+import { bucketOf, confirmedIndexes, dueToday, sortedTimes } from "@/lib/medicine/today";
 import type { TodayMedicineEntry } from "@/lib/api";
 
-function entry(overrides: Partial<TodayMedicineEntry> = {}): TodayMedicineEntry {
+function entry({
+  regimen,
+  logs = [],
+}: {
+  regimen?: Partial<TodayMedicineEntry["regimen"]>;
+  logs?: TodayMedicineEntry["logs"];
+} = {}): TodayMedicineEntry {
   return {
     regimen: {
       id: 1,
       name: "Sertralina",
       dosage: "50mg",
+      periodicity: "DAILY",
       scheduledAt: ["08:00", "20:00"],
+      ...regimen,
     },
-    logs: [],
-    ...overrides,
+    logs,
   };
 }
 
@@ -88,12 +95,7 @@ describe("confirmedIndexes", () => {
   it("uses the sorted order for a schedule filled out of order", () => {
     const result = confirmedIndexes(
       entry({
-        regimen: {
-          id: 1,
-          name: "Sertralina",
-          dosage: "50mg",
-          scheduledAt: ["20:00", "08:00"],
-        },
+        regimen: { periodicity: "DAILY", scheduledAt: ["20:00", "08:00"] },
         logs: [{ id: 1, takenAt: at(20, 5), scheduledSlot: "20:00" }],
       }),
     );
@@ -104,11 +106,84 @@ describe("confirmedIndexes", () => {
   it("confirms nothing when the regimen has no times", () => {
     const result = confirmedIndexes(
       entry({
-        regimen: { id: 1, name: "Sertralina", dosage: "50mg", scheduledAt: [] },
+        regimen: { scheduledAt: [] },
         logs: [{ id: 1, takenAt: at(10) }],
       }),
     );
 
     expect([...result]).toEqual([]);
+  });
+});
+
+describe("dueToday", () => {
+  it("includes a daily regimen with scheduled times", () => {
+    expect(dueToday(entry())).toBe(true);
+  });
+
+  it("leaves out a ONCE regimen, which logs itself when saved", () => {
+    expect(
+      dueToday(
+        entry({
+          regimen: {
+            name: "Ibuprofeno",
+            dosage: "400mg",
+            periodicity: "ONCE",
+            scheduledAt: [],
+          },
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("leaves out a regimen with no scheduled times", () => {
+    expect(
+      dueToday(entry({ regimen: { scheduledAt: [] } })),
+    ).toBe(false);
+  });
+});
+
+describe("bucketOf", () => {
+  it("is upcoming when every slot is still ahead", () => {
+    expect(bucketOf(entry(), at(7))).toBe("upcoming");
+  });
+
+  it("is upcoming when the slot has just arrived", () => {
+    expect(bucketOf(entry(), at(8))).toBe("upcoming");
+  });
+
+  it("is late once a slot has elapsed unticked", () => {
+    expect(bucketOf(entry(), at(9))).toBe("late");
+  });
+
+  it("is late for an earlier slot left unticked after logging a later one", () => {
+    const result = bucketOf(
+      entry({ logs: [{ id: 1, takenAt: at(20, 5), scheduledSlot: "20:00" }] }),
+      at(9),
+    );
+
+    expect(result).toBe("late");
+  });
+
+  it("is upcoming when the elapsed slot is done and the next one is ahead", () => {
+    const result = bucketOf(
+      entry({ logs: [{ id: 1, takenAt: at(8, 1), scheduledSlot: "08:00" }] }),
+      at(9),
+    );
+
+    expect(result).toBe("upcoming");
+  });
+
+  it("is taken when every slot is logged", () => {
+    const result = bucketOf(
+      entry({
+        logs: [
+          { id: 1, takenAt: at(8, 1), scheduledSlot: "08:00" },
+          { id: 2, takenAt: at(20, 1), scheduledSlot: "20:00" },
+        ],
+      }),
+      at(21),
+    );
+
+    expect(result).toBe("taken");
   });
 });

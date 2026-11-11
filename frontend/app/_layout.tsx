@@ -115,7 +115,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="care-actions/medicine"
-              options={{ title: "Medicamento" }}
+              options={{ title: "Medicamentos de hoje" }}
             />
             <Stack.Screen
               name="care-actions/medicine-new"

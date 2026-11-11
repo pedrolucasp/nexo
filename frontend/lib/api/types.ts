@@ -309,7 +309,7 @@ export interface MedicineRegimen {
 }
 
 export interface TodayMedicineEntry {
-  regimen: Pick<MedicineRegimen, 'id' | 'name' | 'dosage' | 'scheduledAt'>;
+  regimen: Pick<MedicineRegimen, 'id' | 'name' | 'dosage' | 'periodicity' | 'scheduledAt'>;
   logs: { id: number; takenAt: Date; scheduledSlot?: string | null }[];
 }
 
