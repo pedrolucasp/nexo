@@ -5,6 +5,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
+import { formatMinutes } from "@/lib/utils/time";
 
 type Props = {
   value: Date;
@@ -12,12 +13,7 @@ type Props = {
 };
 
 function formatTime(date: Date): string {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const h = hours % 12 || 12;
-  const m = minutes.toString().padStart(2, "0");
-  return `${h.toString().padStart(2, "0")}:${m}  ${ampm}`;
+  return formatMinutes(date.getHours() * 60 + date.getMinutes());
 }
 
 export const TimePicker: React.FC<Props> = ({ value, onChange }) => {
