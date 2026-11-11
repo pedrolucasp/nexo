@@ -123,12 +123,9 @@ class ApiClient {
 
     let response: Response;
 
-    console.log(`${API_BASE_URL}${endpoint} => with ${JSON.stringify(config)}`)
-
     try {
       response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    } catch (err) {
-      console.error("Underlying error: ", err)
+    } catch {
       throw new ApiError("Sem conexão com o servidor", 0);
     }
 
@@ -140,8 +137,6 @@ class ApiClient {
       const body = await response
         .json()
         .catch(() => ({ error: "Network error" }));
-
-      console.error("[API]: ", body, response.status);
 
       throw new ApiError(
         body.error || `HTTP ${response.status}`,
