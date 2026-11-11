@@ -155,27 +155,6 @@ describe('PATCH /medicine-regimens/:id/active', () => {
   })
 })
 
-describe('DELETE /medicine-regimens/:id', () => {
-  it('deactivates (soft-deletes) the regimen', async () => {
-    const user = await createTestUser(db)
-    const token = generateTestToken(user.id, user.email)
-    const regimen = await seedRegimen(user.id, { active: true })
-
-    const res = await request(app)
-      .delete(`/medicine-regimens/${regimen.id}`)
-      .set('Authorization', `Bearer ${token}`)
-
-    expect(res.status).toBe(200)
-
-    const dbRecord = await db.medicineRegimen.findUnique({
-      where: { id: regimen.id }
-    })
-
-    expect(dbRecord).not.toBeNull()
-    expect(dbRecord!.active).toBe(false)
-  })
-})
-
 describe('GET /medicine-regimens/today', () => {
   it('returns active regimens with their logs', async () => {
     const user = await createTestUser(db)

@@ -8,7 +8,6 @@ import {
   getMedicineRegimenById,
   createMedicineRegimen,
   updateMedicineRegimen,
-  deactivateMedicineRegimen,
   getTodayMedicineRegimens,
   toggleMedicineRegimen,
 } from '@app/services/medicineRegimen.service';
@@ -97,16 +96,6 @@ export const MedicineRegimensController = {
       );
 
       return res.status(200).json({ regimen });
-    } catch (err) {
-      next(err);
-    }
-  },
-
-  destroy: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-      await deactivateMedicineRegimen(req.userId!, Number(req.params.id));
-
-      return res.status(200).json({});
     } catch (err) {
       next(err);
     }

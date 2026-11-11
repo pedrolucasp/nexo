@@ -100,16 +100,3 @@ export const getTodayMedicineRegimens = async (
   );
 };
 
-export const deactivateMedicineRegimen = async (
-  userId: number,
-  id: number,
-): Promise<MedicineRegimen> => {
-  const regimen = await prisma.medicineRegimen.update({
-    where: { id, userId },
-    data: { active: false },
-  });
-
-  await syncMedicineReminderJobs(regimen);
-
-  return regimen;
-};
