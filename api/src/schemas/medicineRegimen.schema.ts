@@ -14,7 +14,7 @@ export const UpdateMedicineRegimenSchema = z.object({
   name: z.string().min(1).optional(),
   dosage: z.string().min(1).optional(),
   periodicity: z.nativeEnum(MedicinePeriodicity).optional(),
-  scheduledAt: z.array(z.string()).optional().default([]),
+  scheduledAt: z.array(z.string()).optional(),
   active: z.boolean().optional(),
 });
 

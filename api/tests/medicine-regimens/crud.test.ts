@@ -131,6 +131,30 @@ describe('PATCH /medicine-regimens/:id', () => {
     expect(res.body.regimen.dosage).toBe('100mg')
     expect(res.body.regimen.scheduledAt).toEqual(['09:00'])
   })
+
+  it('leaves scheduledAt alone when the patch omits it', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const regimen = await seedRegimen(user.id)
+
+    await db.medicineRegimen.update({
+      where: { id: regimen.id },
+      data: { scheduledAt: ['08:00', '20:00'] },
+    })
+
+    const res = await request(app)
+      .patch(`/medicine-regimens/${regimen.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ regimen: { dosage: '100mg' } })
+
+    expect(res.status).toBe(200)
+
+    const dbRecord = await db.medicineRegimen.findUnique({
+      where: { id: regimen.id },
+    })
+
+    expect(dbRecord!.scheduledAt).toEqual(['08:00', '20:00'])
+  })
 })
 
 describe('PATCH /medicine-regimens/:id/active', () => {
