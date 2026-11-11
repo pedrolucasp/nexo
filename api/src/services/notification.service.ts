@@ -36,7 +36,7 @@ const notificationRules: Record<NotificationKind, NotificationRule> = {
   },
   [NotificationKind.MEDICINE_REMINDER]: {
     expiresAt: endOfAppDay,
-    screen: "medicine-regimens",
+    screen: "care-actions/medicine",
   },
   [NotificationKind.INSIGHT_ALERT]: {
     expiresAt: () => null,

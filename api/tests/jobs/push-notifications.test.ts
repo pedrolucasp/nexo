@@ -64,7 +64,7 @@ describe('medicineReminderProcessor', () => {
         title: 'Hora de tomar Sertralina',
         body: '50mg',
         data: expect.objectContaining({
-          screen: 'medicine-regimens',
+          screen: 'care-actions/medicine',
           regimenId: regimen.id,
           notificationId: row!.id,
         }),
