@@ -38,7 +38,7 @@ literatura.
 \hline
 
 Teste unitário &
-Uma única função ou módulo, sem HTTP, sem banco de dados e sem dispositivo. &
+Uma única função ou módulo, sem rede, sem banco de dados e sem dispositivo. &
 Teste de unidade. \\
 
 \hline
@@ -76,19 +76,20 @@ permanece deliberadamente assimétrico, embora essa assimetria tenha se
 estreitado. A API possui uma suíte automatizada completa --- unitária, de
 integração e de tarefas assíncronas --- e é protegida por um portão de
 integração contínua. O aplicativo móvel, por sua vez, passou a contar com três
-camadas de verificação: uma suíte unitária em Jest sobre a lógica pura, a
-verificação manual em dispositivo físico e uma suíte \textit{end-to-end} fina
-por cima. A assimetria persiste porque a camada automatizada do aplicativo
-alcança apenas a lógica pura, e não as telas, e porque permanece fora da
-integração contínua. Ela não é um descuido, e se justifica por duas
-prioridades. A primeira é a capacidade de trabalho limitada: manter uma suíte
-automatizada completa nas duas esferas excederia o disponível, e concentra-se o
-esforço onde o retorno é maior. A segunda é que a API concentra a validação, a
-autenticação, as regras de negócio e a persistência --- isto é, a garantia sobre
-a integridade dos dados registrados pelo usuário. A suíte unitária do aplicativo
-cresceu pelo mesmo movimento já adotado na API: extrair a lógica de apresentação
-e de agregação em costuras testáveis, para que ela deixe de depender da tela e
-do dispositivo para ser exercitada.
+camadas de verificação: uma suíte unitária em Jest sobre a lógica sem
+interface, a verificação manual em dispositivo físico e uma suíte
+\textit{end-to-end} fina por cima. A assimetria persiste porque a camada
+automatizada do aplicativo alcança apenas a lógica sem interface, e não as
+telas, e porque permanece fora da integração contínua. Ela não é um descuido, e
+se justifica por duas prioridades. A primeira é a capacidade de trabalho
+limitada: manter uma suíte automatizada completa nas duas esferas excederia o
+disponível, e concentra-se o esforço onde o retorno é maior. A segunda é que a
+API concentra a validação, a autenticação, as regras de negócio e a persistência
+--- isto é, a garantia sobre a integridade dos dados registrados pelo usuário. A
+suíte unitária do aplicativo cresceu pelo mesmo movimento já adotado na API:
+extrair a lógica de apresentação, de agregação e de acesso a dados em costuras
+testáveis, para que ela deixe de depender da tela e do dispositivo para ser
+exercitada.
 
 A Tabela~\ref{tab:test-tooling} resume as ferramentas envolvidas e o ponto em que
 cada uma atua.
@@ -278,53 +279,43 @@ realmente envia, sem que nada verifique uma contra a outra.
 
 \section{Verificação do Aplicativo Móvel}\label{sec:test-mobile}
 
-Em linha com a assimetria descrita na Seção~\ref{sec:test-strategy},
-a verificação do aplicativo móvel organiza-se em três camadas. A primeira é uma
-suíte unitária usando a biblioteca Jest sobre a lógica pura de apresentação
-e de agregação, descrita na Seção~\ref{sec:test-mobile-unit}. A segunda
-é a verificação cotidiana de forma manual, em um dispositivo físico, contra
-a pilha local em execução --- o aplicativo roda como \textit{build} de
-desenvolvimento do Expo, visto que precisa de algumas bibliotecas/dependências
-nativas do Android. A terceira é uma suíte \textit{end-to-end} fina, descrita
-na Seção~\ref{sec:test-mobile-e2e}. A verificação manual continua sendo a que
-captura o que os testes automatizados raramente alcançam --- problemas visuais,
-de leiaute e de desempenho no dispositivo ---, mas não é repetível, não protege
-contra regressões e permanece invisível à integração contínua.
+Em linha com a assimetria descrita na Seção~\ref{sec:test-strategy}, a
+verificação do aplicativo móvel organiza-se em três camadas. A primeira é uma
+suíte unitária em Jest sobre a lógica sem interface, descrita na
+Seção~\ref{sec:test-mobile-unit}. A segunda é a verificação cotidiana de forma
+manual, em um dispositivo físico, contra a pilha local em execução --- o
+aplicativo roda como \textit{build} de desenvolvimento do Expo, visto que
+precisa de algumas bibliotecas/dependências nativas do Android. A terceira é
+uma suíte \textit{end-to-end} fina, descrita na Seção~\ref{sec:test-mobile-e2e}.
+A verificação manual continua sendo a que captura o que os testes automatizados
+raramente alcançam --- problemas visuais, de leiaute e de desempenho no
+dispositivo ---, mas não é repetível, não protege contra regressões e permanece
+invisível à integração contínua.
 
 \subsection{Testes unitários (Jest)}\label{sec:test-mobile-unit}
 
-A suíte unitária do aplicativo usa o Jest como executor e asserções, com
-o \textit{preset} \texttt{jest-expo/android} --- o mesmo recorte de plataforma
-do aplicativo. Os arquivos vivem em \texttt{frontend/tests}, espelhando
-a árvore do código-fonte, e carregam o sufixo \texttt{.unit.test.ts}, convenção
-tomada emprestada da API; a configuração só busca por arquivos sob
-\texttt{tests}, de modo que nada no diretório de rotas ou outras telas possa
-ser confundido com um teste. Um único arquivo de configuração global
-(\texttt{tests/setup.ts}) substitui apenas a fronteira nativa do Expo ---
-armazenamento seguro, MMKV, constantes, notificações e detecção de dispositivo
----, preservando a regra já adotada na API: simula-se somente o que deixa
-o processo. Não há HTTP, banco de dados nem dispositivo envolvidos.
+A suíte roda sob o Jest, no mesmo alvo Android do aplicativo, sem emulador,
+dispositivo, rede ou banco de dados; apenas a fronteira nativa do Expo é
+substituída, de modo que o código exercitado é o mesmo que roda no aparelho.
 
-Ao momento da redação, a suíte reunia 16 arquivos e 221 casos de teste,
+No momento da redação, a suíte reunia 16 arquivos e 221 casos de teste,
 distribuídos por oito áreas e muitos deles parametrizados por tabelas. Os
-testes cobrem as constantes utilizadas para textos, ícones, cores e retornos
-de API, regras de roteamento de autenticação, janela de edição, chaves de
-consulta e algumas APIs de estado efêmero da aplicação (Zustand e ReactQuery,
-mencionados nos capítulos anteriores), além dos mapeadores e das operações de
-cache que mantêm o histórico paginado coerente após cada mutação. Grande parte
+testes cobrem a apresentação (rótulos, ícones, cores e datas relativas), a
+tradução das mensagens de erro para pt-BR, o cliente HTTP (token, contrato de
+erro e sessão expirada em 401), as regras de roteamento de autenticação e da
+janela de edição, as chaves de consulta, os stores efêmeros e as operações de
+cache que mantêm o histórico paginado ordenado após cada mutação. Grande parte
 desse código foi extraída de telas e componentes justamente para se tornar
 testável --- o mesmo movimento descrito para os agregadores da API.
 
 Por não dependerem de dispositivo nem da pilha em execução, esses testes são
-rápidos e determinísticos. Porém, a limitação é a mesma de qualquer camada
-unitária, agravada por não haver camada intermediária: a suíte alcança apenas
-a lógica pura. Até o momento, não há testes de componente ou de renderização;
-não há exercício de \textit{hooks} que dependam de render. Assim, a integração
-entre telas, formulários e serviços permanece coberta apenas pela suíte
-\textit{end-to-end}. A suíte também não roda na integração contínua,
-e a cobertura é medida sem limiar, como na API. A camada eleva a confiança na
-lógica pura, mas não fecha a lacuna entre o teste unitário
-e o \textit{end-to-end}.
+rápidos e determinísticos. Porém, a suíte alcança apenas a lógica sem
+interface: não há testes de componente ou de renderização, nem exercício de
+\textit{hooks} que dependam de render. Assim, a integração entre telas,
+formulários e serviços permanece coberta apenas pela suíte
+\textit{end-to-end}. A suíte também não roda na integração contínua. A camada
+eleva a confiança na lógica isolada, mas não fecha a lacuna entre o teste
+unitário e o \textit{end-to-end}.
 
 \subsection{Suíte \textit{end-to-end} (Maestro)}\label{sec:test-mobile-e2e}
 
@@ -369,7 +360,7 @@ verificação de tipos (\texttt{tsc --noEmit}) e a suíte unitária
 
 Em síntese, a verificação automatizada cobre a superfície HTTP e a persistência
 da API, a sua lógica pura, os seus trabalhadores em segundo plano e a lógica
-pura do aplicativo móvel; a verificação do aplicativo completa-se com a
+sem interface do aplicativo móvel; a verificação do aplicativo completa-se com a
 inspeção manual e com uma jornada de fumaça \textit{end-to-end}. Permanecem
 pouco cobertas a lógica do \textit{frontend} entre o nível de unidade e o
 \textit{end-to-end} --- a integração entre telas, formulários e serviços ---, a
@@ -386,9 +377,8 @@ imposta, o que orienta o trabalho sem jamais reprovar uma \textit{build} ou
 dados de teste escritos à mão em cada arquivo e a cópia espelhada dos tipos da
 API mantida no \textit{frontend} --- que os testes unitários exercitam, mas não
 conferem contra a fonte de verdade --- podem divergir sem que nenhum teste
-acuse. A quarta é que a suíte do aplicativo, além de não ter camada de
-componente, roda apenas manualmente e fora da integração contínua, de modo que
-uma regressão pode ser integrada ao código sem que nada reprove. Essas lacunas
-são assumidas de forma explícita e refletem uma escolha de priorização, não uma
-garantia de ausência de defeitos, e que podem ser corrigidas em incrementos no
-futuro.
+acuse. A quarta é que, sem uma camada de componente e sem execução na
+integração contínua, uma regressão de interface pode ser integrada ao código
+sem que nada reprove. Essas lacunas são assumidas de forma explícita e
+refletem uma escolha de priorização, não uma garantia de ausência de defeitos,
+e que podem ser corrigidas em incrementos no futuro.
