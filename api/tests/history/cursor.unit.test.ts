@@ -91,4 +91,18 @@ describe('sleepSortAt', () => {
       sleepSortAt(new Date('2026-11-10T00:00:00.000Z')).toISOString(),
     ).toBe('2026-11-10T15:00:00.000Z')
   })
+
+  it('anchors a record with a wake time at that time of day', () => {
+    expect(
+      sleepSortAt(new Date('2026-11-10T00:00:00.000Z'), 390).toISOString(),
+    ).toBe('2026-11-10T09:30:00.000Z')
+  })
+
+  it('keeps a wake time near midnight on the wake day', () => {
+    // 00:30 local with eight hours of sleep means a bedtime the night before;
+    // the sort key stays on the day the user woke up
+    expect(
+      sleepSortAt(new Date('2026-11-10T00:00:00.000Z'), 30).toISOString(),
+    ).toBe('2026-11-10T03:30:00.000Z')
+  })
 })

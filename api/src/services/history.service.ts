@@ -58,33 +58,94 @@ const momentCut = (kind: HistoryKind, cursor?: HistoryCursor) => {
   };
 };
 
-// `date` is day-granular and has no moment of its own, so the cut compares
-// the app-timezone day against the anchor the sort uses
-const sleepCut = (cursor?: HistoryCursor) => {
+// `date` is the record's day identity and has no moment of its own, so the cut
+// compares the app-timezone day and, within it, the row's wake minute against
+// the cursor's. A row with no wake time falls back to noon. The in-memory
+// comparator still drops anything at or after the cursor, but doing the minute
+// in SQL keeps a same-day cluster larger than the page reachable
+const sleepCut = (cursor?: HistoryCursor): Prisma.SleepRecordWhereInput => {
   if (!cursor) return {};
 
   const day = appDayOf(cursor.sortAt);
-  const noon = sleepSortAt(day);
-  const at = cursor.sortAt.getTime();
-
-  if (at < noon.getTime()) return { date: { lt: day } };
-  if (at > noon.getTime()) return { date: { lte: day } };
-
+  const minutes = appMinutesOf(cursor.sortAt);
   const rank = historyKindRank("sleep");
   const cursorRank = historyKindRank(cursor.kind);
 
-  if (rank > cursorRank) return { date: { lte: day } };
-  if (rank < cursorRank) return { date: { lt: day } };
+  // At an equal instant sleep is rank 1: a lower-ranked cursor kind leaves it
+  // after the cursor, a higher-ranked one puts it before, and the same kind
+  // breaks the tie by id
+  const keepsEqualInstant = cursorRank <= rank;
+  const equalInstantId: Prisma.SleepRecordWhereInput =
+    cursorRank === rank ? { id: { lt: cursor.id } } : {};
 
-  return {
-    OR: [{ date: { lt: day } }, { date: day, id: { lt: cursor.id } }],
+  const sameDayAt = (
+    anchorMinutes: number | null,
+  ): Prisma.SleepRecordWhereInput | null => {
+    const anchor = sleepSortAt(day, anchorMinutes).getTime();
+
+    if (anchor > cursor.sortAt.getTime()) return null;
+    if (anchor < cursor.sortAt.getTime()) {
+      return { date: day, wakeMinutes: anchorMinutes };
+    }
+    if (!keepsEqualInstant) return null;
+
+    return { date: day, wakeMinutes: anchorMinutes, ...equalInstantId };
   };
+
+  const branches: Prisma.SleepRecordWhereInput[] = [
+    { date: { lt: day } },
+    { date: day, wakeMinutes: { lt: minutes } },
+  ];
+
+  const atMinute = sameDayAt(minutes);
+  if (atMinute) branches.push(atMinute);
+
+  const atNoon = sameDayAt(null);
+  if (atNoon) branches.push(atNoon);
+
+  return { OR: branches };
 };
 
 // The app-timezone calendar day containing `instant`, in the UTC-midnight form
 // Prisma uses for @db.Date columns
 const appDayOf = (instant: Date): Date =>
   new Date(`${format(instant, "yyyy-MM-dd", { in: APP_TIMEZONE })}T00:00:00.000Z`);
+
+// Minutes since midnight in the app timezone
+const appMinutesOf = (instant: Date): number => {
+  const [hours, minutes] = format(instant, "HH:mm", { in: APP_TIMEZONE })
+    .split(":")
+    .map(Number);
+
+  return hours * 60 + minutes;
+};
+
+// Within a day a sleep row sorts by its wake minute, with noon standing in for
+// NULL. Prisma cannot order by that coalesced value, so timed and untimed rows
+// are fetched separately; each keeps its own top `take`, which is enough to
+// contain the union's top `take`
+const fetchSleepRows = async (
+  userId: number,
+  cursor: HistoryCursor | undefined,
+  take: number,
+): Promise<SleepRecord[]> => {
+  const cut = sleepCut(cursor);
+
+  const [timed, untimed] = await Promise.all([
+    prisma.sleepRecord.findMany({
+      where: { userId, wakeMinutes: { not: null }, ...cut },
+      orderBy: [{ date: "desc" }, { wakeMinutes: "desc" }, { id: "desc" }],
+      take,
+    }),
+    prisma.sleepRecord.findMany({
+      where: { userId, wakeMinutes: null, ...cut },
+      orderBy: [{ date: "desc" }, { id: "desc" }],
+      take,
+    }),
+  ]);
+
+  return [...timed, ...untimed];
+};
 
 export const getHistoryByUserId = async (
   userId: number,
@@ -113,11 +174,7 @@ export const getHistoryByUserId = async (
         })
       : [],
     wants("sleep")
-      ? prisma.sleepRecord.findMany({
-          where: { userId, ...sleepCut(cursor) },
-          orderBy: [{ date: "desc" }, { id: "desc" }],
-          take,
-        })
+      ? fetchSleepRows(userId, cursor, take)
       : [],
     wants("care_action")
       ? prisma.careAction.findMany({
@@ -143,7 +200,7 @@ export const getHistoryByUserId = async (
     ...sleepRecords.map((record) => ({
       ...record,
       kind: "sleep" as const,
-      sortAt: sleepSortAt(record.date),
+      sortAt: sleepSortAt(record.date, record.wakeMinutes),
     })),
     ...careActions.map((careAction) => ({
       ...careAction,

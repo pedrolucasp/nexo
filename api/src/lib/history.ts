@@ -76,21 +76,28 @@ export const compareHistoryItems = (
   historyKindRank(a.kind) - historyKindRank(b.kind) ||
   b.id - a.id;
 
-// A sleep record has no moment of its own, so the list anchors it at noon of
-// its app-timezone day
-export const sleepSortAt = (date: Date): Date => {
+const NOON_MINUTES = 12 * 60;
+
+// A sleep record has no moment of its own, so the list anchors it at its wake
+// time on its app-timezone day, falling back to noon when it has none
+export const sleepSortAt = (
+  date: Date,
+  wakeMinutes?: number | null,
+): Date => {
   const [year, month, day] = date
     .toISOString()
     .slice(0, 10)
     .split("-")
     .map(Number);
 
+  const minutes = wakeMinutes ?? NOON_MINUTES;
+
   const anchored = new TZDate(
     year,
     month - 1,
     day,
-    12,
-    0,
+    Math.floor(minutes / 60),
+    minutes % 60,
     0,
     APP_TIMEZONE_NAME,
   );

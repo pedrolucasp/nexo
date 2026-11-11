@@ -31,9 +31,9 @@ async function seedTrigger(userId: number, moment: Date) {
   })
 }
 
-async function seedSleep(userId: number, date: Date) {
+async function seedSleep(userId: number, date: Date, wakeMinutes?: number) {
   return db.sleepRecord.create({
-    data: { userId, average: 8, date, annotations: 'Dormi bem' },
+    data: { userId, average: 8, date, annotations: 'Dormi bem', wakeMinutes },
   })
 }
 
@@ -180,6 +180,85 @@ describe('GET /history', () => {
       `sleep:${sleep.id}`,
       `mood:${before.id}`,
     ])
+    expect(res.body.items[1].sortAt).toBe('2026-11-10T15:00:00.000Z')
+  })
+
+  it('places a sleep record at its wake time instead of noon', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    // 05:00, 06:30 and 09:00 in America/Sao_Paulo (UTC-3)
+    const early = await seedMood(user.id, at('2026-11-10T08:00:00.000Z'))
+    const sleep = await seedSleep(user.id, at('2026-11-10T00:00:00.000Z'), 390)
+    const late = await seedMood(user.id, at('2026-11-10T12:00:00.000Z'))
+
+    const res = await request(app)
+      .get('/history')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(historyOrder(res.body)).toEqual([
+      `mood:${late.id}`,
+      `sleep:${sleep.id}`,
+      `mood:${early.id}`,
+    ])
+    expect(res.body.items[1].sortAt).toBe('2026-11-10T09:30:00.000Z')
+  })
+
+  it('pages through sleep records anchored at their wake time', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const early = await seedMood(user.id, at('2026-11-10T08:00:00.000Z'))
+    const sleep = await seedSleep(user.id, at('2026-11-10T00:00:00.000Z'), 390)
+    const late = await seedMood(user.id, at('2026-11-10T12:00:00.000Z'))
+
+    const expected = [
+      `mood:${late.id}`,
+      `sleep:${sleep.id}`,
+      `mood:${early.id}`,
+    ]
+
+    const seen: string[] = []
+    let cursor: string | null = null
+
+    for (let page = 0; page < 10; page++) {
+      const query: string = cursor ? `?limit=1&cursor=${cursor}` : '?limit=1'
+      const res = await request(app)
+        .get(`/history${query}`)
+        .set('Authorization', `Bearer ${token}`)
+
+      expect(res.status).toBe(200)
+      seen.push(...historyOrder(res.body))
+      cursor = res.body.nextCursor
+
+      if (!cursor) break
+    }
+
+    expect(cursor).toBeNull()
+    expect(seen).toEqual(expected)
+  })
+
+  it('orders same-day sleep records by wake time, not id', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    // Inserted so the latest wake time has the lowest id: an id-ordered
+    // prefilter would pick 05:00 instead
+    const latest = await seedSleep(
+      user.id,
+      at('2026-11-10T00:00:00.000Z'),
+      1100,
+    )
+    await seedSleep(user.id, at('2026-11-10T00:00:00.000Z'), 300)
+    await seedSleep(user.id, at('2026-11-10T00:00:00.000Z'), 200)
+
+    const res = await request(app)
+      .get('/history?limit=1')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(200)
+    expect(historyOrder(res.body)).toEqual([`sleep:${latest.id}`])
   })
 
   it('filters by type', async () => {
