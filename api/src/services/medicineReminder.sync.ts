@@ -2,6 +2,7 @@ import { MedicineRegimen } from "@prisma/client";
 import { getQueue } from "@app/lib/queue/QueueRegistry";
 import { MedicineReminderJobName } from "@app/lib/queue/types";
 import { logger } from "@app/lib/logger";
+import { APP_TIMEZONE_NAME } from "@app/lib/appTime";
 import { timeToCron } from "@app/utils/calc";
 
 export async function syncMedicineReminderJobs(
@@ -63,7 +64,7 @@ export async function syncMedicineReminderJobs(
         scheduledTime: time,
       },
       {
-        repeat: { pattern: cron, tz: "America/Sao_Paulo" },
+        repeat: { pattern: cron, tz: APP_TIMEZONE_NAME },
         jobId: `regimen-${regimen.id}-${time}`,
       }
     );
