@@ -1,11 +1,12 @@
 import { View, StyleSheet } from "react-native";
-import { router, type Href } from "expo-router";
+import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Cards";
 import { Badge } from "@/components/ui/Badge";
 import { NOTIFICATION_KINDS } from "@/constants/notification-kinds";
+import { destination } from "@/lib/notifications/destination";
 import { formatMoment } from "@/lib/utils/time";
 import { Spacing } from "@/constants/theme";
 import type { Notification } from "@/lib/api";
@@ -19,26 +20,6 @@ type Props = {
 const isExpired = (notification: Notification): boolean =>
   notification.expiresAt !== null &&
   new Date(notification.expiresAt).getTime() <= Date.now();
-
-// The same deep-link shape the push observer uses: a pathname plus params
-function destination(notification: Notification): Href {
-  if (notification.kind === "MEDICINE_REMINDER" && notification.regimenId !== null) {
-    return {
-      pathname: "/medicine-regimens/[id]",
-      params: { id: String(notification.regimenId) },
-    } as Href;
-  }
-
-  if (notification.kind === "MEDICINE_REMINDER") {
-    return { pathname: "/medicine-regimens" } as Href;
-  }
-
-  if (notification.kind === "DAILY_REMINDER") {
-    return { pathname: "/new/entry" } as Href;
-  }
-
-  return { pathname: "/insights" } as Href;
-}
 
 export function NotificationRow({ notification }: Props) {
   const meta = NOTIFICATION_KINDS[notification.kind];
