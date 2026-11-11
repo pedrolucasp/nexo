@@ -72,3 +72,21 @@ Além dessas, as lacunas apontadas na Seção~\ref{sec:test-gaps} --- como a
 maquinaria da fila fora do alcance dos testes e a duplicação manual dos dados
 de teste --- sugerem ajustes de menor porte, porém de impacto relevante na
 manutenibilidade do projeto a médio prazo.
+
+Outra frente que a implementação revelou diz respeito ao ciclo de vida dos
+medicamentos. O protótipo trata um regime medicamentoso por um único estado
+binário --- em uso ou fora de uso ---, o que se mostrou insuficiente para cobrir
+situações corriqueiras do cotidiano do público-alvo: pausar temporariamente um
+medicamento por orientação médica, encerrar um tratamento por tempo determinado
+e descontinuar definitivamente um medicamento são situações distintas que hoje
+não podem ser expressas nem distinguidas pelo sistema. A consequência alcança
+também o histórico, já que o nome e a dosagem exibidos em cada registro de dose
+são lidos do regime no momento da consulta: renomear um medicamento reescreve
+retroativamente o passado, e um regime removido deixaria registros de dose sem
+identificação. Um modelo que separasse o regime de sua vigência ao longo do
+tempo --- preservando, em cada dose, a dosagem prescrita no momento em que ela
+foi registrada --- atenderia a esses casos de uso e tornaria o histórico
+confiável por construção, em vez de depender de o regime nunca ser alterado. A
+mesma revisão permitiria ainda que a periodicidade configurada repercutisse de
+fato na geração dos lembretes, hoje disparados diariamente qualquer que seja a
+frequência escolhida.
