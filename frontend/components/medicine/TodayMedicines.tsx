@@ -4,22 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { useMedicineToday, useCreateCareAction, medicineTodayKeys } from "@/hooks";
 import { useQueryClient } from "@tanstack/react-query";
-import { TodayMedicineEntry } from "@/lib/api";
-
-function sortedTimes(scheduledAt: string[]): string[] {
-  return [...scheduledAt].sort((a, b) => {
-    const [ah, am] = a.split(":").map(Number);
-    const [bh, bm] = b.split(":").map(Number);
-    return ah * 60 + am - (bh * 60 + bm);
-  });
-}
-
-function confirmedIndexes(entry: TodayMedicineEntry): Set<number> {
-  const confirmed = new Set<number>();
-  const n = Math.min(entry.logs.length, entry.regimen.scheduledAt.length);
-  for (let i = 0; i < n; i++) confirmed.add(i);
-  return confirmed;
-}
+import { confirmedIndexes, sortedTimes } from "@/lib/medicine/today";
 
 export function TodayMedicines() {
   const { data, isLoading } = useMedicineToday();
@@ -44,11 +29,12 @@ export function TodayMedicines() {
     );
   }
 
-  const handleConfirm = async (regimenId: number) => {
+  const handleConfirm = async (regimenId: number, slot?: string) => {
     await createCareAction.mutateAsync({
       type: "MEDICINE",
       moment: new Date(),
       regimenId,
+      ...(slot ? { scheduledSlot: slot } : {}),
     });
 
     queryClient.invalidateQueries({ queryKey: medicineTodayKeys.list() });
@@ -81,7 +67,15 @@ export function TodayMedicines() {
                 <TouchableOpacity
                   key={time}
                   style={[styles.timeRow, isDone && styles.timeRowConfirmed]}
-                  onPress={isDone ? undefined : () => handleConfirm(entry.regimen.id)}
+                  onPress={
+                    isDone
+                      ? undefined
+                      : () =>
+                          handleConfirm(
+                            entry.regimen.id,
+                            time === "hoje" ? undefined : time,
+                          )
+                  }
                   activeOpacity={isDone ? 1 : 0.7}
                   disabled={isDone || createCareAction.isPending}
                 >

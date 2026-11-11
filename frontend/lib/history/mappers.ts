@@ -118,8 +118,8 @@ export function mapCareActionToHistoryCard(record: CareAction): HistoryCard {
   switch (record.type) {
     case "MEDICINE": {
       const log = record.medicineLog;
-      const name = log?.regimen?.name ?? "Medicamento";
-      const dosage = log?.regimen?.dosage;
+      const name = log?.medicineName ?? log?.regimen?.name ?? "Medicamento";
+      const dosage = log?.dosage ?? log?.regimen?.dosage;
       return {
         id: `care_action-${record.id}`,
         category: "care_action",

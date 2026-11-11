@@ -74,7 +74,7 @@ function resolveHeader(ca: CareAction): HeaderMeta {
         icon: "medication",
         color: "#7C3AED",
         iconBg: "#EDE9FE",
-        title: ca.medicineLog?.regimen?.name ?? "Medicamento",
+        title: ca.medicineLog?.medicineName ?? ca.medicineLog?.regimen?.name ?? "Medicamento",
       };
     case "APPOINTMENT":
       return {
@@ -154,6 +154,8 @@ export default function CareActionDetailScreen() {
   }
 
   const header = resolveHeader(careAction);
+  const medicineDosage =
+    careAction.medicineLog?.dosage ?? careAction.medicineLog?.regimen?.dosage;
 
   const handleDelete = async () => {
     await deleteCareAction.mutateAsync(String(careAction.id));
@@ -192,11 +194,11 @@ export default function CareActionDetailScreen() {
         <Card style={styles.topCard}>
           {careAction.type === "MEDICINE" && (
             <>
-              {careAction.medicineLog?.regimen?.dosage ? (
+              {medicineDosage ? (
                 <DetailRow
                   icon="medication"
                   label="Dosagem"
-                  value={careAction.medicineLog.regimen.dosage}
+                  value={medicineDosage}
                 />
               ) : null}
               {careAction.medicineLog?.regimen?.periodicity ? (

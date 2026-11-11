@@ -277,7 +277,42 @@ describe("mapTriggerToHistoryCard", () => {
 
 describe("mapCareActionToHistoryCard", () => {
   describe("medicine", () => {
-    it("uses the regimen name and dosage", () => {
+    it("uses the name and dosage the dose was taken at", () => {
+      const record = careAction({
+        id: 10,
+        type: "MEDICINE",
+        medicineLog: {
+          id: 1,
+          careActionId: 10,
+          takenAt: FIXED,
+          medicineName: "Ritalina",
+          dosage: "10mg",
+          regimen: {
+            id: 1,
+            name: "Ritalina LA",
+            dosage: "20mg",
+            periodicity: "DAILY",
+            scheduledAt: [],
+            active: true,
+            userId: 1,
+            createdAt: FIXED,
+            updatedAt: FIXED,
+          },
+        },
+      });
+
+      expect(mapCareActionToHistoryCard(record)).toStrictEqual({
+        id: "care_action-10",
+        category: "care_action",
+        subtype: "medicine",
+        timestamp: record.moment.toString(),
+        title: "Ritalina",
+        summary: "10mg",
+        raw: record,
+      });
+    });
+
+    it("falls back to the regimen when the log has no snapshot", () => {
       const record = careAction({
         id: 10,
         type: "MEDICINE",
@@ -299,15 +334,10 @@ describe("mapCareActionToHistoryCard", () => {
         },
       });
 
-      expect(mapCareActionToHistoryCard(record)).toStrictEqual({
-        id: "care_action-10",
-        category: "care_action",
-        subtype: "medicine",
-        timestamp: record.moment.toString(),
-        title: "Ritalina",
-        summary: "10mg",
-        raw: record,
-      });
+      const card = mapCareActionToHistoryCard(record);
+
+      expect(card.title).toBe("Ritalina");
+      expect(card.summary).toBe("10mg");
     });
 
     it("falls back when there is no regimen", () => {

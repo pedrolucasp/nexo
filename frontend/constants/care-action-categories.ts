@@ -78,7 +78,7 @@ export function getCareActionMeta(ca: CareAction): CareActionMeta {
         icon: 'medication',
         color: '#7C3AED',
         iconBackground: '#EDE9FE',
-        label: ca.medicineLog?.regimen?.name ?? 'Medicação',
+        label: ca.medicineLog?.medicineName ?? ca.medicineLog?.regimen?.name ?? 'Medicação',
       };
     case 'ACTIVITY':
       return getActivityCategory(ca.activity?.type);

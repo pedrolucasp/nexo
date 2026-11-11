@@ -103,6 +103,28 @@ describe("getCareActionMeta", () => {
     });
   });
 
+  it("labels medicine by the name it was logged with", () => {
+    expect(
+      getCareActionMeta(
+        careAction({
+          type: "MEDICINE",
+          medicineLog: {
+            id: 1,
+            careActionId: 1,
+            takenAt: FIXED,
+            medicineName: "Sertralina",
+            regimen: regimen({ name: "Sertralina XR" }),
+          },
+        }),
+      ),
+    ).toStrictEqual({
+      icon: "medication",
+      color: "#7C3AED",
+      iconBackground: "#EDE9FE",
+      label: "Sertralina",
+    });
+  });
+
   it("falls back to a generic medicine label without a regimen", () => {
     expect(getCareActionMeta(careAction({ type: "MEDICINE" }))).toStrictEqual({
       icon: "medication",

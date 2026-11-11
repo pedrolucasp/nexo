@@ -310,7 +310,7 @@ export interface MedicineRegimen {
 
 export interface TodayMedicineEntry {
   regimen: Pick<MedicineRegimen, 'id' | 'name' | 'dosage' | 'scheduledAt'>;
-  logs: { id: number; takenAt: Date }[];
+  logs: { id: number; takenAt: Date; scheduledSlot?: string | null }[];
 }
 
 export interface MedicineLog {
@@ -318,6 +318,9 @@ export interface MedicineLog {
   regimenId?: number;
   careActionId: number;
   takenAt: Date;
+  medicineName?: string | null;
+  dosage?: string | null;
+  scheduledSlot?: string | null;
   regimen?: MedicineRegimen;
 }
 
@@ -398,6 +401,7 @@ export interface CreateCareActionMedicinePayload {
   type: 'MEDICINE';
   moment: Date;
   regimenId?: number;
+  scheduledSlot?: string;
   medicine?: {
     name: string;
     dosage: string;
