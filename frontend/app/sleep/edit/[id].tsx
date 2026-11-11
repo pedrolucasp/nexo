@@ -72,7 +72,10 @@ function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepReco
   return (
     <KeyboardAvoidingView behavior="height" style={styles.keyboardView}>
       <Stack.Screen options={{ title: "Editar Registro" }} />
-      <ScrollView scrollEventThrottle={16}>
+      <ScrollView
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.scrollContent}
+      >
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.innerHeaderWrapper}>
@@ -184,6 +187,9 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
   },
   centered: {
     flex: 1,
