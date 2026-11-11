@@ -71,8 +71,6 @@ export default function Settings() {
     router.push("/profile");
   };
 
-  const handleInvisibleMode = () => {};
-
   const handleDataExport = () => {
     setExportVisible(true);
   };
@@ -327,7 +325,7 @@ export default function Settings() {
               alignItems: "center",
               justifyContent: "space-between",
             }}
-            onPress={handleInvisibleMode}
+            onPress={() => router.push("/privacy")}
           >
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <MaterialIcons
@@ -337,7 +335,7 @@ export default function Settings() {
               />
 
               <Text style={[styles.rowLabel, { marginLeft: 8 }]}>
-                Privacidade
+                Política de Privacidade
               </Text>
             </View>
 

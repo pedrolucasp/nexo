@@ -52,6 +52,11 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="privacy"
+              options={{ title: "Política de Privacidade" }}
+            />
+
+            <Stack.Screen
               name="profile"
               options={{
                 title: "Editar perfil",
