@@ -3,7 +3,9 @@ import {
   formatMinutes,
   formatMoment,
   getTimeBadge,
+  minutesToDate,
   parseDateOnly,
+  wakeMinutesFromDate,
 } from "@/lib/utils/time";
 
 const at = (hour: number, minute = 0) => new Date(2025, 0, 15, hour, minute);
@@ -74,6 +76,26 @@ describe("formatMinutes", () => {
     expect(formatMinutes(420)).toBe("07:00");
     expect(formatMinutes(1410)).toBe("23:30");
     expect(formatMinutes(1439)).toBe("23:59");
+  });
+});
+
+describe("minutesToDate", () => {
+  it("sets the clock to the given minutes since midnight", () => {
+    const date = minutesToDate(390);
+
+    expect(date.getHours()).toBe(6);
+    expect(date.getMinutes()).toBe(30);
+  });
+});
+
+describe("wakeMinutesFromDate", () => {
+  it("snaps the picked clock to the nearest half hour", () => {
+    expect(wakeMinutesFromDate(at(7, 14))).toBe(420);
+    expect(wakeMinutesFromDate(at(7, 15))).toBe(450);
+  });
+
+  it("wraps the last half hour onto midnight", () => {
+    expect(wakeMinutesFromDate(at(23, 45))).toBe(0);
   });
 });
 

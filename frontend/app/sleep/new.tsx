@@ -19,11 +19,14 @@ import { useCreateSleepRecord } from "@/hooks";
 import { useToast } from "@/context/ToastContext";
 import { ApiError } from "@/lib/api";
 import { translateError } from "@/lib/errors/translations";
-import { formatMinutes } from "@/lib/utils/time";
+import {
+  DEFAULT_WAKE_MINUTES,
+  WakeTimePicker,
+} from "@/components/ui/WakeTimePicker";
 
 export default function NewSleepRecord() {
   const [date, setDate] = useState(new Date());
-  const [wakeMinutes, setWakeMinutes] = useState(420);
+  const [wakeMinutes, setWakeMinutes] = useState(DEFAULT_WAKE_MINUTES);
   const [annotations, setAnnotations] = useState("");
   const [average, setAverage] = useState(7.5);
   const createSleepRecord = useCreateSleepRecord();
@@ -79,16 +82,9 @@ export default function NewSleepRecord() {
             />
 
             <View style={{ marginVertical: 15 }}>
-              <ScaleSlider
-                label="Acordou por volta das"
+              <WakeTimePicker
                 value={wakeMinutes}
-                onValueChange={setWakeMinutes}
-                onValueFormat={formatMinutes}
-                step={30}
-                min={0}
-                max={1410}
-                minLabel="00:00"
-                maxLabel="23:30"
+                onChange={setWakeMinutes}
               />
             </View>
 

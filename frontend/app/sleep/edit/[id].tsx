@@ -16,8 +16,12 @@ import { Spacing, Typography, Colors, BorderRadius } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { DatePickerField } from "@/components/ui/DatePickerField";
 import { ScaleSlider } from "@/components/ui/ScaleSlider";
+import {
+  DEFAULT_WAKE_MINUTES,
+  WakeTimePicker,
+} from "@/components/ui/WakeTimePicker";
 import { useSleepRecord, useUpdateSleepRecord } from "@/hooks";
-import { formatMinutes, parseDateOnly } from "@/lib/utils/time";
+import { parseDateOnly } from "@/lib/utils/time";
 import type { SleepRecord } from "@/lib/api";
 
 export default function EditSleepRecord() {
@@ -44,7 +48,7 @@ function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepReco
 
   const [date, setDate] = useState(parseDateOnly(sleepRecord.date));
   const [wakeMinutes, setWakeMinutes] = useState(
-    sleepRecord.wakeMinutes ?? 420,
+    sleepRecord.wakeMinutes ?? DEFAULT_WAKE_MINUTES,
   );
   const [annotations, setAnnotations] = useState(sleepRecord.annotations || "");
   const [average, setAverage] = useState(sleepRecord.average);
@@ -99,16 +103,9 @@ function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepReco
             />
 
             <View style={{ marginVertical: 15 }}>
-              <ScaleSlider
-                label="Acordou por volta das"
+              <WakeTimePicker
                 value={wakeMinutes}
-                onValueChange={setWakeMinutes}
-                onValueFormat={formatMinutes}
-                step={30}
-                min={0}
-                max={1410}
-                minLabel="00:00"
-                maxLabel="23:30"
+                onChange={setWakeMinutes}
               />
             </View>
 

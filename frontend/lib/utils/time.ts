@@ -44,6 +44,17 @@ export const formatMinutes = (minutes: number): string => {
   return `${hh}:${mm}`;
 }
 
+export const minutesToDate = (minutes: number): Date => {
+  const date = new Date();
+  date.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
+  return date;
+}
+
+export const wakeMinutesFromDate = (date: Date): number => {
+  const minutes = date.getHours() * 60 + date.getMinutes();
+  return (Math.round(minutes / 30) * 30) % 1440;
+}
+
 // Parse a date-only string (YYYY-MM-DD or ISO UTC midnight) as local noon
 // to prevent timezone offsets from shifting the calendar day
 export const parseDateOnly = (dateStr: string | Date): Date => {
