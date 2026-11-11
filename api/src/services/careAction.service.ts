@@ -169,7 +169,7 @@ export const createCareAction = async (
 
       const regimen = await prisma.medicineRegimen.findUnique({
         where: { id: regimenId, userId },
-        select: { id: true },
+        select: { id: true, name: true, dosage: true },
       });
 
       if (!regimen) throw new MedicineRegimenNotFoundError();
@@ -183,7 +183,12 @@ export const createCareAction = async (
             triggerId: input.triggerId,
             moodId: input.moodId,
             medicineLog: {
-              create: { regimenId },
+              create: {
+                regimenId,
+                medicineName: regimen.name,
+                dosage: regimen.dosage,
+                scheduledSlot: input.scheduledSlot,
+              },
             },
           },
           include: careActionIncludes,
@@ -206,6 +211,9 @@ export const createCareAction = async (
             moodId: input.moodId,
             medicineLog: {
               create: {
+                medicineName: med.name,
+                dosage: med.dosage,
+                scheduledSlot: input.scheduledSlot,
                 regimen: {
                   create: {
                     name: med.name,

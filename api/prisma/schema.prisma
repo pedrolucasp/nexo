@@ -154,10 +154,13 @@ model CareAction {
 }
 
 model MedicineLog {
-  id           Int      @id @default(autoincrement())
-  regimenId    Int?     @map("regimen_id")
-  careActionId Int      @unique @map("care_action_id")
-  takenAt      DateTime @default(now()) @map("taken_at")
+  id            Int      @id @default(autoincrement())
+  regimenId     Int?     @map("regimen_id")
+  careActionId  Int      @unique @map("care_action_id")
+  takenAt       DateTime @default(now()) @map("taken_at")
+  medicineName  String?  @map("medicine_name")
+  dosage        String?
+  scheduledSlot String?  @map("scheduled_slot")
 
   regimen    MedicineRegimen? @relation(fields: [regimenId], references: [id])
   careAction CareAction       @relation(fields: [careActionId], references: [id], onDelete: Cascade)

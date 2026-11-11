@@ -21,7 +21,7 @@ export const toggleMedicineRegimen = async (
 
 type TodayEntry = {
   regimen: Pick<MedicineRegimen, 'id' | 'name' | 'dosage' | 'scheduledAt'>;
-  logs: { id: number; takenAt: Date }[];
+  logs: { id: number; takenAt: Date; scheduledSlot: string | null }[];
 };
 
 export const getMedicineRegimenById = async (
@@ -88,7 +88,7 @@ export const getTodayMedicineRegimens = async (
           regimenId: regimen.id,
           takenAt: { gte: start, lt: end },
         },
-        select: { id: true, takenAt: true },
+        select: { id: true, takenAt: true, scheduledSlot: true },
       });
       return { regimen, logs };
     })

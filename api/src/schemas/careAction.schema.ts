@@ -22,6 +22,7 @@ export const CreateCareActionSchema = z.object({
   // MEDICINE fields
   regimenId: z.number().int().positive().optional(),
   medicine: MedicineInlineSchema.optional(),
+  scheduledSlot: z.string().regex(/^\d{2}:\d{2}$/).optional(),
 
   // APPOINTMENT fields
   appointment: z

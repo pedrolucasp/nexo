@@ -115,6 +115,152 @@ describe('Medicine logs (via POST /care-actions)', () => {
     expect(careAction!.medicineLog!.regimenId).toBe(regimen.id)
   })
 
+  it('keeps the name and dosage the dose was taken at', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00'],
+      },
+    })
+
+    await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: { type: 'MEDICINE', moment, regimenId: regimen.id },
+      })
+
+    await db.medicineRegimen.update({
+      where: { id: regimen.id },
+      data: { name: 'Sertralina XR', dosage: '75mg' },
+    })
+
+    const log = await db.medicineLog.findFirst({ where: { regimenId: regimen.id } })
+
+    expect(log!.medicineName).toBe('Sertralina')
+    expect(log!.dosage).toBe('50mg')
+  })
+
+  it('snapshots the name and dosage of an inline medicine', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: {
+          type: 'MEDICINE',
+          moment,
+          medicine: {
+            name: 'Melatonina',
+            dosage: '5mg',
+            periodicity: 'DAILY',
+            scheduledAt: ['22:00'],
+          },
+        },
+      })
+
+    const log = await db.medicineLog.findFirst({ where: { regimen: { userId: user.id } } })
+
+    expect(log!.medicineName).toBe('Melatonina')
+    expect(log!.dosage).toBe('5mg')
+  })
+
+  it('records the scheduled slot the dose fulfils', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'TWICE_DAILY',
+        scheduledAt: ['08:00', '20:00'],
+      },
+    })
+
+    await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: {
+          type: 'MEDICINE',
+          moment,
+          regimenId: regimen.id,
+          scheduledSlot: '20:00',
+        },
+      })
+
+    const log = await db.medicineLog.findFirst({ where: { regimenId: regimen.id } })
+
+    expect(log!.scheduledSlot).toBe('20:00')
+  })
+
+  it('leaves the slot empty when the client sends none', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00'],
+      },
+    })
+
+    await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: { type: 'MEDICINE', moment, regimenId: regimen.id },
+      })
+
+    const log = await db.medicineLog.findFirst({ where: { regimenId: regimen.id } })
+
+    expect(log!.scheduledSlot).toBeNull()
+  })
+
+  it('rejects a scheduled slot that is not a time of day', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00'],
+      },
+    })
+
+    const res = await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: {
+          type: 'MEDICINE',
+          moment,
+          regimenId: regimen.id,
+          scheduledSlot: 'morning',
+        },
+      })
+
+    expect(res.status).toBe(400)
+    expect(res.body.fields).toHaveProperty('scheduledSlot')
+    expect(await db.medicineLog.count()).toBe(0)
+  })
+
   it('records the taken time on the medicine log', async () => {
     const user = await createTestUser(db)
     const token = generateTestToken(user.id, user.email)

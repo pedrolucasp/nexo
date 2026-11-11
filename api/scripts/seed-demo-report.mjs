@@ -584,8 +584,17 @@ async function main() {
 
         const careActionId = await insertCareAction('MEDICINE', moment)
         await db.query(
-          'INSERT INTO medicine_logs (care_action_id, regimen_id, taken_at) VALUES ($1, $2, $3)',
-          [careActionId, regimens[regimen.key], moment],
+          `INSERT INTO medicine_logs
+             (care_action_id, regimen_id, medicine_name, dosage, scheduled_slot, taken_at)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [
+            careActionId,
+            regimens[regimen.key],
+            regimen.name,
+            regimen.dosage,
+            regimen.time,
+            moment,
+          ],
         )
         counts.medicine++
       }

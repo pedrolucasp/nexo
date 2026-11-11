@@ -308,6 +308,9 @@ describe('exportProcessor', () => {
           create: {
             regimenId: regimen.id,
             takenAt: new Date('2026-03-05T08:05:00.000Z'),
+            medicineName: 'Sertralina',
+            dosage: '50mg',
+            scheduledSlot: '08:00',
           },
         },
       },
@@ -378,11 +381,17 @@ describe('exportProcessor', () => {
     const logLines = csvLines(logsCsv)
     expect(logLines[0]).toContain('care_action_id')
     expect(logLines[0]).toContain('regimen_id')
+    expect(logLines[0]).toContain('Nome')
+    expect(logLines[0]).toContain('Dosagem')
+    expect(logLines[0]).toContain('Horário')
     expect(logLines[0]).toContain('Tomado em')
     const logHeader = logLines[0].split(',').map((field) => field.replace(/"/g, ''))
     const logFields = logLines[1].split(',')
     expect(Number(logFields[logHeader.indexOf('care_action_id')])).toBe(medicineAction.id)
     expect(Number(logFields[logHeader.indexOf('regimen_id')])).toBe(regimen.id)
+    expect(logFields[logHeader.indexOf('Nome')]).toBe('"Sertralina"')
+    expect(logFields[logHeader.indexOf('Dosagem')]).toBe('"50mg"')
+    expect(logFields[logHeader.indexOf('Horário')]).toBe('"08:00"')
 
     const appointmentCsv = await zip.file('appointments.csv')!.async('string')
     const appointmentLines = csvLines(appointmentCsv)

@@ -145,6 +145,9 @@ export const medicineLogTable: CsvTable<MedicineLog> = {
     { header: "id", value: (log) => log.id },
     { header: "care_action_id", value: (log) => log.careActionId },
     { header: "regimen_id", value: (log) => log.regimenId },
+    { header: "Nome", value: (log) => log.medicineName },
+    { header: "Dosagem", value: (log) => log.dosage },
+    { header: "Horário", value: (log) => log.scheduledSlot },
     { header: "Tomado em", value: (log) => log.takenAt },
   ],
 };

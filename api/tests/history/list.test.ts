@@ -345,6 +345,55 @@ describe('GET /history', () => {
     })
   })
 
+  it('serves the logged name and dosage, not the live regimen', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const regimen = await db.medicineRegimen.create({
+      data: {
+        userId: user.id,
+        name: 'Sertralina',
+        dosage: '50mg',
+        periodicity: 'DAILY',
+        scheduledAt: ['08:00'],
+      },
+    })
+
+    await request(app)
+      .post('/care-actions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        careAction: {
+          type: 'MEDICINE',
+          moment: '2026-11-10T12:00:00.000Z',
+          regimenId: regimen.id,
+        },
+      })
+
+    await db.medicineRegimen.update({
+      where: { id: regimen.id },
+      data: { name: 'Sertralina XR', dosage: '75mg' },
+    })
+
+    const res = await request(app)
+      .get('/history')
+      .set('Authorization', `Bearer ${token}`)
+
+    const medicine = res.body.items.find(
+      (item: { kind: string; type?: string }) =>
+        item.kind === 'care_action' && item.type === 'MEDICINE',
+    )
+
+    expect(medicine.medicineLog).toMatchObject({
+      medicineName: 'Sertralina',
+      dosage: '50mg',
+    })
+    expect(medicine.medicineLog.regimen).toMatchObject({
+      name: 'Sertralina XR',
+      dosage: '75mg',
+    })
+  })
+
   it('walks a same-instant cluster larger than the page', async () => {
     const user = await createTestUser(db)
     const token = generateTestToken(user.id, user.email)
