@@ -1,5 +1,6 @@
 import {
   formatDate,
+  formatMinutes,
   formatMoment,
   getTimeBadge,
   parseDateOnly,
@@ -63,6 +64,16 @@ describe("formatDate", () => {
 
   it("names an older date with the year", () => {
     expect(formatDate(new Date(2025, 0, 10))).toBe("10/01/2025");
+  });
+});
+
+describe("formatMinutes", () => {
+  it("renders minutes since midnight as a padded 24-hour clock", () => {
+    expect(formatMinutes(0)).toBe("00:00");
+    expect(formatMinutes(390)).toBe("06:30");
+    expect(formatMinutes(420)).toBe("07:00");
+    expect(formatMinutes(1410)).toBe("23:30");
+    expect(formatMinutes(1439)).toBe("23:59");
   });
 });
 

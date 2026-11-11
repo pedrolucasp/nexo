@@ -144,6 +144,7 @@ export interface SleepRecordPayload {
   average: number;
   annotations: string;
   date: Date;
+  wakeMinutes?: number;
 }
 
 export interface UpdateSleepRecordPayload extends Partial<SleepRecordPayload> {}
@@ -153,6 +154,7 @@ export interface SleepRecord {
   annotations: string;
   date: Date;
   average: number;
+  wakeMinutes?: number | null;
   createdAt: Date;
   updatedAt: Date;
 }

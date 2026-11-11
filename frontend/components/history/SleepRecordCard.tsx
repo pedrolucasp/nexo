@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/Badge'
 import type { SleepRecord } from '@/lib/api'
 import type { HistoryCard } from '@/lib/history/types'
 import { Spacing } from '@/constants/theme';
+import { formatMinutes } from '@/lib/utils/time';
 import { router } from 'expo-router'
 
 function sleepBadge(hours: number) {
@@ -39,6 +40,11 @@ export function SleepRecordCard({ card }: Props) {
         <View style={styles.body}>
           <View style={styles.titleRow}>
             <Text style={styles.title}>Sono</Text>
+            {card.raw.wakeMinutes != null ? (
+              <Text style={styles.time}>
+                {formatMinutes(card.raw.wakeMinutes)}
+              </Text>
+            ) : null}
           </View>
           <View style={styles.durationRow}>
             <Text style={styles.duration}>{duration}</Text>
@@ -84,6 +90,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: '600'
+  },
+  time: {
+    fontSize: 13,
+    opacity: 0.45
   },
   durationRow: {
     flexDirection: 'row',

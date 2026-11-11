@@ -19,9 +19,11 @@ import { useCreateSleepRecord } from "@/hooks";
 import { useToast } from "@/context/ToastContext";
 import { ApiError } from "@/lib/api";
 import { translateError } from "@/lib/errors/translations";
+import { formatMinutes } from "@/lib/utils/time";
 
 export default function NewSleepRecord() {
   const [date, setDate] = useState(new Date());
+  const [wakeMinutes, setWakeMinutes] = useState(420);
   const [annotations, setAnnotations] = useState("");
   const [average, setAverage] = useState(7.5);
   const createSleepRecord = useCreateSleepRecord();
@@ -33,7 +35,7 @@ export default function NewSleepRecord() {
 
   const save = async () => {
     try {
-      const data = { date, annotations, average };
+      const data = { date, annotations, average, wakeMinutes };
       await createSleepRecord.mutateAsync(data);
       router.replace("/");
     } catch (error) {
@@ -70,11 +72,25 @@ export default function NewSleepRecord() {
 
           <Card style={styles.mainCard}>
             <DatePickerField
-              label="Data do Registro"
+              label="Data em que acordou"
               initialDate={date}
               maximumDate={new Date()}
               onChange={setDate}
             />
+
+            <View style={{ marginVertical: 15 }}>
+              <ScaleSlider
+                label="Acordou por volta das"
+                value={wakeMinutes}
+                onValueChange={setWakeMinutes}
+                onValueFormat={formatMinutes}
+                step={30}
+                min={0}
+                max={1410}
+                minLabel="00:00"
+                maxLabel="23:30"
+              />
+            </View>
 
             <View style={{ marginVertical: 15 }}>
               <ScaleSlider

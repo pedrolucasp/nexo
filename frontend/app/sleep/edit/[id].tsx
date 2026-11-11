@@ -17,7 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { DatePickerField } from "@/components/ui/DatePickerField";
 import { ScaleSlider } from "@/components/ui/ScaleSlider";
 import { useSleepRecord, useUpdateSleepRecord } from "@/hooks";
-import { parseDateOnly } from "@/lib/utils/time";
+import { formatMinutes, parseDateOnly } from "@/lib/utils/time";
 import type { SleepRecord } from "@/lib/api";
 
 export default function EditSleepRecord() {
@@ -43,6 +43,9 @@ function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepReco
   const updateSleepRecord = useUpdateSleepRecord();
 
   const [date, setDate] = useState(parseDateOnly(sleepRecord.date));
+  const [wakeMinutes, setWakeMinutes] = useState(
+    sleepRecord.wakeMinutes ?? 420,
+  );
   const [annotations, setAnnotations] = useState(sleepRecord.annotations || "");
   const [average, setAverage] = useState(sleepRecord.average);
 
@@ -55,6 +58,7 @@ function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepReco
       date,
       annotations,
       average,
+      wakeMinutes,
     };
 
     await updateSleepRecord.mutateAsync({ id: String(id), payload: data });
@@ -88,11 +92,25 @@ function EditSleepForm({ id, sleepRecord }: { id: string; sleepRecord: SleepReco
 
           <Card style={styles.mainCard}>
             <DatePickerField
-              label="Data do Registro"
+              label="Data em que acordou"
               initialDate={date}
               maximumDate={new Date()}
               onChange={setDate}
             />
+
+            <View style={{ marginVertical: 15 }}>
+              <ScaleSlider
+                label="Acordou por volta das"
+                value={wakeMinutes}
+                onValueChange={setWakeMinutes}
+                onValueFormat={formatMinutes}
+                step={30}
+                min={0}
+                max={1410}
+                minLabel="00:00"
+                maxLabel="23:30"
+              />
+            </View>
 
             <View style={{ marginVertical: 15 }}>
               <ScaleSlider

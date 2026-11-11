@@ -36,6 +36,14 @@ export const formatDate = (date: Date): string => {
   return format(date, "dd/MM/yyyy", { locale: ptBR });
 }
 
+export const formatMinutes = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  const hh = hours.toString().padStart(2, "0");
+  const mm = mins.toString().padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
 // Parse a date-only string (YYYY-MM-DD or ISO UTC midnight) as local noon
 // to prevent timezone offsets from shifting the calendar day
 export const parseDateOnly = (dateStr: string | Date): Date => {

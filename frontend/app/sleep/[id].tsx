@@ -18,7 +18,7 @@ import {
   useSleepRecord,
   useDeleteSleepRecord,
 } from "@/hooks/useSleepRecord.queries";
-import { formatDate, parseDateOnly } from "@/lib/utils/time";
+import { formatDate, formatMinutes, parseDateOnly } from "@/lib/utils/time";
 
 export default function SleepDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -73,6 +73,12 @@ export default function SleepDetailScreen() {
               <Text style={styles.dateLabel}>
                 {formatDate(parseDateOnly(sleepRecord.date))}
               </Text>
+
+              {sleepRecord.wakeMinutes != null && (
+                <Text style={styles.dateLabel}>
+                  Acordou por volta das {formatMinutes(sleepRecord.wakeMinutes)}
+                </Text>
+              )}
             </Col>
           </Row>
         </Card>
