@@ -44,8 +44,6 @@ export function TodayMedicines() {
     );
   }
 
-  console.log("today: ", JSON.stringify(entries))
-
   const handleConfirm = async (regimenId: number) => {
     await createCareAction.mutateAsync({
       type: "MEDICINE",

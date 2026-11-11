@@ -136,6 +136,11 @@ export default function RootLayout() {
             />
 
             <Stack.Screen
+              name="medicine-regimens/[id]"
+              options={{ title: "Editar Medicamento" }}
+            />
+
+            <Stack.Screen
               name="notifications"
               options={{
                 presentation: "modal",
