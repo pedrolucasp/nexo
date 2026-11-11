@@ -1,5 +1,6 @@
 import {
   mapCareActionToHistoryCard,
+  mapHistoryItemToCard,
   mapMoodToHistoryCard,
   mapSleepToHistoryCard,
   mapTriggerToHistoryCard,
@@ -78,6 +79,17 @@ function careAction(overrides: Partial<CareAction> = {}): CareAction {
     ...overrides,
   };
 }
+
+describe("mapHistoryItemToCard", () => {
+  it("uses the feed's sort instant as the card timestamp", () => {
+    const record = mood({ moment: new Date(2025, 0, 15, 9, 0) });
+    const sortAt = new Date(2025, 0, 16, 12, 0);
+
+    const card = mapHistoryItemToCard({ ...record, kind: "mood", sortAt });
+
+    expect(card.timestamp).toBe(sortAt.toISOString());
+  });
+});
 
 describe("mapMoodToHistoryCard", () => {
   it("maps the record into a mood card", () => {

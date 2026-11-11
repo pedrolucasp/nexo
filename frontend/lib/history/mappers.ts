@@ -1,5 +1,11 @@
 import type { HistoryCard } from "@/lib/history/types";
-import type { MoodEntry, SleepRecord, Trigger, CareAction } from "@/lib/api";
+import type {
+  MoodEntry,
+  SleepRecord,
+  Trigger,
+  CareAction,
+  HistoryItem,
+} from "@/lib/api";
 import { getMood } from "@/constants/moods";
 import { parseDateOnly } from "@/lib/utils/time";
 
@@ -89,6 +95,23 @@ function appointmentLabel(type?: string): string {
     OTHER: "Consulta",
   };
   return type ? (labels[type] ?? "Consulta") : "Consulta";
+}
+
+// The feed carries its own sort instant, so the card timestamp comes from it
+// rather than being recomputed from each record's moment or date
+export function mapHistoryItemToCard(item: HistoryItem): HistoryCard {
+  const timestamp = new Date(item.sortAt).toISOString();
+
+  switch (item.kind) {
+    case "mood":
+      return { ...mapMoodToHistoryCard(item), timestamp };
+    case "sleep":
+      return { ...mapSleepToHistoryCard(item), timestamp };
+    case "trigger":
+      return { ...mapTriggerToHistoryCard(item), timestamp };
+    case "care_action":
+      return { ...mapCareActionToHistoryCard(item), timestamp };
+  }
 }
 
 export function mapCareActionToHistoryCard(record: CareAction): HistoryCard {

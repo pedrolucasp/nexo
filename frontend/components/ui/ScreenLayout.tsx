@@ -20,6 +20,8 @@ interface ScreenLayoutProps {
   userAvatar?: string;
   onNotificationPress?: () => void;
   scrollEnabled?: boolean;
+  // Set false when the child owns scrolling, such as a virtualized list
+  scrollable?: boolean;
 }
 
 export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
@@ -28,6 +30,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   userAvatar,
   onNotificationPress,
   scrollEnabled = true,
+  scrollable = true,
 }) => {
   const router = useRouter();
   const textColor = useThemeColor({}, "text") as string;
@@ -64,14 +67,20 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
           </Pressable>
         </View>
 
-        <ScrollView
-          scrollEnabled={scrollEnabled}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={scrollEnabled ? undefined : { flex: 1 }}
-          scrollEventThrottle={16}
-        >
-          <View style={styles.scrollContent}>{children}</View>
-        </ScrollView>
+        {scrollable ? (
+          <ScrollView
+            scrollEnabled={scrollEnabled}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={
+              scrollEnabled ? undefined : { flex: 1 }
+            }
+            scrollEventThrottle={16}
+          >
+            <View style={styles.scrollContent}>{children}</View>
+          </ScrollView>
+        ) : (
+          <View style={styles.staticContent}>{children}</View>
+        )}
       </SafeAreaView>
     </View>
   );
@@ -116,6 +125,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing.containerPadding,
     paddingVertical: Spacing.sectionGap,
+  },
+  staticContent: {
+    flex: 1,
   },
 });
 
