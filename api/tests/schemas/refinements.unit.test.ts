@@ -43,6 +43,20 @@ describe('sleep record average bounds', () => {
   })
 })
 
+describe('sleep record wake time bounds', () => {
+  it('accepts the first and last minute of the day, and absence', () => {
+    expect(CreateSleepRecordSchema.safeParse({ ...sleepRecord, wakeMinutes: 0 }).success).toBe(true)
+    expect(CreateSleepRecordSchema.safeParse({ ...sleepRecord, wakeMinutes: 1439 }).success).toBe(true)
+    expect(CreateSleepRecordSchema.safeParse(sleepRecord).success).toBe(true)
+  })
+
+  it('rejects a minute outside the day or a fraction', () => {
+    for (const wakeMinutes of [-1, 1440, 6.5]) {
+      expect(CreateSleepRecordSchema.safeParse({ ...sleepRecord, wakeMinutes }).success).toBe(false)
+    }
+  })
+})
+
 describe('daily reminder time format', () => {
   it('accepts a two-digit hour and minute, and null to clear it', () => {
     expect(UpdateUserPreferencesSchema.safeParse({ dailyReminderTime: '08:30' }).success).toBe(true)

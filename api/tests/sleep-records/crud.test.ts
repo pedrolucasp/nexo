@@ -16,7 +16,7 @@ beforeEach(() => cleanupTestDb(db))
 
 async function seedSleepRecord(
   userId: number,
-  overrides: { average?: number; annotations?: string } = {}
+  overrides: { average?: number; annotations?: string; wakeMinutes?: number } = {}
 ) {
   return db.sleepRecord.create({
     data: {
@@ -24,6 +24,7 @@ async function seedSleepRecord(
       date: new Date(),
       average: overrides.average ?? 7,
       annotations: overrides.annotations,
+      wakeMinutes: overrides.wakeMinutes,
     },
   })
 }
@@ -51,6 +52,69 @@ describe('POST /sleep_records', () => {
     const dbRecord = await db.sleepRecord.findFirst({ where: { userId: user.id } })
 
     expect(dbRecord).not.toBeNull()
+  })
+
+  it('creates a sleep record with a wake time and reads it back', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const created = await request(app)
+      .post('/sleep_records')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        sleepRecord: {
+          date: new Date().toISOString(),
+          average: 8,
+          wakeMinutes: 390,
+        },
+      })
+
+    expect(created.status).toBe(201)
+    expect(created.body.sleepRecord.wakeMinutes).toBe(390)
+
+    const fetched = await request(app)
+      .get(`/sleep_records/${created.body.sleepRecord.id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(fetched.body.wakeMinutes).toBe(390)
+  })
+
+  it('creates a sleep record without a wake time', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    const res = await request(app)
+      .post('/sleep_records')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        sleepRecord: {
+          date: new Date().toISOString(),
+          average: 8,
+        },
+      })
+
+    expect(res.status).toBe(201)
+    expect(res.body.sleepRecord.wakeMinutes).toBeNull()
+  })
+
+  it('returns 400 for an out-of-range or fractional wake time', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+
+    for (const wakeMinutes of [-1, 1440, 6.5]) {
+      const res = await request(app)
+        .post('/sleep_records')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          sleepRecord: {
+            date: new Date().toISOString(),
+            average: 7,
+            wakeMinutes,
+          },
+        })
+
+      expect(res.status).toBe(400)
+    }
   })
 
   it('returns 400 for out-of-range average', async () => {
@@ -152,6 +216,39 @@ describe('PUT /sleep_records/:id', () => {
     expect(res.status).toBe(200)
     expect(res.body.sleepRecord.average).toBe(10)
     expect(res.body.sleepRecord.annotations).toBe('Dreamt with Sade')
+  })
+
+  it('updates the wake time', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const record = await seedSleepRecord(user.id, { wakeMinutes: 390 })
+
+    const res = await request(app)
+      .put(`/sleep_records/${record.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ sleepRecord: { wakeMinutes: 480 } })
+
+    expect(res.status).toBe(200)
+    expect(res.body.sleepRecord.wakeMinutes).toBe(480)
+
+    const fetched = await request(app)
+      .get(`/sleep_records/${record.id}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(fetched.body.wakeMinutes).toBe(480)
+  })
+
+  it('returns 400 for an out-of-range wake time', async () => {
+    const user = await createTestUser(db)
+    const token = generateTestToken(user.id, user.email)
+    const record = await seedSleepRecord(user.id)
+
+    const res = await request(app)
+      .put(`/sleep_records/${record.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ sleepRecord: { wakeMinutes: 1440 } })
+
+    expect(res.status).toBe(400)
   })
 
   it('refuses to update once the editing window has closed', async () => {
