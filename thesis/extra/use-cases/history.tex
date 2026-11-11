@@ -16,8 +16,8 @@ Usuário \\
 \hline
 
 \textbf{Resumo} &
-Permite consultar o histórico de registros de humor, sono e ações de
-cuidado agrupados por data. \\
+Permite consultar o histórico de registros de humor, sono, gatilhos e
+ações de cuidado agrupados por data. \\
 \hline
 
 \textbf{Pré-condições} &
@@ -39,15 +39,17 @@ Os registros históricos são apresentados ao usuário. \\
 \cline{1-2}
 
 &
-2. O sistema recupera os registros do usuário. \\
+2. O sistema consulta a primeira página do histórico consolidado, da mais
+recente para a mais antiga. \\
 \cline{1-2}
 
 &
-3. O sistema agrupa os registros por data. \\
+3. O sistema agrupa por data os registros recebidos. \\
 \cline{1-2}
 
 &
-4. O sistema apresenta indicadores resumidos para cada registro. \\
+4. O sistema apresenta os registros com seus indicadores resumidos e, ao final
+da lista, carrega automaticamente a página seguinte. \\
 \cline{1-2}
 
 5. Seleciona um registro. & \\
@@ -86,7 +88,9 @@ primeiros cinco minutos após sua criação. \\
 \cline{1-2}
 
 &
-2. O sistema informa que não existem registros cadastrados. \\
+2. Se a primeira página vier vazia, o sistema informa que não existem
+registros cadastrados. Se uma página seguinte vier sem itens e sem cursor, o
+sistema apenas encerra a lista, sem repetir aquela mensagem. \\
 \hline
 
 \multicolumn{2}{|c|}{\textbf{Cenário de Exceção E1 --- Tempo para edição expirado}}\\

@@ -168,10 +168,11 @@ API \\
 A suíte automatizada concentra-se na API e cobre três frentes: os testes
 unitários, os testes de integração das rotas HTTP e os testes dos processadores
 de tarefas em segundo plano. No momento da redação, o diretório
-\texttt{api/tests} reunia 48 arquivos --- 17 unitários, 26 de rotas e cinco de
-\textit{jobs}. A execução e as asserções ficam a cargo do Vitest; as requisições
-HTTP são feitas pelo Supertest, que exercita a aplicação Express diretamente,
-sem abrir uma porta de rede, porém através de sua pilha HTTP real.
+\texttt{api/tests} reunia 52 arquivos --- 18 unitários, 27 de rotas, dois de
+\textit{middleware} e cinco de \textit{jobs}. A execução e as asserções ficam a
+cargo do Vitest; as requisições HTTP são feitas pelo Supertest, que exercita a
+aplicação Express diretamente, sem abrir uma porta de rede, porém através de
+sua pilha HTTP real.
 
 \subsection{Organização e ferramentas}\label{sec:test-api-org}
 
@@ -233,10 +234,11 @@ Os testes unitários exercitam uma única função ou módulo, sem HTTP e sem ba
 de dados. Concentram-se na lógica pura do sistema, em grande parte extraída
 deliberadamente de seus envoltórios de persistência para se tornar testável: os
 agregadores dos indicadores, os construtores dos relatórios e auxiliares
-compartilhados, como paginação e conversão de agendamento. Também cobrem o
-gerador de código de ativação, a validade de tokens, os serializadores e as
-regras de validação. Por serem rápidos e determinísticos, são o instrumento
-natural para fixar casos-limite --- fronteiras de janelas de tempo, margens de
+compartilhados, como paginação e conversão de agendamento. Também cobrem
+o gerador de código de ativação, a validade de tokens, os serializadores, as
+regras de validação e o cursor do histórico em sua codificação, decodificação
+e ordenação. Por serem rápidos e determinísticos, são o instrumento natural
+para fixar casos-limite --- fronteiras de janelas de tempo, margens de
 classificação e aritmética de paginação --- e servem como documentação
 executável dessas regras.
 
@@ -303,14 +305,15 @@ armazenamento seguro, MMKV, constantes, notificações e detecção de dispositi
 ---, preservando a regra já adotada na API: simula-se somente o que deixa
 o processo. Não há HTTP, banco de dados nem dispositivo envolvidos.
 
-Ao momento da redação, a suíte reunia 14 arquivos e 181 casos de teste, muitos
-deles parametrizados por tabelas, distribuídos por sete áreas, muitos deles
-parametrizados por tabelas. Elas cobrem as constantes utilizadas para textos,
-ícones, cores e retornos de API, regras de roteamento de autenticação, janela
-de edição e algumas APIs de estado efemero da aplicação (Zustand e ReactQuery,
-mencionados nos capítulos anteriores). Grande parte desse código foi extraída
-de telas e componentes justamente para se tornar testável --- o mesmo movimento
-descrito para os agregadores da API.
+Ao momento da redação, a suíte reunia 16 arquivos e 221 casos de teste,
+distribuídos por oito áreas e muitos deles parametrizados por tabelas. Os
+testes cobrem as constantes utilizadas para textos, ícones, cores e retornos
+de API, regras de roteamento de autenticação, janela de edição, chaves de
+consulta e algumas APIs de estado efêmero da aplicação (Zustand e ReactQuery,
+mencionados nos capítulos anteriores), além dos mapeadores e das operações de
+cache que mantêm o histórico paginado coerente após cada mutação. Grande parte
+desse código foi extraída de telas e componentes justamente para se tornar
+testável --- o mesmo movimento descrito para os agregadores da API.
 
 Por não dependerem de dispositivo nem da pilha em execução, esses testes são
 rápidos e determinísticos. Porém, a limitação é a mesma de qualquer camada

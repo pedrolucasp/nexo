@@ -201,10 +201,12 @@ navegação.
 Uma decisão estrutural relevante foi consolidar os registros em uma única linha
 do tempo. Em vez de listas separadas para humor, sono, gatilhos e ações de
 cuidado, a tela de Histórico combina os quatro tipos em uma sequência
-cronológica única, agrupada por dia, por meio de um componente de mapeamento
-que normaliza cada recurso em um formato comum, descrito no Capítulo
-\ref{sec:history-analysis}. A motivação decorre da própria metodologia EMA:
-aproximar visualmente eventos relacionados --- como um gatilho registrado
+cronológica única, agrupada por dia. Essa consolidação é resolvida no servidor
+por um \textit{endpoint} de leitura paginada, que devolve os quatro tipos já
+mesclados e identificados por uma etiqueta comum de tipo, conforme
+descrito no Capítulo \ref{sec:history-analysis}; o aplicativo apenas converte
+cada item no cartão correspondente. A motivação decorre da própria metodologia
+EMA: aproximar visualmente eventos relacionados --- como um gatilho registrado
 minutos antes de um humor --- permite reconstruir uma narrativa do dia em vez
 de fragmentar o contexto em telas distintas.
 

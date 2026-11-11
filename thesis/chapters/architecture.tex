@@ -42,8 +42,8 @@ projeto, mas que delimita seu principal limite de escalabilidade.
 Este capítulo detalha o funcionamento de algumas funcionalidades
 desenvolvidas durante o projeto. Apenas algumas funcionalidades mais
 chaves são abordadas neste capítulo, como o registro de humor, o vínculo
-de um gatilho, os indicadores, o registro de atividades e, por fim, a
-exportação de dados e a geração de relatórios.
+de um gatilho, o histórico consolidado, os indicadores, o registro de
+atividades e, por fim, a exportação de dados e a geração de relatórios.
 
 \section{Processo de Login}
 
@@ -325,21 +325,37 @@ reduzindo o volume de informação exibida.
 \source{Elaborado pelo autor (2026)}
 \end{figure}
 
-Como os quatro tipos de dado residem em recursos distintos da API, a
-tela consulta os respectivos \textit{endpoints} em paralelo e, em
-seguida, processa o resultado no próprio aplicativo. Para isso, é
-utilizado um pequeno serviço que atua como \textit{mapper}, transformando
-os dados de cada \textit{endpoint} em um formato comum, apresentado no
+Os quatro tipos de dado residem em recursos distintos do banco, mas a
+consolidação não acontece no aplicativo. Um único \textit{endpoint}
+autenticado, \texttt{GET /history}, recebe \texttt{limit}, \texttt{cursor}
+e \texttt{type} e devolve uma página já mesclada, na forma
+\texttt{\{ items, nextCursor \}}. No servidor, cada uma das quatro tabelas
+é consultada com o mesmo limite e o corte adequado ao seu tipo, e os
+resultados são ordenados em conjunto, de modo que a ordem exibida pertence
+à API, e não a uma composição de listas feita no dispositivo. Cada item é
+a própria entidade acrescida de \texttt{kind}, que identifica o tipo, e de
+\texttt{sortAt}, o instante usado para ordenar e agrupar, conforme o
 código \ref{lst:history-card}.
 
 \newpage
 
-\begin{lstlisting}[caption={Formato comum da tela de histórico}, label={lst:history-card}]
+\begin{lstlisting}[caption={Formatos do histórico no servidor e no cartão da tela}, label={lst:history-card}]
+export type HistoryItem =
+  | (MoodEntry & { kind: "mood"; sortAt: Date })
+  | (SleepRecord & { kind: "sleep"; sortAt: Date })
+  | (Trigger & { kind: "trigger"; sortAt: Date })
+  | (CareAction & { kind: "care_action"; sortAt: Date });
+
+export interface HistoryPage {
+  items: HistoryItem[];
+  nextCursor: string | null;
+}
+
 export type HistoryCard = {
-  id: string; // "<category>-<id>" to avoid collisions
+  id: string; // "<category>-<id>"
   category: HistoryCategory;
-  subtype?: CareActionSubtype; // only set when category === "care_action"
-  timestamp: string; // ISO string -- used for sorting and display
+  subtype?: CareActionSubtype; // only for care actions
+  timestamp: string; // ISO string, from sortAt
   title: string;
   summary: string;
   badge?: HistoryBadge;
@@ -347,26 +363,57 @@ export type HistoryCard = {
 };
 \end{lstlisting}
 
-Após a normalização, os quatro conjuntos de dados são combinados em uma
-única lista ordenada pelo campo \texttt{timestamp} e reagrupados por dia
-para exibição, conforme visto na figura \ref{fig:screenshot-history}, nos
-cabeçalhos ``terça-feira, 14 de julho'' e ``segunda-feira, 13 de julho''.
-Essa unificação é proposital: ao invés de apresentar quatro telas
-separadas por tipo de dado, o histórico busca reconstruir uma narrativa
-única do dia do usuário, aproximando-se do princípio de \textit{Ecological
-Momentary Assessment} já mencionado anteriormente --- o contexto de um
-registro de humor (por exemplo, o gatilho ``Interno'' registrado três
-minutos antes, na mesma figura) fica visualmente próximo do evento que
-possivelmente o motivou.
+A ordenação total é decrescente por \texttt{sortAt}; em caso de empate,
+crescente por \texttt{kind}, em uma ordem fixa; e, por fim, decrescente por
+\texttt{id}. Humor, gatilho e ação de cuidado têm um momento próprio, que
+serve como \texttt{sortAt}; o registro de sono é diário e não possui hora,
+então o servidor o ancora ao meio-dia no fuso
+\texttt{America/Sao\_Paulo}. O cursor é uma codificação \texttt{base64url}
+de \texttt{\{ sortAt, kind, id \}} que o aplicativo não interpreta: apenas
+a devolve na requisição seguinte, e a página começa estritamente depois do
+registro que ela identifica. Trata-se de paginação por chave, e não por
+deslocamento, porque o histórico cresce no topo: um deslocamento fixo
+passaria a repetir ou a pular registros à medida que novos fossem
+inseridos.
 
-A propriedade \texttt{raw} armazena o dado original, permitindo que a
-listagem redirecione o usuário para a tela de detalhe correta ao tocar em
-um card, independentemente da categoria. Já a propriedade \texttt{badge}
-reaproveita o mesmo mecanismo já descrito na seção de indicadores: para
-um registro de sono, sinaliza se a duração foi insuficiente; para um
-registro de humor, destaca a dimensão mais relevante daquele registro
-(como ``Ansiedade alta'' na figura \ref{fig:screenshot-history}); para um
-gatilho, indica sua categoria, e assim por diante.
+No aplicativo, um mapeador converte cada item no cartão exibido pela
+tela --- um \texttt{HistoryCard}, que reaproveita os mesmos componentes
+por categoria ---, e o instante exibido vem de \texttt{sortAt}, sem
+recalcular a data a partir de cada registro. Os itens são então
+reagrupados por dia, conforme visto na figura
+\ref{fig:screenshot-history}, nos cabeçalhos ``terça-feira, 14 de julho''
+e ``segunda-feira, 13 de julho''. Essa unificação é proposital:
+ao invés de apresentar quatro telas separadas por tipo de dado, o
+histórico busca reconstruir uma narrativa única do dia do usuário,
+aproximando-se do princípio de \textit{Ecological Momentary Assessment}
+já mencionado anteriormente --- o contexto de um registro de humor (por
+exemplo, o gatilho ``Interno'' registrado três minutos antes, na mesma
+figura) fica visualmente próximo do evento que possivelmente o motivou.
+
+O cartão guarda o dado original na propriedade \texttt{raw}, permitindo
+que a listagem redirecione o usuário para a tela de detalhe correta ao
+tocar em um card, independentemente da categoria. Já a propriedade
+\texttt{badge} reaproveita o mesmo mecanismo já descrito na seção de
+indicadores: para um registro de sono, sinaliza se a duração foi
+insuficiente; para um registro de humor, destaca a dimensão mais relevante
+daquele registro (como ``Ansiedade alta'' na
+figura \ref{fig:screenshot-history}); para um gatilho, indica sua
+categoria, e assim por diante.
+
+A lista é renderizada por uma \texttt{SectionList} virtualizada, que
+monta apenas os cartões próximos à janela visível, e não todos os
+registros de uma vez. As seções são reconstruídas a partir de todos os
+itens acumulados após cada página, o que mantém os registros de um mesmo
+dia sob um único cabeçalho ainda que a fronteira entre páginas caia no
+meio do dia; os cabeçalhos, por sua vez, não permanecem fixos no topo
+durante a rolagem, preservando o comportamento anterior. Ao se aproximar
+do fim da lista, o aplicativo requisita a página seguinte. O filtro ativo
+é enviado como o parâmetro \texttt{type}, e cada categoria mantém seu
+próprio fluxo de cursor, de modo que trocar de filtro reinicia a partir
+da página mais recente. O gesto de puxar para atualizar descarta o
+acumulado e recomeça da primeira página; enquanto uma página carrega, um
+indicador no rodapé sinaliza a espera, e uma falha oferece a ação de
+tentar novamente em vez de se confundir com o fim do histórico.
 
 \section{Exportação de Dados e Relatórios}\label{sec:export-report}
 
