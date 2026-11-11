@@ -20,7 +20,10 @@ export const toggleMedicineRegimen = async (
 };
 
 type TodayEntry = {
-  regimen: Pick<MedicineRegimen, 'id' | 'name' | 'dosage' | 'scheduledAt'>;
+  regimen: Pick<
+    MedicineRegimen,
+    'id' | 'name' | 'dosage' | 'periodicity' | 'scheduledAt'
+  >;
   logs: { id: number; takenAt: Date; scheduledSlot: string | null }[];
 };
 
@@ -77,7 +80,13 @@ export const getTodayMedicineRegimens = async (
 
   const regimens = await prisma.medicineRegimen.findMany({
     where: { userId, active: true },
-    select: { id: true, name: true, dosage: true, scheduledAt: true },
+    select: {
+      id: true,
+      name: true,
+      dosage: true,
+      periodicity: true,
+      scheduledAt: true,
+    },
     orderBy: { createdAt: 'desc' },
   });
 

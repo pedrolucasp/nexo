@@ -36,7 +36,7 @@ export default function MedicineCareAction() {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Qual medicamento?</Text>
             <Text style={styles.headerSubtitle}>
-              Selecione um medicamento existente ou registre um novo
+              Toque para editar ou registre a dose tomada
             </Text>
           </View>
 
@@ -48,20 +48,31 @@ export default function MedicineCareAction() {
             <Section>
               <SectionHeader title="Medicamentos cadastrados" />
               {regimens.map((regimen) => (
-                <TouchableOpacity
-                  key={regimen.id}
-                  style={styles.regimenChip}
-                  activeOpacity={0.7}
-                  onPress={() => handleSelectRegimen(regimen.id)}
-                  disabled={createCareAction.isPending}
-                >
-                  <Ionicons name="bandage-outline" size={18} color={Colors.light.tint} />
-                  <View style={styles.regimenChipText}>
-                    <Text style={styles.regimenChipName}>{regimen.name}</Text>
-                    <Text style={styles.regimenChipDosage}>{regimen.dosage}</Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={16} color={Colors.light.disabled} />
-                </TouchableOpacity>
+                <View key={regimen.id} style={styles.regimenRow}>
+                  <TouchableOpacity
+                    style={styles.regimenChip}
+                    activeOpacity={0.7}
+                    onPress={() => router.push(`/medicine-regimens/${regimen.id}`)}
+                  >
+                    <Ionicons name="bandage-outline" size={18} color={Colors.light.tint} />
+                    <View style={styles.regimenChipText}>
+                      <Text style={styles.regimenChipName}>{regimen.name}</Text>
+                      <Text style={styles.regimenChipDosage}>{regimen.dosage}</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={16} color={Colors.light.disabled} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.doseButton}
+                    activeOpacity={0.7}
+                    onPress={() => handleSelectRegimen(regimen.id)}
+                    disabled={createCareAction.isPending}
+                    accessibilityLabel={`Registrar dose de ${regimen.name}`}
+                  >
+                    <Ionicons name="checkmark" size={16} color={Colors.light.text} />
+                    <Text style={styles.doseButtonText}>Tomei</Text>
+                  </TouchableOpacity>
+                </View>
               ))}
             </Section>
           )}
@@ -102,7 +113,14 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     textAlign: 'center',
   },
+  regimenRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 8,
+    marginBottom: 8,
+  },
   regimenChip: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -111,8 +129,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.light.divider,
     gap: 12,
-    marginBottom: 8,
     ...Shadows.sm,
+  },
+  doseButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.light.tint,
+  },
+  doseButtonText: {
+    ...Typography.labelSm,
+    fontWeight: '600',
+    color: Colors.light.text,
   },
   regimenChipText: {
     flex: 1,

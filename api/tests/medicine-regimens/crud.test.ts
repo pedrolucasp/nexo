@@ -194,6 +194,7 @@ describe('GET /medicine-regimens/today', () => {
     expect(res.status).toBe(200)
     expect(res.body.regimens).toHaveLength(1)
     expect(res.body.regimens[0].regimen.name).toBe('Melatonina')
+    expect(res.body.regimens[0].regimen.periodicity).toBe('DAILY')
     expect(res.body.regimens[0].logs).toBeInstanceOf(Array)
   })
 })
