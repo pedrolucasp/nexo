@@ -446,6 +446,82 @@ acumulado e recomeça da primeira página; enquanto uma página carrega, um
 indicador no rodapé sinaliza a espera, e uma falha oferece a ação de
 tentar novamente em vez de se confundir com o fim do histórico.
 
+\section{Notificações}\label{sec:notifications}
+
+O Nexo lembra o usuário de duas coisas cotidianas --- registrar como se
+sente e tomar o medicamento no horário ---, e eventualmente chama atenção
+para um indicador. A entrega não depende de um único canal: além do aviso
+que aparece no dispositivo, toda notificação também fica guardada em uma
+caixa de entrada dentro do aplicativo, como mostra a figura
+\ref{fig:screenshot-notifications}. Essa escolha reflete a ideia central da
+funcionalidade: a notificação é antes um registro do que um aviso. Grava-se
+primeiro, e só depois se tenta avisar. Se o aviso não puder ser entregue
+--- porque o usuário desativou as notificações ou porque o serviço de
+\textit{push} falhou ---, o lembrete não se perde: continua disponível na
+caixa de entrada.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de notificações}
+\label{fig:screenshot-notifications}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-notifications.jpeg}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+Os horários partem das preferências do próprio usuário. O lembrete diário
+segue o horário que ele escolhe nas configurações, e cada medicamento ativo
+gera seus próprios lembretes nos horários prescritos. Como esses horários
+mudam, o agendamento é refeito sempre que a preferência muda: ao ativar,
+ajustar ou desligar um lembrete, ou ao editar um medicamento, os lembretes
+antigos são descartados e recriados. Tudo isso roda na mesma infraestrutura
+de filas do restante do sistema, de modo que o envio não atrapalha a
+resposta ao usuário.
+
+Cada tipo de notificação tem um comportamento próprio --- por quanto tempo
+continua fazendo sentido e para onde leva ao ser tocada ---, e esse
+comportamento fica definido em um único lugar. Um lembrete de humor ou de
+medicamento vale para o dia em que foi pensado: aberto horas depois, perde
+o propósito. Um alerta de indicador, por outro lado, não se prende a um
+horário e não expira. A tela de destino também decorre do tipo: o toque leva
+ao registro de humor, à lista de medicamentos ou aos indicadores.
+
+O caminho do toque merece um cuidado à parte. Quando o usuário toca no
+aviso, o aplicativo precisa abrir a tela certa tanto se ele já estava em uso
+quanto se o aviso foi o que abriu o aplicativo. Nos dois casos a navegação é
+diferente, e o aplicativo trata cada um: empilha a tela de destino quando já
+estava aberto, e a coloca no lugar da tela inicial quando foi aberto pelo
+próprio aviso --- evitando que o usuário, ao voltar, caia em uma pilha de
+telas que nunca percorreu.
+
+A caixa de entrada é uma lista paginada, servida por um único ponto de
+consulta autenticado, que devolve as notificações da mais recente para a
+mais antiga. A paginação é por posição no tempo, e não por número de página,
+pelo mesmo motivo do histórico: a lista cresce no topo, e um deslocamento
+fixo passaria a repetir ou pular itens. No aplicativo, cada linha ganha um
+ícone e uma cor por tipo; as já expiradas não desaparecem, apenas ficam
+esmaecidas e marcadas como tal. O histórico do que foi lembrado continua
+visível, mas distinguível do que ainda pede ação.
+
+Essa ausência de lida/não lida e de um contador no ícone do sino é uma
+decisão consciente, e não uma lacuna. Em um aplicativo usado por pessoas
+com transtorno afetivo bipolar, transformar os lembretes em uma pilha de
+pendências que nunca zera teria o efeito oposto ao pretendido: um número de
+não lidas costuma ser lido como cobrança, e uma lista de coisas que o
+usuário ``não fez'' pesa justamente sobre quem o aplicativo deveria acolher.
+Por isso a caixa de entrada não acumula estado a limpar; o que importa não é
+se o aviso foi lido, mas se o seu momento ainda vale. Cada notificação nasce
+com uma janela de relevância, e a lógica é que um lembrete deixe de ser um
+lembrete vivo quando o seu momento passa --- ou quando o próprio usuário
+registra aquilo que ele pedia: um humor registrado, um medicamento tomado.
+Nada é contado como pendência; o histórico fica disponível para consulta,
+mas não cobra.
+
+Resta uma limitação que esta versão aceita: a entrega é um melhor-esforço,
+dependente do serviço de \textit{push} do Expo \cite{expo:2026}, que faz a
+ponte com o serviço de mensagens do sistema operacional. Quando ela falha,
+a notificação permanece na caixa de entrada, mas o aviso no dispositivo
+pode não chegar.
+
 \section{Exportação de Dados e Relatórios}\label{sec:export-report}
 
 Além das telas de consulta e análise, o Nexo oferece duas formas de
