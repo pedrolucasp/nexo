@@ -10,8 +10,8 @@ const formatDecimal = (value: number): string =>
   value.toFixed(1).replace(".", ",");
 
 const FOOTNOTE =
-  "Primeira e segunda metade dos últimos 7 dias. " +
-  "Escala 1–5: 1 Irritado · 2 Triste · 3 Neutro · 4 Bem · 5 Ótimo. " +
+  "As médias usam os códigos das opções: " +
+  "Irritado=1 · Triste=2 · Neutro=3 · Bem=4 · Ótimo=5. " +
   "Variações abaixo de 0,5 ponto ficam dentro de meio degrau; " +
   "1,0 ponto equivale a uma opção inteira.";
 
@@ -55,6 +55,7 @@ export const MoodTrendWidget: React.FC = () => {
       category="Humor"
       body={insight.body}
       metric={`${first} → ${second}`}
+      metricHint="média 1ª e 2ª metades"
       accent="neutral"
       footnote={FOOTNOTE}
     />

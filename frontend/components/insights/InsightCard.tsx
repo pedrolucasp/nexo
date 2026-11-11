@@ -17,6 +17,7 @@ interface InsightCardProps {
   category: string;
   body: React.ReactNode;
   metric: string;
+  metricHint?: string;
   accent?: MetricAccent;
   footnote?: string;
 }
@@ -25,6 +26,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
   category,
   body,
   metric,
+  metricHint,
   accent = "neutral",
   footnote,
 }) => (
@@ -38,9 +40,14 @@ export const InsightCard: React.FC<InsightCardProps> = ({
           body
         )}
       </View>
-      <Text style={[styles.metric, { color: metricColor[accent] }]}>
-        {metric}
-      </Text>
+      <View style={styles.metricBlock}>
+        <Text style={[styles.metric, { color: metricColor[accent] }]}>
+          {metric}
+        </Text>
+        {metricHint && (
+          <Text style={styles.metricHint}>{metricHint}</Text>
+        )}
+      </View>
     </View>
     {footnote && (
       <>
@@ -89,6 +96,15 @@ const styles = StyleSheet.create({
   metric: {
     ...Typography.headlineLg,
     fontSize: 22,
+  },
+  metricBlock: {
+    alignItems: "flex-end",
+  },
+  metricHint: {
+    ...Typography.labelXs,
+    color: Colors.light.textSecondary,
+    marginTop: 2,
+    textAlign: "right",
   },
   divider: {
     height: StyleSheet.hairlineWidth,
