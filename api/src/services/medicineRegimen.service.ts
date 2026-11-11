@@ -2,6 +2,7 @@ import { prisma } from '@app/lib/prisma';
 import { MedicineRegimen } from '@prisma/client';
 import { CreateMedicineRegimenInput, UpdateMedicineRegimenInput } from '@app/schemas';
 import { syncMedicineReminderJobs } from '@app/services/medicineReminder.sync';
+import { appDayWindow } from '@app/lib/queue/processors/insights/utils';
 
 export const toggleMedicineRegimen = async (
   userId: number,
@@ -72,13 +73,7 @@ export const updateMedicineRegimen = async (
 export const getTodayMedicineRegimens = async (
   userId: number,
 ): Promise<TodayEntry[]> => {
-  const now = new Date();
-
-  const startOfDay = new Date(now);
-  startOfDay.setUTCHours(0, 0, 0, 0);
-
-  const endOfDay = new Date(now);
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  const { start, end } = appDayWindow();
 
   const regimens = await prisma.medicineRegimen.findMany({
     where: { userId, active: true },
@@ -91,7 +86,7 @@ export const getTodayMedicineRegimens = async (
       const logs = await prisma.medicineLog.findMany({
         where: {
           regimenId: regimen.id,
-          takenAt: { gte: startOfDay, lte: endOfDay },
+          takenAt: { gte: start, lt: end },
         },
         select: { id: true, takenAt: true },
       });
