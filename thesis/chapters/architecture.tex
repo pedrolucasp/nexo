@@ -227,6 +227,40 @@ diário de energia, este último apresentado na figura
 depende desse registro e permanece apenas no \textit{job} semanal de
 \textit{fan-out} (seção \ref{sec:insights}).
 
+\subsection{Acompanhamento do registro}\label{sec:mood-follow-up}
+
+Depois de salvo, um registro de humor pode ser reaberto na tela ``Ver
+detalhes'', que funciona como o acompanhamento daquele momento. A tela
+retoma o humor e o horário no topo, os três níveis emocionais em barras,
+os sentimentos e emoções com suas intensidades, a anotação do usuário,
+quando houver, e, por fim, a seção ``Vínculo'', na figura
+\ref{fig:screenshot-mood-entry-linked}. É nessa seção que o registro deixa
+de ser um retrato isolado: os gatilhos associados aparecem com categoria,
+horário e a barra de impacto percebido, e as ações de cuidado vinculadas
+aparecem com ícone, rótulo e horário. Tocar em qualquer um deles abre o
+registro correspondente, e a navegação entre as duas pontas é simétrica
+--- o detalhe da ação de cuidado também leva de volta ao humor
+(seção~\ref{sec:care-actions}).
+
+\begin{figure}[H]
+\centering
+\caption{Detalhe de um registro de humor com vínculos}
+\label{fig:screenshot-mood-entry-linked}
+\includegraphics[height=0.78\textheight,keepaspectratio]{screenshot-mood-entry-linked.jpg}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+O conteúdo vem de uma única leitura. O \textit{endpoint} autenticado
+\texttt{GET /moods/:id} devolve o humor com seus componentes, os vínculos
+de gatilho já com o gatilho embutido e as ações de cuidado com os dados da
+sua modalidade; o aplicativo apenas renderiza o que recebeu, sem uma
+requisição por vínculo. No caso das ações de cuidado, a relação é gravada
+do lado da ação, no campo que aponta para o humor, e por isso a mesma
+relação aparece tanto aqui quanto no detalhe da ação. O rodapé reúne
+edição e exclusão sob a mesma janela de cinco minutos dos demais
+registros: dentro do prazo, o registro é editável; passado ele, a tela
+vira apenas consulta.
+
 \section{Ações de Cuidado}\label{sec:care-actions}
 
 A aba ``Ações de Cuidado'' funciona como ponto de entrada para o que o
