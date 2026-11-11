@@ -5,23 +5,35 @@ import {
   moodTrendBody,
 } from '@app/lib/queue/processors/insights/moodTrend'
 
-const mood = (selectedMood: BaseMoodOption, energyLevel: number) => ({
+const periodStart = new Date('2026-01-05T00:00:00Z')
+const periodEnd = new Date('2026-01-12T00:00:00Z')
+
+const mood = (
+  selectedMood: BaseMoodOption,
+  moment: string,
+  energyLevel = 6,
+) => ({
   selectedMood,
   energyLevel,
+  moment: new Date(moment),
 })
 
 describe('computeMoodTrend', () => {
-  it('averages each half, scales the delta, and picks the dominant mood', () => {
-    const trend = computeMoodTrend([
-      mood('SAD', 6),
-      mood('NEUTRAL', 6),
-      mood('GREAT', 6),
-      mood('GREAT', 6),
-      mood('GREAT', 6),
-    ])
+  it('averages each time half, reports the point difference, and picks the dominant mood', () => {
+    const trend = computeMoodTrend(
+      [
+        mood('SAD', '2026-01-05T10:00:00Z'),
+        mood('NEUTRAL', '2026-01-06T10:00:00Z'),
+        mood('GREAT', '2026-01-09T10:00:00Z'),
+        mood('GREAT', '2026-01-10T10:00:00Z'),
+      ],
+      periodStart,
+      periodEnd,
+    )
 
     expect(trend).toEqual({
       delta: 100,
+      deltaPoints: 2.5,
       avgFirst: 2.5,
       avgSecond: 5,
       dominantMood: 'GREAT',
@@ -29,58 +41,98 @@ describe('computeMoodTrend', () => {
     })
   })
 
-  it('reports a negative delta when the second half dips', () => {
-    const trend = computeMoodTrend([
-      mood('GREAT', 6),
-      mood('GREAT', 6),
-      mood('SAD', 6),
-      mood('SAD', 6),
-      mood('SAD', 6),
-    ])
+  it('reports a negative difference when the second half dips', () => {
+    const trend = computeMoodTrend(
+      [
+        mood('GREAT', '2026-01-05T10:00:00Z'),
+        mood('GREAT', '2026-01-06T10:00:00Z'),
+        mood('SAD', '2026-01-09T10:00:00Z'),
+        mood('SAD', '2026-01-10T10:00:00Z'),
+        mood('SAD', '2026-01-11T10:00:00Z'),
+      ],
+      periodStart,
+      periodEnd,
+    )
 
-    expect(trend.delta).toBe(-60)
-    expect(trend.dominantMood).toBe('SAD')
+    expect(trend?.deltaPoints).toBe(-3)
+    expect(trend?.delta).toBe(-60)
+    expect(trend?.dominantMood).toBe('SAD')
   })
 
-  it('reports a zero delta and the mean energy for a flat period', () => {
-    const trend = computeMoodTrend([
-      mood('GOOD', 3),
-      mood('GOOD', 9),
-      mood('GOOD', 6),
-    ])
+  it('reports a zero difference and the mean energy for a flat period', () => {
+    const trend = computeMoodTrend(
+      [
+        mood('GOOD', '2026-01-05T10:00:00Z', 3),
+        mood('GOOD', '2026-01-06T10:00:00Z', 9),
+        mood('GOOD', '2026-01-09T10:00:00Z', 6),
+        mood('GOOD', '2026-01-10T10:00:00Z', 6),
+      ],
+      periodStart,
+      periodEnd,
+    )
 
-    expect(trend.delta).toBe(0)
-    expect(trend.avgEnergy).toBe(6)
+    expect(trend?.deltaPoints).toBe(0)
+    expect(trend?.delta).toBe(0)
+    expect(trend?.avgEnergy).toBe(6)
+  })
+
+  it('splits by timestamp rather than by entry count', () => {
+    const trend = computeMoodTrend(
+      [
+        mood('GREAT', '2026-01-05T10:00:00Z'),
+        mood('GREAT', '2026-01-06T10:00:00Z'),
+        mood('GREAT', '2026-01-07T10:00:00Z'),
+        mood('SAD', '2026-01-10T10:00:00Z'),
+      ],
+      periodStart,
+      periodEnd,
+    )
+
+    expect(trend).toBeNull()
+  })
+
+  it('rounds the averages to one decimal so the pair matches the difference', () => {
+    const trend = computeMoodTrend(
+      [
+        mood('NEUTRAL', '2026-01-05T10:00:00Z'),
+        mood('NEUTRAL', '2026-01-06T10:00:00Z'),
+        mood('GOOD', '2026-01-07T10:00:00Z'),
+        mood('GOOD', '2026-01-09T10:00:00Z'),
+        mood('GOOD', '2026-01-10T10:00:00Z'),
+        mood('GREAT', '2026-01-11T10:00:00Z'),
+      ],
+      periodStart,
+      periodEnd,
+    )
+
+    expect(trend?.avgFirst).toBe(3.3)
+    expect(trend?.avgSecond).toBe(4.3)
+    expect(trend?.deltaPoints).toBe(1)
   })
 })
 
 describe('moodTrendBody', () => {
-  it('celebrates an improving delta', () => {
-    expect(moodTrendBody(100)).toBe(
-      'Seu humor melhorou 100% em relação ao início do período.',
+  it('prints a positive difference with a plus sign', () => {
+    expect(moodTrendBody(0.3)).toBe(
+      'Média de humor nos últimos 7 dias. Diferença de +0,3 ponto.',
     )
   })
 
-  it('names a worsening delta by its magnitude', () => {
-    expect(moodTrendBody(-60)).toBe(
-      'Seu humor caiu 60% em relação ao início do período.',
+  it('prints a negative difference', () => {
+    expect(moodTrendBody(-0.3)).toBe(
+      'Média de humor nos últimos 7 dias. Diferença de -0,3 ponto.',
     )
   })
 
-  it('calls a small delta stable', () => {
-    expect(moodTrendBody(5)).toBe(
-      'Seu humor se manteve estável durante o período.',
+  it('prints a zero difference without a sign', () => {
+    expect(moodTrendBody(0)).toBe(
+      'Média de humor nos últimos 7 dias. Diferença de 0,0 ponto.',
     )
   })
 
-  it('treats a delta of exactly ten as stable and eleven as a change', () => {
-    expect(moodTrendBody(10)).toBe(
-      'Seu humor se manteve estável durante o período.',
+  it('always prints one decimal place', () => {
+    expect(moodTrendBody(2)).toBe(
+      'Média de humor nos últimos 7 dias. Diferença de +2,0 ponto.',
     )
-    expect(moodTrendBody(-10)).toBe(
-      'Seu humor se manteve estável durante o período.',
-    )
-    expect(moodTrendBody(11)).toContain('melhorou')
-    expect(moodTrendBody(-11)).toContain('caiu')
   })
 })

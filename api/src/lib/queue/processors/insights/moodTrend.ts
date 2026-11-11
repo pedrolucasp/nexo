@@ -11,22 +11,41 @@ const MOOD_SCORE: Record<BaseMoodOption, number> = {
   ANGRY: 1,
 };
 
-type MoodTrendEntry = { selectedMood: BaseMoodOption; energyLevel: number };
+type MoodTrendEntry = {
+  selectedMood: BaseMoodOption;
+  energyLevel: number;
+  moment: Date;
+};
 
 export type MoodTrend = {
   delta: number;
+  deltaPoints: number;
   avgFirst: number;
   avgSecond: number;
   dominantMood: BaseMoodOption;
   avgEnergy: number;
 };
 
-export function computeMoodTrend(moods: MoodTrendEntry[]): MoodTrend {
-  const scores = moods.map((m) => MOOD_SCORE[m.selectedMood]);
-  const mid = Math.floor(scores.length / 2);
-  const avgFirst = avg(scores.slice(0, mid));
-  const avgSecond = avg(scores.slice(mid));
-  const delta = Math.round(((avgSecond - avgFirst) / avgFirst) * 100);
+const round1 = (value: number): number => Math.round(value * 10) / 10;
+
+const formatDecimal = (value: number): string =>
+  value.toFixed(1).replace(".", ",");
+
+export function computeMoodTrend(
+  moods: MoodTrendEntry[],
+  periodStart: Date,
+  periodEnd: Date,
+): MoodTrend | null {
+  const midpoint = new Date((periodStart.getTime() + periodEnd.getTime()) / 2);
+  const first = moods.filter((m) => m.moment <= midpoint);
+  const second = moods.filter((m) => m.moment > midpoint);
+
+  if (first.length < 2 || second.length < 2) return null;
+
+  const avgFirst = round1(avg(first.map((m) => MOOD_SCORE[m.selectedMood])));
+  const avgSecond = round1(avg(second.map((m) => MOOD_SCORE[m.selectedMood])));
+  const deltaPoints = round1(avgSecond - avgFirst);
+  const delta = Math.round((deltaPoints / avgFirst) * 100);
 
   // Dominant mood in the period
   const moodCounts = moods.reduce<Partial<Record<BaseMoodOption, number>>>(
@@ -39,15 +58,15 @@ export function computeMoodTrend(moods: MoodTrendEntry[]): MoodTrend {
 
   const avgEnergy = avg(moods.map((m) => m.energyLevel));
 
-  return { delta, avgFirst, avgSecond, dominantMood, avgEnergy };
+  return { delta, deltaPoints, avgFirst, avgSecond, dominantMood, avgEnergy };
 }
 
-export function moodTrendBody(delta: number): string {
-  if (delta > 10)
-    return `Seu humor melhorou ${delta}% em relação ao início do período.`;
-  if (delta < -10)
-    return `Seu humor caiu ${Math.abs(delta)}% em relação ao início do período.`;
-  return "Seu humor se manteve estável durante o período.";
+export function moodTrendBody(deltaPoints: number): string {
+  const sign = deltaPoints > 0 ? "+" : "";
+  return (
+    "Média de humor nos últimos 7 dias. " +
+    `Diferença de ${sign}${formatDecimal(deltaPoints)} ponto.`
+  );
 }
 
 export async function processMoodTrend({
@@ -64,9 +83,8 @@ export async function processMoodTrend({
     select: { selectedMood: true, energyLevel: true, moment: true },
   });
 
-  if (moods.length < 3) return;
-
-  const trend = computeMoodTrend(moods);
+  const trend = computeMoodTrend(moods, start, end);
+  if (!trend) return;
 
   await prisma.insight.upsert({
     where: {
@@ -77,7 +95,7 @@ export async function processMoodTrend({
       },
     },
     update: {
-      body: moodTrendBody(trend.delta),
+      body: moodTrendBody(trend.deltaPoints),
       metadata: trend,
       generatedAt: new Date(),
     },
@@ -86,7 +104,7 @@ export async function processMoodTrend({
       type: InsightType.MOOD_TREND,
       period: InsightPeriod.WEEKLY,
       title: "Tendência de Humor",
-      body: moodTrendBody(trend.delta),
+      body: moodTrendBody(trend.deltaPoints),
       metadata: trend,
       periodStart: start,
       periodEnd: end,

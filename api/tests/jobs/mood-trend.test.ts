@@ -7,23 +7,39 @@ const db = buildPrisma()
 afterAll(() => db.$disconnect())
 beforeEach(() => cleanupTestDb(db))
 
+const DAY = 24 * 60 * 60 * 1000
+
+type MoodOption = 'GREAT' | 'GOOD' | 'NEUTRAL' | 'SAD' | 'ANGRY'
+
+const at = (base: Date, days: number) =>
+  new Date(base.getTime() + days * DAY)
+
+const createMood = (
+  userId: number,
+  selectedMood: MoodOption,
+  moment: Date,
+) =>
+  db.mood.create({
+    data: {
+      userId,
+      selectedMood,
+      anxietyLevel: 2,
+      stressLevel: 2,
+      energyLevel: 7,
+      moment,
+      moodComponents: { create: [{ component: 'JOY', intensity: 'LIGHT' }] },
+    },
+  })
+
 describe('processMoodTrend', () => {
-  it('skips processing when fewer than 3 mood entries exist', async () => {
+  it('skips processing when a half has fewer than two entries', async () => {
     const user = await createTestUser(db)
     const now = new Date()
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const weekAgo = new Date(now.getTime() - 7 * DAY)
 
-    await db.mood.create({
-      data: {
-        userId: user.id,
-        selectedMood: 'GOOD',
-        anxietyLevel: 2,
-        stressLevel: 2,
-        energyLevel: 7,
-        moment: new Date(weekAgo.getTime() + 60_000),
-        moodComponents: { create: [{ component: 'JOY', intensity: 'LIGHT' }] },
-      },
-    })
+    await createMood(user.id, 'GOOD', at(weekAgo, 0))
+    await createMood(user.id, 'GOOD', at(weekAgo, 1))
+    await createMood(user.id, 'GOOD', at(weekAgo, 5))
 
     await processMoodTrend({
       userId: user.id,
@@ -31,28 +47,22 @@ describe('processMoodTrend', () => {
       periodEnd: now.toISOString(),
     })
 
-    const insight = await db.insight.findFirst({ where: { userId: user.id } })
+    const insight = await db.insight.findFirst({
+      where: { userId: user.id },
+    })
     expect(insight).toBeNull()
   })
 
-  it('creates a MOOD_TREND insight when enough entries exist', async () => {
+  it('creates a MOOD_TREND insight when both halves have enough entries', async () => {
     const user = await createTestUser(db)
     const now = new Date()
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const weekAgo = new Date(now.getTime() - 7 * DAY)
 
-    const moods = ['GREAT', 'GOOD', 'NEUTRAL', 'GOOD', 'GREAT'] as const
+    const moods: MoodOption[] = ['GREAT', 'GOOD', 'NEUTRAL', 'GOOD']
+    const offsets = [0, 1, 5, 6]
+
     for (let i = 0; i < moods.length; i++) {
-      await db.mood.create({
-        data: {
-          userId: user.id,
-          selectedMood: moods[i],
-          anxietyLevel: 2,
-          stressLevel: 2,
-          energyLevel: 7,
-          moment: new Date(weekAgo.getTime() + i * 24 * 60 * 60 * 1000),
-          moodComponents: { create: [{ component: 'JOY', intensity: 'LIGHT' }] },
-        },
-      })
+      await createMood(user.id, moods[i], at(weekAgo, offsets[i]))
     }
 
     await processMoodTrend({
@@ -61,32 +71,29 @@ describe('processMoodTrend', () => {
       periodEnd: now.toISOString(),
     })
 
-    const insight = await db.insight.findFirst({ where: { userId: user.id, type: 'MOOD_TREND' } })
+    const insight = await db.insight.findFirst({
+      where: { userId: user.id, type: 'MOOD_TREND' },
+    })
     expect(insight).not.toBeNull()
     expect(insight!.title).toBe('Tendência de Humor')
+    expect(insight!.body).toBe(
+      'Média de humor nos últimos 7 dias. Diferença de -1,0 ponto.',
+    )
     expect(insight!.metadata).toMatchObject({
-      dominantMood: expect.any(String),
-      delta: expect.any(Number),
+      avgFirst: 4.5,
+      avgSecond: 3.5,
+      deltaPoints: -1,
+      dominantMood: 'GOOD',
     })
   })
 
   it('upserts the insight on repeated calls for the same period', async () => {
     const user = await createTestUser(db)
     const now = new Date()
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const weekAgo = new Date(now.getTime() - 7 * DAY)
 
-    for (let i = 0; i < 4; i++) {
-      await db.mood.create({
-        data: {
-          userId: user.id,
-          selectedMood: 'GOOD',
-          anxietyLevel: 2,
-          stressLevel: 2,
-          energyLevel: 6,
-          moment: new Date(weekAgo.getTime() + i * 24 * 60 * 60 * 1000),
-          moodComponents: { create: [{ component: 'JOY', intensity: 'LIGHT' }] },
-        },
-      })
+    for (const offset of [0, 1, 5, 6]) {
+      await createMood(user.id, 'GOOD', at(weekAgo, offset))
     }
 
     const periodStart = weekAgo.toISOString()
@@ -95,7 +102,9 @@ describe('processMoodTrend', () => {
     await processMoodTrend({ userId: user.id, periodStart, periodEnd })
     await processMoodTrend({ userId: user.id, periodStart, periodEnd })
 
-    const count = await db.insight.count({ where: { userId: user.id, type: 'MOOD_TREND' } })
+    const count = await db.insight.count({
+      where: { userId: user.id, type: 'MOOD_TREND' },
+    })
     expect(count).toBe(1)
   })
 })
