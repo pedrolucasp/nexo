@@ -42,8 +42,8 @@ projeto, mas que delimita seu principal limite de escalabilidade.
 Este capítulo detalha o funcionamento de algumas funcionalidades
 desenvolvidas durante o projeto. Apenas algumas funcionalidades mais
 chaves são abordadas neste capítulo, como o registro de humor, o vínculo
-de um gatilho, o histórico consolidado, os indicadores, o registro de
-atividades e, por fim, a exportação de dados e a geração de relatórios.
+de um gatilho, as ações de cuidado, o histórico consolidado, os
+indicadores e, por fim, a exportação de dados e a geração de relatórios.
 
 \section{Processo de Login}
 
@@ -226,6 +226,91 @@ diário de energia, este último apresentado na figura
 \ref{fig:screenshot-consulta-registros}. O padrão de gatilhos não
 depende desse registro e permanece apenas no \textit{job} semanal de
 \textit{fan-out} (seção \ref{sec:insights}).
+
+\section{Ações de Cuidado}\label{sec:care-actions}
+
+A aba ``Ações de Cuidado'' funciona como ponto de entrada para o que o
+sistema entende por cuidado, e não como uma listagem: reúne o botão de
+registro, o acesso ao catálogo de medicamentos, os atalhos para sono e
+gatilho e uma nota de apoio, conforme a figura
+\ref{fig:screenshot-care-actions-hub}. O botão principal abre um seletor
+com as três modalidades, e cada opção leva ao formulário correspondente.
+Reunir esses atalhos no mesmo lugar não é apenas uma escolha de
+organização: o hub amplia o foco do humor para as ações que o cercam --- a
+dose tomada, a noite de sono, o gatilho ---, que não são, em si, um estado
+afetivo, mas formam o contexto em que ele ocorre. É a mesma lógica do EMA
+que sustenta a tela: um humor isolado diz pouco; o que permite
+interpretá-lo é o que foi feito, tomado, dormido ou acontecido em volta.
+
+\begin{figure}[H]
+\centering
+\caption{Tela de Ações de Cuidado}
+\label{fig:screenshot-care-actions-hub}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-care-actions-hub.jpeg}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+O seletor, na figura \ref{fig:screenshot-care-action-picker}, é uma rota
+apresentada como folha, sem consulta à API: existe apenas para despachar o
+usuário ao fluxo escolhido. As três modalidades têm formulários distintos
+porque o que se registra também muda. A consulta pede o tipo de
+profissional e a duração, além de uma anotação opcional; a atividade pede
+o tipo e, se o usuário quiser, a duração; o medicamento não é digitado a
+cada dose, mas escolhido entre os horários já cadastrados para o dia.
+
+\begin{figure}[H]
+\centering
+\caption{Seletor de tipo de ação de cuidado}
+\label{fig:screenshot-care-action-picker}
+\includegraphics[width=0.70\textwidth,height=0.60\textheight,keepaspectratio]{screenshot-care-action-picker.jpg}
+\source{Elaborado pelo autor (2026)}
+\end{figure}
+
+Por trás dessa separação visual, o servidor trata as três modalidades como
+um único recurso, exposto pelo conjunto de rotas \texttt{/care-actions}. A
+tabela \texttt{care\_actions} guarda o que é comum: o instante do evento
+(\texttt{moment}), o usuário e os vínculos opcionais com um gatilho e com
+um humor. O tipo é um enumerador --- \texttt{MEDICINE},
+\texttt{APPOINTMENT}, \texttt{ACTIVITY} --- que atua como discriminante, e
+o conteúdo próprio de cada modalidade fica em uma tabela satélite ligada
+por relação um-para-um: \texttt{medicine\_logs}, \texttt{appointments} ou
+\texttt{activities}, com apenas as colunas do seu tipo. Na leitura, a API
+remonta a união, incluindo as três relações e devolvendo nulas as que não
+se aplicam, de modo que o aplicativo recebe sempre a mesma forma. Os
+vínculos com gatilho e humor ficam no registro comum, e não em cada tabela
+satélite, porque atravessam as três modalidades: uma consulta, uma
+caminhada ou uma dose podem remeter ao mesmo evento. O tipo, por sua vez,
+é imutável --- a atualização não aceita o campo ---, pois trocá-lo
+equivaleria a apagar o registro e criar outro.
+
+Esses vínculos não servem apenas para anexar um gatilho ou um humor a mais
+um registro: eles são o que permite reconstruir a cadeia de eventos do
+dia. Uma ação de cuidado raramente é um fato isolado. Ela pode ser a
+resposta a um gatilho --- o usuário percebe uma ruminação interna e decide
+caminhar ou ir à academia --- e, ao mesmo tempo, influenciar o humor que
+registra mais tarde. No sentido inverso, uma consulta com o terapeuta pode
+ser a origem de um gatilho, que só então desencadeia uma reação de humor.
+Como o vínculo não pertence a nenhuma das modalidades em particular, ele
+fica no registro comum, e é isso que permite ao histórico
+(seção~\ref{sec:history-analysis}) exibir a ação ao lado do evento que a
+motivou ou daquele que ela ajudou a desencadear, em vez de tratá-la como
+um item avulso. É esse o caminho oferecido logo após salvar uma consulta:
+o aplicativo propõe criar um gatilho ou registrar um humor a partir dali,
+e o vínculo fica gravado na própria ação.
+
+O medicamento é o caso que foge do padrão de evento isolado. O que se
+acompanha é o regime (\texttt{medicine\_regimens}), com nome, dosagem,
+periodicidade e horários, e a dose é apenas o registro de que um horário
+foi cumprido. A tela de medicamento carrega os regimes ativos do dia e os
+separa em atrasados, próximos e tomados; tocar em um horário cria a ação
+do tipo \texttt{MEDICINE} com o regime e o horário correspondentes. Nome e
+dosagem são copiados para a dose no momento da escrita, de modo que editar
+o regime depois não reescreva o passado. É o regime, e não a dose, que
+alimenta o agendamento dos lembretes descritos na
+seção~\ref{sec:notifications}. No aplicativo, a criação insere o item na
+janela já carregada do cache do histórico, na posição que a ordenação lhe
+reserva, e invalida as listas de ações e de medicamentos do dia; a exclusão
+o remove do mesmo cache.
 
 \section{Indicadores}\label{sec:insights}
 
