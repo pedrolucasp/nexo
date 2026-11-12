@@ -90,3 +90,82 @@ ao longo do tempo, para que o próprio período de uso --- e não apenas a
 dose --- seja reconstruível. Representar essa vigência permitiria ainda que a
 periodicidade configurada repercutisse de fato na geração dos lembretes, hoje
 disparados diariamente qualquer que seja a frequência escolhida.
+
+Outra frente, ainda no campo do que o usuário registra, é a possibilidade de
+anexar material aos registros. Hoje o Nexo trabalha apenas com texto e números:
+a anotação de um humor é um campo de texto, e o único tipo de mídia que
+o sistema guarda é o avatar do perfil. Anexar fotos e gravações de áudio a um
+registro de humor --- ou a um gatilho, ou a uma ação de cuidado --- aproximaria
+o aplicativo do que o público-alvo já encontra em soluções similares, uma vez
+que o Baseline admite entradas por áudio e o DailyBeans permite associar fotos
+ao registro. A mudança, porém, não é apenas de interface. Parte da
+infraestrutura já existe e funciona: o envio do avatar exercita o caminho
+completo de um arquivo, do formulário multipart no aplicativo até
+o armazenamento de objetos, com a chave e a URL gravadas no registro
+correspondente. O que falta é desenhar um fluxo para um conteúdo que não
+é único nem substituível como o avatar: um anexo se acumula, tem vínculo com um
+registro específico e precisa sobreviver à edição dele. Isso exigiria um modelo
+de dados para o anexo, com tipo, tamanho, duração e o vínculo de origem; um
+envio que aceite mais de um arquivo e outras mídias além de imagem, hoje
+barradas pelo filtro do \textit{endpoint} de avatar; e a inclusão dos anexos na
+exportação integral, que se pretende um retrato completo dos dados do usuário.
+Acrescenta ainda uma questão de custo e de retenção: áudio e imagem ocupam
+muito mais espaço que texto, e o armazenamento de objetos do projeto opera hoje
+com um único \textit{bucket} de leitura pública, adequado a avatares, mas não
+a conteúdo íntimo.
+
+Dos anexos de áudio decorre uma segunda possibilidade: transcrevê-los no
+próprio dispositivo, e não no servidor. Modelos abertos de porte reduzido,
+executados por \textit{runtimes} que cabem em um aplicativo móvel, já tornam
+viável transcrever alguns minutos de fala sem que o áudio saia do aparelho.
+O uso mais imediato seria o de uma anotação falada: o usuário gravaria o relato
+e pediria a transcrição, que passaria a preencher o campo de texto daquele
+humor ou daquele gatilho. A motivação não é apenas de conveniência. Manter
+o som no dispositivo dialoga com a preferência, registrada no questionário, de
+guardar os dados localmente, e sobretudo com a frente de criptografia no
+cliente discutida anteriormente --- uma anotação cifrada no aparelho não pode
+ser transcrita no servidor, de modo que as duas frentes se reforçam em vez de
+competir. Em contrapartida, o tamanho do modelo a baixar, a latência
+e o consumo de bateria em aparelhos intermediários, a qualidade da transcrição
+em português e o próprio escoamento do texto produzido, já que o aplicativo
+ainda não possui fila de envio \textit{offline}, são obstáculos que só uma
+avaliação prática resolveria. Registre-se que a transcrição é uma
+funcionalidade autônoma, útil mesmo que nenhuma outra frente avance: ela serve
+tanto ao registro avulso quanto, mais adiante, ao fornecimento de texto a um
+fluxo conduzido por perguntas.
+
+A forma de preencher o registro é outra frente que a implementação sugeriu,
+e diz respeito sobretudo à interface. O fluxo atual é declaradamente um
+formulário: escolhe-se o humor, julgam-se os níveis de energia, estresse
+e ansiedade em uma escala de 1 a 10, selecionam-se sentimentos e intensidades
+e, por fim, escreve-se uma anotação, em uma sequência fixa de telas. Uma
+alternativa seria conduzir o registro como uma conversa, perguntando como foi
+o dia e quanto de estresse ele exigiu, e adaptando a próxima pergunta ao que
+foi respondido --- um fluxo guiado, em vez de um conjunto de campos. Vale notar
+que os dados já existentes no modelo suportariam essa mudança sem alteração de
+esquema, o que torna a frente uma questão de apresentação e de roteiro, e não
+de domínio. O cuidado é que um fluxo conversacional pode ficar mais lento que
+o formulário que pretende substituir: o registro por toques resolve-se em
+poucos segundos e é justamente o que boa parte do público procura. A condução
+por perguntas corre ainda o risco de soar avaliativa --- algo que este trabalho
+evitou deliberadamente ao não emitir juízos sobre o estado do usuário ---, de
+modo que a redação das perguntas pesaria tanto quanto a mecânica da tela. Uma
+saída plausível seria oferecer os dois caminhos, deixando ao usuário a escolha
+entre o registro rápido e o conduzido, conforme o momento.
+
+Por fim, os relatórios comportam ao menos duas ampliações. A primeira é de
+conteúdo: o documento desta versão cobre apenas os dados de humor, e a intenção
+de incorporar o sono, as atividades e os padrões de gatilho, incluindo
+a correlação entre sono e energia já calculada nos indicadores, foi adiada.
+A segunda é de forma: hoje o usuário escolhe apenas o período, e todo
+o restante do documento é fixo. Permitir escolher o que entra no relatório, ou
+oferecer modelos prontos para finalidades distintas --- um resumo curto para
+uma consulta, um panorama mais longo para revisão pessoal ---, tornaria
+o artefato mais expressivo e mais próximo do uso real, que é levar algo legível
+a um profissional de saúde. O risco é que a ampliação agrave o problema de
+interpretação já registrado para os indicadores: um gráfico ou um recorte novo
+precisa declarar sobre qual janela foi calculado e sobre qual escala repousa,
+sob pena de sugerir conclusões que o dado não sustenta --- o mesmo cuidado que
+levou a manter estático o rótulo de estabilidade. Uma versão configurável,
+portanto, exigiria que cada elemento do relatório carregasse sua própria
+legenda de leitura.
