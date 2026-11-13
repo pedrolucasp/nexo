@@ -50,7 +50,7 @@ export const MoodsController = {
 
   show: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const mood = await getMoodById(Number(req.params.id));
+      const mood = await getMoodById(req.userId!, Number(req.params.id!));
 
       if (!mood) {
         return res.status(404).json({ errors: "Mood was not found" });

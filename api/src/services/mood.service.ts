@@ -80,10 +80,11 @@ export const getMoodsByUserId = async (
   };
 };
 
-export const getMoodById = async (id: number) => {
+export const getMoodById = async (userId: number, id: number) => {
   return await prisma.mood.findUnique({
     where: {
       id,
+      userId,
     },
     include: {
       moodComponents: true,
