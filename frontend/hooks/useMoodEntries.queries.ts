@@ -11,10 +11,12 @@ import {
   moodHistoryItem,
   removeHistoryItemInCache,
 } from "@/lib/history/cache";
+import { invalidateLinkedEntities } from "@/lib/cache/links";
+import { QUERY_NAMESPACES } from "@/lib/cache/namespaces";
 import { insightKeys } from "./useInsights.queries";
 
 export const moodKeys = {
-  all: () => ["mood-entries"] as const,
+  all: () => [QUERY_NAMESPACES.mood] as const,
   lists: () => [...moodKeys.all(), "list"] as const,
   list: (filters?: MoodEntryFilters) => [...moodKeys.lists(), filters] as const,
   detail: (id: string) => [...moodKeys.all(), "detail", id] as const,
@@ -93,9 +95,8 @@ export const useUpdateMoodEntry = () => {
       invalidateHistory(queryClient);
 
       // Trigger detail embeds the full mood in its links, so an edited mood
-      // would otherwise keep its old levels there. The literal prefix is used
-      // instead of triggerKeys to avoid a circular import between the hooks.
-      queryClient.invalidateQueries({ queryKey: ["triggers"] });
+      // would otherwise keep its old levels there
+      invalidateLinkedEntities(queryClient, "mood");
 
       setTimeout(() => {
         queryClient.invalidateQueries({
@@ -122,6 +123,8 @@ export const useDeleteMoodEntry = () => {
     onSuccess: (_data, id) => {
       removeHistoryItemInCache(queryClient, "mood", Number(id));
       queryClient.invalidateQueries({ queryKey: moodKeys.lists() });
+      // The trigger and care action screens embed this entry while linked
+      invalidateLinkedEntities(queryClient, "mood");
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("MOOD_TREND") });
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("ENERGY_SLEEP_CORRELATION") });

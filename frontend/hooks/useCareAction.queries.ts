@@ -13,6 +13,8 @@ import {
   invalidateHistory,
   removeHistoryItemInCache,
 } from "@/lib/history/cache";
+import { invalidateLinkedEntities } from "@/lib/cache/links";
+import { QUERY_NAMESPACES } from "@/lib/cache/namespaces";
 import { medicineTodayKeys } from "@/hooks/useMedicineToday.queries";
 import { medicineRegimenKeys } from "@/hooks/useMedicineRegimen.queries";
 
@@ -24,7 +26,7 @@ interface CareActionFilters {
 }
 
 export const careActionKeys = {
-  all: () => ["careActions"] as const,
+  all: () => [QUERY_NAMESPACES.careAction] as const,
   lists: () => [...careActionKeys.all(), "list"] as const,
   list: (filters?: CareActionFilters) => [...careActionKeys.lists(), filters] as const,
   detail: (id: string) => [...careActionKeys.all(), "detail", id] as const,
@@ -75,8 +77,7 @@ export const usePatchCareAction = () => {
       invalidateHistory(queryClient);
 
       // A link change also lands on the mood or trigger that now points back
-      queryClient.invalidateQueries({ queryKey: ["mood-entries"] });
-      queryClient.invalidateQueries({ queryKey: ["triggers"] });
+      invalidateLinkedEntities(queryClient, "careAction");
     },
   });
 };
@@ -109,6 +110,8 @@ export const useDeleteCareAction = () => {
     onSuccess: (_data, id) => {
       removeHistoryItemInCache(queryClient, "care_action", Number(id));
       queryClient.invalidateQueries({ queryKey: careActionKeys.lists() });
+      // The mood entry and trigger screens embed this care action while linked
+      invalidateLinkedEntities(queryClient, "careAction");
     },
   });
 };

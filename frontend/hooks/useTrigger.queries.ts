@@ -7,11 +7,13 @@ import {
   removeHistoryItemInCache,
   triggerHistoryItem,
 } from "@/lib/history/cache";
+import { invalidateLinkedEntities } from "@/lib/cache/links";
+import { QUERY_NAMESPACES } from "@/lib/cache/namespaces";
 import { insightKeys } from "@/hooks/useInsights.queries";
 import { moodKeys } from "@/hooks/useMoodEntries.queries";
 
 export const triggerKeys = {
-  all: () => ["triggers"] as const,
+  all: () => [QUERY_NAMESPACES.trigger] as const,
   lists: () => [...triggerKeys.all(), "list"] as const,
   list: (filters?: TriggerFilters) =>
     [...triggerKeys.lists(), filters] as const,
@@ -139,6 +141,9 @@ export const useDeleteTrigger = () => {
     onSuccess: (_data, id) => {
       removeHistoryItemInCache(queryClient, "trigger", Number(id));
       queryClient.invalidateQueries({ queryKey: triggerKeys.lists() });
+      // The mood and care action screens embed this trigger, and a care action
+      // may have pointed at it
+      invalidateLinkedEntities(queryClient, "trigger");
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: insightKeys.byType("TRIGGER_PATTERN") });
       }, 2000);
